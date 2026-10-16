@@ -32,6 +32,34 @@ function advance(r: Raid, seconds: number, keys = new Set<string>()) {
 }
 beforeEach(() => memory.clear());
 describe("真实战区逻辑", () => {
+  it("高阶枪耐久更高，实际射出700发降至零；30以下减伤，零耐久保留30%伤害", () => {
+    expect(db.w11.durability!).toBeGreaterThan(db.w0.durability!);
+    for (const id of ["w0", "w11"]) {
+      const { s, r } = start();
+      s.equipment.primary = makeItem(id);
+      for (let shot = 0; shot < 700; shot++) {
+        r.mag = 1;
+        r.fireCool = 0;
+        r.shoot();
+        r.bullets = [];
+      }
+      expect(s.equipment.primary!.durability).toBe(0);
+      r.mag = 1;
+      r.fireCool = 0;
+      r.shoot();
+      expect(r.bullets[0].damage).toBeCloseTo(db[id].damage! * 0.3);
+      s.equipment.primary!.durability = 30;
+      r.mag = 1;
+      r.fireCool = 0;
+      r.shoot();
+      expect(r.bullets.at(-1)!.damage).toBe(db[id].damage);
+      s.equipment.primary!.durability = 15;
+      r.mag = 1;
+      r.fireCool = 0;
+      r.shoot();
+      expect(r.bullets.at(-1)!.damage).toBeCloseTo(db[id].damage! * 0.65);
+    }
+  });
   it("发现玩家会通知同房间敌猫，隔墙远处敌人不会全图仇恨", () => {
     const { r } = start();
     r.p.x = 1000;

@@ -1,5 +1,136 @@
 import { test, expect, type Page } from "@playwright/test";
 
+test("基地设置在声音失败时仍打开顶层菜单，设置、指南和返回开始均可使用", async ({
+  page,
+}) => {
+  await start(page);
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.evaluate(() => {
+    (window as any).__game.sound.start = () => {
+      throw new Error("测试声音设备故障");
+    };
+    const cover = document.createElement("div");
+    cover.id = "stacking-test";
+    cover.style.cssText =
+      "position:fixed;inset:0;z-index:2147483647;background:#15231d;pointer-events:none";
+    document.body.append(cover);
+  });
+  await page.getByRole("button", { name: "设置", exact: true }).click();
+  const dialog = page.locator("#base-menu");
+  expect(await dialog.evaluate((el) => el.matches(":modal"))).toBe(true);
+  for (const name of ["返回开始界面", "设置", "操作指南"])
+    await expect(
+      dialog.getByRole("button", { name, exact: true }),
+    ).toBeVisible();
+  expect(
+    await dialog
+      .getByRole("button", { name: "设置", exact: true })
+      .evaluate((el) => {
+        const b = el.getBoundingClientRect();
+        return !!document
+          .elementFromPoint(b.x + b.width / 2, b.y + b.height / 2)
+          ?.closest("#base-menu");
+      }),
+  ).toBe(true);
+  await page.screenshot({ path: "test-results/base-menu-top-layer.png" });
+  await page.evaluate(() => document.querySelector("#stacking-test")?.remove());
+  await dialog.getByRole("button", { name: "设置", exact: true }).click();
+  await expect(dialog.getByText("主音量", { exact: true })).toBeVisible();
+  await dialog
+    .getByRole("button", { name: "返回基地菜单", exact: true })
+    .click();
+  await dialog.getByRole("button", { name: "操作指南", exact: true }).click();
+  await expect(
+    dialog.getByRole("heading", { name: "操作指南", exact: true }),
+  ).toBeVisible();
+  await dialog
+    .getByRole("button", { name: "返回基地菜单", exact: true })
+    .click();
+  await dialog
+    .getByRole("button", { name: "返回开始界面", exact: true })
+    .click();
+  await expect(dialog).toBeHidden();
+  await expect(
+    page.getByRole("button", { name: "读取存档", exact: true }),
+  ).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test("Esc 菜单高于最高层级游戏画面，实际可点击并关闭", async ({ page }) => {
+  await start(page);
+  await deploy(page);
+  await page.evaluate(() => {
+    for (const el of document.querySelectorAll<HTMLElement>("#world,#scene3d"))
+      el.style.zIndex = "2147483647";
+  });
+  await page.keyboard.press("Escape");
+  const dialog = page.locator("#game-menu");
+  expect(await dialog.evaluate((el) => el.matches(":modal"))).toBe(true);
+  const resume = dialog.getByRole("button", { name: "继续游戏", exact: true });
+  expect(
+    await resume.evaluate((el) => {
+      const b = el.getBoundingClientRect();
+      return !!document
+        .elementFromPoint(b.x + b.width / 2, b.y + b.height / 2)
+        ?.closest("#game-menu");
+    }),
+  ).toBe(true);
+  await page.screenshot({ path: "test-results/esc-top-layer.png" });
+  await resume.click();
+  await expect(dialog).toBeHidden();
+  expect(await page.evaluate(() => (window as any).__game.raid.paused)).toBe(
+    false,
+  );
+});
+
+test("仓库背包物品显示价值、可出售和全部放回，武器可修复并损耗上限", async ({
+  page,
+}) => {
+  await start(page);
+  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await expect(
+    page.locator('[data-grid="pack"] [data-item="m1"] .item-value'),
+  ).toBeVisible();
+  await page.locator('[data-grid="pack"] [data-item="f1"]').click();
+  await expect(page.locator("#item-menu .item-sale-value")).toContainText(
+    "出售价值",
+  );
+  const coins = await page.evaluate(() => (window as any).__game.save.coins);
+  await page
+    .locator("#item-menu")
+    .getByRole("button", { name: /^出售/ })
+    .click();
+  expect(
+    await page.evaluate(() => (window as any).__game.save.coins),
+  ).toBeGreaterThan(coins);
+  await page.getByRole("button", { name: "全部放回", exact: true }).click();
+  expect(
+    await page.evaluate(() => (window as any).__game.save.pack.length),
+  ).toBe(0);
+  await expect(
+    page.getByRole("button", { name: "全部放回", exact: true }),
+  ).toBeDisabled();
+  await page.evaluate(() => {
+    const g = (window as any).__game;
+    g.save.equipment.primary.durability = 12;
+    g.render();
+  });
+  await page.locator('[data-slot="primary"] .equipped-item').click();
+  await expect(page.locator("#item-menu")).toContainText("威力 58%");
+  await page
+    .locator("#item-menu")
+    .getByRole("button", { name: /^修复/ })
+    .click();
+  expect(
+    await page.evaluate(() => {
+      const w = (window as any).__game.save.equipment.primary;
+      return [w.durability, w.maxDurability];
+    }),
+  ).toEqual([89.44, 89.44]);
+  await page.screenshot({ path: "test-results/warehouse-bulk-sale.png" });
+});
+
 test("空装备位双击默认穿戴，拾取弹药优先补满原堆叠至90发", async ({ page }) => {
   await start(page);
   await page.evaluate(() => {

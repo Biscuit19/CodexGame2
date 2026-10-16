@@ -29,6 +29,8 @@ import {
   canPut,
   load,
   normalizeAmmo,
+  stashAll,
+  sell,
   type Result,
 } from "../../src/store";
 const memory = new Map<string, string>();
@@ -95,6 +97,39 @@ describe("配置与战斗", () => {
   });
 });
 describe("物品、经济与死亡事务", () => {
+  it("全部放回保留装备，仓库不足时留下背包余物，背包可直接出售", () => {
+    const s = newSave(),
+      equipment = structuredClone(s.equipment);
+    expect(stashAll(s).left).toBe(0);
+    expect(s.pack).toHaveLength(0);
+    expect(s.equipment).toEqual(equipment);
+    s.stash = Array.from({ length: 59 }, () => makeItem("f1"));
+    s.pack = [makeItem("f1"), makeItem("f2")];
+    expect(stashAll(s)).toEqual({ moved: 1, left: 1 });
+    expect(s.stash).toHaveLength(60);
+    const i = s.pack[0],
+      coins = s.coins;
+    expect(sell(s, "pack", i.uid)).toBe(sale(i));
+    expect(s.coins).toBe(coins + sale(i));
+    expect(s.pack).toHaveLength(0);
+  });
+  it("武器修复降低最大耐久，旧存档无耐久枪械自动补齐", () => {
+    const s = newSave(),
+      gun = s.equipment.primary!;
+    gun.durability = 0;
+    s.coins = 10000;
+    expect(repair(s, "primary")).toBe(true);
+    expect(gun.maxDurability).toBeCloseTo(88);
+    expect(gun.durability).toBeCloseTo(88);
+    const other = s.stash.find((i) => i.id === "w3")!;
+    other.durability = 10;
+    expect(repair(s, other)).toBe(true);
+    expect(other.maxDurability).toBeLessThan(db.w3.durability!);
+    delete gun.durability;
+    delete gun.maxDurability;
+    const migrated = validateSave(s);
+    expect(migrated.equipment.primary!.durability).toBe(db.w0.durability);
+  });
   it("同级子弹始终合并至90发，不同等级分开且旧存档迁移不丢物品", () => {
     const list = [
       makeItem("m1", 30),

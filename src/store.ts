@@ -252,6 +252,13 @@ export function validateSave(data: unknown): Save {
     )
       throw Error("物品数据无效");
     ids.add(i.uid);
+    // Pre-durability saves contain valid guns without durability fields.
+    if (
+      db[i.id].kind === "weapon" &&
+      i.durability === undefined &&
+      i.maxDurability === undefined
+    )
+      i.durability = i.maxDurability = db[i.id].durability;
     if (
       i.loaded &&
       (db[i.id].kind !== "weapon" ||
@@ -572,7 +579,11 @@ export function buyBack(s: Save, uid: string) {
   persist(s);
   return true;
 }
-export function sell(s: Save, from: "stash" | "overflow", uid: string) {
+export function sell(
+  s: Save,
+  from: "stash" | "overflow" | "pack",
+  uid: string,
+) {
   const i = s[from].find((x) => x.uid === uid);
   if (!i) return 0;
   const price = sale(i);
@@ -580,6 +591,12 @@ export function sell(s: Save, from: "stash" | "overflow", uid: string) {
   s[from] = s[from].filter((x) => x.uid !== uid);
   persist(s);
   return price;
+}
+export function stashAll(s: Save) {
+  if (s.pending) return { moved: 0, left: s.pack.length };
+  let moved = 0;
+  for (const i of [...s.pack]) if (move(s, "pack", "stash", i.uid)) moved++;
+  return { moved, left: s.pack.length };
 }
 export function upgradeWarehouse(s: Save) {
   if (s.warehouse >= 4 || s.coins < warehouseCosts[s.warehouse + 1])
@@ -603,12 +620,21 @@ export function upgradeSafe(s: Save, level: number) {
 }
 export function repairCost(i: Item) {
   return Math.ceil(
-    ((i.maxDurability ?? 0) - (i.durability ?? 0)) * db[i.id].tier * 9,
+    ((i.maxDurability ?? 0) - (i.durability ?? 0)) *
+      db[i.id].tier *
+      (db[i.id].kind === "weapon" ? 4 : 9),
   );
 }
-export function repair(s: Save, slot: "armor" | "helmet") {
-  const i = s.equipment[slot];
+export function repair(s: Save, slot: keyof Equipment | Item) {
+  if (s.pending) return false;
+  const i =
+    typeof slot === "string"
+      ? s.equipment[slot]
+      : [...s.pack, ...s.stash, ...Object.values(s.equipment)].find(
+          (v) => v?.uid === slot.uid,
+        );
   if (!i) return false;
+  if (!["weapon", "armor", "helmet"].includes(db[i.id].kind)) return false;
   const cost = repairCost(i);
   if (!cost || s.coins < cost) return false;
   const loss = (i.maxDurability ?? 0) - (i.durability ?? 0);

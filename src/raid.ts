@@ -17,6 +17,8 @@ import {
   AMMO_STACK,
   BASE_PACK,
   EXTRACT_SECONDS,
+  wearWeapon,
+  weaponDamageScale,
   type Item,
   type BossDef,
 } from "./data";
@@ -65,6 +67,7 @@ export interface Enemy {
   boss?: BossDef;
   id: string;
   weapon: number;
+  weaponDurability: number;
   mag: number;
   reload: number;
   phase: number;
@@ -594,6 +597,7 @@ export class Raid {
       boss,
       id: boss?.id ?? crypto.randomUUID(),
       weapon,
+      weaponDurability: weapons[weapon].durability!,
       mag: weapons[weapon].mag!,
       reload: 0,
       phase: 0,
@@ -862,11 +866,15 @@ export class Raid {
       this.p.y - 24,
       a,
       true,
-      this.weapon.damage!,
+      this.weapon.damage! *
+        weaponDamageScale(
+          this.weaponItem!.durability ?? this.weapon.durability!,
+        ),
       this.ammoTier,
       this.weapon.range!,
     );
     this.sound.play("shot");
+    wearWeapon(this.weaponItem!);
     this.shake = Math.max(this.shake, this.weapon.damage! > 60 ? 5 : 2);
     this.emit(
       this.p.x + Math.cos(a) * 44,
@@ -1244,6 +1252,7 @@ export class Raid {
       makeItem(`h${e.tier}`),
       makeItem(`m${Math.min(4, e.tier)}`, 20),
     ];
+    items[0].durability = e.weaponDurability;
     items[1].durability = e.armorDurability;
     items[2].durability = e.helmetDurability;
     for (let n = 0; n < (e.boss ? 3 : Math.floor(this.random() * 3)); n++)
@@ -1568,10 +1577,15 @@ export class Raid {
                     ? 0.55
                     : 0.15 + 0.04 * (5 - e.tier)),
               false,
-              e.boss ? 14 + this.map * 2 : 8 + this.map * 2,
+              (e.boss ? 14 + this.map * 2 : 8 + this.map * 2) *
+                weaponDamageScale(e.weaponDurability),
               Math.min(4, e.tier),
             );
           e.mag--;
+          e.weaponDurability = Math.max(
+            0,
+            e.weaponDurability - weapons[e.weapon].durability! / 700,
+          );
           e.cool =
             e.boss?.skill === "shotgun"
               ? 1.5

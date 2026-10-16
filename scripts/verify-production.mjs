@@ -50,6 +50,24 @@ try {
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.waitForFunction(() => !!navigator.serviceWorker.controller);
   await page.screenshot({ path: "test-results/production-home.png" });
+  await page.getByRole("button", { name: "设置", exact: true }).click();
+  const baseMenu = page.locator("#base-menu");
+  expect(await baseMenu.evaluate((el) => el.matches(":modal"))).toBe(true);
+  await expect(
+    baseMenu.getByRole("button", { name: "返回开始界面", exact: true }),
+  ).toBeVisible();
+  await page.screenshot({ path: "test-results/production-base-menu.png" });
+  await baseMenu.getByRole("button", { name: "设置", exact: true }).click();
+  await expect(baseMenu.getByText("主音量", { exact: true })).toBeVisible();
+  await baseMenu
+    .getByRole("button", { name: "返回基地菜单", exact: true })
+    .click();
+  await baseMenu.getByRole("button", { name: "操作指南", exact: true }).click();
+  await expect(
+    baseMenu.getByRole("heading", { name: "操作指南", exact: true }),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(baseMenu).toBeHidden();
   await page.getByRole("button", { name: "战区地图", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await expect(page.locator("#scene3d")).toBeVisible();
@@ -68,11 +86,29 @@ try {
   await page.keyboard.press("Escape");
   await expect(page.getByRole("region", { name: "左侧背包" })).toHaveCount(0);
   await page.screenshot({ path: "test-results/production-map1.png" });
+  await page.evaluate(() => {
+    for (const el of document.querySelectorAll("#world,#scene3d"))
+      el.style.zIndex = "2147483647";
+  });
   await page.keyboard.press("Escape");
   await expect(
     page.getByRole("heading", { name: "游戏菜单", exact: true }),
   ).toBeVisible();
   await expect(page.locator("#game-menu")).toBeVisible();
+  expect(
+    await page.locator("#game-menu").evaluate((el) => el.matches(":modal")),
+  ).toBe(true);
+  expect(
+    await page
+      .getByRole("button", { name: "继续游戏", exact: true })
+      .evaluate((el) => {
+        const b = el.getBoundingClientRect();
+        return !!document
+          .elementFromPoint(b.x + b.width / 2, b.y + b.height / 2)
+          ?.closest("#game-menu");
+      }),
+  ).toBe(true);
+  await page.screenshot({ path: "test-results/production-esc-menu.png" });
   await page.getByRole("button", { name: "继续游戏", exact: true }).click();
   await page.evaluate(() => window.dispatchEvent(new Event("blur")));
   await expect(
@@ -95,6 +131,15 @@ try {
   await expect(page.getByRole("region", { name: "左侧背包" })).toBeVisible();
   await expect(page.getByRole("region", { name: "右侧仓库" })).toBeVisible();
   await expect(page.locator('[data-grid="stash"] > *')).toHaveCount(60);
+  await expect(
+    page.locator('[data-grid="pack"] .item-value').first(),
+  ).toBeVisible();
+  await page.locator('[data-grid="pack"] [data-item="f1"]').click();
+  await expect(
+    page.locator("#item-menu").getByRole("button", { name: /^出售/ }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "全部放回", exact: true }).click();
+  await expect(page.locator('[data-grid="pack"] .item-slot')).toHaveCount(0);
   await page.locator('[data-grid="stash"] [data-item="w3"]').click();
   await expect(page.locator("#item-menu .item-description")).toHaveText(
     "中距离 · 稳定点射",
@@ -112,6 +157,9 @@ try {
         productionHelpersAbsent: true,
         map1WebGL: true,
         pauseAbort: true,
+        nativeTopLayerMenus: true,
+        baseSettingsAndGuide: true,
+        packBulkTransferAndSale: true,
         offlineLoad: true,
         errors,
         failed,

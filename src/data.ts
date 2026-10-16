@@ -90,6 +90,7 @@ export const weapons: ItemDef[] = [
   reload: r[6] as number,
   price: r[7] as number,
   tier: r[8] as number,
+  durability: [100, 125, 150, 185, 220][(r[8] as number) - 1],
   unlock: Math.min(3, Math.max(0, (r[8] as number) - 2)),
   desc:
     i < 3
@@ -344,6 +345,13 @@ export const makeItem = (id: string, qty = 1): Item => {
 // Remaining protection compares both grade and the actual durability left.
 export const protection = (i: Item | null | undefined) =>
   i ? db[i.id].tier * Math.max(0, i.durability ?? 0) : 0;
+export const weaponDamageScale = (durability: number) =>
+  0.3 + 0.7 * Math.max(0, Math.min(1, durability / 30));
+export function wearWeapon(i: Item) {
+  const loss = db[i.id].durability! / 700;
+  i.durability = Math.max(0, (i.durability ?? db[i.id].durability!) - loss);
+  if (i.durability < 1e-8) i.durability = 0;
+}
 export const sale = (i: Item) =>
   Math.floor(
     db[i.id].price * 0.65 * (db[i.id].kind === "ammo" ? i.qty / AMMO_STACK : 1),

@@ -976,6 +976,65 @@ kbd {
 #game-menu.hidden {
   display: none;
 }
+#game-menu,
+#base-menu {
+  position: fixed;
+  inset: 0;
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  max-height: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  overflow: auto;
+}
+#game-menu:not([open]),
+#base-menu:not([open]) {
+  display: none;
+}
+#game-menu::backdrop,
+#base-menu::backdrop {
+  background: transparent;
+}
+.pack-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.pack-heading .panel-heading {
+  flex: 1;
+}
+.pack-heading .secondary {
+  font-size: 18px;
+  padding: 8px 12px;
+  min-height: 40px;
+  margin-bottom: 20px;
+}
+.slot-grid .item-slot .item-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  height: 26px;
+}
+.item-visual svg {
+  width: 18px;
+  height: 18px;
+}
+.item-visual .item-value {
+  font-size: 18px;
+  line-height: 1.2;
+  color: #e4c58c;
+  font-variant-numeric: tabular-nums;
+}
+.item-sale-value {
+  color: #e4c58c;
+}
 .in-raid {
   overflow: hidden;
   background: #9da986;
@@ -1117,6 +1176,7 @@ kbd {
   color: #b9c9a8;
 }
 .weapon-hud > span {
+  display: block;
   font-size: 18px;
   color: #c6d2b5;
 }
@@ -1659,6 +1719,9 @@ kbd {
 .equipped-item span {
   font-size: 18px;
   color: #bdc9ae;
+}
+.equipped-item .item-value {
+  color: #edcd91;
 }
 .item-menu,
 .item-tooltip {
