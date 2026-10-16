@@ -8,6 +8,8 @@ import {
   safePrice,
   bosses,
   type Item,
+  AMMO_STACK,
+  BASE_PACK,
 } from "./data";
 export type Equipment = {
   primary: Item | null;
@@ -15,6 +17,8 @@ export type Equipment = {
   armor: Item | null;
   helmet: Item | null;
   bag: Item | null;
+  ammo: Item | null;
+  melee: Item | null;
 };
 export interface Settings {
   master: number;
@@ -81,7 +85,7 @@ export const defaults: Settings = {
   aim: "#edd39a",
 };
 export function newSave(slot = 0): Save {
-  return {
+  const save: Save = {
     version: 1,
     slot,
     name: "三花七号",
@@ -111,6 +115,8 @@ export function newSave(slot = 0): Save {
       armor: makeItem("a1"),
       helmet: makeItem("h1"),
       bag: makeItem("b1"),
+      ammo: makeItem("m1", 90),
+      melee: makeItem("k0"),
     },
     defeated: [],
     collection: [],
@@ -124,6 +130,9 @@ export function newSave(slot = 0): Save {
     pending: false,
     updated: Date.now(),
   };
+  normalizeAmmo(save.pack);
+  normalizeAmmo(save.stash);
+  return save;
 }
 const key = (slot: number) => `tricat.save.${slot}`;
 let database: IDBDatabase | undefined;
@@ -141,7 +150,7 @@ export async function initDB() {
   }
 }
 export function validateSave(data: unknown): Save {
-  const s = data as Save;
+  const s = structuredClone(data) as Save;
   if (
     !s ||
     s.version !== 1 ||
@@ -239,10 +248,21 @@ export function validateSave(data: unknown): Save {
       ids.has(i.uid) ||
       !Number.isInteger(i.qty) ||
       i.qty < 1 ||
-      i.qty > (db[i.id].kind === "ammo" ? 30 : 1)
+      i.qty > (db[i.id].kind === "ammo" ? AMMO_STACK : 1)
     )
       throw Error("物品数据无效");
     ids.add(i.uid);
+    if (
+      i.loaded &&
+      (db[i.id].kind !== "weapon" ||
+        !Number.isInteger(i.loaded.count) ||
+        i.loaded.count < 0 ||
+        i.loaded.count > db[i.id].mag! ||
+        !Number.isInteger(i.loaded.tier) ||
+        i.loaded.tier < 1 ||
+        i.loaded.tier > 4)
+    )
+      throw Error("武器弹匣无效");
     if (
       db[i.id].durability &&
       (!Number.isFinite(i.durability) ||
@@ -260,6 +280,8 @@ export function validateSave(data: unknown): Save {
     armor: "armor",
     helmet: "helmet",
     bag: "bag",
+    ammo: "ammo",
+    melee: "melee",
   })) {
     const i = s.equipment[slot as keyof Equipment];
     if (i && db[i.id].kind !== kind) throw Error("装备栏位无效");
@@ -301,7 +323,7 @@ export function validateSave(data: unknown): Save {
         throw Error("弹匣记录无效");
     }
   }
-  return structuredClone(s);
+  return migrateInventory(s);
 }
 export function persist(s: Save) {
   s.updated = Date.now();
@@ -364,7 +386,8 @@ export async function load(slot: number): Promise<Save | null> {
     } catch {
       saveIssue = "检测到损坏的存档，已尝试恢复最近有效备份。";
     }
-  return valid.sort((a, b) => b.updated - a.updated)[0] || null;
+  const best = valid.sort((a, b) => b.updated - a.updated)[0];
+  return best ? migrateInventory(best) : null;
 }
 export const unlocked = (s: Save) =>
   Math.min(
@@ -372,14 +395,15 @@ export const unlocked = (s: Save) =>
     ["iron", "swift", "yeed"].filter((id) => s.defeated.includes(id)).length,
   );
 export const packCapacity = (s: Save) =>
-  s.equipment.bag ? db[s.equipment.bag.id].capacity! : 8;
+  s.equipment.bag ? db[s.equipment.bag.id].capacity! : BASE_PACK;
 export function put(list: Item[], item: Item, capacity: number) {
+  normalizeAmmo(list);
   if (!canPut(list, item, capacity)) return false;
   if (db[item.id].kind === "ammo") {
     let remaining = item.qty;
     for (const stack of list) {
-      if (stack.id === item.id && stack.qty < 30) {
-        const n = Math.min(30 - stack.qty, remaining);
+      if (stack.id === item.id && stack.qty < AMMO_STACK) {
+        const n = Math.min(AMMO_STACK - stack.qty, remaining);
         stack.qty += n;
         remaining -= n;
         if (!remaining) return true;
@@ -391,6 +415,53 @@ export function put(list: Item[], item: Item, capacity: number) {
   list.push(item);
   return true;
 }
+export function normalizeAmmo(list: Item[]) {
+  const result: Item[] = [];
+  for (const item of list) {
+    if (db[item.id].kind !== "ammo") {
+      result.push(item);
+      continue;
+    }
+    let left = item.qty;
+    for (const existing of result)
+      if (existing.id === item.id && existing.qty < AMMO_STACK) {
+        const n = Math.min(AMMO_STACK - existing.qty, left);
+        existing.qty += n;
+        left -= n;
+      }
+    while (left > 0) {
+      const n = Math.min(left, AMMO_STACK);
+      result.push({
+        ...item,
+        uid: result.some((i) => i.uid === item.uid)
+          ? crypto.randomUUID()
+          : item.uid,
+        qty: n,
+      });
+      left -= n;
+    }
+  }
+  list.splice(0, list.length, ...result);
+}
+export function migrateInventory(s: Save) {
+  s.equipment.ammo ??= null;
+  if (!Object.hasOwn(s.equipment, "melee")) s.equipment.melee = makeItem("k0");
+  for (const r of s.loadedRounds ?? []) {
+    const w = [s.equipment.primary, s.equipment.secondary].find(
+      (i) => i?.uid === r.weapon,
+    );
+    if (w && !w.loaded) w.loaded = { tier: r.tier, count: r.count };
+  }
+  delete s.loadedRounds;
+  if (s.overflow.length) {
+    s.stash.push(...s.overflow);
+    s.overflow = [];
+    while (s.stash.length > capacities[s.warehouse] && s.warehouse < 4)
+      s.warehouse++;
+  }
+  [s.pack, s.stash, s.secure].forEach(normalizeAmmo);
+  return s;
+}
 // Capacity is checked before merging, so a failed move never partially mutates a stack.
 export function canPut(list: Item[], item: Item, capacity: number) {
   return (
@@ -398,7 +469,7 @@ export function canPut(list: Item[], item: Item, capacity: number) {
     (db[item.id].kind === "ammo" &&
       list
         .filter((i) => i.id === item.id)
-        .reduce((n, i) => n + 30 - i.qty, 0) >= item.qty)
+        .reduce((n, i) => n + AMMO_STACK - i.qty, 0) >= item.qty)
   );
 }
 export function move(
@@ -437,15 +508,15 @@ export function equip(
       ? secondary
         ? "secondary"
         : "primary"
-      : kind === "armor" || kind === "helmet" || kind === "bag"
-        ? kind
+      : ["armor", "helmet", "bag", "ammo", "melee"].includes(kind)
+        ? (kind as keyof Equipment)
         : null;
   if (!slot) return false;
   const old = s.equipment[slot];
   const next = list.filter((x) => x.uid !== uid);
   if (old) next.push(old);
   const newPackCap =
-    kind === "bag" ? (db[i.id].capacity ?? 8) : packCapacity(s);
+    kind === "bag" ? (db[i.id].capacity ?? BASE_PACK) : packCapacity(s);
   if ((from === "pack" ? next : s.pack).length > newPackCap) return false;
   const sourceCap =
     from === "stash"
@@ -457,6 +528,7 @@ export function equip(
           : Infinity;
   if (next.length > sourceCap) return false;
   s[from] = next;
+  normalizeAmmo(s[from]);
   s.equipment[slot] = i;
   persist(s);
   return true;
@@ -471,7 +543,7 @@ export function buy(s: Save, id: string) {
     (d.tier >= 4 && (s.stock?.[id] ?? 0) >= (d.tier === 5 ? 1 : 2))
   )
     return false;
-  const i = makeItem(id, d.kind === "ammo" ? 30 : 1);
+  const i = makeItem(id, d.kind === "ammo" ? AMMO_STACK : 1);
   if (!canPut(s.stash, i, capacities[s.warehouse])) return false;
   s.coins -= d.price;
   put(s.stash, i, capacities[s.warehouse]);
@@ -489,12 +561,13 @@ export function buyBack(s: Save, uid: string) {
   )
     return false;
   const d = db[lost.id],
-    cost = Math.ceil(d.price * (d.kind === "ammo" ? lost.qty / 30 : 1));
+    cost = Math.ceil(d.price * (d.kind === "ammo" ? lost.qty / AMMO_STACK : 1));
   if (s.coins < cost || !canPut(s.stash, lost, capacities[s.warehouse]))
     return false;
   s.coins -= cost;
   s.buyback = s.buyback.filter((i) => i !== lost);
   const replacement = makeItem(lost.id, lost.qty);
+  if (lost.loaded) replacement.loaded = { ...lost.loaded };
   put(s.stash, replacement, capacities[s.warehouse]);
   persist(s);
   return true;
@@ -549,10 +622,9 @@ export function repair(s: Save, slot: "armor" | "helmet") {
   return true;
 }
 export function beginRaid(s: Save) {
-  if (s.pending || s.overflow.length || !s.equipment.primary) return false;
+  if (s.pending || (!s.equipment.primary && !s.equipment.melee)) return false;
   s.raidBackup = JSON.stringify({ ...s, raidBackup: undefined });
   s.pending = true;
-  s.loadedRounds = [];
   s.stats.raids++;
   s.result = undefined;
   persist(s);
@@ -562,7 +634,6 @@ export function settle(s: Save, r: Result) {
   if (!s.pending) return false;
   s.pending = false;
   delete s.raidBackup;
-  s.loadedRounds = [];
   s.stock = {};
   const kept = r.success || s.mode === "easy";
   s.buyback = [];
@@ -578,13 +649,13 @@ export function settle(s: Save, r: Result) {
       armor: null,
       helmet: null,
       bag: null,
+      ammo: null,
+      melee: makeItem("k0"),
     };
   } else if (!r.success) {
     // Easy-mode death keeps its original return-to-stash rule; successful raids keep the backpack.
     for (const item of s.pack) {
-      if (!canPut(s.stash, item, capacities[s.warehouse]))
-        s.overflow.push(item);
-      else put(s.stash, item, capacities[s.warehouse]);
+      put(s.stash, item, Infinity);
     }
     s.pack = [];
   }
@@ -612,6 +683,8 @@ export function settle(s: Save, r: Result) {
   s.stats.time += r.time;
   s.stats.value += r.value;
   s.result = r;
+  normalizeAmmo(s.pack);
+  normalizeAmmo(s.stash);
   persist(s);
   return true;
 }
@@ -634,14 +707,6 @@ export function cancelRaid(s: Save) {
 }
 export function recoverInterrupted(s: Save) {
   if (s.pending) {
-    for (const rounds of s.loadedRounds ?? []) {
-      let left = rounds.count;
-      while (left > 0) {
-        const n = Math.min(30, left);
-        s.pack.push(makeItem(`m${rounds.tier}`, n));
-        left -= n;
-      }
-    }
     settle(s, {
       success: false,
       reason: "上次出击中断，已按死亡规则安全结算",
@@ -668,7 +733,7 @@ export function rescue(s: Save) {
   s.equipment.armor = makeItem("a1");
   for (const i of [makeItem("m1", 30), makeItem("f1")]) {
     if (canPut(s.pack, i, packCapacity(s))) put(s.pack, i, packCapacity(s));
-    else s.overflow.push(i);
+    else put(s.stash, i, Infinity);
   }
   persist(s);
   return true;

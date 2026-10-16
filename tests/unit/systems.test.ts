@@ -28,6 +28,7 @@ import {
   put,
   canPut,
   load,
+  normalizeAmmo,
   type Result,
 } from "../../src/store";
 const memory = new Map<string, string>();
@@ -94,6 +95,31 @@ describe("配置与战斗", () => {
   });
 });
 describe("物品、经济与死亡事务", () => {
+  it("同级子弹始终合并至90发，不同等级分开且旧存档迁移不丢物品", () => {
+    const list = [
+      makeItem("m1", 30),
+      makeItem("m1", 30),
+      makeItem("m1", 20),
+      makeItem("m2", 30),
+    ];
+    normalizeAmmo(list);
+    expect(list.filter((i) => i.id === "m1")).toHaveLength(1);
+    expect(list[0].qty).toBe(80);
+    expect(put(list, makeItem("m1", 20), 3)).toBe(true);
+    expect(list.filter((i) => i.id === "m1").map((i) => i.qty)).toEqual([
+      90, 10,
+    ]);
+    const s = newSave();
+    delete (s.equipment as any).ammo;
+    delete (s.equipment as any).melee;
+    s.overflow = [makeItem("m1", 30)];
+    s.loadedRounds = [{ weapon: s.equipment.primary!.uid, tier: 1, count: 15 }];
+    const loaded = validateSave(s);
+    expect(loaded.equipment.primary!.loaded!.count).toBe(15);
+    expect(loaded.overflow).toHaveLength(0);
+    expect(loaded.equipment.melee!.id).toBe("k0");
+    expect(loaded.stash.find((i) => i.id === "m1")!.qty).toBe(90);
+  });
   it("成功撤离保留背包、仓库不变，空仓位仍可使用", () => {
     const s = newSave(),
       loot = makeItem("c4_0");
@@ -110,15 +136,15 @@ describe("物品、经济与死亡事务", () => {
   });
   it("满背包可直接替换护甲，背包缩容失败不会改动任何物品", () => {
     const s = newSave();
-    s.pack = Array.from({ length: 7 }, () => makeItem("f1"));
+    s.pack = Array.from({ length: 19 }, () => makeItem("f1"));
     const a = makeItem("a2");
     s.pack.push(a);
     const old = s.equipment.armor!.uid;
     expect(equip(s, "pack", a.uid)).toBe(true);
-    expect(s.pack).toHaveLength(8);
+    expect(s.pack).toHaveLength(20);
     expect(s.pack.some((i) => i.uid === old)).toBe(true);
     s.equipment.bag = makeItem("b3");
-    s.pack = Array.from({ length: 13 }, () => makeItem("f1"));
+    s.pack = Array.from({ length: 25 }, () => makeItem("f1"));
     const bag = makeItem("b1");
     s.stash.push(bag);
     const before = structuredClone(s);
@@ -127,12 +153,12 @@ describe("物品、经济与死亡事务", () => {
   });
   it("空间不足的移动不会丢失或复制弹药", () => {
     const s = newSave();
-    s.pack = Array.from({ length: 7 }, () => makeItem("f1"));
-    s.pack.push(makeItem("m1", 29));
+    s.pack = Array.from({ length: 19 }, () => makeItem("f1"));
+    s.pack.push(makeItem("m1", 89));
     const i = makeItem("m1", 30);
     s.stash = [i];
     expect(move(s, "stash", "pack", i.uid)).toBe(false);
-    expect(s.pack.at(-1)!.qty).toBe(29);
+    expect(s.pack.at(-1)!.qty).toBe(89);
     expect(s.stash[0].qty).toBe(30);
   });
   it("合并不足 30 发的弹药，装备交换保留原物品", () => {

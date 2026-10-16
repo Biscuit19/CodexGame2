@@ -14,6 +14,9 @@ import {
   armorDur,
   helmetDur,
   protection,
+  AMMO_STACK,
+  BASE_PACK,
+  EXTRACT_SECONDS,
   type Item,
   type BossDef,
 } from "./data";
@@ -28,6 +31,7 @@ import {
   cancelRaid,
   equip,
   settle,
+  normalizeAmmo,
 } from "./store";
 import { Sound } from "./audio";
 export interface Rect {
@@ -150,7 +154,7 @@ export class Raid {
   bullets: Bullet[] = [];
   particles: Particle[] = [];
   combatFX: {
-    kind: "muzzle" | "hit";
+    kind: "muzzle" | "hit" | "melee";
     x: number;
     y: number;
     angle: number;
@@ -164,7 +168,7 @@ export class Raid {
   paused = false;
   sprintToggled = false;
   done = false;
-  activeWeapon: "primary" | "secondary" = "primary";
+  activeWeapon: "primary" | "secondary" | "melee" = "primary";
   magazines: Record<string, number> = {};
   magazineTiers: Record<string, number> = {};
   ammoTier = 1;
@@ -172,6 +176,8 @@ export class Raid {
   fireCool = 0;
   heal = 0;
   healItem = "";
+  healSource?: Container;
+  meleeCooldown = 0;
   healDuration = 0;
   extract = 0;
   exit?: Exit;
@@ -213,14 +219,20 @@ export class Raid {
     save.pendingMap = map;
     for (const slot of ["primary", "secondary"] as const) {
       const i = save.equipment[slot];
-      if (i) this.magazines[i.uid] = 0;
+      if (i) {
+        this.magazines[i.uid] = i.loaded?.count ?? 0;
+        this.magazineTiers[i.uid] = i.loaded?.tier ?? 1;
+      }
     }
     this.ammoTier = Math.max(
       1,
+      ...(save.equipment.ammo ? [db[save.equipment.ammo.id].tier] : []),
       ...save.pack
         .filter((i) => db[i.id].kind === "ammo")
         .map((i) => db[i.id].tier),
     );
+    if (!save.equipment.primary) this.activeWeapon = "melee";
+    this.ammoTier = this.weaponItem?.loaded?.tier ?? this.ammoTier;
     this.build();
     this.loadMagazine(true);
     this.sound.mode = "raid";
@@ -238,7 +250,10 @@ export class Raid {
     if (this.weaponItem) this.magazines[this.weaponItem.uid] = v;
   }
   get reserve() {
-    return this.save.pack
+    return [
+      ...this.save.pack,
+      ...(this.save.equipment.ammo ? [this.save.equipment.ammo] : []),
+    ]
       .filter((i) => i.id === `m${this.ammoTier}`)
       .reduce((n, i) => n + i.qty, 0);
   }
@@ -682,7 +697,13 @@ export class Raid {
     }
   }
   loadMagazine(instant = false) {
-    if (!this.weapon || this.reload || this.mag >= this.weapon.mag!) return;
+    if (
+      !this.weapon ||
+      this.activeWeapon === "melee" ||
+      this.reload ||
+      this.mag >= this.weapon.mag!
+    )
+      return;
     if (!this.reserve) {
       this.notify("没有对应等级的备弹 · 在背包切换弹药");
       return;
@@ -700,7 +721,10 @@ export class Raid {
     let count = Math.min(this.weapon.mag! - this.mag, this.reserve);
     this.mag += count;
     this.magazineTiers[this.weaponItem!.uid] = this.ammoTier;
-    for (const i of this.save.pack) {
+    for (const i of [
+      ...(this.save.equipment.ammo ? [this.save.equipment.ammo] : []),
+      ...this.save.pack,
+    ]) {
       if (i.id === `m${this.ammoTier}` && count > 0) {
         const used = Math.min(count, i.qty);
         i.qty -= used;
@@ -708,6 +732,8 @@ export class Raid {
       }
     }
     this.save.pack = this.save.pack.filter((i) => i.qty > 0);
+    if (this.save.equipment.ammo?.qty === 0) this.save.equipment.ammo = null;
+    normalizeAmmo(this.save.pack);
     this.syncLoaded();
     persist(this.save);
     this.onChange();
@@ -725,43 +751,23 @@ export class Raid {
   equipLoot(uid: string, secondary = true) {
     const item = this.save.pack.find((i) => i.uid === uid);
     if (!item) return false;
-    if (db[item.id].kind !== "weapon") return equip(this.save, "pack", uid);
-    const old = this.save.equipment[secondary ? "secondary" : "primary"];
-    const simulated = structuredClone(this.save.pack);
-    let count = old ? (this.magazines[old.uid] ?? 0) : 0;
-    while (count > 0) {
-      const n = Math.min(count, 30);
-      if (
-        !put(
-          simulated,
-          makeItem(`m${this.magazineTiers[old!.uid] ?? this.ammoTier}`, n),
-          packCapacity(this.save),
-        )
-      )
-        return false;
-      count -= n;
-    }
-    const original = this.save.pack;
-    this.save.pack = simulated;
-    const okay = equip(this.save, "pack", uid, secondary);
-    if (okay) {
-      if (old) {
-        delete this.magazines[old.uid];
-        delete this.magazineTiers[old.uid];
-      }
-      this.magazines[item.uid] ??= 0;
-      this.magazineTiers[item.uid] ??= this.ammoTier;
+    this.syncLoaded();
+    const ok = equip(this.save, "pack", uid, secondary);
+    if (ok && db[item.id].kind === "weapon") {
+      this.magazines[item.uid] = item.loaded?.count ?? 0;
+      this.magazineTiers[item.uid] = item.loaded?.tier ?? this.ammoTier;
+      this.reload = 0;
       this.syncLoaded();
-      persist(this.save);
-    } else this.save.pack = original;
-    return okay;
+    }
+    if (ok && db[item.id].kind === "ammo") this.switchAmmo(db[item.id].tier);
+    return ok;
   }
   switchAmmo(tier: number) {
     if (tier === this.ammoTier || tier < 1 || tier > 4) return;
     const simulated = structuredClone(this.save.pack);
     let left = this.mag;
     while (left) {
-      const n = Math.min(30, left),
+      const n = Math.min(AMMO_STACK, left),
         item = makeItem(`m${this.ammoTier}`, n);
       if (!put(simulated, item, packCapacity(this.save))) {
         this.notify("背包空间不足，无法卸下当前弹匣");
@@ -782,22 +788,10 @@ export class Raid {
   unequipToPack(slot: keyof Save["equipment"]) {
     const i = this.save.equipment[slot];
     if (!i) return false;
+    this.syncLoaded();
     const next = structuredClone(this.save.pack),
-      cap = slot === "bag" ? 8 : packCapacity(this.save);
+      cap = slot === "bag" ? BASE_PACK : packCapacity(this.save);
     if (next.length > cap || !put(next, i, cap)) return false;
-    let count = this.magazines[i.uid] ?? 0;
-    while (count > 0) {
-      const n = Math.min(30, count);
-      if (
-        !put(
-          next,
-          makeItem(`m${this.magazineTiers[i.uid] ?? this.ammoTier}`, n),
-          cap,
-        )
-      )
-        return false;
-      count -= n;
-    }
     this.save.pack = next;
     this.save.equipment[slot] = null;
     delete this.magazines[i.uid];
@@ -819,10 +813,13 @@ export class Raid {
     this.p.rollY = l ? dy / l : Math.sin(this.p.angle);
     this.sound.play("roll");
   }
-  useFood(uid?: string) {
+  useFood(uid?: string, source: "pack" | "loot" = "pack") {
     if (this.heal || this.p.hp >= 100) return;
     const food = uid
-      ? this.save.pack.find((i) => i.uid === uid && db[i.id].kind === "food")
+      ? (source === "loot"
+          ? (this.search?.items.slice(0, this.search.revealed) ?? [])
+          : this.save.pack
+        ).find((i) => i.uid === uid && db[i.id].kind === "food")
       : this.save.pack
           .filter((i) => db[i.id].kind === "food")
           .sort((a, b) => db[a.id].heal! - db[b.id].heal!)[0];
@@ -831,12 +828,16 @@ export class Raid {
       return;
     }
     this.healItem = food.uid;
+    this.healSource = source === "loot" ? this.search : undefined;
     this.healDuration = db[food.id].useTime!;
     this.heal = this.healDuration;
-    this.search = undefined;
     this.onChange();
   }
   shoot() {
+    if (this.activeWeapon === "melee") {
+      this.swingMelee();
+      return;
+    }
     if (
       !this.weapon ||
       this.reload ||
@@ -876,20 +877,107 @@ export class Raid {
     this.alert(this.p.x, this.p.y, 420);
   }
   syncLoaded() {
-    this.save.loadedRounds = (["primary", "secondary"] as const).flatMap(
-      (slot) => {
-        const w = this.save.equipment[slot];
-        return w
-          ? [
-              {
-                weapon: w.uid,
-                tier: this.magazineTiers[w.uid] ?? this.ammoTier,
-                count: this.magazines[w.uid] ?? 0,
-              },
-            ]
-          : [];
-      },
-    );
+    for (const slot of ["primary", "secondary"] as const) {
+      const w = this.save.equipment[slot];
+      if (w)
+        w.loaded = {
+          tier: this.magazineTiers[w.uid] ?? w.loaded?.tier ?? this.ammoTier,
+          count: this.magazines[w.uid] ?? w.loaded?.count ?? 0,
+        };
+    }
+    delete this.save.loadedRounds;
+  }
+  swingMelee() {
+    if (
+      this.inventory ||
+      this.paused ||
+      this.mapOpen ||
+      this.meleeCooldown > 0 ||
+      this.p.roll ||
+      !this.save.equipment.melee
+    )
+      return;
+    this.meleeCooldown = 0.45;
+    this.interrupt();
+    this.sound.play("roll");
+    this.combatFX.push({
+      kind: "melee",
+      x: this.p.x,
+      y: this.p.y - 24,
+      angle: this.p.angle,
+      friendly: true,
+      life: 0.25,
+      max: 0.25,
+    });
+    for (const e of [...this.enemies]) {
+      const a = Math.atan2(e.y - this.p.y, e.x - this.p.x),
+        diff = Math.atan2(
+          Math.sin(a - this.p.angle),
+          Math.cos(a - this.p.angle),
+        );
+      if (
+        Math.hypot(e.x - this.p.x, e.y - this.p.y) < 85 &&
+        Math.abs(diff) < 1.2 &&
+        this.lineClear(this.p.x, this.p.y, e.x, e.y)
+      )
+        this.hurtEnemy(e, {
+          x: e.x,
+          y: e.y - 24,
+          vx: Math.cos(a),
+          vy: Math.sin(a),
+          damage: 48,
+          tier: 1,
+          friendly: true,
+          travel: 0,
+          range: 85,
+          life: 0,
+        });
+    }
+  }
+  dropItem(uid: string) {
+    const i = this.save.pack.find((i) => i.uid === uid);
+    if (!i) return false;
+    this.save.pack = this.save.pack.filter((v) => v !== i);
+    this.containers.push({
+      x: this.p.x + 28,
+      y: this.p.y,
+      name: "丢下的物品",
+      type: "corpse",
+      items: [i],
+      revealed: 1,
+      locked: false,
+      open: true,
+      cooldown: 0,
+    });
+    persist(this.save);
+    this.onChange();
+    return true;
+  }
+  engage(e: Enemy) {
+    const initial = e.state !== "combat";
+    e.state = "combat";
+    e.alert = 8;
+    e.target = { x: this.p.x, y: this.p.y };
+    if (!initial) return;
+    for (const ally of this.enemies) {
+      if (ally === e) continue;
+      const sameRoom = this.rooms.some(
+        ([x, y, w, h]) =>
+          Math.abs(e.x - x) < w / 2 &&
+          Math.abs(e.y - y) < h / 2 &&
+          Math.abs(ally.x - x) < w / 2 &&
+          Math.abs(ally.y - y) < h / 2,
+      );
+      if (
+        sameRoom ||
+        (Math.hypot(e.x - ally.x, e.y - ally.y) < 320 &&
+          this.lineClear(e.x, e.y, ally.x, ally.y))
+      ) {
+        ally.state = "combat";
+        ally.alert = 8;
+        ally.target = { x: this.p.x, y: this.p.y };
+      }
+    }
   }
   addBullet(
     x: number,
@@ -974,7 +1062,7 @@ export class Raid {
       if (this.map === 2)
         for (let i = 0; i < 2; i++)
           this.spawn(ex.x - 130, ex.y - 140 - i * 40, 3, 3);
-      this.notify("撤离已启动 · 留在圈内 5 秒");
+      this.notify("撤离已启动 · 留在圈内 3 秒");
     }
   }
   answer(v: number) {
@@ -1028,7 +1116,9 @@ export class Raid {
     if (db[i.id].kind === "collectible" && !this.save.collection.includes(i.id))
       this.save.collection.push(i.id);
     this.value += Math.floor(
-      db[i.id].price * 0.65 * (db[i.id].kind === "ammo" ? i.qty / 30 : 1),
+      db[i.id].price *
+        0.65 *
+        (db[i.id].kind === "ammo" ? i.qty / AMMO_STACK : 1),
     );
     c.items.splice(index, 1);
     c.revealed--;
@@ -1040,13 +1130,15 @@ export class Raid {
     const c = this.search,
       index = c?.items.findIndex((i) => i.uid === uid) ?? -1;
     if (!c || index < 0 || index >= c.revealed) return false;
+    this.syncLoaded();
     const item = c.items[index],
       kind = db[item.id].kind;
     const slot = requested ?? (kind === "weapon" ? "secondary" : kind);
     if (
       !(["primary", "secondary"].includes(slot)
         ? kind === "weapon"
-        : kind === slot && ["armor", "helmet", "bag"].includes(slot))
+        : kind === slot &&
+          ["armor", "helmet", "bag", "ammo", "melee"].includes(slot))
     )
       return false;
     const key = slot as keyof Save["equipment"];
@@ -1055,14 +1147,6 @@ export class Raid {
     const old = this.save.equipment[key],
       returned: Item[] = old ? [old] : [];
     if (old && kind === "weapon") {
-      let rounds = this.magazines[old.uid] ?? 0;
-      while (rounds > 0) {
-        const n = Math.min(rounds, 30);
-        returned.push(
-          makeItem(`m${this.magazineTiers[old.uid] ?? this.ammoTier}`, n),
-        );
-        rounds -= n;
-      }
       delete this.magazines[old.uid];
       delete this.magazineTiers[old.uid];
     }
@@ -1070,8 +1154,8 @@ export class Raid {
     c.revealed += returned.length - 1;
     this.save.equipment[key] = item;
     if (kind === "weapon") {
-      this.magazines[item.uid] ??= 0;
-      this.magazineTiers[item.uid] ??= this.ammoTier;
+      this.magazines[item.uid] = item.loaded?.count ?? 0;
+      this.magazineTiers[item.uid] = item.loaded?.tier ?? this.ammoTier;
       this.reload = 0;
       this.syncLoaded();
     }
@@ -1139,7 +1223,7 @@ export class Raid {
     this.stats.damageDealt += d;
     e.hit = 0.12;
     e.alert = 6;
-    e.state = "combat";
+    this.engage(e);
     e.target = { x: this.p.x, y: this.p.y };
     this.float(
       e.x,
@@ -1194,21 +1278,9 @@ export class Raid {
   finish(success: boolean, reason: string) {
     if (this.done) return;
     this.done = true;
-    this.interrupt(); // Return loaded rounds: they are real ammunition, not free per-raid magazines.
-    for (const slot of ["primary", "secondary"] as const) {
-      const w = this.save.equipment[slot];
-      let count = w ? this.magazines[w.uid] || 0 : 0;
-      while (count > 0) {
-        const n = Math.min(30, count),
-          i = makeItem(`m${this.magazineTiers[w!.uid] ?? this.ammoTier}`, n);
-        if (canPut(this.save.pack, i, packCapacity(this.save)))
-          put(this.save.pack, i, packCapacity(this.save));
-        else if (success || this.save.mode === "easy")
-          this.save.overflow.push(i);
-        else this.save.pack.push(i);
-        count -= n;
-      }
-    }
+    this.interrupt();
+    this.syncLoaded();
+    normalizeAmmo(this.save.pack);
     const result: Result = {
       success,
       reason,
@@ -1279,6 +1351,7 @@ export class Raid {
     p.rollCooldown -= dt;
     p.hit -= dt;
     this.fireCool -= dt;
+    this.meleeCooldown = Math.max(0, this.meleeCooldown - dt);
     this.shake = Math.max(0, this.shake - dt * 20);
     p.regen -= dt;
     const sprint = this.sprintToggled && l > 0 && p.stamina > 0 && !p.exhausted;
@@ -1314,10 +1387,16 @@ export class Raid {
       this.heal -= dt;
       if (this.heal <= 0) {
         this.heal = 0;
-        const food = this.save.pack.find((i) => i.uid === this.healItem);
+        const source = this.healSource?.items ?? this.save.pack;
+        const food = source.find((i) => i.uid === this.healItem);
         if (food) {
           p.hp = Math.min(100, p.hp + db[food.id].heal!);
-          this.save.pack = this.save.pack.filter((i) => i !== food);
+          if (this.healSource) {
+            const index = source.indexOf(food);
+            source.splice(index, 1);
+            this.healSource.revealed--;
+            this.healSource = undefined;
+          } else this.save.pack = this.save.pack.filter((i) => i !== food);
           this.sound.play("heal");
           persist(this.save);
           this.onChange();
@@ -1353,8 +1432,9 @@ export class Raid {
     );
     if (this.exit && (!this.exit.paid || this.exit.bought)) {
       this.extract += dt;
-      if (this.extract >= 5) {
+      if (this.extract >= EXTRACT_SECONDS) {
         this.finish(true, "成功撤离");
+        return;
         return;
       }
     } else this.extract = 0;
@@ -1442,7 +1522,7 @@ export class Raid {
     const canSee =
       d < (role === "sniper" ? 780 : 560) && this.lineClear(e.x, e.y, p.x, p.y);
     if (canSee) {
-      e.state = "combat";
+      this.engage(e);
       e.alert = 6;
       e.target = { x: p.x, y: p.y };
     } else if (e.alert <= 0 && e.state !== "patrol") {

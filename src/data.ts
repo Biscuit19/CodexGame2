@@ -1,5 +1,12 @@
 export type Kind =
-  "weapon" | "armor" | "helmet" | "bag" | "ammo" | "food" | "collectible";
+  | "weapon"
+  | "armor"
+  | "helmet"
+  | "bag"
+  | "ammo"
+  | "food"
+  | "collectible"
+  | "melee";
 export interface ItemDef {
   id: string;
   name: string;
@@ -26,7 +33,23 @@ export interface Item {
   qty: number;
   durability?: number;
   maxDurability?: number;
+  loaded?: { tier: number; count: number };
 }
+export const AMMO_STACK = 90,
+  BASE_PACK = 20,
+  EXTRACT_SECONDS = 3;
+export const melee: ItemDef = {
+  id: "k0",
+  name: "猫爪短刀",
+  kind: "melee",
+  tier: 1,
+  price: 0,
+  icon: "sword",
+  desc: "近身挥击 · 不消耗弹药",
+  damage: 48,
+  range: 85,
+  rpm: 120,
+};
 export const rarity = ["", "常见", "优良", "珍贵", "稀世", "传说"];
 export const colors = [
   "",
@@ -113,9 +136,9 @@ export const bags: ItemDef[] = [
   kind: "bag",
   tier: i + 1,
   price: [200, 900, 2500, 6000, 14000][i],
-  capacity: 8 + i * 4,
+  capacity: [20, 30, 40, 55, 75][i],
   icon: "bag",
-  desc: `${8 + i * 4} 格容量 · 每件物品一格`,
+  desc: `${[20, 30, 40, 55, 75][i]} 格容量 · 每件物品一格`,
   unlock: Math.max(0, i - 1),
 }));
 export const ammo: ItemDef[] = [
@@ -128,9 +151,9 @@ export const ammo: ItemDef[] = [
   name,
   kind: "ammo",
   tier: i + 1,
-  price: [3, 8, 20, 55][i] * 30,
+  price: [3, 8, 20, 55][i] * AMMO_STACK,
   icon: "ammo",
-  desc: `30 发/组 · 穿透 ${[1, 2, 3, 5][i]} 级`,
+  desc: `90 发/组 · 穿透 ${[1, 2, 3, 5][i]} 级`,
   unlock: Math.max(0, i - 1),
 }));
 export const foods: ItemDef[] = [
@@ -285,6 +308,7 @@ export const collectibles: ItemDef[] = lootNames.flatMap((s, t) =>
   })),
 );
 export const items = [
+  melee,
   ...weapons,
   ...defenses,
   ...bags,
@@ -296,6 +320,7 @@ export const db: Record<string, ItemDef> = Object.fromEntries(
   items.map((i) => [i.id, i]),
 );
 export const kindNames: Record<Kind, string> = {
+  melee: "近战武器",
   weapon: "武器",
   armor: "护甲",
   helmet: "头盔",
@@ -321,7 +346,7 @@ export const protection = (i: Item | null | undefined) =>
   i ? db[i.id].tier * Math.max(0, i.durability ?? 0) : 0;
 export const sale = (i: Item) =>
   Math.floor(
-    db[i.id].price * 0.65 * (db[i.id].kind === "ammo" ? i.qty / 30 : 1),
+    db[i.id].price * 0.65 * (db[i.id].kind === "ammo" ? i.qty / AMMO_STACK : 1),
   );
 export const searchTime = (i: Item) => {
   const d = db[i.id];

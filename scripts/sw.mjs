@@ -27,7 +27,7 @@ const version = `tricat-${hash.digest("hex").slice(0, 12)}`;
 const source = `const CACHE=${JSON.stringify(version)},FILES=${JSON.stringify(files.map((f) => `./${f.slice(5)}`))};
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('tricat-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
-self.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==self.location.origin)return;e.respondWith(caches.match(e.request,{ignoreVary:true}).then(hit=>hit||fetch(e.request).catch(()=>e.request.mode==='navigate'?caches.match('./index.html',{ignoreVary:true}):Response.error())));});
+self.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==self.location.origin)return;if(e.request.mode==='navigate'){e.respondWith(fetch(e.request,{cache:'no-cache'}).then(async r=>{if(r.ok){const copy=r.clone();await(await caches.open(CACHE)).put('./index.html',copy);}return r;}).catch(()=>caches.match('./index.html',{ignoreVary:true})));return;}e.respondWith(caches.match(e.request,{ignoreVary:true}).then(hit=>hit||fetch(e.request)));});
 `;
 await writeFile("dist/sw.js", source);
 await writeFile("dist/.nojekyll", "");

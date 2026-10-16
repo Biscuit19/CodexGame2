@@ -468,6 +468,14 @@ export class Renderer {
         hit: e.hit,
       });
     const close = Math.hypot(e.x - r.p.x, e.y - r.p.y) < 650;
+    text(
+      c,
+      e.boss?.name ?? breeds[e.breed]?.name ?? "自动炮塔",
+      e.x,
+      e.y - (e.boss ? 140 : 104),
+      20,
+      "#f4e6c7",
+    );
     if (close && (e.state === "combat" || e.hit > 0)) {
       const size = e.boss ? 85 : 40;
       round(
@@ -488,15 +496,6 @@ export class Renderer {
         2,
         e.boss ? "#e4b879" : "#d8b18b",
       );
-      if (!e.boss)
-        text(
-          c,
-          breeds[e.breed]?.name || "自动炮塔",
-          e.x,
-          e.y - 95,
-          11,
-          "#f4e6c7",
-        );
     }
     if (e.shield > 0) {
       c.strokeStyle = "#a5d8e3";

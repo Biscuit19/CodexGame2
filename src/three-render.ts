@@ -13,6 +13,7 @@ type Rig = {
   legs: THREE.Group[];
   tail: THREE.Group;
   gun: THREE.Group;
+  knife: THREE.Group;
   helmet: THREE.Group;
   vest: THREE.Mesh;
   pack: THREE.Group;
@@ -298,7 +299,13 @@ function makeCat(breed = -2, boss = false): Rig {
   shadow.rotation.x = -Math.PI / 2;
   shadow.position.y = 1;
   root.add(shadow);
-  return { root, body, head, legs, tail, gun, helmet, vest, pack };
+  const knife = new THREE.Group();
+  knife.position.copy(gun.position);
+  body.add(knife);
+  block(knife, "#415649", 0, 0, 5, 5, 5, 16, 1);
+  block(knife, "#bdc9bd", 0, 0, 23, 3, 7, 24, 1);
+  knife.visible = false;
+  return { root, body, head, legs, tail, gun, helmet, vest, pack, knife };
 }
 
 /** Map one uses real geometry, orthographic projection, light and articulated models. */
@@ -681,6 +688,14 @@ export class ThreeRenderer {
       !!r.save.equipment.armor,
       !!r.save.equipment.bag,
     );
+    const player = this.actors.get("player")!;
+    player.gun.visible = r.activeWeapon !== "melee" && !!r.weaponItem;
+    player.knife.visible =
+      r.activeWeapon === "melee" && !!r.save.equipment.melee;
+    player.knife.rotation.y =
+      r.meleeCooldown > 0
+        ? Math.sin((r.meleeCooldown / 0.45) * Math.PI) * 1.7
+        : 0;
     const ids = new Set(["player"]);
     for (const e of r.enemies) {
       ids.add(e.id);
@@ -771,6 +786,17 @@ export class ThreeRenderer {
         "#dfe6cd",
       );
     }
+    for (const e of r.enemies) {
+      const p = this.project(e.x, e.y, e.boss ? 133 : 105);
+      text(
+        c,
+        e.boss?.name ?? breeds[e.breed]?.name ?? "炮塔",
+        p.x,
+        p.y,
+        20,
+        "#fff0d4",
+      );
+    }
     for (const e of r.enemies)
       if (e.state === "combat" || e.hit > 0) {
         const p = this.project(e.x, e.y, e.boss ? 118 : 93);
@@ -784,15 +810,6 @@ export class ThreeRenderer {
           3,
           "#e3bc83",
         );
-        if (!e.boss)
-          text(
-            c,
-            breeds[e.breed]?.name || "炮塔",
-            p.x,
-            p.y - 10,
-            20,
-            "#fff0d4",
-          );
       }
     const near = r.near;
     if (near && !r.search && !r.puzzle) {
@@ -825,6 +842,16 @@ export class ThreeRenderer {
       const p = this.project(fx.x, fx.y + 24, 32),
         life = fx.life / fx.max;
       c.globalAlpha = Math.min(1, life * 2);
+      if (fx.kind === "melee") {
+        c.strokeStyle = "#e9f2d1";
+        c.shadowColor = "#dfe8c9";
+        c.shadowBlur = 9;
+        c.lineWidth = 5;
+        c.beginPath();
+        c.ellipse(p.x, p.y, 75, 48, 0, fx.angle - 1.1, fx.angle + 1.1);
+        c.stroke();
+        continue;
+      }
       c.strokeStyle = fx.friendly ? "#ffe7a0" : "#ff9d78";
       c.fillStyle = "#fff9de";
       c.shadowColor = c.strokeStyle;

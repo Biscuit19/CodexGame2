@@ -32,9 +32,49 @@ function advance(r: Raid, seconds: number, keys = new Set<string>()) {
 }
 beforeEach(() => memory.clear());
 describe("真实战区逻辑", () => {
+  it("发现玩家会通知同房间敌猫，隔墙远处敌人不会全图仇恨", () => {
+    const { r } = start();
+    r.p.x = 1000;
+    r.p.y = 1000;
+    const a = r.spawn(1100, 1000, 0, 1),
+      b = r.spawn(1200, 1000, 0, 1),
+      far = r.spawn(2000, 1000, 0, 1);
+    r.updateEnemy(a, 1 / 60);
+    expect(b.state).toBe("combat");
+    expect(b.target).toEqual({ x: 1000, y: 1000 });
+    expect(far.state).toBe("patrol");
+  });
+  it("容器食物可原地食用，近战不会消耗枪内或装备栏子弹", () => {
+    const { r, s } = start(),
+      c = r.containers[0];
+    c.items = [makeItem("f2")];
+    c.revealed = 1;
+    c.x = r.p.x;
+    c.y = r.p.y;
+    r.startSearch(c);
+    r.p.hp = 50;
+    r.useFood(c.items[0].uid, "loot");
+    advance(r, 1.6);
+    expect(r.p.hp).toBe(85);
+    expect(c.items).toHaveLength(0);
+    r.interrupt();
+    r.inventory = false;
+    r.p.x = 1000;
+    r.p.y = 1000;
+    r.p.angle = 0;
+    const e = r.spawn(1050, 1000, 0, 1);
+    e.cool = 999;
+    const mag = r.mag,
+      ammo = s.equipment.ammo!.qty;
+    r.activeWeapon = "melee";
+    r.shoot();
+    expect(e.hp).toBeLessThan(e.maxHp);
+    expect(s.equipment.ammo!.qty).toBe(ammo);
+    expect(s.equipment.primary!.loaded!.count).toBe(mag);
+  });
   it("满包双击更强头甲直接交换，旧甲留在已揭示容器；弱甲只拾取", () => {
     const { s, r } = start();
-    s.pack = Array.from({ length: 8 }, () => makeItem("f1"));
+    s.pack = Array.from({ length: 20 }, () => makeItem("f1"));
     const armor = makeItem("a3"),
       old = s.equipment.armor!;
     const c = r.containers[0];
@@ -45,7 +85,7 @@ describe("真实战区逻辑", () => {
     expect(s.equipment.armor!.uid).toBe(armor.uid);
     expect(c.items[0].uid).toBe(old.uid);
     expect(c.revealed).toBe(1);
-    expect(s.pack).toHaveLength(8);
+    expect(s.pack).toHaveLength(20);
     r.take(0, false, true);
     expect(s.equipment.armor!.uid).toBe(armor.uid);
     expect(c.items).toHaveLength(1);
@@ -224,7 +264,7 @@ describe("真实战区逻辑", () => {
     expect(corpse.items.some((i) => db[i.id].kind === "weapon")).toBe(true);
     expect(corpse.items.some((i) => db[i.id].kind === "armor")).toBe(true);
   });
-  it("撤离要连续停留五秒，离圈重置，付费点先扣款一次", () => {
+  it("撤离要连续停留三秒，离圈重置，付费点先扣款一次", () => {
     const { s, r } = start(),
       ex = r.exits[2],
       coins = s.coins;
@@ -236,13 +276,13 @@ describe("真实战区逻辑", () => {
     expect(s.coins).toBe(coins - 600);
     r.interact();
     expect(s.coins).toBe(coins - 600);
-    advance(r, 3);
+    advance(r, 1.5);
     expect(r.done).toBe(false);
     r.p.x -= 100;
     advance(r, 0.1);
     expect(r.extract).toBe(0);
     r.p.x += 100;
-    advance(r, 5.2);
+    advance(r, 3.2);
     expect(r.done).toBe(true);
     expect(s.stats.extracts).toBe(1);
   });
@@ -281,22 +321,19 @@ describe("真实战区逻辑", () => {
       "doctor",
     ]);
   });
-  it("40 发弹匣的结算按每组 30 发拆分，刷新不会丢失已装子弹", () => {
+  it("枪内弹药保留在武器上，满包撤离不生成溢出物品，下一局弹药守恒", () => {
     const { s, r } = start();
-    s.equipment.primary = makeItem("w1");
-    s.pack = [makeItem("m1", 30), makeItem("m1", 30)];
-    r.magazines[s.equipment.primary.uid] = 0;
-    r.finishReload();
-    expect(r.mag).toBe(40);
+    s.pack = Array.from({ length: 20 }, () => makeItem("f1"));
+    r.mag = 25;
+    r.syncLoaded();
+    const reserve = s.equipment.ammo!.qty;
     r.finish(true, "test");
-    expect(() => validateSave(s)).not.toThrow();
-    expect(
-      s.pack.filter((i) => i.id === "m1").reduce((n, i) => n + i.qty, 0),
-    ).toBe(60);
-    const s2 = newSave();
-    s2.mode = "easy";
-    new Raid(
-      s2,
+    expect(s.pack).toHaveLength(20);
+    expect(s.overflow).toHaveLength(0);
+    expect(s.equipment.primary!.loaded!.count).toBe(25);
+    const restored = validateSave(s);
+    const next = new Raid(
+      restored,
       0,
       sound,
       () => {},
@@ -304,14 +341,8 @@ describe("真实战区逻辑", () => {
       () => {},
       44,
     );
-    const before =
-      s2.pack.filter((i) => i.id === "m1").reduce((n, i) => n + i.qty, 0) +
-      s2.loadedRounds!.reduce((n, i) => n + i.count, 0);
-    recoverInterrupted(s2);
-    const total = s2.stash
-      .filter((i) => i.id === "m1")
-      .reduce((n, i) => n + i.qty, 0);
-    expect(total).toBe(before + 60);
+    expect(next.mag + restored.equipment.ammo!.qty).toBe(25 + reserve);
+    expect(restored.overflow).toHaveLength(0);
   });
   it("保险箱答错锁定和警报，答对进入逐件搜索；移动中断当前搜索", () => {
     const { r } = start(),

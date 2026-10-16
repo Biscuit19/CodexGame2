@@ -964,6 +964,18 @@ kbd {
   position: relative;
   z-index: 2;
 }
+#game-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: auto;
+}
+#game-menu .modal-backdrop {
+  z-index: 1001;
+}
+#game-menu.hidden {
+  display: none;
+}
 .in-raid {
   overflow: hidden;
   background: #9da986;
@@ -1599,13 +1611,13 @@ kbd {
 }
 .pack-grid .item-slot,
 .safe-grid .item-slot {
-  padding: 4px;
-  gap: 1px;
+  padding: 2px;
+  gap: 0;
 }
 .pack-grid .item-slot > svg,
 .safe-grid .item-slot > svg {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
 }
 .slot-grid .item-slot > small {
   display: none;
@@ -1616,7 +1628,7 @@ kbd {
 }
 .inventory-panel .equipped-grid,
 .raid-inventory-layout .equipped-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 6px;
   margin-bottom: 20px;
 }
@@ -1692,6 +1704,31 @@ kbd {
 }
 .item-tooltip {
   pointer-events: none;
+}
+.inventory-layout {
+  grid-template-columns: 500px minmax(0, 1fr);
+}
+.inventory-panel,
+.raid-inventory-layout .inventory-panel {
+  width: 500px;
+}
+.pack-grid,
+.safe-grid,
+.raid-inventory-layout .pack-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+@media (max-width: 1250px) {
+  .inventory-layout {
+    grid-template-columns: 450px minmax(0, 1fr);
+  }
+  .inventory-panel,
+  .raid-inventory-layout .inventory-panel {
+    width: 450px;
+  }
+  .loot-panel,
+  .puzzle-panel {
+    width: 340px;
+  }
 }
 [data-drop="equipment"]:hover {
   border-color: #dbc18b;

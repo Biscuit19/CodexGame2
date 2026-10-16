@@ -61,14 +61,24 @@ try {
   await expect(page.locator("#sprint-state")).toHaveText("疾跑开启");
   await page.keyboard.press("Tab");
   await expect(page.getByRole("region", { name: "左侧背包" })).toBeVisible();
-  await expect(page.locator('[data-grid="pack"] > *')).toHaveCount(8);
+  await expect(page.locator('[data-grid="pack"] > *')).toHaveCount(20);
   await expect(page.locator(".equipped-grid")).toBeVisible();
+  await expect(page.locator('[data-slot="ammo"]')).toBeVisible();
+  await expect(page.locator('[data-slot="melee"]')).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("region", { name: "左侧背包" })).toHaveCount(0);
   await page.screenshot({ path: "test-results/production-map1.png" });
   await page.keyboard.press("Escape");
   await expect(
     page.getByRole("heading", { name: "游戏菜单", exact: true }),
+  ).toBeVisible();
+  await expect(page.locator("#game-menu")).toBeVisible();
+  await page.getByRole("button", { name: "继续游戏", exact: true }).click();
+  await page.evaluate(() => window.dispatchEvent(new Event("blur")));
+  await expect(
+    page
+      .locator("#game-menu")
+      .getByRole("button", { name: "退出本局", exact: true }),
   ).toBeVisible();
   await page.getByRole("button", { name: "退出本局", exact: true }).click();
   await expect(
