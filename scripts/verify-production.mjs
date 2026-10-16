@@ -91,6 +91,16 @@ try {
   await expect(
     page.locator('[data-slot="primary"] [data-art="w16"]'),
   ).toBeVisible();
+  await page
+    .locator('[data-slot="primary"] .equipped-item')
+    .dragTo(page.locator('[data-slot="secondary"]'));
+  await expect(
+    page.locator('[data-slot="secondary"] .equipped-item'),
+  ).toHaveAttribute("data-item", "w16");
+  await page
+    .locator('[data-slot="secondary"] .equipped-item')
+    .dragTo(page.locator('[data-slot="primary"]'));
+  await expect(page.locator("#sort")).toHaveValue("type");
   await page.getByRole("button", { name: "返回基地", exact: true }).click();
   await page.getByRole("button", { name: "战区地图", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
@@ -118,6 +128,9 @@ try {
   await expect(page.locator(".equipped-grid")).toBeVisible();
   await expect(page.locator('[data-slot="ammo"]')).toBeVisible();
   await expect(page.locator('[data-slot="melee"]')).toBeVisible();
+  await expect(
+    page.getByText("旧铁盒（安全箱）", { exact: true }),
+  ).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("region", { name: "左侧背包" })).toHaveCount(0);
   await page.screenshot({ path: "test-results/production-map1.png" });
@@ -176,11 +189,35 @@ try {
   await expect(page.locator('[data-grid="pack"] .item-slot')).toHaveCount(0);
   await page.locator('[data-grid="stash"] [data-item="w3"]').click();
   await expect(page.locator("#item-menu .item-description")).toHaveText(
-    "中距离 · 稳定点射",
+    "三条尾巴一起摇，后坐力也只好跟着讲道理。",
   );
   await expect(
     page.locator("#item-menu").getByRole("button", { name: "放入安全箱" }),
   ).toHaveCount(0);
+  await page.getByRole("button", { name: "返回基地", exact: true }).click();
+  await page.getByRole("button", { name: "收藏图鉴", exact: true }).click();
+  await expect(page.locator(".collection-item")).toHaveCount(60);
+  await expect(page.locator(".collection-item .item-art")).toHaveCount(60);
+  await expect(page.locator(".collection-item svg")).toHaveCount(0);
+  await expect(page.locator('.collection-item[data-id="c4_0"]')).toBeDisabled();
+  const collectibleAtlasCount = await page
+    .locator(".collection-item .art-glyph")
+    .evaluateAll(async (els) => {
+      const urls = [
+        ...new Set(els.map((el) => el.style.backgroundImage.slice(5, -2))),
+      ];
+      for (const url of urls) {
+        const img = new Image();
+        img.src = url;
+        await img.decode();
+      }
+      return urls.length;
+    });
+  expect(collectibleAtlasCount).toBe(3);
+  await page.screenshot({
+    path: "test-results/production-collectibles-offline.png",
+    fullPage: true,
+  });
   if (errors.length || failed.length)
     throw Error(JSON.stringify({ errors, failed }));
   console.log(
@@ -197,6 +234,8 @@ try {
         offlineLoad: true,
         pngEquipmentAndTwentyWeapons: true,
         shotgunPurchaseEquipAndFire: true,
+        sixtyCollectibleIconsOffline: true,
+        primarySecondaryDrag: true,
         errors,
         failed,
       },

@@ -266,7 +266,7 @@ test("撤离后不重读即可连续入库，弹匣不卸弹且没有待整理�
     g.raid.mag = 17;
     g.raid.finish(true, "test");
   });
-  await page.getByRole("button", { name: "返回基地", exact: true }).click();
+  await page.locator('[data-action="close-result"]').click();
   await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
   expect(
     await page.evaluate(() => (window as any).__game.raid),
@@ -425,7 +425,7 @@ test("原描述、物品旁菜单、正方形格子、仓库拖拽装备与筛�
   const w = page.locator('[data-grid="stash"] [data-item="w3"]');
   await w.click();
   await expect(page.locator("#item-menu .item-description")).toHaveText(
-    "中距离 · 稳定点射",
+    "三条尾巴一起摇，后坐力也只好跟着讲道理。",
   );
   await expect(
     page.locator("#item-menu").getByRole("button", { name: "放入安全箱" }),
@@ -469,7 +469,7 @@ test("原描述、物品旁菜单、正方形格子、仓库拖拽装备与筛�
   const before = await page.evaluate(() => (window as any).__game.save.coins);
   await page.locator('.shop-grid [data-item="w0"]').click();
   await expect(page.locator("#item-menu .item-description")).toHaveText(
-    "近距离 · 全自动 · 快速压制",
+    "尾巴卷得像弹簧，子弹倒是一发也不肯弹回来。",
   );
   await page
     .locator("#item-menu")
@@ -798,7 +798,7 @@ test("容器立即打开，自动显示左侧背包，逐件搜索后双击拾�
   await expect(
     page.getByRole("heading", { name: "成功撤离", exact: true }),
   ).toBeVisible({ timeout: 15000 });
-  await page.getByRole("button", { name: "返回基地", exact: true }).click();
+  await page.locator('[data-action="close-result"]').click();
   await page.reload();
   await page.getByRole("button", { name: "读取存档", exact: true }).click();
   await page.getByRole("button", { name: "读取", exact: true }).first().click();

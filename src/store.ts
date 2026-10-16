@@ -500,6 +500,16 @@ export function move(
   persist(s);
   return true;
 }
+export function swapWeaponSlots(
+  s: Save,
+  from: "primary" | "secondary",
+  to: "primary" | "secondary",
+) {
+  if (from === to || !s.equipment[from]) return false;
+  [s.equipment[from], s.equipment[to]] = [s.equipment[to], s.equipment[from]];
+  persist(s);
+  return true;
+}
 export function equip(
   s: Save,
   from: "stash" | "pack" | "overflow" | "secure",

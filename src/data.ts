@@ -1,3 +1,4 @@
+import { collectibleRows } from "./collectibles";
 export type Kind =
   | "weapon"
   | "armor"
@@ -64,7 +65,7 @@ export const melee: ItemDef = {
   tier: 1,
   price: 0,
   icon: "sword",
-  desc: "近身挥击 · 不消耗弹药",
+  desc: "不需要子弹，只需要一点勇气，以及对方刚好正在换弹。",
   damage: 48,
   range: 85,
   rpm: 120,
@@ -135,14 +136,28 @@ export const weapons: ItemDef[] = weaponRows.map((r, i) => ({
   pellets: r[10] ?? 1,
   durability: [100, 125, 150, 185, 220][r[9] - 1],
   unlock: Math.min(3, Math.max(0, r[9] - 2)),
-  desc:
-    r[1] === "smg"
-      ? "近距离 · 全自动 · 快速压制"
-      : r[1] === "rifle"
-        ? "中距离 · 稳定点射"
-        : r[1] === "sniper"
-          ? "远距离 · 精准射击 · 无散布"
-          : "近距离 · 多弹丸爆发 · 远距离衰减",
+  desc: [
+    "尾巴卷得像弹簧，子弹倒是一发也不肯弹回来。",
+    "耳朵折起来听不见劝，扳机扣下去停不住爪。",
+    "黑帮大佬的爵士乐器，鼓里装的不是金枪鱼。",
+    "三条尾巴一起摇，后坐力也只好跟着讲道理。",
+    "钩住的不是敌人，是铲屎官最后的装备预算。",
+    "国产虎斑很能打，唯一的死角是肚皮。",
+    "枪管长，胡须更长，拐弯时记得两样都收好。",
+    "战术大靴子穿上身，敌人看完只想退货。",
+    "鱼骨卡在枪上，不在喉咙里，火力才顺畅。",
+    "看起来像一朵云，落下来的却不是小雨。",
+    "鱼叉用于捕鱼，这把主要负责让敌猫摸不着鱼。",
+    "爪子越大口径越大，开枪前建议先通知物业。",
+    "鱼骨通透，弹匣饱满，唯独钱包瘦得见骨。",
+    "折起肉垫装乖巧，展开火力全靠手速。",
+    "午睡前清空弹匣，醒来才有安静的好天气。",
+    "折纸作业满分，实弹考试请勿对折枪管。",
+    "猫抓板负责磨爪，这把负责给近处的敌人磨血条。",
+    "两颗虎牙咬一口，下一口得先换弹。",
+    "摇铃叫不醒装睡的猫，开这一枪肯定可以。",
+    "先炸毛，再炸场；它的喂食量按弹匣计算。",
+  ][i],
 }));
 export function randomWeapon(
   random: () => number,
@@ -174,7 +189,13 @@ const defenses: ItemDef[] = Array.from({ length: 5 }, (_, i) => [
     price: [450, 1400, 3800, 8500, 18000][i],
     durability: armorDur[i],
     icon: "armor",
-    desc: `${i + 1} 级防护 · 可在基地修复`,
+    desc: [
+      "比纸箱结实一点，猫的自信多了很多。",
+      "穿上开始巡逻，巡到饭点自动下班。",
+      "突击时护胸，挨骂时护不住自尊。",
+      "很重，但没主人对体重秤的怨念重。",
+      "号称九命保险，理赔请先保留购买小票。",
+    ][i],
     unlock: Math.max(0, i - 1),
   },
   {
@@ -185,7 +206,13 @@ const defenses: ItemDef[] = Array.from({ length: 5 }, (_, i) => [
     price: [250, 800, 2100, 5000, 11000][i],
     durability: helmetDur[i],
     icon: "helmet",
-    desc: "头部防护 · 耳朵也要保护好",
+    desc: [
+      "前任主人留下的刮痕，建议别问它是怎么留下的。",
+      "给耳朵预留了位置，给坏主意没有。",
+      "挡得住弹片，挡不住开罐头的声音。",
+      "蒙面之后很神秘，打呼噜照样暴露身份。",
+      "全方位保护，除了猫突然想舔自己的时候。",
+    ][i],
     unlock: Math.max(0, i - 1),
   },
 ]).flat();
@@ -203,7 +230,13 @@ export const bags: ItemDef[] = [
   price: [200, 900, 2500, 6000, 14000][i],
   capacity: [20, 30, 40, 55, 75][i],
   icon: "bag",
-  desc: `${[20, 30, 40, 55, 75][i]} 格容量 · 每件物品一格`,
+  desc: [
+    "装得下梦想，贵重的梦想请分批运输。",
+    "鱼在外面，战利品在里面，别抱着包啃。",
+    "保证送达，不保证邮差不会半路钻进去睡觉。",
+    "远征要轻装，猫决定只带最重的宝贝。",
+    "能装九条命的行李，装不下第十次贪心。",
+  ][i],
   unlock: Math.max(0, i - 1),
 }));
 export const ammo: ItemDef[] = [
@@ -218,7 +251,12 @@ export const ammo: ItemDef[] = [
   tier: i + 1,
   price: [3, 8, 20, 55][i] * AMMO_STACK,
   icon: "ammo",
-  desc: `90 发/组 · 穿透 ${[1, 2, 3, 5][i]} 级`,
+  desc: [
+    "不是豌豆，请勿装进饭盆，否则敌我双方都很困惑。",
+    "铜做的爪子，比剪完指甲的真爪更有说服力。",
+    "胡须负责测距离，银须负责让距离不再安全。",
+    "牙医看到这个口径，当场建议敌人拔腿就跑。",
+  ][i],
   unlock: Math.max(0, i - 1),
 }));
 export const foods: ItemDef[] = [
@@ -235,142 +273,40 @@ export const foods: ItemDef[] = [
   heal: [20, 35, 60, 100][i],
   useTime: [1, 1.4, 2, 3][i],
   icon: ["fish", "tube", "can", "meal"][i],
-  desc: `恢复 ${[20, 35, 60, 100][i]} 生命 · ${[1, 1.4, 2, 3][i]} 秒`,
+  desc: [
+    "没有哪次受伤是一根鱼干解决不了的，有就再来一根。",
+    "撕开包装的声音，比基地集合号有效十倍。",
+    "拉环一响，附近的隐身猫全部解除潜行。",
+    "吃完回满的是血量，清空的是本周伙食预算。",
+  ][i],
   unlock: 0,
 }));
-const lootNames = [
-  "磨牙木块|旧铃铛|半包猫砂|塑料瓶盖|弯曲饭勺|掉毛滚筒|单只拖鞋|空鱼罐头|断线耳机|快递纸箱|褪色逗猫棒|猫当劳番茄包",
-  "金枪鱼猫条|猫薄荷香包|合金饭盆|便携猫抓板|充电暖爪宝|猫猫恋爱指南|自动红点笔|八成新键盘|折叠猫窝|喵哈哈矿泉水|肯喵基薯条|宜猫六角扳手",
-  "战术猫罐头|机械逗猫棒|古董项圈|夜视鼠标|猫奈儿零钱包|喵星降噪耳机|猫为折叠手机|特撕拉车钥匙|哈利猫法杖|银河系漫游毛巾|猫勒比金币|超级玛喵卡带",
-  "沙海之瞳|黄金猫砂铲|翡翠鱼骨|皇家绒垫|猫力士潜水表|蒂猫妮钻石圈|路易喵登旅行箱|喵界旋转陀螺|矩阵红色猫粮|侦探烟斗|光剑逗猫棒|午夜蝙蝠猫面具",
-  "星洲猫心|永恒罐头|九命怀表|月神毛线球|时间猫眼石|无限猫爪套|至尊开罐圣剑|喵娜丽莎真迹|黄金羊毛团|琥珀猫薄荷|头号猫家游戏蛋|宇宙终极鱼干",
-];
-const lootIcons = [
-  [
-    "wood",
-    "bell",
-    "bag",
-    "coin",
-    "tool",
-    "tool",
-    "shoe",
-    "can",
-    "headphone",
-    "box",
-    "wand",
-    "tube",
-  ],
-  [
-    "tube",
-    "leaf",
-    "meal",
-    "board",
-    "phone",
-    "book",
-    "wand",
-    "keyboard",
-    "bed",
-    "bottle",
-    "fries",
-    "tool",
-  ],
-  [
-    "can",
-    "wand",
-    "collar",
-    "mouse",
-    "purse",
-    "headphone",
-    "phone",
-    "key",
-    "wand",
-    "cloth",
-    "coin",
-    "cartridge",
-  ],
-  [
-    "gem",
-    "tool",
-    "fish",
-    "bed",
-    "watch",
-    "collar",
-    "case",
-    "top",
-    "pill",
-    "pipe",
-    "sword",
-    "mask",
-  ],
-  [
-    "heart",
-    "can",
-    "watch",
-    "yarn",
-    "gem",
-    "glove",
-    "sword",
-    "painting",
-    "yarn",
-    "amber",
-    "egg",
-    "fish",
-  ],
-];
-const descriptions: Record<string, string> = {
-  猫猫恋爱指南: "第一页写着慢慢眨眼，后面全是空白。",
-  猫奈儿零钱包: "能装下九条命，却装不下一根完整猫条。",
-  喵界旋转陀螺: "它停下的时候，说明你终于醒了。",
-  时间猫眼石: "可以倒流七秒，通常用来挽救打翻的罐头。",
-  星洲猫心: "沙海最深处的猫眼宝石。七秒，够心跳快一次。",
-  无限猫爪套: "集齐六颗宝石，也只能打出一个肉垫巴掌。",
-  至尊开罐圣剑: "勇者拔出了剑，发现罐头是拉环的。",
-  特撕拉车钥匙: "车不一定会来，附近的猫一定会来。",
-};
-export const collectibles: ItemDef[] = lootNames.flatMap((s, t) =>
-  s.split("|").map((name, i) => ({
-    id: `c${t}_${i}`,
-    name,
-    kind: "collectible",
-    tier: t + 1,
-    price:
-      name === "星洲猫心"
-        ? 35000
-        : Math.round(
-            [
-              [40, 120],
-              [180, 450],
-              [700, 1500],
-              [3000, 7000],
-              [15000, 34000],
-            ][t][0] +
-              (i / 11) *
-                ([
-                  [40, 120],
-                  [180, 450],
-                  [700, 1500],
-                  [3000, 7000],
-                  [15000, 34000],
-                ][t][1] -
-                  [
-                    [40, 120],
-                    [180, 450],
-                    [700, 1500],
-                    [3000, 7000],
-                    [15000, 34000],
-                  ][t][0]),
-          ),
-    icon: lootIcons[t][i],
-    desc:
-      descriptions[name] ||
-      [
-        "小小的旧物，也藏着一段猫生。",
-        "在战区里，实用比漂亮更重要。",
-        "识货的猫会给它一个好价钱。",
-        "保存完好，连挑剔的猫都挪不开眼。",
-        "很少有猫亲眼见过它。带回暖窝吧。",
-      ][t],
-  })),
+export const collectibles: ItemDef[] = collectibleRows.map(
+  ([id, name, tier, desc]) => {
+    const peers = collectibleRows.filter((r) => r[2] === tier);
+    const rank = peers.findIndex((r) => r[0] === id);
+    const [low, high] = [
+      [40, 120],
+      [180, 450],
+      [700, 1500],
+      [3000, 7000],
+      [15000, 34000],
+    ][tier - 1];
+    return {
+      id,
+      name,
+      tier,
+      desc,
+      kind: "collectible",
+      icon: "gem",
+      price:
+        id === "c4_0"
+          ? 35000
+          : Math.round(
+              low + (rank / Math.max(1, peers.length - 1)) * (high - low),
+            ),
+    };
+  },
 );
 export const items = [
   melee,

@@ -32,6 +32,7 @@ import {
   normalizeAmmo,
   stashAll,
   sell,
+  swapWeaponSlots,
   type Result,
 } from "../../src/store";
 const memory = new Map<string, string>();
@@ -56,6 +57,38 @@ const result = (success: boolean, bosses: string[] = []): Result => ({
   reward: success ? 300 : 0,
 });
 describe("配置与战斗", () => {
+  it("全部物品使用独立幽默描述，60件旧编号收藏重分品质且传说仅6件", () => {
+    expect(collectibles).toHaveLength(60);
+    expect(new Set(items.map((i) => i.desc)).size).toBe(items.length);
+    expect(collectibles.filter((i) => i.tier === 5)).toHaveLength(6);
+    expect(collectibles.filter((i) => i.tier === 1).length).toBeGreaterThan(15);
+    for (let group = 0; group < 5; group++)
+      for (let n = 0; n < 12; n++) expect(db[`c${group}_${n}`]).toBeDefined();
+    expect(db.c2_6.tier).toBe(4);
+    expect(db.c2_7.desc).toBe("车不一定会来，附近的猫一定会来。");
+    expect(db.c4_8.tier).toBe(1);
+    expect(db.c4_0.name).toBe("星洲猫心");
+    expect(searchTime(makeItem("c4_0"))).toBe(7);
+  });
+  it("主副武器原地互换与移入空位不占仓库空间，也不丢弹匣", () => {
+    const s = newSave(),
+      a = makeItem("w3"),
+      b = makeItem("w16");
+    a.loaded = { tier: 2, count: 17 };
+    b.loaded = { tier: 1, count: 4 };
+    s.equipment.primary = a;
+    s.equipment.secondary = b;
+    const stash = s.stash.length;
+    expect(swapWeaponSlots(s, "primary", "secondary")).toBe(true);
+    expect(s.equipment.primary).toBe(b);
+    expect(s.equipment.secondary).toBe(a);
+    expect(s.equipment.secondary?.loaded).toEqual({ tier: 2, count: 17 });
+    s.equipment.primary = null;
+    expect(swapWeaponSlots(s, "secondary", "primary")).toBe(true);
+    expect(s.equipment.primary).toBe(a);
+    expect(s.equipment.secondary).toBeNull();
+    expect(s.stash).toHaveLength(stash);
+  });
   it("四张地图按解锁阶梯刷新全部20款枪，传说枪明显更少", () => {
     const random = rng(2026),
       found = new Set<string>();

@@ -21,6 +21,7 @@ import {
   wearWeapon,
   weaponDamageScale,
   randomWeapon,
+  sale,
   type Item,
   type BossDef,
 } from "./data";
@@ -36,6 +37,7 @@ import {
   equip,
   settle,
   normalizeAmmo,
+  swapWeaponSlots,
 } from "./store";
 import { Sound } from "./audio";
 export interface Rect {
@@ -766,12 +768,35 @@ export class Raid {
     persist(this.save);
     this.onChange();
   }
+  swapWeapons(from: "primary" | "secondary", to: "primary" | "secondary") {
+    this.syncLoaded();
+    if (!swapWeaponSlots(this.save, from, to)) return false;
+    if (this.activeWeapon !== "melee" && !this.weaponItem)
+      this.activeWeapon = to;
+    this.ammoTier = this.weaponItem?.loaded?.tier ?? this.ammoTier;
+    this.reload = 0;
+    this.syncLoaded();
+    persist(this.save);
+    return true;
+  }
+  selectWeapon(slot: "primary" | "secondary") {
+    const item = this.save.equipment[slot];
+    if (!item) return false;
+    this.syncLoaded();
+    this.activeWeapon = slot;
+    this.ammoTier =
+      this.magazineTiers[item.uid] ?? item.loaded?.tier ?? this.ammoTier;
+    this.reload = 0;
+    return true;
+  }
   switchWeapon() {
-    if (this.save.equipment.secondary) {
-      this.activeWeapon =
-        this.activeWeapon === "primary" ? "secondary" : "primary";
-      this.ammoTier = this.magazineTiers[this.weaponItem!.uid] ?? this.ammoTier;
-      this.reload = 0;
+    const next =
+      this.activeWeapon === "primary"
+        ? "secondary"
+        : this.activeWeapon === "secondary" || this.save.equipment.primary
+          ? "primary"
+          : "secondary";
+    if (this.selectWeapon(next)) {
       this.interrupt();
       this.onChange();
     }
@@ -784,6 +809,8 @@ export class Raid {
     if (ok && db[item.id].kind === "weapon") {
       this.magazines[item.uid] = item.loaded?.count ?? 0;
       this.magazineTiers[item.uid] = item.loaded?.tier ?? this.ammoTier;
+      if (this.weaponItem?.uid === item.uid)
+        this.ammoTier = this.magazineTiers[item.uid];
       this.reload = 0;
       this.syncLoaded();
     }
@@ -1211,6 +1238,8 @@ export class Raid {
     if (kind === "weapon") {
       this.magazines[item.uid] = item.loaded?.count ?? 0;
       this.magazineTiers[item.uid] = item.loaded?.tier ?? this.ammoTier;
+      if (this.weaponItem?.uid === item.uid)
+        this.ammoTier = this.magazineTiers[item.uid];
       this.reload = 0;
       this.syncLoaded();
     }
@@ -1342,7 +1371,10 @@ export class Raid {
       reason,
       map: this.map,
       ...this.stats,
-      value: this.value,
+      value: [...this.save.pack, ...this.save.secure].reduce(
+        (sum, item) => sum + sale(item),
+        0,
+      ),
       time: this.elapsed,
       bosses: success ? this.pendingBosses : [],
       reward: success ? 300 + this.map * 350 : 0,

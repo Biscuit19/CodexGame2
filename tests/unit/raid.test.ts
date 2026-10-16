@@ -32,6 +32,68 @@ function advance(r: Raid, seconds: number, keys = new Set<string>()) {
 }
 beforeEach(() => memory.clear());
 describe("真实战区逻辑", () => {
+  it("从背包或容器拖换当前主武器后使用新枪的真实弹种", () => {
+    const { s, r } = start(),
+      gun = makeItem("w16");
+    gun.loaded = { tier: 4, count: 3 };
+    s.pack = [gun];
+    expect(r.equipLoot(gun.uid, false)).toBe(true);
+    expect(r.mag).toBe(3);
+    expect(r.ammoTier).toBe(4);
+    const other = makeItem("w3");
+    other.loaded = { tier: 2, count: 11 };
+    const c = r.containers[0];
+    c.items = [other];
+    c.revealed = 1;
+    r.search = c;
+    expect(r.equipContainer(other.uid, "primary")).toBe(true);
+    expect(r.mag).toBe(11);
+    expect(r.ammoTier).toBe(2);
+    expect(c.items[0].loaded).toEqual({ tier: 4, count: 3 });
+    s.equipment.secondary = null;
+    expect(r.swapWeapons("primary", "secondary")).toBe(true);
+    expect(() => r.switchWeapon()).not.toThrow();
+    expect(r.activeWeapon).toBe("secondary");
+    expect(r.selectWeapon("primary")).toBe(false);
+    expect(r.ammoTier).toBe(2);
+  });
+  it("战斗中拖换主副武器保持实际弹药、弹种，并支持空装备位", () => {
+    const { s, r } = start(),
+      a = s.equipment.primary!;
+    r.mag = 17;
+    r.ammoTier = 2;
+    r.magazineTiers[a.uid] = 2;
+    const b = makeItem("w16");
+    b.loaded = { tier: 3, count: 4 };
+    s.pack = [b];
+    expect(r.equipLoot(b.uid, true)).toBe(true);
+    r.reload = 1;
+    expect(r.swapWeapons("primary", "secondary")).toBe(true);
+    expect(r.weaponItem?.uid).toBe(b.uid);
+    expect(r.mag).toBe(4);
+    expect(r.ammoTier).toBe(3);
+    expect(r.reload).toBe(0);
+    expect(s.equipment.secondary?.loaded).toEqual({ tier: 2, count: 17 });
+    expect(r.unequipToPack("primary")).toBe(true);
+    expect(r.swapWeapons("secondary", "primary")).toBe(true);
+    expect(r.weaponItem?.uid).toBe(a.uid);
+    expect(r.mag).toBe(17);
+    expect(r.ammoTier).toBe(2);
+  });
+  it("撤离结算价值按最后带出的背包和安全箱计算，不累计已丢弃物品", () => {
+    const { s, r } = start();
+    s.pack = [makeItem("f1"), makeItem("m2", 45)];
+    s.secure = [makeItem("c4_0")];
+    r.value = 999999;
+    r.elapsed = 123;
+    r.finish(true, "成功撤离");
+    expect(s.result?.value).toBe(
+      Math.floor(120 * 0.65) +
+        Math.floor(360 * 0.65) +
+        Math.floor(35000 * 0.65),
+    );
+    expect(s.result?.time).toBe(123);
+  });
   it("霰弹一次产生7枚弹丸，只消耗1发子弹和一次耐久，远处实际命中伤害明显衰减", () => {
     const hits = (distance: number) => {
       const { s, r } = start();

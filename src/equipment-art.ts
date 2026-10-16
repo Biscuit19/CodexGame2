@@ -1,9 +1,23 @@
 import weaponsUrl from "./assets/icons/weapons.png";
 import equipmentUrl from "./assets/icons/equipment.png";
 import { iconFrames } from "./icon-frames";
+import collectible0 from "./assets/icons/collectibles-0.png";
+import collectible1 from "./assets/icons/collectibles-1.png";
+import collectible2 from "./assets/icons/collectibles-2.png";
+import { collectibleFrames } from "./collectible-frames";
 
 // Generated PNG atlases: exact row-major order, one complete icon in each cell.
 export function equipmentFrame(id: string) {
+  const collectible = /^c([0-4])_(\d+)$/.exec(id);
+  if (collectible && Number(collectible[2]) < 12) {
+    const index = Number(collectible[1]) * 12 + Number(collectible[2]),
+      atlas = Math.floor(index / 20);
+    return {
+      url: [collectible0, collectible1, collectible2][atlas],
+      ...collectibleFrames[atlas],
+      rect: collectibleFrames[atlas].frames[index % 20],
+    };
+  }
   if (/^w\d+$/.test(id) && Number(id.slice(1)) < 20)
     return {
       url: weaponsUrl,

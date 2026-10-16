@@ -43,6 +43,7 @@ import {
   repair,
   repairCost,
   stashAll,
+  swapWeaponSlots,
   rescue,
   recoverInterrupted,
   validateSave,
@@ -134,7 +135,7 @@ let slots: (Save | null)[] = [null, null, null],
   result: Result | undefined;
 let selected: { from: ItemSource; uid: string } | undefined,
   filter = "all",
-  sort = "tier",
+  sort = "type",
   weaponFilter = "all";
 let menuAnchor = { x: 0, y: 0, left: 0 },
   hoverTimer: ReturnType<typeof setTimeout> | undefined;
@@ -305,7 +306,7 @@ function equipped() {
     .join("")}</div>`;
 }
 function inventoryPanel() {
-  return `<section class="panel inventory-panel" aria-label="左侧背包"><div class="inventory-scroll">${heading("当前装备")}${equipped()}<div data-drop="pack"><div class="pack-heading">${heading("背包", `${s.pack.length}/${packCapacity(s)} 格`)}${!raid ? btn("全部放回", "stash-all", s.pack.length ? "" : "disabled", "secondary") : ""}</div><div class="slot-grid pack-grid" data-grid="pack">${s.pack.map((i) => card(i, "pack")).join("")}${emptySlots(packCapacity(s) - s.pack.length)}</div></div><div data-drop="secure">${heading(safeNames[s.safe], `${s.secure.length}/${safeCap[s.safe]} 格`)}<div class="slot-grid safe-grid" data-grid="secure">${s.secure.map((i) => card(i, "secure")).join("")}${emptySlots(safeCap[s.safe] - s.secure.length)}</div></div>${!raid ? btn("升级安全箱", "safe-menu", "", "secondary full") : ""}</div></section>`;
+  return `<section class="panel inventory-panel" aria-label="左侧背包"><div class="equipment-fixed">${heading("当前装备")}${equipped()}</div><div class="pack-heading">${heading("背包", `${s.pack.length}/${packCapacity(s)} 格`)}${!raid ? btn("全部放回", "stash-all", s.pack.length ? "" : "disabled", "secondary") : ""}</div><div class="inventory-scroll" data-drop="pack"><div class="slot-grid pack-grid" data-grid="pack">${s.pack.map((i) => card(i, "pack")).join("")}${emptySlots(packCapacity(s) - s.pack.length)}</div></div><div class="safe-fixed" data-drop="secure"><div class="safe-label"><strong>${safeNames[s.safe]}（安全箱）</strong>${!raid ? btn("升级", "safe-menu", "", "secondary") : `<span>${s.secure.length}/${safeCap[s.safe]} 格</span>`}</div><div class="slot-grid safe-grid" data-grid="secure" style="--safe-slots:${safeCap[s.safe]}">${s.secure.map((i) => card(i, "secure")).join("")}${emptySlots(safeCap[s.safe] - s.secure.length)}</div></div></section>`;
 }
 function selectedActions() {
   const i = selectedItem();
@@ -426,7 +427,20 @@ function equipSelected(slot?: keyof Equipment) {
   )
     return false;
   let ok = false;
-  if (selected.from === "loot") ok = raid?.equipContainer(i.uid, slot) ?? false;
+  if (
+    selected.from === "equipment" &&
+    kind === "weapon" &&
+    (slot === "primary" || slot === "secondary")
+  ) {
+    const from = Object.entries(s.equipment).find(
+      ([, item]) => item?.uid === i.uid,
+    )?.[0];
+    if (from === "primary" || from === "secondary")
+      ok =
+        from === slot ||
+        (raid ? raid.swapWeapons(from, slot) : swapWeaponSlots(s, from, slot));
+  } else if (selected.from === "loot")
+    ok = raid?.equipContainer(i.uid, slot) ?? false;
   else if (selected.from !== "equipment" && selected.from !== "shop") {
     if (raid && selected.from === "pack")
       ok = raid.equipLoot(i.uid, slot === "secondary");
@@ -443,7 +457,30 @@ function warehouse() {
   let list = [...s.stash];
   if (filter !== "all") list = list.filter((i) => db[i.id].kind === filter);
   list.sort((a, b) =>
-    sort === "value" ? sale(b) - sale(a) : db[b.id].tier - db[a.id].tier,
+    sort === "value"
+      ? sale(b) - sale(a)
+      : sort === "type"
+        ? [
+            "weapon",
+            "armor",
+            "helmet",
+            "bag",
+            "ammo",
+            "food",
+            "melee",
+            "collectible",
+          ].indexOf(db[a.id].kind) -
+            [
+              "weapon",
+              "armor",
+              "helmet",
+              "bag",
+              "ammo",
+              "food",
+              "melee",
+              "collectible",
+            ].indexOf(db[b.id].kind) || sale(b) - sale(a)
+        : db[b.id].tier - db[a.id].tier || sale(b) - sale(a),
   );
   return `<div class="inventory-layout">${inventoryPanel()}<section class="panel warehouse-panel" data-drop="stash" aria-label="右侧仓库">${heading("仓库", `${s.stash.length}/${capacities[s.warehouse]} 格`)}<div class="warehouse-tools"><select id="filter" aria-label="物品分类"><option value="all">全部物品</option>${Object.entries(
     kindNames,
@@ -454,7 +491,7 @@ function warehouse() {
     )
     .join(
       "",
-    )}</select><select id="sort" aria-label="排序"><option value="tier">按品质</option><option value="value" ${sort === "value" ? "selected" : ""}>按价值</option></select>${btn("出售收集品", "sell-all", "", "secondary")}${btn(s.warehouse < 4 ? `扩容 ◈ ${money(warehouseCosts[s.warehouse + 1])}` : "已满级", "warehouse", s.warehouse >= 4 ? "disabled" : "", "secondary")}</div><div class="warehouse-scroll"><div class="slot-grid warehouse-grid" data-grid="stash">${list.map((i) => card(i, "stash")).join("")}${Array.from({ length: s.stash.length - list.length }, () => '<div class="filtered-slot" aria-label="筛选隐藏的物品">已占用</div>').join("")}${emptySlots(capacities[s.warehouse] - s.stash.length)}</div></div></section></div>`;
+    )}</select><select id="sort" aria-label="排序"><option value="type" ${sort === "type" ? "selected" : ""}>按类型</option><option value="tier" ${sort === "tier" ? "selected" : ""}>按品质</option><option value="value" ${sort === "value" ? "selected" : ""}>按价值</option></select>${btn("出售收集品", "sell-all", "", "secondary")}${btn(s.warehouse < 4 ? `扩容 ◈ ${money(warehouseCosts[s.warehouse + 1])}` : "已满级", "warehouse", s.warehouse >= 4 ? "disabled" : "", "secondary")}</div><div class="warehouse-scroll"><div class="slot-grid warehouse-grid" data-grid="stash">${list.map((i) => card(i, "stash")).join("")}${Array.from({ length: s.stash.length - list.length }, () => '<div class="filtered-slot" aria-label="筛选隐藏的物品">已占用</div>').join("")}${emptySlots(capacities[s.warehouse] - s.stash.length)}</div></div></section></div>`;
 }
 function shop() {
   const products = items.filter((d) =>
@@ -524,7 +561,7 @@ function collection() {
           .filter((d) => d.kind === "collectible" && d.tier === t)
           .map(
             (d) =>
-              `<div class="collection-item ${s.collection.includes(d.id) ? "found" : ""}">${icon(d.icon, colors[t], 50)}<strong>${name(d.id)}</strong><span>${s.collection.includes(d.id) ? "已发现" : "未发现"} · ◈ ${money(Math.floor(d.price * 0.65))}</span></div>`,
+              `<button class="collection-item ${s.collection.includes(d.id) ? "found" : ""}" data-action="collection-detail" data-id="${d.id}" ${s.collection.includes(d.id) ? "" : "disabled"}>${itemIcon({ id: d.id, uid: d.id, qty: 1 }, 80)}<strong>${name(d.id)}</strong><span>${s.collection.includes(d.id) ? "已发现" : "未发现"} · ◈ ${money(Math.floor(d.price * 0.65))}</span></button>`,
           )
           .join("")}</div></section>`,
     )
@@ -554,27 +591,35 @@ function baseModal() {
   if (result) return resultModal(result);
   if (!modal || ["base-menu", "base-settings", "base-help"].includes(modal))
     return "";
+  const collectible = modal.startsWith("collection:")
+    ? db[modal.slice(11)]
+    : undefined;
   let content =
-    modal === "help"
-      ? guide()
-      : modal === "safe"
-        ? `${heading("升级安全箱")}<div class="safe-options">${safeNames.map((n, i) => btn(`${icon("safe", "#d8bf88", 54)}<strong>${n}</strong><span>${safeCap[i]} 格</span><span>${i <= s.safe ? "已拥有" : i === 3 && !s.defeated.includes("yeed") ? "击败猫伊德后解锁" : `◈ ${money(safePrice[i])}`}</span>`, "safe", `data-id="${i}" ${i <= s.safe || (i === 3 && !s.defeated.includes("yeed")) ? "disabled" : ""}`)).join("")}</div>`
-        : modal === "settings"
-          ? settingsContent()
-          : "";
+    collectible && s.collection.includes(collectible.id)
+      ? `${heading(esc(collectible.name))}<div class="collection-detail-art">${itemIcon({ id: collectible.id, uid: collectible.id, qty: 1 }, 160)}</div><p style="color:${colors[collectible.tier]}">${rarity[collectible.tier]}</p><p class="collection-description">${esc(collectible.desc)}</p><p>出售价值 ◈ ${money(Math.floor(collectible.price * 0.65))} 金币</p>`
+      : modal === "help"
+        ? guide()
+        : modal === "safe"
+          ? `${heading("升级安全箱")}<div class="safe-options">${safeNames.map((n, i) => btn(`${icon("safe", "#d8bf88", 54)}<strong>${n}</strong><span>${safeCap[i]} 格</span><span>${i <= s.safe ? "已拥有" : i === 3 && !s.defeated.includes("yeed") ? "击败猫伊德后解锁" : `◈ ${money(safePrice[i])}`}</span>`, "safe", `data-id="${i}" ${i <= s.safe || (i === 3 && !s.defeated.includes("yeed")) ? "disabled" : ""}`)).join("")}</div>`
+          : modal === "settings"
+            ? settingsContent()
+            : "";
   return `<div class="modal-backdrop"><section class="modal panel">${btn("×", "close-modal", 'aria-label="关闭"', "close")}${content}</section></div>`;
 }
 function resultModal(r: Result) {
   return `<div class="modal-backdrop"><section class="modal result-panel panel"><h1>${s.completed && r.bosses.includes("doctor") ? "行动完成" : r.success ? "成功撤离" : "行动失败"}</h1><p>${esc(r.reason)}</p><div class="result-stats">${[
     ["击败敌人", r.kills],
     ["搜索容器", r.searches],
-    ["带回价值", `◈ ${money(r.success || s.mode === "easy" ? r.value : 0)}`],
+    [
+      "带出物资价值",
+      `◈ ${money(r.success || s.mode === "easy" ? r.value : 0)}`,
+    ],
     ["用时", `${Math.floor(r.time / 60)}分${Math.floor(r.time % 60)}秒`],
   ]
     .map(([a, b]) => `<div><span>${a}</span><strong>${b}</strong></div>`)
     .join(
       "",
-    )}</div><p>${r.success ? "背包物品已保留，请自行整理到仓库。" : s.mode === "easy" ? "轻松模式：物品全部保留。" : "标准模式：安全箱保留，其余出战物品丢失。"}</p>${btn("返回基地", "close-result", "", "primary full")}</section></div>`;
+    )}</div><p>${r.success ? "背包物品已保留，请自行整理到仓库。" : s.mode === "easy" ? "轻松模式：物品全部保留。" : "标准模式：安全箱保留，其余出战物品丢失。"}</p>${btn(r.success ? `${r.value >= 20000 ? "一辈子花不完" : r.value > 0 ? "这波收获满满" : "好耶，猫回来了"}<small>（返回基地）</small>` : "回家，再来一局（返回基地）", "close-result", "", "primary full")}</section></div>`;
 }
 function renderRaid() {
   if (!raid) return;
@@ -845,8 +890,14 @@ async function action(el: HTMLElement) {
     render();
   } else if (a === "nav") {
     page = id!;
+    if (page === "loadout") sort = "type";
     selected = undefined;
     modal = "";
+    render();
+  } else if (a === "collection-detail") {
+    if (!id || db[id]?.kind !== "collectible" || !s.collection.includes(id))
+      return;
+    modal = `collection:${id}`;
     render();
   } else if (a === "settings") {
     modal = "base-menu";
@@ -1160,9 +1211,39 @@ root.addEventListener("dragstart", (e) => {
     (e as DragEvent).dataTransfer!.effectAllowed = "move";
   }
 });
+let dragScroll: HTMLElement | undefined,
+  dragVelocity = 0,
+  dragFrame = 0;
+function stopDragScroll() {
+  cancelAnimationFrame(dragFrame);
+  dragFrame = 0;
+  dragScroll = undefined;
+}
+function scrollDragging() {
+  if (!draggedItem || !dragScroll || !dragVelocity) {
+    stopDragScroll();
+    return;
+  }
+  dragScroll.scrollTop += dragVelocity;
+  dragFrame = requestAnimationFrame(scrollDragging);
+}
 root.addEventListener("dragover", (e) => {
-  if ((e.target as HTMLElement).closest("[data-drop]")) e.preventDefault();
+  const target = e.target as HTMLElement;
+  if (target.closest("[data-drop]")) e.preventDefault();
+  const area = target.closest<HTMLElement>(
+    ".inventory-scroll,.warehouse-scroll",
+  );
+  if (!area || !draggedItem) {
+    stopDragScroll();
+    return;
+  }
+  const rect = area.getBoundingClientRect(),
+    y = (e as DragEvent).clientY;
+  dragScroll = area;
+  dragVelocity = y < rect.top + 45 ? -12 : y > rect.bottom - 45 ? 12 : 0;
+  if (!dragFrame) dragFrame = requestAnimationFrame(scrollDragging);
 });
+document.addEventListener("drop", stopDragScroll, true);
 root.addEventListener("drop", (e) => {
   const target = (e.target as HTMLElement).closest<HTMLElement>("[data-drop]");
   if (!target) return;
@@ -1243,6 +1324,7 @@ document.addEventListener("drop", (e) => {
   overlay();
 });
 document.addEventListener("dragend", () => {
+  stopDragScroll();
   draggedItem = undefined;
 });
 window.addEventListener(
@@ -1330,8 +1412,7 @@ window.addEventListener(
       (e.code === "Digit1" && r.activeWeapon !== "primary") ||
       (e.code === "Digit2" && r.activeWeapon !== "secondary")
     ) {
-      r.activeWeapon = e.code === "Digit1" ? "primary" : "secondary";
-      r.reload = 0;
+      r.selectWeapon(e.code === "Digit1" ? "primary" : "secondary");
       overlay();
     }
   },
@@ -1358,8 +1439,18 @@ canvas.addEventListener("contextmenu", (e) => e.preventDefault());
 canvas.addEventListener(
   "wheel",
   (e) => {
+    if (
+      !raid ||
+      raid.done ||
+      raid.paused ||
+      raid.inventory ||
+      raid.search ||
+      raid.puzzle ||
+      raid.mapOpen
+    )
+      return;
     e.preventDefault();
-    raid?.switchWeapon();
+    raid.switchWeapon();
   },
   { passive: false },
 );
