@@ -1282,6 +1282,7 @@ window.addEventListener(
       overlay();
     }
     if (e.code === "KeyE") {
+      closeItemMenu();
       r.interact();
       if (r.search || r.puzzle) {
         r.inventory = true;

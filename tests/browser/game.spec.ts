@@ -56,9 +56,12 @@ test("接近容器时方向键未松开，第一次 E 同时打开两栏并持�
   ).toBeGreaterThan(0);
   await page.keyboard.up("KeyD");
   await page.screenshot({ path: "test-results/first-e-search.png" });
+  await page.locator('[data-grid="pack"] [data-item="f1"]').click();
+  await expect(page.locator("#item-menu")).toBeVisible();
   await page.keyboard.press("KeyE");
   await expect(page.getByRole("region", { name: "左侧背包" })).toHaveCount(0);
   await expect(page.getByRole("region", { name: "右侧容器" })).toHaveCount(0);
+  await expect(page.locator("#item-menu")).toHaveCount(0);
   await page.keyboard.press("KeyE");
   await expect(page.getByRole("region", { name: "左侧背包" })).toBeVisible();
   await expect(page.getByRole("region", { name: "右侧容器" })).toBeVisible();
