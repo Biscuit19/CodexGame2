@@ -56,6 +56,12 @@ test("接近容器时方向键未松开，第一次 E 同时打开两栏并持�
   ).toBeGreaterThan(0);
   await page.keyboard.up("KeyD");
   await page.screenshot({ path: "test-results/first-e-search.png" });
+  await page.keyboard.press("KeyE");
+  await expect(page.getByRole("region", { name: "左侧背包" })).toHaveCount(0);
+  await expect(page.getByRole("region", { name: "右侧容器" })).toHaveCount(0);
+  await page.keyboard.press("KeyE");
+  await expect(page.getByRole("region", { name: "左侧背包" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "右侧容器" })).toBeVisible();
   await page.keyboard.down("KeyA");
   await expect(page.getByRole("region", { name: "右侧容器" })).toHaveCount(0);
   await page.keyboard.up("KeyA");
@@ -634,7 +640,9 @@ test("开始菜单、标准模式默认、简洁基地、仓库右侧和固定�
   ).toBeVisible();
 });
 
-test("地图一立体模型、切换疾跑、暂停设置与完整回滚", async ({ page }) => {
+test("地图一立体模型、默认疾跑与持刀加速、暂停设置与完整回滚", async ({
+  page,
+}) => {
   test.setTimeout(60000);
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
@@ -662,20 +670,29 @@ test("地图一立体模型、切换疾跑、暂停设置与完整回滚", async
     (window as any).__game.raid.enemies = [];
   });
   const firstX = await page.evaluate(() => (window as any).__game.raid.p.x);
-  await page.keyboard.press("Shift");
   await page.keyboard.down("KeyD");
   await page.waitForFunction(
     (x) => (window as any).__game.raid.p.x > x + 30,
     firstX,
   );
   await page.keyboard.up("KeyD");
+  await expect(page.locator("#sprint-state")).toHaveText("疾跑");
   expect(
-    await page.evaluate(() => (window as any).__game.raid.sprintToggled),
-  ).toBe(true);
+    await page.evaluate(() => (window as any).__game.raid.p.stamina),
+  ).toBeLessThan(100);
+  expect(
+    await page.evaluate(() => (window as any).__game.raid.movementSpeed),
+  ).toBe(220);
   await page.keyboard.press("Shift");
   expect(
-    await page.evaluate(() => (window as any).__game.raid.sprintToggled),
-  ).toBe(false);
+    await page.evaluate(() => (window as any).__game.raid.movementSpeed),
+  ).toBe(220);
+  await page.keyboard.press("Digit3");
+  await expect(page.locator("#sprint-state")).toHaveText("持刀加速");
+  expect(
+    await page.evaluate(() => (window as any).__game.raid.movementSpeed),
+  ).toBe(270);
+  await page.keyboard.press("Digit1");
   await page.screenshot({ path: "test-results/map1-3d.png" });
   await page.evaluate(() => {
     const g = (window as any).__game,

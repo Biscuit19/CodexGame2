@@ -38,6 +38,16 @@ export interface Item {
 export const AMMO_STACK = 90,
   BASE_PACK = 20,
   EXTRACT_SECONDS = 3;
+export const MOVEMENT = {
+  maxStamina: 100,
+  runSpeed: 220,
+  knifeSpeed: 270,
+  exhaustedSpeed: 140,
+  drainPerSecond: 100 / 30,
+  rollCost: 10,
+  recoveryPerSecond: 24,
+  recoverThreshold: 25,
+};
 export const melee: ItemDef = {
   id: "k0",
   name: "猫爪短刀",

@@ -158,17 +158,55 @@ describe("真实战区逻辑", () => {
     expect(after).toEqual(original);
     expect(r.abort()).toBe(false);
   });
-  it("切换疾跑在松开 Shift 后继续，第二次切换恢复行走", () => {
+  it("默认疾跑每秒220，持刀加速至270，Shift不改变速度", () => {
     const { r } = start();
     r.p.x = 1000;
     r.p.y = 1550;
-    r.sprintToggled = true;
     advance(r, 0.2, new Set(["KeyD"]));
-    const x = r.p.x;
-    expect(r.p.stamina).toBeLessThan(160);
-    r.sprintToggled = false;
+    expect(r.p.x - 1000).toBeCloseTo(44, 1);
+    let x = r.p.x;
+    advance(r, 0.2, new Set(["KeyD", "ShiftLeft"]));
+    expect(r.p.x - x).toBeCloseTo(44, 1);
+    r.activeWeapon = "melee";
+    x = r.p.x;
     advance(r, 0.2, new Set(["KeyD"]));
-    expect(r.p.x - x).toBeCloseTo(28, 1);
+    expect(r.p.x - x).toBeCloseTo(54, 1);
+  });
+  it("满体力100可持续跑30秒，耗尽疲劳，休息后自动恢复", () => {
+    const { r } = start();
+    r.width = 20000;
+    r.walls = [];
+    r.exits = [];
+    r.containers = [];
+    r.p.x = 1000;
+    r.p.y = 1000;
+    expect(r.p.stamina).toBe(100);
+    advance(r, 15, new Set(["KeyD"]));
+    expect(r.p.stamina).toBeCloseTo(50, 5);
+    advance(r, 15, new Set(["KeyD"]));
+    expect(r.p.stamina).toBe(0);
+    expect(r.p.exhausted).toBe(true);
+    advance(r, 2);
+    expect(r.p.exhausted).toBe(false);
+    expect(r.movementSpeed).toBe(220);
+    advance(r, 5);
+    expect(r.p.stamina).toBe(100);
+  });
+  it("翻滚恰好消耗10点体力，不足10点不能翻滚", () => {
+    const { r } = start();
+    r.roll(1, 0);
+    expect(r.p.stamina).toBe(90);
+    r.p.roll = 0;
+    r.p.rollCooldown = 0;
+    r.p.stamina = 9;
+    r.roll(1, 0);
+    expect(r.p.roll).toBe(0);
+    expect(r.p.stamina).toBe(9);
+    r.p.stamina = 10;
+    r.roll(1, 0);
+    expect(r.p.stamina).toBe(0);
+    expect(r.p.roll).toBeGreaterThan(0);
+    expect(r.p.exhausted).toBe(true);
   });
   it("容器即时打开，只有内含物逐件计时，同时打开背包", () => {
     const { r } = start(),
@@ -180,6 +218,9 @@ describe("真实战区逻辑", () => {
     expect(r.inventory).toBe(true);
     expect(c.revealed).toBe(0);
     expect(c.open).toBe(true);
+    r.interact();
+    expect(r.inventory).toBe(false);
+    expect(r.search).toBeUndefined();
   });
   it("四张地图的首领与撤离点均可从出生点步行抵达，敌人不会刷在墙内", () => {
     for (let map = 0; map < 4; map++) {
@@ -257,11 +298,11 @@ describe("真实战区逻辑", () => {
       expect(count).toBe(0);
     }
   });
-  it("行走可进食，奔跑或受击会打断，完成后能再次吃食物", () => {
+  it("站立可进食，默认疾跑会打断，完成后能再次吃食物", () => {
     const { s, r } = start();
     r.p.hp = 30;
     r.useFood();
-    advance(r, 1.2, new Set(["KeyD"]));
+    advance(r, 1.2);
     expect(r.p.hp).toBe(50);
     expect(r.heal).toBe(0);
     r.useFood();
@@ -269,7 +310,6 @@ describe("真实战区逻辑", () => {
     expect(r.p.hp).toBe(85);
     s.pack.push(makeItem("f3"));
     r.useFood();
-    r.sprintToggled = true;
     advance(r, 0.1, new Set(["KeyD"]));
     expect(r.heal).toBe(0);
   });

@@ -21,6 +21,7 @@ import {
   AMMO_STACK,
   BASE_PACK,
   EXTRACT_SECONDS,
+  MOVEMENT,
   weaponDamageScale,
 } from "./data";
 import {
@@ -230,12 +231,11 @@ function settingsContent(inRaid = false) {
 }
 function guide() {
   return `${heading("操作指南")}<div class="guide-grid">${[
-    ["W A S D", "移动"],
-    ["Shift", "切换疾跑"],
+    ["W A S D", "疾跑（持刀更快）"],
     ["空格", "翻滚"],
     ["鼠标左键", "瞄准与射击"],
     ["R", "换弹"],
-    ["E", "打开容器"],
+    ["E", "开关容器与背包"],
     ["F", "食物回血"],
     ["Tab", "打开背包"],
     ["M", "打开地图"],
@@ -566,7 +566,7 @@ function renderRaid() {
   canvas.classList.remove("hidden");
   document.body.classList.add("in-raid");
   if (r.map !== 0) scene3d?.show(false);
-  root.innerHTML = `<div class="raid-hud"><div class="raid-top"><strong>${maps[r.map].name}</strong><div id="boss-hud"></div>${btn('<b id="raid-time">15:00</b><span>菜单</span>', "pause", "", "raid-timer")}</div><canvas id="minimap" width="200" height="150" data-action="toggle-map" aria-label="打开战区地图"></canvas><div class="raid-bottom"><section class="vitals"><div><strong id="hp-number">100</strong><span>生命</span></div><div class="meter"><i id="hp-fill"></i></div><div class="stamina-row"><span>体力</span><strong id="st-number">160</strong><span id="sprint-state">行走</span></div><div class="meter stamina"><i id="st-fill"></i></div><span id="armor-readout"></span></section><div class="raid-shortcuts"><span>空格 翻滚</span><span>E 搜索</span><span>Tab 背包</span><span>M 地图</span></div><section class="weapon-hud"><strong id="weapon-name"></strong><div><b id="mag-count"></b><span id="reserve-count"></span></div><span id="ammo-name"></span><span id="weapon-condition"></span></section></div><div id="action-progress" class="action-progress hidden"></div><div id="crosshair"></div></div><div id="raid-overlay">${raidOverlay()}</div>`;
+  root.innerHTML = `<div class="raid-hud"><div class="raid-top"><strong>${maps[r.map].name}</strong><div id="boss-hud"></div>${btn('<b id="raid-time">15:00</b><span>菜单</span>', "pause", "", "raid-timer")}</div><canvas id="minimap" width="200" height="150" data-action="toggle-map" aria-label="打开战区地图"></canvas><div class="raid-bottom"><section class="vitals"><div><strong id="hp-number">100</strong><span>生命</span></div><div class="meter"><i id="hp-fill"></i></div><div class="stamina-row"><span>体力</span><strong id="st-number">${MOVEMENT.maxStamina}</strong><span id="sprint-state">疾跑</span></div><div class="meter stamina"><i id="st-fill"></i></div><span id="armor-readout"></span></section><div class="raid-shortcuts"><span>空格 翻滚</span><span>E 搜索</span><span>Tab 背包</span><span>M 地图</span></div><section class="weapon-hud"><strong id="weapon-name"></strong><div><b id="mag-count"></b><span id="reserve-count"></span></div><span id="ammo-name"></span><span id="weapon-condition"></span></section></div><div id="action-progress" class="action-progress hidden"></div><div id="crosshair"></div></div><div id="raid-overlay">${raidOverlay()}</div>`;
   overlay();
   updateHUD();
 }
@@ -614,7 +614,10 @@ function updateHUD() {
   );
   set("hp-number", String(Math.max(0, Math.ceil(p.hp))));
   set("st-number", String(Math.ceil(p.stamina)));
-  set("sprint-state", r.sprintToggled ? "疾跑开启" : "行走");
+  set(
+    "sprint-state",
+    p.exhausted ? "疲劳" : r.weapon?.kind === "melee" ? "持刀加速" : "疾跑",
+  );
   set("weapon-name", r.weaponItem ? name(r.weaponItem.id) : "未装备武器");
   set("mag-count", String(r.mag).padStart(2, "0"));
   set("reserve-count", `/ ${r.reserve}`);
@@ -638,7 +641,7 @@ function updateHUD() {
   const hp = document.getElementById("hp-fill"),
     st = document.getElementById("st-fill");
   if (hp) hp.style.width = `${Math.max(0, p.hp)}%`;
-  if (st) st.style.width = `${(p.stamina / 160) * 100}%`;
+  if (st) st.style.width = `${(p.stamina / MOVEMENT.maxStamina) * 100}%`;
   document
     .querySelector(".raid-timer")
     ?.classList.toggle("warning", r.time < 300);
@@ -1263,8 +1266,6 @@ window.addEventListener(
     }
     if (r.paused) return;
     keys.add(e.code);
-    if (e.code === "ShiftLeft" || e.code === "ShiftRight")
-      r.sprintToggled = !r.sprintToggled;
     if (r.puzzle && /^Digit[1-4]$/.test(e.code)) {
       r.answer(r.puzzle.choices[Number(e.code.at(-1)) - 1]);
       return;
@@ -1284,6 +1285,7 @@ window.addEventListener(
       r.interact();
       if (r.search || r.puzzle) {
         r.inventory = true;
+        r.mapOpen = false;
         // Do not let the approach movement cancel a search on the next frame.
         keys.clear();
         mouse.down = false;

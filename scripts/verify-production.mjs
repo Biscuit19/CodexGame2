@@ -72,11 +72,14 @@ try {
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await expect(page.locator("#scene3d")).toBeVisible();
   await expect(page.locator("#raid-time")).toBeVisible();
-  await page.keyboard.press("Shift");
+  await expect(page.locator("#st-number")).toHaveText("100");
   await page.keyboard.down("KeyD");
   await page.waitForTimeout(700);
   await page.keyboard.up("KeyD");
-  await expect(page.locator("#sprint-state")).toHaveText("疾跑开启");
+  await expect(page.locator("#sprint-state")).toHaveText("疾跑");
+  await page.keyboard.press("Digit3");
+  await expect(page.locator("#sprint-state")).toHaveText("持刀加速");
+  await page.keyboard.press("Digit1");
   await page.keyboard.press("Tab");
   await expect(page.getByRole("region", { name: "左侧背包" })).toBeVisible();
   await expect(page.locator('[data-grid="pack"] > *')).toHaveCount(20);

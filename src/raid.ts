@@ -17,6 +17,7 @@ import {
   AMMO_STACK,
   BASE_PACK,
   EXTRACT_SECONDS,
+  MOVEMENT,
   wearWeapon,
   weaponDamageScale,
   type Item,
@@ -138,7 +139,7 @@ export class Raid {
     x: 260,
     y: 1450,
     hp: 100,
-    stamina: 160,
+    stamina: MOVEMENT.maxStamina,
     angle: 0,
     walk: 0,
     roll: 0,
@@ -169,7 +170,6 @@ export class Raid {
   time = 900;
   elapsed = 0;
   paused = false;
-  sprintToggled = false;
   done = false;
   activeWeapon: "primary" | "secondary" | "melee" = "primary";
   magazines: Record<string, number> = {};
@@ -245,6 +245,13 @@ export class Raid {
   }
   get weapon() {
     return this.weaponItem ? db[this.weaponItem.id] : undefined;
+  }
+  get movementSpeed() {
+    const speed =
+      this.weapon?.kind === "melee" ? MOVEMENT.knifeSpeed : MOVEMENT.runSpeed;
+    return this.p.exhausted
+      ? (speed * MOVEMENT.exhaustedSpeed) / MOVEMENT.runSpeed
+      : speed;
   }
   get mag() {
     return this.weaponItem ? this.magazines[this.weaponItem.uid] || 0 : 0;
@@ -806,9 +813,15 @@ export class Raid {
     return true;
   }
   roll(dx: number, dy: number) {
-    if (this.p.stamina < 28 || this.p.rollCooldown > 0 || this.p.roll) return;
+    if (
+      this.p.stamina < MOVEMENT.rollCost ||
+      this.p.rollCooldown > 0 ||
+      this.p.roll
+    )
+      return;
     this.interrupt();
-    this.p.stamina -= 28;
+    this.p.stamina -= MOVEMENT.rollCost;
+    if (this.p.stamina <= 0) this.p.exhausted = true;
     this.p.regen = 0.8;
     this.p.roll = 0.35;
     this.p.rollCooldown = 0.6;
@@ -1029,6 +1042,7 @@ export class Raid {
   }
   interact() {
     if (this.search || this.puzzle) {
+      this.inventory = false;
       this.interrupt();
       return;
     }
@@ -1363,30 +1377,34 @@ export class Raid {
     this.meleeCooldown = Math.max(0, this.meleeCooldown - dt);
     this.shake = Math.max(0, this.shake - dt * 20);
     p.regen -= dt;
-    const sprint = this.sprintToggled && l > 0 && p.stamina > 0 && !p.exhausted;
+    const sprint = l > 0 && !this.mapOpen && p.stamina > 0 && !p.exhausted;
     if (l && !this.mapOpen) {
       this.interrupt(false);
       if (sprint) {
         if (this.heal > 0) this.interrupt();
-        p.stamina = Math.max(0, p.stamina - dt * 10);
+        p.stamina = Math.max(0, p.stamina - dt * MOVEMENT.drainPerSecond);
+        if (p.stamina < 1e-8) p.stamina = 0;
         p.regen = 0.8;
         if (p.stamina <= 0) {
           p.exhausted = true;
-          this.sprintToggled = false;
         }
       }
       this.moveActor(
         p,
-        dx * (sprint ? 220 : 140) * dt,
-        dy * (sprint ? 220 : 140) * dt,
+        dx * this.movementSpeed * dt,
+        dy * this.movementSpeed * dt,
       );
       p.walk += dt * (sprint ? 15 : 10);
     } else p.walk = 0;
     if (p.roll > 0) {
       p.roll = Math.max(0, p.roll - dt);
       this.moveActor(p, p.rollX * 390 * dt, p.rollY * 390 * dt);
-    } else if (p.regen <= 0) p.stamina = Math.min(160, p.stamina + 24 * dt);
-    if (p.stamina >= 25) p.exhausted = false;
+    } else if (p.regen <= 0)
+      p.stamina = Math.min(
+        MOVEMENT.maxStamina,
+        p.stamina + MOVEMENT.recoveryPerSecond * dt,
+      );
+    if (p.stamina >= MOVEMENT.recoverThreshold) p.exhausted = false;
     if (mouse.down) this.shoot();
     if (this.reload > 0) {
       this.reload -= dt;
