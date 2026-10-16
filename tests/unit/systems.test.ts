@@ -94,6 +94,37 @@ describe("配置与战斗", () => {
   });
 });
 describe("物品、经济与死亡事务", () => {
+  it("成功撤离保留背包、仓库不变，空仓位仍可使用", () => {
+    const s = newSave(),
+      loot = makeItem("c4_0");
+    s.pack.push(loot);
+    const pack = structuredClone(s.pack),
+      stash = structuredClone(s.stash);
+    beginRaid(s);
+    settle(s, result(true));
+    expect(s.pack).toEqual(pack);
+    expect(s.stash).toEqual(stash);
+    expect(s.overflow).toHaveLength(0);
+    expect(move(s, "pack", "stash", loot.uid)).toBe(true);
+    expect(s.stash.some((i) => i.uid === loot.uid)).toBe(true);
+  });
+  it("满背包可直接替换护甲，背包缩容失败不会改动任何物品", () => {
+    const s = newSave();
+    s.pack = Array.from({ length: 7 }, () => makeItem("f1"));
+    const a = makeItem("a2");
+    s.pack.push(a);
+    const old = s.equipment.armor!.uid;
+    expect(equip(s, "pack", a.uid)).toBe(true);
+    expect(s.pack).toHaveLength(8);
+    expect(s.pack.some((i) => i.uid === old)).toBe(true);
+    s.equipment.bag = makeItem("b3");
+    s.pack = Array.from({ length: 13 }, () => makeItem("f1"));
+    const bag = makeItem("b1");
+    s.stash.push(bag);
+    const before = structuredClone(s);
+    expect(equip(s, "stash", bag.uid)).toBe(false);
+    expect(s).toEqual(before);
+  });
   it("空间不足的移动不会丢失或复制弹药", () => {
     const s = newSave();
     s.pack = Array.from({ length: 7 }, () => makeItem("f1"));

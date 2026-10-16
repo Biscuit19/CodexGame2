@@ -62,11 +62,13 @@ try {
   await page.keyboard.press("Tab");
   await expect(page.getByRole("region", { name: "左侧背包" })).toBeVisible();
   await expect(page.locator('[data-grid="pack"] > *')).toHaveCount(8);
-  await page.keyboard.press("Tab");
+  await expect(page.locator(".equipped-grid")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("region", { name: "左侧背包" })).toHaveCount(0);
   await page.screenshot({ path: "test-results/production-map1.png" });
   await page.keyboard.press("Escape");
   await expect(
-    page.getByRole("heading", { name: "暂停", exact: true }),
+    page.getByRole("heading", { name: "游戏菜单", exact: true }),
   ).toBeVisible();
   await page.getByRole("button", { name: "退出本局", exact: true }).click();
   await expect(
@@ -83,6 +85,13 @@ try {
   await expect(page.getByRole("region", { name: "左侧背包" })).toBeVisible();
   await expect(page.getByRole("region", { name: "右侧仓库" })).toBeVisible();
   await expect(page.locator('[data-grid="stash"] > *')).toHaveCount(60);
+  await page.locator('[data-grid="stash"] [data-item="w3"]').click();
+  await expect(page.locator("#item-menu .item-description")).toHaveText(
+    "中距离 · 稳定点射",
+  );
+  await expect(
+    page.locator("#item-menu").getByRole("button", { name: "放入安全箱" }),
+  ).toHaveCount(0);
   if (errors.length || failed.length)
     throw Error(JSON.stringify({ errors, failed }));
   console.log(

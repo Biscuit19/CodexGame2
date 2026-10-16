@@ -378,6 +378,8 @@ export class ThreeRenderer {
       new THREE.LineBasicMaterial({ color: "#fff0b0" }),
     );
     this.scene.add(this.bulletLines);
+    // Positions change outside the initial zero-filled bounds every frame.
+    this.bulletLines.frustumCulled = false;
     const pg = new THREE.BufferGeometry();
     pg.setAttribute(
       "position",
@@ -394,6 +396,7 @@ export class ThreeRenderer {
       }),
     );
     this.scene.add(this.particlePoints);
+    this.particlePoints.frustumCulled = false;
     this.resize();
   }
   resize() {
@@ -749,6 +752,7 @@ export class ThreeRenderer {
     flat.resize();
     const c = flat.ctx;
     c.clearRect(0, 0, flat.width, flat.height);
+    this.drawCombat(r, c);
     for (const e of r.exits) {
       const p = this.project(e.x, e.y, 65);
       text(c, e.name, p.x, p.y, 20, e.active ? "#f4edcf" : "#b5c1aa");
@@ -801,5 +805,46 @@ export class ThreeRenderer {
       text(c, f.text, p.x, p.y, 25, f.color);
     }
     c.globalAlpha = 1;
+  }
+  drawCombat(r: Raid, c: CanvasRenderingContext2D) {
+    c.save();
+    c.lineCap = "round";
+    for (const b of r.bullets) {
+      const p = this.project(b.x, b.y + 24, 30),
+        q = this.project(b.x - b.vx * 0.032, b.y + 24 - b.vy * 0.032, 30);
+      c.strokeStyle = b.friendly ? "#fff2b5" : "#ff9c70";
+      c.shadowColor = c.strokeStyle;
+      c.shadowBlur = 10;
+      c.lineWidth = b.friendly ? 3 : 3.5;
+      c.beginPath();
+      c.moveTo(q.x, q.y);
+      c.lineTo(p.x, p.y);
+      c.stroke();
+    }
+    for (const fx of r.combatFX) {
+      const p = this.project(fx.x, fx.y + 24, 32),
+        life = fx.life / fx.max;
+      c.globalAlpha = Math.min(1, life * 2);
+      c.strokeStyle = fx.friendly ? "#ffe7a0" : "#ff9d78";
+      c.fillStyle = "#fff9de";
+      c.shadowColor = c.strokeStyle;
+      c.shadowBlur = 12;
+      const radius = fx.kind === "hit" ? 5 + (1 - life) * 15 : 6 + life * 7;
+      c.lineWidth = 2.5;
+      c.beginPath();
+      for (let k = 0; k < 6; k++) {
+        const a = (k * Math.PI) / 3 + fx.angle;
+        c.moveTo(
+          p.x + Math.cos(a) * radius * 0.4,
+          p.y + Math.sin(a) * radius * 0.4,
+        );
+        c.lineTo(p.x + Math.cos(a) * radius, p.y + Math.sin(a) * radius);
+      }
+      c.stroke();
+      c.beginPath();
+      c.arc(p.x, p.y, fx.kind === "hit" ? 3 : 4, 0, Math.PI * 2);
+      c.fill();
+    }
+    c.restore();
   }
 }

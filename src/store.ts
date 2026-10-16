@@ -407,6 +407,7 @@ export function move(
   to: "stash" | "pack" | "secure",
   uid: string,
 ) {
+  if (from === to) return false;
   const i = s[from].find((x) => x.uid === uid);
   if (!i) return false;
   const cap =
@@ -423,7 +424,7 @@ export function move(
 }
 export function equip(
   s: Save,
-  from: "stash" | "pack" | "overflow",
+  from: "stash" | "pack" | "overflow" | "secure",
   uid: string,
   secondary = false,
 ) {
@@ -440,10 +441,22 @@ export function equip(
         ? kind
         : null;
   if (!slot) return false;
-  if (kind === "bag" && s.pack.length > (db[i.id].capacity ?? 8)) return false;
   const old = s.equipment[slot];
-  s[from] = list.filter((x) => x.uid !== uid);
-  if (old) s[from].push(old);
+  const next = list.filter((x) => x.uid !== uid);
+  if (old) next.push(old);
+  const newPackCap =
+    kind === "bag" ? (db[i.id].capacity ?? 8) : packCapacity(s);
+  if ((from === "pack" ? next : s.pack).length > newPackCap) return false;
+  const sourceCap =
+    from === "stash"
+      ? capacities[s.warehouse]
+      : from === "secure"
+        ? safeCap[s.safe]
+        : from === "pack"
+          ? newPackCap
+          : Infinity;
+  if (next.length > sourceCap) return false;
+  s[from] = next;
   s.equipment[slot] = i;
   persist(s);
   return true;
@@ -566,7 +579,8 @@ export function settle(s: Save, r: Result) {
       helmet: null,
       bag: null,
     };
-  } else {
+  } else if (!r.success) {
+    // Easy-mode death keeps its original return-to-stash rule; successful raids keep the backpack.
     for (const item of s.pack) {
       if (!canPut(s.stash, item, capacities[s.warehouse]))
         s.overflow.push(item);

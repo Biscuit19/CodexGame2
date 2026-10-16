@@ -1560,3 +1560,139 @@ kbd {
     animation: none !important;
   }
 }
+
+/* Shared inventory cells keep the same square footprint, occupied or empty. */
+.slot-grid .item-slot,
+.slot-grid .empty-slot,
+.slot-grid .filtered-slot,
+.slot-grid .unrevealed {
+  aspect-ratio: 1;
+  min-height: 0;
+  height: auto;
+  width: 100%;
+  padding: 6px;
+  gap: 2px;
+  justify-content: center;
+}
+.filtered-slot {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #52644544;
+  color: #aebba0;
+  font-size: 18px;
+}
+.slot-grid .item-slot .quality {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--rarity);
+  font-size: 0;
+}
+.slot-grid .item-slot > svg {
+  width: 36px;
+  height: 36px;
+}
+.pack-grid .item-slot,
+.safe-grid .item-slot {
+  padding: 4px;
+  gap: 1px;
+}
+.pack-grid .item-slot > svg,
+.safe-grid .item-slot > svg {
+  width: 28px;
+  height: 28px;
+}
+.slot-grid .item-slot > small {
+  display: none;
+}
+.slot-grid .item-slot strong,
+.slot-grid .item-slot > span:not(.quality) {
+  line-height: 1.2;
+}
+.inventory-panel .equipped-grid,
+.raid-inventory-layout .equipped-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin-bottom: 20px;
+}
+.equipped-grid .equipped-slot {
+  padding: 6px;
+  grid-column: auto;
+}
+.equipped-grid .equipped-slot:last-child {
+  grid-column: auto;
+}
+.equipped-item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  border: 0;
+  padding: 5px 0;
+}
+.equipped-item strong {
+  font-size: 18px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+.equipped-item span {
+  font-size: 18px;
+  color: #bdc9ae;
+}
+.item-menu,
+.item-tooltip {
+  position: fixed;
+  z-index: 120;
+  pointer-events: auto;
+  width: 310px;
+  padding: 20px;
+  box-shadow: 0 12px 45px #071b16b8;
+  max-height: calc(100vh - 24px);
+  overflow: auto;
+}
+.item-menu h3 {
+  font-size: 23px;
+  margin-bottom: 8px;
+}
+.item-menu p,
+.item-tooltip p {
+  font-size: 18px;
+  line-height: 1.6;
+  margin: 12px 0;
+  white-space: normal;
+}
+.item-menu > span {
+  font-size: 18px;
+}
+.item-options {
+  display: flex;
+  flex-direction: column;
+  margin-top: 14px;
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+.item-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 8px;
+  font-size: 19px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+}
+.item-tooltip {
+  pointer-events: none;
+}
+[data-drop="equipment"]:hover {
+  border-color: #dbc18b;
+}

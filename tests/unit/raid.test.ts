@@ -32,6 +32,37 @@ function advance(r: Raid, seconds: number, keys = new Set<string>()) {
 }
 beforeEach(() => memory.clear());
 describe("真实战区逻辑", () => {
+  it("满包双击更强头甲直接交换，旧甲留在已揭示容器；弱甲只拾取", () => {
+    const { s, r } = start();
+    s.pack = Array.from({ length: 8 }, () => makeItem("f1"));
+    const armor = makeItem("a3"),
+      old = s.equipment.armor!;
+    const c = r.containers[0];
+    c.items = [armor];
+    c.revealed = 1;
+    r.startSearch(c);
+    r.take(0, false, true);
+    expect(s.equipment.armor!.uid).toBe(armor.uid);
+    expect(c.items[0].uid).toBe(old.uid);
+    expect(c.revealed).toBe(1);
+    expect(s.pack).toHaveLength(8);
+    r.take(0, false, true);
+    expect(s.equipment.armor!.uid).toBe(armor.uid);
+    expect(c.items).toHaveLength(1);
+    s.pack.pop();
+    r.take(0, false, true);
+    expect(s.pack.some((i) => i.uid === old.uid)).toBe(true);
+  });
+  it("玩家和敌人发射与命中均产生有时效的可视反馈", () => {
+    const { r } = start();
+    r.addBullet(1000, 1000, 0, true, 20, 1);
+    r.addBullet(1200, 1000, Math.PI, false, 20, 1);
+    expect(r.combatFX.filter((f) => f.kind === "muzzle")).toHaveLength(2);
+    r.hurtPlayer(5, 1);
+    expect(r.combatFX.some((f) => f.kind === "hit" && !f.friendly)).toBe(true);
+    advance(r, 0.7);
+    expect(r.combatFX).toHaveLength(0);
+  });
   it("新存档默认标准模式，暂停退出完整返还弹药、耐久、金币和新物品", () => {
     const s = newSave();
     expect(s.mode).toBe("standard");
@@ -259,6 +290,9 @@ describe("真实战区逻辑", () => {
     expect(r.mag).toBe(40);
     r.finish(true, "test");
     expect(() => validateSave(s)).not.toThrow();
+    expect(
+      s.pack.filter((i) => i.id === "m1").reduce((n, i) => n + i.qty, 0),
+    ).toBe(60);
     const s2 = newSave();
     s2.mode = "easy";
     new Raid(

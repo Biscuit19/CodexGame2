@@ -316,6 +316,9 @@ export const makeItem = (id: string, qty = 1): Item => {
       : {}),
   };
 };
+// Remaining protection compares both grade and the actual durability left.
+export const protection = (i: Item | null | undefined) =>
+  i ? db[i.id].tier * Math.max(0, i.durability ?? 0) : 0;
 export const sale = (i: Item) =>
   Math.floor(
     db[i.id].price * 0.65 * (db[i.id].kind === "ammo" ? i.qty / 30 : 1),

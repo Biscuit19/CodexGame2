@@ -13,6 +13,7 @@ import {
   colors,
   armorDur,
   helmetDur,
+  protection,
   type Item,
   type BossDef,
 } from "./data";
@@ -148,6 +149,15 @@ export class Raid {
   exits: Exit[] = [];
   bullets: Bullet[] = [];
   particles: Particle[] = [];
+  combatFX: {
+    kind: "muzzle" | "hit";
+    x: number;
+    y: number;
+    angle: number;
+    friendly: boolean;
+    life: number;
+    max: number;
+  }[] = [];
   floating: Floating[] = [];
   time = 900;
   elapsed = 0;
@@ -712,11 +722,11 @@ export class Raid {
       this.onChange();
     }
   }
-  equipLoot(uid: string) {
+  equipLoot(uid: string, secondary = true) {
     const item = this.save.pack.find((i) => i.uid === uid);
     if (!item) return false;
     if (db[item.id].kind !== "weapon") return equip(this.save, "pack", uid);
-    const old = this.save.equipment.secondary;
+    const old = this.save.equipment[secondary ? "secondary" : "primary"];
     const simulated = structuredClone(this.save.pack);
     let count = old ? (this.magazines[old.uid] ?? 0) : 0;
     while (count > 0) {
@@ -731,15 +741,19 @@ export class Raid {
         return false;
       count -= n;
     }
+    const original = this.save.pack;
     this.save.pack = simulated;
-    if (old) this.magazines[old.uid] = 0;
-    const okay = equip(this.save, "pack", uid, true);
+    const okay = equip(this.save, "pack", uid, secondary);
     if (okay) {
+      if (old) {
+        delete this.magazines[old.uid];
+        delete this.magazineTiers[old.uid];
+      }
       this.magazines[item.uid] ??= 0;
       this.magazineTiers[item.uid] ??= this.ammoTier;
       this.syncLoaded();
       persist(this.save);
-    }
+    } else this.save.pack = original;
     return okay;
   }
   switchAmmo(tier: number) {
@@ -764,6 +778,34 @@ export class Raid {
     this.loadMagazine();
     persist(this.save);
     this.onChange();
+  }
+  unequipToPack(slot: keyof Save["equipment"]) {
+    const i = this.save.equipment[slot];
+    if (!i) return false;
+    const next = structuredClone(this.save.pack),
+      cap = slot === "bag" ? 8 : packCapacity(this.save);
+    if (next.length > cap || !put(next, i, cap)) return false;
+    let count = this.magazines[i.uid] ?? 0;
+    while (count > 0) {
+      const n = Math.min(30, count);
+      if (
+        !put(
+          next,
+          makeItem(`m${this.magazineTiers[i.uid] ?? this.ammoTier}`, n),
+          cap,
+        )
+      )
+        return false;
+      count -= n;
+    }
+    this.save.pack = next;
+    this.save.equipment[slot] = null;
+    delete this.magazines[i.uid];
+    delete this.magazineTiers[i.uid];
+    this.reload = 0;
+    this.syncLoaded();
+    persist(this.save);
+    return true;
   }
   roll(dx: number, dy: number) {
     if (this.p.stamina < 28 || this.p.rollCooldown > 0 || this.p.roll) return;
@@ -859,6 +901,15 @@ export class Raid {
     range = 800,
   ) {
     const speed = friendly ? 1050 : 440;
+    this.combatFX.push({
+      kind: "muzzle",
+      x: x + Math.cos(a) * 40,
+      y: y + Math.sin(a) * 40,
+      angle: a,
+      friendly,
+      life: 0.18,
+      max: 0.18,
+    });
     this.bullets.push({
       x: x + Math.cos(a) * 32,
       y: y + Math.sin(a) * 32,
@@ -953,9 +1004,19 @@ export class Raid {
     this.inventory = true;
     this.sound.play("search");
   }
-  take(index: number, safe = false) {
+  take(index: number, safe = false, autoEquip = false) {
     const c = this.search;
-    if (!c || index >= c.revealed) return;
+    if (!c || index < 0 || index >= c.revealed) return;
+    const candidate = c.items[index],
+      kind = db[candidate.id].kind;
+    if (
+      autoEquip &&
+      (kind === "armor" || kind === "helmet") &&
+      protection(candidate) > protection(this.save.equipment[kind])
+    ) {
+      this.equipContainer(candidate.uid, kind);
+      return;
+    }
     const i = c.items[index],
       target = safe ? this.save.secure : this.save.pack,
       cap = safe ? [1, 2, 4, 6][this.save.safe] : packCapacity(this.save);
@@ -975,8 +1036,62 @@ export class Raid {
     this.sound.play("click");
     this.onChange();
   }
+  equipContainer(uid: string, requested?: keyof Save["equipment"]) {
+    const c = this.search,
+      index = c?.items.findIndex((i) => i.uid === uid) ?? -1;
+    if (!c || index < 0 || index >= c.revealed) return false;
+    const item = c.items[index],
+      kind = db[item.id].kind;
+    const slot = requested ?? (kind === "weapon" ? "secondary" : kind);
+    if (
+      !(["primary", "secondary"].includes(slot)
+        ? kind === "weapon"
+        : kind === slot && ["armor", "helmet", "bag"].includes(slot))
+    )
+      return false;
+    const key = slot as keyof Save["equipment"];
+    if (key === "bag" && this.save.pack.length > db[item.id].capacity!)
+      return false;
+    const old = this.save.equipment[key],
+      returned: Item[] = old ? [old] : [];
+    if (old && kind === "weapon") {
+      let rounds = this.magazines[old.uid] ?? 0;
+      while (rounds > 0) {
+        const n = Math.min(rounds, 30);
+        returned.push(
+          makeItem(`m${this.magazineTiers[old.uid] ?? this.ammoTier}`, n),
+        );
+        rounds -= n;
+      }
+      delete this.magazines[old.uid];
+      delete this.magazineTiers[old.uid];
+    }
+    c.items.splice(index, 1, ...returned);
+    c.revealed += returned.length - 1;
+    this.save.equipment[key] = item;
+    if (kind === "weapon") {
+      this.magazines[item.uid] ??= 0;
+      this.magazineTiers[item.uid] ??= this.ammoTier;
+      this.reload = 0;
+      this.syncLoaded();
+    }
+    this.value += Math.floor(db[item.id].price * 0.65);
+    persist(this.save);
+    this.sound.play("click");
+    this.onChange();
+    return true;
+  }
   hurtPlayer(dmg: number, tier: number, head = false) {
     if (this.done) return;
+    this.combatFX.push({
+      kind: "hit",
+      x: this.p.x,
+      y: this.p.y - 24,
+      angle: 0,
+      friendly: false,
+      life: 0.25,
+      max: 0.25,
+    });
     this.interrupt();
     const armor = this.save.equipment[head ? "helmet" : "armor"];
     let taken = damage(
@@ -998,6 +1113,15 @@ export class Raid {
     if (this.p.hp <= 0) this.finish(false, "在战区倒下了");
   }
   hurtEnemy(e: Enemy, b: Bullet) {
+    this.combatFX.push({
+      kind: "hit",
+      x: b.x,
+      y: b.y,
+      angle: Math.atan2(b.vy, b.vx),
+      friendly: true,
+      life: 0.25,
+      max: 0.25,
+    });
     const head = b.y < e.y - 34;
     let d = damage(
       b.damage,
@@ -1254,6 +1378,15 @@ export class Raid {
         ) {
           b.life = 0;
           this.emit(b.x, b.y, 3, "#afbc99");
+          this.combatFX.push({
+            kind: "hit",
+            x: b.x,
+            y: b.y,
+            angle: 0,
+            friendly: b.friendly,
+            life: 0.25,
+            max: 0.25,
+          });
           break;
         }
         if (b.friendly) {
@@ -1278,6 +1411,8 @@ export class Raid {
       q.life -= dt;
     }
     this.particles = this.particles.filter((q) => q.life > 0);
+    for (const fx of this.combatFX) fx.life -= dt;
+    this.combatFX = this.combatFX.filter((fx) => fx.life > 0);
     for (const f of this.floating) {
       f.y -= 25 * dt;
       f.life -= dt;

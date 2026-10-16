@@ -1,4 +1,171 @@
 import { test, expect, type Page } from "@playwright/test";
+
+test("原描述、物品旁菜单、正方形格子、仓库拖拽装备与筛选容量", async ({
+  page,
+}) => {
+  await start(page);
+  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "当前装备", exact: true }),
+  ).toBeVisible();
+  const w = page.locator('[data-grid="stash"] [data-item="w3"]');
+  await w.click();
+  await expect(page.locator("#item-menu .item-description")).toHaveText(
+    "中距离 · 稳定点射",
+  );
+  await expect(
+    page.locator("#item-menu").getByRole("button", { name: "放入安全箱" }),
+  ).toHaveCount(0);
+  const box = await w.boundingBox();
+  expect(Math.abs(box!.width - box!.height)).toBeLessThan(2);
+  await page.getByRole("heading", { name: "仓库", exact: true }).click();
+  await w.dragTo(page.locator('[data-slot="primary"]'));
+  expect(
+    await page.evaluate(() => (window as any).__game.save.equipment.primary.id),
+  ).toBe("w3");
+  await page.evaluate(async () => {
+    const d = await import("/src/data.ts"),
+      g = (window as any).__game;
+    for (const id of ["a2", "h2", "c4_0"]) g.save.stash.push(d.makeItem(id));
+    g.render();
+  });
+  for (const id of ["a2", "h2", "m1", "f2", "c4_0"]) {
+    await page
+      .locator(`[data-grid="stash"] [data-item="${id}"]`)
+      .first()
+      .click();
+    const desc = await page.evaluate(
+      async (id) => (await import("/src/data.ts")).db[id].desc,
+      id,
+    );
+    await expect(page.locator("#item-menu .item-description")).toHaveText(desc);
+    await page.getByRole("heading", { name: "仓库", exact: true }).click();
+  }
+  await page.getByRole("heading", { name: "仓库", exact: true }).click();
+  await page.locator("#filter").selectOption("ammo");
+  const occupied = await page.evaluate(
+    () => (window as any).__game.save.stash.length,
+  );
+  await expect(page.locator('[data-grid="stash"] .empty-slot')).toHaveCount(
+    60 - occupied,
+  );
+  await page.screenshot({ path: "test-results/inventory-v3.png" });
+  await page.getByRole("button", { name: "返回基地", exact: true }).click();
+  await page.getByRole("button", { name: "补给商店", exact: true }).click();
+  const before = await page.evaluate(() => (window as any).__game.save.coins);
+  await page.locator('.shop-grid [data-item="w0"]').click();
+  await expect(page.locator("#item-menu .item-description")).toHaveText(
+    "近距离 · 全自动 · 快速压制",
+  );
+  await page
+    .locator("#item-menu")
+    .getByRole("button", { name: /购买/ })
+    .click();
+  expect(await page.evaluate(() => (window as any).__game.save.coins)).toBe(
+    before - 900,
+  );
+  expect(
+    await page.evaluate(() =>
+      (window as any).__game.save.stash.some((i: any) => i.id === "w0"),
+    ),
+  ).toBe(true);
+});
+
+test("满包舔包双击更强头甲、旧甲留在容器，Esc 先关闭搜索再开菜单", async ({
+  page,
+}) => {
+  test.setTimeout(60000);
+  await start(page);
+  await deploy(page);
+  await page.evaluate(async () => {
+    const d = await import("/src/data.ts"),
+      g = (window as any).__game,
+      r = g.raid;
+    r.enemies = [];
+    g.save.pack = Array.from({ length: 8 }, () => d.makeItem("f1"));
+    const c = r.containers[0];
+    c.items = [d.makeItem("a3"), d.makeItem("h3")];
+    c.revealed = 2;
+    r.p.x = c.x - 25;
+    r.p.y = c.y;
+  });
+  await page.keyboard.press("KeyE");
+  await page.locator('.loot-panel [data-item="a3"]').click();
+  await expect(page.locator("#item-menu .item-description")).not.toBeEmpty();
+  await page.locator('.loot-panel [data-item="a3"]').dblclick();
+  expect(
+    await page.evaluate(() => (window as any).__game.save.equipment.armor.id),
+  ).toBe("a3");
+  await expect(page.locator('.loot-panel [data-item="a1"]')).toBeVisible();
+  await page.locator('.loot-panel [data-item="h3"]').dblclick();
+  expect(
+    await page.evaluate(() => (window as any).__game.save.equipment.helmet.id),
+  ).toBe("h3");
+  await expect(page.locator('.loot-panel [data-item="h1"]')).toBeVisible();
+  expect(
+    await page.evaluate(() => (window as any).__game.save.pack.length),
+  ).toBe(8);
+  await page.screenshot({ path: "test-results/loot-v3.png" });
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".loot-panel")).toHaveCount(0);
+  await expect(page.getByRole("region", { name: "左侧背包" })).toHaveCount(0);
+  expect(await page.evaluate(() => (window as any).__game.raid.paused)).toBe(
+    false,
+  );
+  await page.keyboard.press("Escape");
+  await expect(
+    page.getByRole("heading", { name: "游戏菜单", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "继续游戏", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "退出本局", exact: true }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "继续游戏", exact: true }).click();
+  await page.keyboard.press("Tab");
+  await expect(page.locator(".equipped-grid")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".equipped-grid")).toHaveCount(0);
+});
+
+test("地图一远离原点仍绘制双方弹道、枪口和命中特效", async ({ page }) => {
+  await start(page);
+  await deploy(page);
+  const pixels = await page.evaluate(() => {
+    const g = (window as any).__game,
+      r = g.raid;
+    r.enemies = [];
+    r.p.x = 1000;
+    r.p.y = 1000;
+    r.paused = true;
+    r.addBullet(1000, 976, 0, true, 20, 1);
+    r.addBullet(1190, 976, Math.PI, false, 20, 1);
+    r.hurtPlayer(5, 1);
+    g.renderer3d.render(r, g.renderer);
+    const project = g.renderer3d.project(1040, 1000, 32),
+      ctx = g.renderer.ctx;
+    const rgba = ctx.getImageData(
+      Math.round(project.x) - 12,
+      Math.round(project.y) - 12,
+      24,
+      24,
+    ).data;
+    return {
+      pixels: Array.from(rgba).filter(
+        (_: number, i: number) => i % 4 === 3 && rgba[i] > 0,
+      ).length,
+      culling: g.renderer3d.bulletLines.frustumCulled,
+      particles: g.renderer3d.particlePoints.frustumCulled,
+      muzzles: r.combatFX.filter((f: any) => f.kind === "muzzle").length,
+    };
+  });
+  expect(pixels.pixels).toBeGreaterThan(20);
+  expect(pixels.culling).toBe(false);
+  expect(pixels.particles).toBe(false);
+  expect(pixels.muzzles).toBe(2);
+  await page.screenshot({ path: "test-results/combat-v3.png" });
+});
 async function start(page: Page, mode = "standard") {
   await page.goto("/?test=1");
   await page.getByRole("button", { name: "开始游戏", exact: true }).click();
@@ -115,7 +282,7 @@ test("地图一立体模型、切换疾跑、暂停设置与完整回滚", async
   });
   await page.keyboard.press("Escape");
   await expect(
-    page.getByRole("heading", { name: "暂停", exact: true }),
+    page.getByRole("heading", { name: "游戏菜单", exact: true }),
   ).toBeVisible();
   await page.getByRole("button", { name: "设置", exact: true }).click();
   await expect(page.getByText("主音量", { exact: true })).toBeVisible();
@@ -213,6 +380,32 @@ test("容器立即打开，自动显示左侧背包，逐件搜索后双击拾�
   expect(
     await page.evaluate(() => (window as any).__game.save.stats.extracts),
   ).toBe(1);
+  expect(
+    await page.evaluate(
+      (uid) => (window as any).__game.save.pack.some((i: any) => i.uid === uid),
+      uid,
+    ),
+  ).toBe(true);
+  expect(
+    await page.evaluate(
+      (uid) =>
+        (window as any).__game.save.stash.some((i: any) => i.uid === uid),
+      uid,
+    ),
+  ).toBe(false);
+  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.locator(`[data-grid="pack"] [data-id="${uid}"]`).click();
+  await page
+    .locator("#item-menu")
+    .getByRole("button", { name: "放入仓库", exact: true })
+    .click();
+  expect(
+    await page.evaluate(
+      (uid) =>
+        (window as any).__game.save.stash.some((i: any) => i.uid === uid),
+      uid,
+    ),
+  ).toBe(true);
 });
 
 test("立体瞄准与真实射击，翻滚和换弹后仍能开火", async ({ page }) => {
