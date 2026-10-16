@@ -150,6 +150,7 @@ describe("物品、经济与死亡事务", () => {
   it("轻松模式死亡保留全部物品，装备耐久保持损耗", () => {
     const s = newSave(),
       loot = makeItem("c4_0");
+    s.mode = "easy";
     s.pack.push(loot);
     s.equipment.armor!.durability = 20;
     beginRaid(s);
@@ -176,6 +177,7 @@ describe("物品、经济与死亡事务", () => {
   });
   it("密钥与通关只在撤离成功后保存，结算幂等", () => {
     const s = newSave();
+    s.mode = "easy";
     beginRaid(s);
     settle(s, result(false, ["iron"]));
     expect(s.defeated).not.toContain("iron");

@@ -132,7 +132,7 @@ export function text(
   color = "#f4eddc",
   align: CanvasTextAlign = "center",
 ) {
-  c.font = `600 ${size}px "Noto Sans SC", "Microsoft YaHei", sans-serif`;
+  c.font = `600 ${Math.max(18, size)}px "三角猫黑体", "Microsoft YaHei", sans-serif`;
   c.textAlign = align;
   c.fillStyle = color;
   c.fillText(s, x, y);

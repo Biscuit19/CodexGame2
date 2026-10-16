@@ -32,6 +32,56 @@ function advance(r: Raid, seconds: number, keys = new Set<string>()) {
 }
 beforeEach(() => memory.clear());
 describe("真实战区逻辑", () => {
+  it("新存档默认标准模式，暂停退出完整返还弹药、耐久、金币和新物品", () => {
+    const s = newSave();
+    expect(s.mode).toBe("standard");
+    const before = structuredClone(s);
+    const r = new Raid(
+      s,
+      0,
+      sound,
+      () => {},
+      () => {},
+      () => {},
+      41,
+    );
+    s.coins -= 600;
+    s.equipment.armor!.durability = 3;
+    s.collection.push("c4_0");
+    s.pack.push(makeItem("c4_0"));
+    s.secure.push(makeItem("c3_0"));
+    r.mag = 1;
+    r.pendingBosses.push("iron");
+    expect(r.abort()).toBe(true);
+    expect(r.done).toBe(true);
+    const { updated: _, ...after } = s;
+    const { updated: __, ...original } = before;
+    expect(after).toEqual(original);
+    expect(r.abort()).toBe(false);
+  });
+  it("切换疾跑在松开 Shift 后继续，第二次切换恢复行走", () => {
+    const { r } = start();
+    r.p.x = 1000;
+    r.p.y = 1550;
+    r.sprintToggled = true;
+    advance(r, 0.2, new Set(["KeyD"]));
+    const x = r.p.x;
+    expect(r.p.stamina).toBeLessThan(160);
+    r.sprintToggled = false;
+    advance(r, 0.2, new Set(["KeyD"]));
+    expect(r.p.x - x).toBeCloseTo(28, 1);
+  });
+  it("容器即时打开，只有内含物逐件计时，同时打开背包", () => {
+    const { r } = start(),
+      c = r.containers[0];
+    r.p.x = c.x;
+    r.p.y = c.y;
+    r.interact();
+    expect(r.search).toBe(c);
+    expect(r.inventory).toBe(true);
+    expect(c.revealed).toBe(0);
+    expect(c.open).toBe(true);
+  });
   it("四张地图的首领与撤离点均可从出生点步行抵达，敌人不会刷在墙内", () => {
     for (let map = 0; map < 4; map++) {
       const s = newSave();
@@ -120,7 +170,8 @@ describe("真实战区逻辑", () => {
     expect(r.p.hp).toBe(85);
     s.pack.push(makeItem("f3"));
     r.useFood();
-    advance(r, 0.1, new Set(["KeyD", "ShiftLeft"]));
+    r.sprintToggled = true;
+    advance(r, 0.1, new Set(["KeyD"]));
     expect(r.heal).toBe(0);
   });
   it("真实弹道能击中敌人并生成带装备的战利品", () => {
@@ -209,6 +260,7 @@ describe("真实战区逻辑", () => {
     r.finish(true, "test");
     expect(() => validateSave(s)).not.toThrow();
     const s2 = newSave();
+    s2.mode = "easy";
     new Raid(
       s2,
       0,

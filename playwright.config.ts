@@ -10,7 +10,11 @@ export default defineConfig({
       executablePath: process.env.CI
         ? undefined
         : process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE || "/usr/bin/chromium",
-      args: ["--no-sandbox", "--disable-dev-shm-usage"],
+      args: [
+        "--no-sandbox",
+        "--disable-dev-shm-usage",
+        "--enable-unsafe-swiftshader",
+      ],
     },
     screenshot: "only-on-failure",
   },

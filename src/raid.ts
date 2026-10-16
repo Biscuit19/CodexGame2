@@ -24,6 +24,7 @@ import {
   canPut,
   put,
   beginRaid,
+  cancelRaid,
   equip,
   settle,
 } from "./store";
@@ -151,6 +152,7 @@ export class Raid {
   time = 900;
   elapsed = 0;
   paused = false;
+  sprintToggled = false;
   done = false;
   activeWeapon: "primary" | "secondary" = "primary";
   magazines: Record<string, number> = {};
@@ -948,7 +950,7 @@ export class Raid {
     this.searchProgress = 0;
     this.stats.searches += c.open ? 0 : 1;
     c.open = true;
-    this.inventory = false;
+    this.inventory = true;
     this.sound.play("search");
   }
   take(index: number, safe = false) {
@@ -1056,6 +1058,15 @@ export class Raid {
     }
     this.enemies = this.enemies.filter((x) => x !== e);
   }
+  abort() {
+    if (this.done || !cancelRaid(this.save)) return false;
+    this.done = true;
+    this.sound.mode = "base";
+    this.search = undefined;
+    this.puzzle = undefined;
+    this.inventory = false;
+    return true;
+  }
   finish(success: boolean, reason: string) {
     if (this.done) return;
     this.done = true;
@@ -1146,15 +1157,17 @@ export class Raid {
     this.fireCool -= dt;
     this.shake = Math.max(0, this.shake - dt * 20);
     p.regen -= dt;
-    const sprint =
-      keys.has("ShiftLeft") && l > 0 && p.stamina > 0 && !p.exhausted;
+    const sprint = this.sprintToggled && l > 0 && p.stamina > 0 && !p.exhausted;
     if (l && !this.mapOpen) {
       this.interrupt(false);
       if (sprint) {
         if (this.heal > 0) this.interrupt();
         p.stamina = Math.max(0, p.stamina - dt * 10);
         p.regen = 0.8;
-        if (p.stamina <= 0) p.exhausted = true;
+        if (p.stamina <= 0) {
+          p.exhausted = true;
+          this.sprintToggled = false;
+        }
       }
       this.moveActor(
         p,

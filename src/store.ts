@@ -43,6 +43,7 @@ export interface Save {
   stock?: Record<string, number>;
   loadedRounds?: { weapon: string; tier: number; count: number }[];
   pendingMap?: number;
+  raidBackup?: string;
   stats: {
     raids: number;
     extracts: number;
@@ -84,8 +85,8 @@ export function newSave(slot = 0): Save {
     version: 1,
     slot,
     name: "三花七号",
-    mode: "easy",
-    easyUsed: true,
+    mode: "standard",
+    easyUsed: false,
     coins: 4500,
     warehouse: 0,
     safe: 0,
@@ -164,6 +165,11 @@ export function validateSave(data: unknown): Save {
     !s.settings
   )
     throw Error("存档格式不受支持");
+  if (
+    s.raidBackup !== undefined &&
+    (typeof s.raidBackup !== "string" || s.raidBackup.length > 2000000)
+  )
+    throw Error("出击备份无效");
   const all: Item[] = [];
   if (
     !Number.isInteger(s.ng) ||
@@ -531,6 +537,7 @@ export function repair(s: Save, slot: "armor" | "helmet") {
 }
 export function beginRaid(s: Save) {
   if (s.pending || s.overflow.length || !s.equipment.primary) return false;
+  s.raidBackup = JSON.stringify({ ...s, raidBackup: undefined });
   s.pending = true;
   s.loadedRounds = [];
   s.stats.raids++;
@@ -541,6 +548,7 @@ export function beginRaid(s: Save) {
 export function settle(s: Save, r: Result) {
   if (!s.pending) return false;
   s.pending = false;
+  delete s.raidBackup;
   s.loadedRounds = [];
   s.stock = {};
   const kept = r.success || s.mode === "easy";
@@ -594,6 +602,22 @@ export function settle(s: Save, r: Result) {
   return true;
 }
 const mapsReward = (m: number) => [4000, 7500, 12000, 20000][m];
+export function cancelRaid(s: Save) {
+  if (!s.pending || !s.raidBackup) return false;
+  try {
+    const raw = JSON.parse(s.raidBackup);
+    if (raw.raidBackup !== undefined) return false;
+    const restored = validateSave(raw),
+      settings = s.settings;
+    for (const k of Object.keys(s))
+      delete (s as unknown as Record<string, unknown>)[k];
+    Object.assign(s, restored, { settings });
+    persist(s);
+    return true;
+  } catch {
+    return false;
+  }
+}
 export function recoverInterrupted(s: Save) {
   if (s.pending) {
     for (const rounds of s.loadedRounds ?? []) {
