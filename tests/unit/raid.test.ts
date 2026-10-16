@@ -1,5 +1,5 @@
 import { beforeEach, describe, it, expect } from "vitest";
-import { Raid } from "../../src/raid";
+import { Raid, projectileFalloff } from "../../src/raid";
 import { newSave, recoverInterrupted, validateSave } from "../../src/store";
 import { makeItem, weapons, db } from "../../src/data";
 import type { Sound } from "../../src/audio";
@@ -32,6 +32,61 @@ function advance(r: Raid, seconds: number, keys = new Set<string>()) {
 }
 beforeEach(() => memory.clear());
 describe("真实战区逻辑", () => {
+  it("霰弹一次产生7枚弹丸，只消耗1发子弹和一次耐久，远处实际命中伤害明显衰减", () => {
+    const hits = (distance: number) => {
+      const { s, r } = start();
+      r.walls = [];
+      r.p.x = 1000;
+      r.p.y = 1000;
+      r.p.angle = 0;
+      s.equipment.primary = makeItem("w16");
+      r.mag = 2;
+      const target = r.spawn(1000 + distance, 1000, 0, 1);
+      target.hp = target.maxHp = 1000;
+      target.turret = true;
+      target.cool = 999;
+      const durability = s.equipment.primary.durability!;
+      r.shoot();
+      expect(r.mag).toBe(1);
+      expect(r.bullets).toHaveLength(7);
+      expect(new Set(r.bullets.map((b) => b.vy)).size).toBe(7);
+      expect(r.combatFX.filter((f) => f.kind === "muzzle")).toHaveLength(1);
+      expect(durability - s.equipment.primary.durability!).toBeCloseTo(
+        100 / 700,
+      );
+      advance(r, 0.4);
+      return r.stats.damageDealt;
+    };
+    const near = hits(80),
+      far = hits(210);
+    expect(near).toBeGreaterThan(40);
+    expect(far).toBeGreaterThan(0);
+    expect(near).toBeGreaterThan(far * 2);
+  });
+  it("敌猫的霰弹枪同样多弹丸射击，掉落实际枪械和已消耗耐久", () => {
+    const { r } = start();
+    r.walls = [];
+    r.p.x = 1000;
+    r.p.y = 1000;
+    const e = r.spawn(1100, 1000, 0, 1);
+    e.weapon = 16;
+    e.weaponDurability = 100;
+    e.mag = 6;
+    e.cool = 0;
+    e.state = "combat";
+    r.updateEnemy(e, 1 / 60);
+    expect(r.bullets).toHaveLength(7);
+    expect(
+      r.bullets.every((b) => !b.friendly && b.shotgun && b.range === 230),
+    ).toBe(true);
+    expect(e.mag).toBe(5);
+    r.kill(e);
+    const gun = r.containers
+      .filter((c) => c.type === "corpse")
+      .flatMap((c) => c.items)
+      .find((i) => i.id === "w16");
+    expect(gun?.durability).toBeCloseTo(100 - 100 / 700);
+  });
   it("高阶枪耐久更高，实际射出700发降至零；30以下减伤，零耐久保留30%伤害", () => {
     expect(db.w11.durability!).toBeGreaterThan(db.w0.durability!);
     for (const id of ["w0", "w11"]) {
@@ -276,7 +331,7 @@ describe("真实战区逻辑", () => {
         ).toBe(true);
     }
   });
-  it("12 把武器都能发射、换弹后继续射击，翻滚结束不会卡死", () => {
+  it("20 把武器都能发射、换弹后继续射击，翻滚结束不会卡死", () => {
     for (const w of weapons) {
       const { s, r } = start();
       s.equipment.primary = makeItem(w.id);
@@ -285,7 +340,7 @@ describe("真实战区逻辑", () => {
       const count = r.stats.damageDealt;
       r.shoot();
       expect(r.mag).toBe(0);
-      expect(r.bullets).toHaveLength(1);
+      expect(r.bullets).toHaveLength(w.pellets!);
       r.loadMagazine();
       advance(r, 4);
       expect(r.reload).toBe(0);

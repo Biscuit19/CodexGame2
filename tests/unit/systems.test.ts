@@ -11,6 +11,7 @@ import {
   damage,
   searchTime,
   sale,
+  randomWeapon,
 } from "../../src/data";
 import {
   newSave,
@@ -55,8 +56,48 @@ const result = (success: boolean, bosses: string[] = []): Result => ({
   reward: success ? 300 : 0,
 });
 describe("配置与战斗", () => {
+  it("四张地图按解锁阶梯刷新全部20款枪，传说枪明显更少", () => {
+    const random = rng(2026),
+      found = new Set<string>();
+    let legendary = 0;
+    for (let map = 0; map < 4; map++) {
+      for (let n = 0; n < 5000; n++) {
+        const w = randomWeapon(random, map);
+        expect(w.unlock).toBeLessThanOrEqual(map);
+        if (map === 3) {
+          found.add(w.id);
+          if (w.tier === 5) legendary++;
+        }
+      }
+    }
+    expect(found.size).toBe(20);
+    expect(legendary).toBeLessThan(250);
+  });
+  it("旧版武器与已装填子弹保留，替换名称后不缩小旧弹匣", () => {
+    const s = newSave();
+    for (const [id, count] of [
+      ["w1", 40],
+      ["w2", 25],
+      ["w5", 25],
+      ["w8", 15],
+      ["w11", 3],
+    ] as const) {
+      const i = makeItem(id);
+      i.loaded = { tier: 1, count };
+      s.stash.push(i);
+    }
+    const restored = validateSave(s);
+    expect(
+      restored.stash.filter((i) => i.loaded).map((i) => i.loaded!.count),
+    ).toEqual([40, 25, 25, 15, 3]);
+    expect(db.w3.name).toBe("三尾47");
+  });
   it("完整内容表，物品 id 唯一，六名主线首领", () => {
-    expect(weapons).toHaveLength(12);
+    expect(weapons).toHaveLength(20);
+    expect(weapons.filter((w) => w.weaponClass === "smg")).toHaveLength(5);
+    expect(weapons.filter((w) => w.weaponClass === "rifle")).toHaveLength(8);
+    expect(weapons.filter((w) => w.weaponClass === "sniper")).toHaveLength(3);
+    expect(weapons.filter((w) => w.weaponClass === "shotgun")).toHaveLength(4);
     expect(collectibles).toHaveLength(60);
     expect(bosses.filter((b) => b.map === 3)).toHaveLength(3);
     expect(new Set(items.map((i) => i.id)).size).toBe(items.length);

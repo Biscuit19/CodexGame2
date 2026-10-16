@@ -20,6 +20,7 @@ import {
   MOVEMENT,
   wearWeapon,
   weaponDamageScale,
+  randomWeapon,
   type Item,
   type BossDef,
 } from "./data";
@@ -101,7 +102,18 @@ export interface Bullet {
   tier: number;
   range: number;
   travel: number;
+  shotgun?: boolean;
 }
+export const projectileFalloff = (b: Bullet) =>
+  b.shotgun
+    ? Math.max(
+        0.15,
+        Math.min(
+          1,
+          1 - (Math.max(0, b.travel - 50) / Math.max(1, b.range - 50)) * 0.85,
+        ),
+      )
+    : Math.max(0.45, 1 - (b.travel / b.range) * 0.3);
 export interface Particle {
   x: number;
   y: number;
@@ -426,9 +438,7 @@ export class Raid {
         loot(this.random, m, high),
       );
       if (type === "weapon")
-        entries[0] = makeItem(
-          `w${Math.min(11, Math.floor(this.random() * (4 + m * 2)))}`,
-        );
+        entries[0] = makeItem(randomWeapon(this.random, m).id);
       if (type === "medical")
         entries[0] = makeItem(`f${1 + Math.floor(this.random() * 3)}`);
       if (i % 3 === 0)
@@ -576,13 +586,20 @@ export class Raid {
     const hp = boss?.hp ?? 55 + tier * 17;
     const weapon =
       boss?.weapon ??
-      (breed === 10
-        ? 9
-        : breed === 14
-          ? 7
-          : breed === 7
-            ? 2
-            : Math.min(11, tier < 2 ? 0 : tier + 1));
+      Number(
+        randomWeapon(
+          this.random,
+          this.map,
+          breed === 10
+            ? "sniper"
+            : breed === 13 || breed === 14
+              ? "shotgun"
+              : breed === 0 || breed === 7
+                ? "smg"
+                : "rifle",
+          Math.max(1, tier - 1),
+        ).id.slice(1),
+      );
     const e: Enemy = {
       x,
       y,
@@ -873,25 +890,37 @@ export class Raid {
     this.mag--;
     this.syncLoaded();
     this.fireCool = 60 / this.weapon.rpm!;
-    const a = this.p.angle + (this.random() - 0.5) * this.weapon.spread! * 2;
-    this.addBullet(
-      this.p.x,
-      this.p.y - 24,
-      a,
-      true,
-      this.weapon.damage! *
-        weaponDamageScale(
-          this.weaponItem!.durability ?? this.weapon.durability!,
-        ),
-      this.ammoTier,
-      this.weapon.range!,
-    );
+    const count = this.weapon.pellets ?? 1;
+    for (let pellet = 0; pellet < count; pellet++) {
+      const spread =
+        count > 1
+          ? (pellet / (count - 1) - 0.5) * 2 + (this.random() - 0.5) * 0.15
+          : (this.random() - 0.5) * 2;
+      const a = this.p.angle + spread * this.weapon.spread!;
+      this.addBullet(
+        this.p.x,
+        this.p.y - 24,
+        a,
+        true,
+        this.weapon.damage! *
+          weaponDamageScale(
+            this.weaponItem!.durability ?? this.weapon.durability!,
+          ),
+        this.ammoTier,
+        this.weapon.range!,
+        count > 1,
+        pellet === 0,
+      );
+    }
     this.sound.play("shot");
     wearWeapon(this.weaponItem!);
-    this.shake = Math.max(this.shake, this.weapon.damage! > 60 ? 5 : 2);
+    this.shake = Math.max(
+      this.shake,
+      count > 1 || this.weapon.damage! > 60 ? 5 : 2,
+    );
     this.emit(
-      this.p.x + Math.cos(a) * 44,
-      this.p.y - 24 + Math.sin(a) * 44,
+      this.p.x + Math.cos(this.p.angle) * 44,
+      this.p.y - 24 + Math.sin(this.p.angle) * 44,
       5,
       "#ffe4a4",
     );
@@ -1008,17 +1037,20 @@ export class Raid {
     dmg: number,
     tier: number,
     range = 800,
+    shotgun = false,
+    muzzle = true,
   ) {
     const speed = friendly ? 1050 : 440;
-    this.combatFX.push({
-      kind: "muzzle",
-      x: x + Math.cos(a) * 40,
-      y: y + Math.sin(a) * 40,
-      angle: a,
-      friendly,
-      life: 0.18,
-      max: 0.18,
-    });
+    if (muzzle)
+      this.combatFX.push({
+        kind: "muzzle",
+        x: x + Math.cos(a) * 40,
+        y: y + Math.sin(a) * 40,
+        angle: a,
+        friendly,
+        life: 0.18,
+        max: 0.18,
+      });
     this.bullets.push({
       x: x + Math.cos(a) * 32,
       y: y + Math.sin(a) * 32,
@@ -1030,6 +1062,7 @@ export class Raid {
       tier,
       range,
       travel: 0,
+      shotgun,
     });
   }
   alert(x: number, y: number, radius: number) {
@@ -1235,7 +1268,7 @@ export class Raid {
       e.tier,
       head ? e.helmetDurability : e.armorDurability,
       head,
-      Math.max(0.45, 1 - (b.travel / b.range) * 0.3),
+      projectileFalloff(b),
     );
     if (e.shield > 0) d *= 0.35;
     if (head)
@@ -1505,7 +1538,11 @@ export class Raid {
             b.life = 0;
           }
         } else if (Math.hypot(p.x - b.x, p.y - 25 - b.y) < 20) {
-          this.hurtPlayer(b.damage, b.tier, b.y < p.y - 34);
+          this.hurtPlayer(
+            b.damage * (b.shotgun ? projectileFalloff(b) : 1),
+            b.tier,
+            b.y < p.y - 34,
+          );
           b.life = 0;
         }
       }
@@ -1580,31 +1617,40 @@ export class Raid {
     }
     if (e.state === "combat" && canSee) {
       e.angle = Math.atan2(p.y - e.y, p.x - e.x);
-      if (e.cool <= 0 && e.reload <= 0 && !e.telegraph) {
+      if (
+        e.cool <= 0 &&
+        e.reload <= 0 &&
+        !e.telegraph &&
+        d < weapons[e.weapon].range! + 30
+      ) {
         if (!e.mag) {
-          e.reload = 2;
+          e.reload = weapons[e.weapon].reload!;
         } else {
-          const shots = e.boss?.skill === "shotgun" ? 5 : 1;
+          const gun = weapons[e.weapon];
+          const shots = gun.pellets ?? 1;
           for (let i = 0; i < shots; i++)
             this.addBullet(
               e.x,
               e.y - 24,
               e.angle +
                 (this.random() - 0.5) *
-                  (e.boss?.skill === "shotgun"
-                    ? 0.55
-                    : 0.15 + 0.04 * (5 - e.tier)),
+                  (shots > 1 ? gun.spread! * 2 : 0.15 + 0.04 * (5 - e.tier)),
               false,
               (e.boss ? 14 + this.map * 2 : 8 + this.map * 2) *
-                weaponDamageScale(e.weaponDurability),
+                weaponDamageScale(e.weaponDurability) *
+                (shots > 1 ? (e.boss ? 4 : 2.8) / shots : 1),
               Math.min(4, e.tier),
+              gun.range!,
+              shots > 1,
+              i === 0,
             );
           e.mag--;
           e.weaponDurability = Math.max(
             0,
             e.weaponDurability - weapons[e.weapon].durability! / 700,
           );
-          e.cool =
+          e.cool = Math.max(
+            60 / gun.rpm!,
             e.boss?.skill === "shotgun"
               ? 1.5
               : e.boss?.skill === "turret"
@@ -1613,7 +1659,8 @@ export class Raid {
                   ? 0.25
                   : role === "sniper"
                     ? 1.7
-                    : 0.65 + this.random() * 0.65;
+                    : 0.65 + this.random() * 0.65,
+          );
           this.sound.play("enemy");
         }
       }

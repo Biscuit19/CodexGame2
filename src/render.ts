@@ -275,6 +275,7 @@ export class Renderer {
           c.rotate((0.35 - p.roll) * Math.PI * 4);
           cat(c, 0, 15, {
             player: true,
+            weaponId: r.weaponItem?.id,
             walk: p.walk,
             angle: p.angle,
             armor: 1,
@@ -286,6 +287,7 @@ export class Renderer {
         } else
           cat(c, p.x, p.y, {
             player: true,
+            weaponId: r.weaponItem?.id,
             walk: p.walk,
             angle: p.angle,
             armor: r.save.equipment.armor ? 1 : 0,
@@ -456,6 +458,7 @@ export class Renderer {
       c.restore();
     } else
       cat(c, e.x, e.y, {
+        weaponId: `w${e.weapon}`,
         fur: b.fur,
         patch: b.patch,
         eye: b.eye,

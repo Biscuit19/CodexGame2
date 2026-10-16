@@ -1648,6 +1648,43 @@ kbd {
   width: 36px;
   height: 36px;
 }
+.item-art {
+  --art-w: var(--art-size);
+  --art-h: var(--art-size);
+  width: var(--art-w);
+  height: var(--art-h);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+.art-glyph {
+  display: block;
+  flex-shrink: 0;
+  background-repeat: no-repeat;
+}
+.slot-grid .item-slot > .item-art {
+  --art-w: 52px;
+  --art-h: 42px;
+}
+.pack-grid .item-slot > .item-art,
+.safe-grid .item-slot > .item-art {
+  --art-w: 62px;
+  --art-h: 34px;
+}
+.shop-grid .item-slot > .item-art {
+  --art-w: 128px;
+  --art-h: 90px;
+}
+.warehouse-panel .item-slot > .item-art {
+  --art-w: 90px;
+  --art-h: 58px;
+}
+.equipped-item > .item-art {
+  --art-w: 84px;
+  --art-h: 48px;
+}
 .pack-grid .item-slot,
 .safe-grid .item-slot {
   padding: 2px;
@@ -1660,6 +1697,18 @@ kbd {
 }
 .slot-grid .item-slot > small {
   display: none;
+}
+.shop-grid .item-slot > small {
+  display: block;
+  font-size: 18px;
+  line-height: 1.3;
+}
+.weapon-filter {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+  font-size: 20px;
 }
 .slot-grid .item-slot strong,
 .slot-grid .item-slot > span:not(.quality) {

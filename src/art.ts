@@ -1,4 +1,5 @@
 import { db, colors, type Item } from "./data";
+import { equipmentSprite, drawEquipment } from "./equipment-art";
 const shapes: Record<string, string> = {
   rifle:
     '<path d="M10 34h40v-8H22l-4 3H8v8h8l-3 14h9l5-14h9v8h6V34m8-4h9"/><path d="M30 25v-6h10v6"/>',
@@ -77,7 +78,7 @@ export function icon(name: string, color = "#dfc18b", size = 48) {
 }
 export function itemIcon(item: Item, size = 48) {
   const d = db[item.id];
-  return icon(d.icon, colors[d.tier], size);
+  return equipmentSprite(item.id, size) ?? icon(d.icon, colors[d.tier], size);
 }
 export type Ctx = CanvasRenderingContext2D;
 export function ellipse(
@@ -204,6 +205,7 @@ export interface CatArt {
   player?: boolean;
   hit?: number;
   breed?: number;
+  weaponId?: string;
 }
 export function cat(c: Ctx, x: number, y: number, o: CatArt = {}) {
   const t = o.walk || 0,
@@ -350,10 +352,12 @@ export function cat(c: Ctx, x: number, y: number, o: CatArt = {}) {
   c.save();
   c.translate(3, -20);
   c.rotate(angle);
-  round(c, 2, -4, 35, 8, 2, "#303d37");
-  round(c, 7, -5, 19, 7, 2, "#657561");
-  round(c, 31, -2, 16, 4, 1, "#23302c");
-  round(c, 12, 2, 7, 9, 1, "#31443b");
+  if (!o.weaponId || !drawEquipment(c, o.weaponId, -14, -19, 72, 42)) {
+    round(c, 2, -4, 35, 8, 2, "#303d37");
+    round(c, 7, -5, 19, 7, 2, "#657561");
+    round(c, 31, -2, 16, 4, 1, "#23302c");
+    round(c, 12, 2, 7, 9, 1, "#31443b");
+  }
   c.restore();
   ellipse(c, Math.cos(angle) * 10, -20 + Math.sin(angle) * 10, 6, 5, fur);
   c.restore();

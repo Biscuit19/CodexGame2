@@ -1,7 +1,8 @@
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
-import { breeds, maps } from "./data";
+import { breeds, maps, db } from "./data";
+import { weaponPalette } from "./equipment-art";
 import type { Raid, Enemy, Container } from "./raid";
 import { Renderer } from "./render";
 import { text, round } from "./art";
@@ -153,6 +154,200 @@ function cylinder(
 ) {
   return mesh(p, new THREE.CylinderGeometry(rt, rb, h, 12), color, x, y, z);
 }
+function weaponModel(g: THREE.Group, id: string) {
+  if (g.userData.weaponId === id) return;
+  release(g);
+  g.clear();
+  const index = Number(id.slice(1)),
+    def = db[id];
+  const [body, accent] = weaponPalette[index] ?? weaponPalette[0];
+  const cream = "#f3dea3",
+    ink = "#183b45",
+    pink = "#ee9bad";
+  const long = def.weaponClass === "sniper",
+    shotgun = def.weaponClass === "shotgun";
+  const len = long ? 36 : shotgun ? 28 : def.weaponClass === "smg" ? 20 : 27;
+  block(g, body, 0, 0, 7, 9, 9, len, 2);
+  block(g, accent, 0, 2, 16, 10, 7, 13, 2);
+  block(g, ink, 0, -8, 2, 5, 13, 7, 1);
+  cylinder(
+    g,
+    ink,
+    0,
+    0,
+    len + 6,
+    shotgun ? 2.7 : 1.8,
+    1.8,
+    long ? 30 : 16,
+  ).rotation.x = Math.PI / 2;
+  block(g, ink, 0, 5, len + 10, 3, 5, 3, 0.5);
+  if (!shotgun) block(g, cream, 0, -10, 12, 5, 15, 8, 1.5).rotation.x = -0.23;
+  if (long) {
+    block(g, ink, 0, 8, 7, 4, 5, 11, 1);
+    cylinder(g, body, 0, 12, 8, 4, 4, 20).rotation.x = Math.PI / 2;
+  }
+  const tube = (points: number[][], color: string, radius = 2.5) =>
+    mesh(
+      g,
+      new THREE.TubeGeometry(
+        new THREE.CatmullRomCurve3(
+          points.map((p) => new THREE.Vector3(p[0], p[1], p[2])),
+        ),
+        12,
+        radius,
+        6,
+        false,
+      ),
+      color,
+      0,
+      0,
+      0,
+    );
+  const ring = (y: number, z: number, color: string, radius: number) => {
+    const m = mesh(
+      g,
+      new THREE.TorusGeometry(radius, 1.7, 6, 16),
+      color,
+      0,
+      y,
+      z,
+    );
+    m.rotation.y = Math.PI / 2;
+    return m;
+  };
+  const ear = (x: number, y: number, z: number, color = accent, size = 6) =>
+    mesh(g, new THREE.ConeGeometry(size, size * 1.6, 3), color, x, y, z);
+  const paw = (y: number, z: number, color = accent, size = 7) => {
+    ball(g, color, 0, y, z, 5, size, size);
+    ball(g, pink, 5, y, z, 1, size * 0.5, size * 0.5);
+    for (const n of [-1, 0, 1])
+      ball(g, pink, 5, y + size * 0.65, z + n * size * 0.6, 1.2, 2, 2);
+  };
+  if (![3, 9, 14, 19].includes(index))
+    block(g, accent, 0, 0, -11, 8, 10, 14, 3);
+  switch (index) {
+    case 0:
+      ring(3, -16, accent, 10);
+      break;
+    case 1:
+      ear(-5, 7, 18);
+      ear(5, 7, 18);
+      break;
+    case 2:
+      cylinder(g, accent, 0, -11, 11, 9, 9, 9).rotation.z = Math.PI / 2;
+      ring(-11, 11, cream, 4);
+      break;
+    case 3:
+      for (const n of [-1, 0, 1]) {
+        tube(
+          [
+            [0, 0, -3],
+            [n * 3, n * 5, -13],
+            [n * 5, n * 13, -25],
+            [n * 5, n * 16, -32],
+          ],
+          accent,
+          4,
+        );
+        ball(g, "#cb5930", n * 4, n * 10, -21, 4.3, 3, 3);
+      }
+      break;
+    case 4:
+      paw(-11, 20, cream, 8);
+      break;
+    case 5:
+      for (const z of [-1, 7, 15]) block(g, accent, 0, 5, z, 10, 2, 3, 0.5);
+      ear(-4, 10, 7, accent, 4);
+      ear(4, 10, 7, accent, 4);
+      break;
+    case 6:
+      for (const n of [-1, 0, 1])
+        tube(
+          [
+            [0, 3, 17],
+            [n * 5, 3 + n * 5, 28],
+            [n * 7, 3 + n * 7, 34],
+          ],
+          cream,
+          1.8,
+        );
+      break;
+    case 7:
+      paw(-1, -15, accent, 10);
+      break;
+    case 8:
+    case 12:
+      block(g, cream, 0, 10, 6, 3, 3, 28, 1);
+      for (const z of [-3, 4, 11, 18]) block(g, cream, 0, 11, z, 15, 3, 3, 1);
+      if (index === 12) block(g, cream, 0, 7, 11, 12, 4, 25, 2);
+      break;
+    case 9:
+      for (const [y, z, s] of [
+        [0, -12, 10],
+        [6, -18, 8],
+        [-5, -19, 7],
+      ])
+        ball(g, cream, 0, y, z, 6, s, s);
+      break;
+    case 10:
+      for (const n of [-1, 1])
+        tube(
+          [
+            [0, 0, -4],
+            [0, n * 7, -15],
+            [0, 0, -21],
+          ],
+          accent,
+          3,
+        );
+      for (const z of [14, 19, 24]) block(g, ink, 5, 1, z, 1, 7, 2, 0.2);
+      break;
+    case 11:
+      paw(0, 57, accent, 8);
+      break;
+    case 13:
+      tube(
+        [
+          [0, 0, 8],
+          [0, -13, 6],
+          [0, -18, 14],
+        ],
+        body,
+        4,
+      );
+      paw(-18, 14, accent, 6);
+      break;
+    case 14:
+      block(g, cream, 0, 0, -10, 16, 18, 20, 6);
+      break;
+    case 15:
+      ear(-5, 14, 10, pink, 8);
+      ear(5, 14, 10, pink, 8);
+      block(g, body, 0, 9, 8, 13, 3, 20, 1);
+      break;
+    case 16:
+      for (const z of [12, 16, 20]) block(g, "#aa7946", 0, 6, z, 10, 2, 2, 0.5);
+      break;
+    case 17:
+      ear(-4, -5, 27, cream, 5).rotation.x = Math.PI;
+      ear(4, -5, 27, cream, 5).rotation.x = Math.PI;
+      break;
+    case 18:
+      ring(-10, 4, accent, 9);
+      ball(g, accent, 0, -19, 6, 5, 6, 6);
+      break;
+    case 19:
+      for (const n of [-2, -1, 0, 1, 2])
+        ear(n * 3, n * 4, -13, accent, 8).rotation.x = -Math.PI / 2;
+      cylinder(g, accent, 0, -11, 9, 10, 10, 10).rotation.z = Math.PI / 2;
+      break;
+  }
+  batchStatic(g);
+  g.traverse((o) => {
+    if (o instanceof THREE.Mesh) o.castShadow = false;
+  });
+  g.userData.weaponId = id;
+}
 function makeCat(breed = -2, boss = false): Rig {
   const b =
     breed === -2
@@ -280,7 +475,7 @@ function makeCat(breed = -2, boss = false): Rig {
     0,
   );
   ball(tail, b.fur, -23, 20, -10, 4.5, 4.5, 4.5);
-  gun.position.set(10, 31, 14);
+  gun.position.set(-20, 31, 14);
   body.add(gun);
   block(gun, "#334941", 0, 0, 9, 8, 8, 30, 2);
   block(gun, "#929475", 0, 1, 3, 9, 7, 15, 2);
@@ -288,8 +483,8 @@ function makeCat(breed = -2, boss = false): Rig {
   const barrel = cylinder(gun, "#2e3f3a", 0, 0, 30, 2.1, 2.1, 19);
   barrel.rotation.x = Math.PI / 2;
   block(gun, "#b6a480", 0, 5, 10, 4, 2, 7, 1);
-  ball(body, b.fur, 16, 29, 15, 5.5, 6, 6);
-  ball(body, b.fur, 4, 30, 23, 5, 5, 5);
+  ball(body, b.fur, -20, 29, 15, 5.5, 6, 6);
+  ball(body, b.fur, -8, 30, 23, 5, 5, 5);
   if (boss) root.scale.setScalar(breed === 14 ? 1.5 : 1.22);
   [head, helmet, pack, gun].forEach(batchStatic);
   root.traverse((o) => {
@@ -302,8 +497,10 @@ function makeCat(breed = -2, boss = false): Rig {
   const knife = new THREE.Group();
   knife.position.copy(gun.position);
   body.add(knife);
-  block(knife, "#415649", 0, 0, 5, 5, 5, 16, 1);
-  block(knife, "#bdc9bd", 0, 0, 23, 3, 7, 24, 1);
+  block(knife, "#b8563c", 0, 0, 5, 5, 5, 16, 1);
+  block(knife, "#f3dea3", 0, 0, 23, 3, 7, 24, 1);
+  ball(knife, "#ee9bad", 0, 4, 6, 5, 2, 5);
+  for (const x of [-4, 0, 4]) ball(knife, "#f3b3c3", x, 4, 11, 2, 2, 2);
   knife.visible = false;
   return { root, body, head, legs, tail, gun, helmet, vest, pack, knife };
 }
@@ -689,6 +886,8 @@ export class ThreeRenderer {
       !!r.save.equipment.bag,
     );
     const player = this.actors.get("player")!;
+    if (r.weaponItem && r.activeWeapon !== "melee")
+      weaponModel(player.gun, r.weaponItem.id);
     player.gun.visible = r.activeWeapon !== "melee" && !!r.weaponItem;
     player.knife.visible =
       r.activeWeapon === "melee" && !!r.save.equipment.melee;
@@ -705,6 +904,7 @@ export class ThreeRenderer {
         this.actors.set(e.id, rig);
         this.world.add(rig.root);
       }
+      weaponModel(rig.gun, `w${e.weapon}`);
       this.updateRig(
         rig,
         e.x,

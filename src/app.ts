@@ -23,6 +23,7 @@ import {
   EXTRACT_SECONDS,
   MOVEMENT,
   weaponDamageScale,
+  weaponClassNames,
 } from "./data";
 import {
   initDB,
@@ -133,7 +134,8 @@ let slots: (Save | null)[] = [null, null, null],
   result: Result | undefined;
 let selected: { from: ItemSource; uid: string } | undefined,
   filter = "all",
-  sort = "tier";
+  sort = "tier",
+  weaponFilter = "all";
 let menuAnchor = { x: 0, y: 0, left: 0 },
   hoverTimer: ReturnType<typeof setTimeout> | undefined;
 function selectedItem() {
@@ -175,7 +177,7 @@ const esc = (v: unknown) =>
         c
       ]!,
   );
-const name = (id: string) => db[id].name.replace("4A1", "四式");
+const name = (id: string) => db[id].name;
 const btn = (label: string, action: string, attrs = "", cls = "") =>
   `<button class="${cls}" data-action="${action}" ${attrs}>${label}</button>`;
 const heading = (text: string, meta = "") =>
@@ -201,7 +203,7 @@ function card(i: Item, from: string, shop = false) {
   const d = db[i.id],
     chosen = selected?.uid === i.uid,
     locked = shop && unlocked(s) < (d.unlock ?? 0);
-  return `<button class="item-slot ${chosen ? "selected" : ""}" style="--rarity:${colors[d.tier]}" data-action="${shop ? "buy" : from === "loot" ? "loot-select" : "select"}" data-id="${shop ? i.id : i.uid}" data-from="${from}" data-item="${i.id}" ${shop ? "" : 'draggable="true"'} ${locked ? "disabled" : ""} title="${esc(name(i.id) + "：" + d.desc)}"><span class="quality">${rarity[d.tier]}</span>${itemIcon(i, 52)}<strong>${name(i.id)}</strong><span>${shop ? (locked ? "尚未解锁" : `◈ ${money(d.price)}`) : d.kind === "ammo" ? `${i.qty} 发` : i.durability !== undefined ? `${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}` : d.kind === "collectible" ? `◈ ${money(sale(i))}` : kindNames[d.kind]}</span>${shop ? `<small>${d.damage ? `伤害 ${d.damage} · 弹匣 ${d.mag}` : d.capacity ? `${d.capacity} 格` : d.heal ? `恢复 ${d.heal} 生命` : d.kind === "ammo" ? "每组 90 发" : `${d.tier} 级防护`}</small>` : ""}</button>`;
+  return `<button class="item-slot ${chosen ? "selected" : ""}" style="--rarity:${colors[d.tier]}" data-action="${shop ? "buy" : from === "loot" ? "loot-select" : "select"}" data-id="${shop ? i.id : i.uid}" data-from="${from}" data-item="${i.id}" ${shop ? "" : 'draggable="true"'} ${locked ? "disabled" : ""} title="${esc(name(i.id) + "：" + d.desc)}"><span class="quality">${rarity[d.tier]}</span>${itemIcon(i, 52)}<strong>${name(i.id)}</strong><span>${shop ? (locked ? "尚未解锁" : `◈ ${money(d.price)}`) : d.kind === "ammo" ? `${i.qty} 发` : i.durability !== undefined ? `${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}` : d.kind === "collectible" ? `◈ ${money(sale(i))}` : kindNames[d.kind]}</span>${shop ? `<small>${d.damage ? `伤害 ${d.damage}${d.pellets! > 1 ? `×${d.pellets}` : ""} · 弹匣 ${d.mag}` : d.capacity ? `${d.capacity} 格` : d.heal ? `恢复 ${d.heal} 生命` : d.kind === "ammo" ? "每组 90 发" : `${d.tier} 级防护`}</small>` : ""}</button>`;
 }
 function remember() {
   persist(s);
@@ -371,7 +373,7 @@ function selectedActions() {
     );
   const spec =
     d.kind === "weapon"
-      ? `伤害 ${d.damage} · 弹匣 ${d.mag} · 射速 ${d.rpm} 发／分`
+      ? `${weaponClassNames[d.weaponClass!]} · ${d.pellets! > 1 ? `伤害 ${d.damage}×${d.pellets} 弹丸` : `伤害 ${d.damage}`} · 弹匣 ${d.mag} · 射速 ${d.rpm} 发／分 · 射程 ${d.range}`
       : d.kind === "bag"
         ? `容量 ${d.capacity} 格`
         : d.kind === "food"
@@ -458,7 +460,10 @@ function shop() {
   const products = items.filter((d) =>
     category === "armor"
       ? ["armor", "helmet", "bag"].includes(d.kind)
-      : d.kind === category,
+      : d.kind === category &&
+        (category !== "weapon" ||
+          weaponFilter === "all" ||
+          d.weaponClass === weaponFilter),
   );
   return `<div class="shop-layout"><aside class="panel shop-categories">${heading("补给商店")}${[
     ["weapon", "武器"],
@@ -476,7 +481,18 @@ function shop() {
     )
     .join(
       "",
-    )}${btn("领取救济包", "rescue", "", "secondary")}</aside><section class="panel shop-products">${heading("商品", "回收比例 65%")}<div class="slot-grid shop-grid">${products.map((d) => card({ uid: d.id, id: d.id, qty: d.kind === "ammo" ? AMMO_STACK : 1 }, "shop", true)).join("")}</div>${
+    )}${btn("领取救济包", "rescue", "", "secondary")}</aside><section class="panel shop-products">${heading("商品", "回收比例 65%")}${
+    category === "weapon"
+      ? `<label class="weapon-filter">枪械类型<select id="weapon-filter" aria-label="枪械类型"><option value="all">全部枪械</option>${Object.entries(
+          weaponClassNames,
+        )
+          .map(
+            ([key, label]) =>
+              `<option value="${key}" ${weaponFilter === key ? "selected" : ""}>${label}</option>`,
+          )
+          .join("")}</select></label>`
+      : ""
+  }<div class="slot-grid shop-grid">${products.map((d) => card({ uid: d.id, id: d.id, qty: d.kind === "ammo" ? AMMO_STACK : 1 }, "shop", true)).join("")}</div>${
     s.buyback.filter((i) => db[i.id].kind !== "collectible").length
       ? `<div class="buyback">${heading("死亡物品回购")}<div class="slot-grid">${s.buyback
           .filter((i) => db[i.id].kind !== "collectible")
@@ -1060,7 +1076,10 @@ document.addEventListener("input", (e) => {
 });
 document.addEventListener("change", async (e) => {
   const input = e.target as HTMLInputElement;
-  if (input.id === "filter") {
+  if (input.id === "weapon-filter") {
+    weaponFilter = input.value;
+    render();
+  } else if (input.id === "filter") {
     filter = input.value;
     render();
   } else if (input.id === "sort") {

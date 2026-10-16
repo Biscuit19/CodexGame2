@@ -68,10 +68,42 @@ try {
   ).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(baseMenu).toBeHidden();
+  await page.getByRole("button", { name: "补给商店", exact: true }).click();
+  await expect(page.locator(".shop-grid .item-art")).toHaveCount(20);
+  await expect(page.locator(".shop-grid svg")).toHaveCount(0);
+  await page.locator("#weapon-filter").selectOption("shotgun");
+  await expect(page.locator(".shop-grid .item-art")).toHaveCount(4);
+  await page.locator('.shop-grid [data-item="w16"]').click();
+  await expect(page.locator("#item-menu")).toContainText("14×7");
+  await page
+    .locator("#item-menu")
+    .getByRole("button", { name: /购买/ })
+    .click();
+  await page.screenshot({
+    path: "test-results/production-weapon-shop.png",
+    fullPage: true,
+  });
+  await page.getByRole("button", { name: "返回基地", exact: true }).click();
+  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page
+    .locator('[data-grid="stash"] [data-item="w16"]')
+    .dragTo(page.locator('[data-slot="primary"]'));
+  await expect(
+    page.locator('[data-slot="primary"] [data-art="w16"]'),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "返回基地", exact: true }).click();
   await page.getByRole("button", { name: "战区地图", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await expect(page.locator("#scene3d")).toBeVisible();
   await expect(page.locator("#raid-time")).toBeVisible();
+  await expect(page.locator("#weapon-name")).toHaveText("抓板870");
+  await expect(page.locator("#mag-count")).toHaveText("06");
+  await page.mouse.move(1000, 500);
+  await page.mouse.down();
+  await page.waitForTimeout(120);
+  await page.mouse.up();
+  await expect(page.locator("#mag-count")).toHaveText("05");
+  await page.screenshot({ path: "test-results/production-shotgun.png" });
   await expect(page.locator("#st-number")).toHaveText("100");
   await page.keyboard.down("KeyD");
   await page.waitForTimeout(700);
@@ -163,6 +195,8 @@ try {
         baseSettingsAndGuide: true,
         packBulkTransferAndSale: true,
         offlineLoad: true,
+        pngEquipmentAndTwentyWeapons: true,
+        shotgunPurchaseEquipAndFire: true,
         errors,
         failed,
       },

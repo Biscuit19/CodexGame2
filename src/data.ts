@@ -7,6 +7,13 @@ export type Kind =
   | "food"
   | "collectible"
   | "melee";
+export type WeaponClass = "smg" | "rifle" | "sniper" | "shotgun";
+export const weaponClassNames: Record<WeaponClass, string> = {
+  smg: "冲锋枪",
+  rifle: "步枪",
+  sniper: "狙击枪",
+  shotgun: "霰弹枪",
+};
 export interface ItemDef {
   id: string;
   name: string;
@@ -26,6 +33,8 @@ export interface ItemDef {
   useTime?: number;
   durability?: number;
   unlock?: number;
+  weaponClass?: WeaponClass;
+  pellets?: number;
 }
 export interface Item {
   uid: string;
@@ -74,41 +83,86 @@ export const capacities = [60, 80, 120, 200, 450],
 export const safeCap = [1, 2, 4, 6],
   safePrice = [0, 12000, 45000, 120000],
   safeNames = ["旧铁盒", "双鱼盒", "四爪保险箱", "六命保险箱"];
-export const weapons: ItemDef[] = [
-  ["绒球-9", 18, 30, 720, 360, 0.12, 1.5, 900, 1],
-  ["呼噜冲锋", 15, 40, 900, 310, 0.18, 1.7, 2100, 2],
-  ["短尾 .45", 23, 25, 600, 340, 0.14, 1.8, 3200, 2],
-  ["猫爪 56", 28, 30, 600, 550, 0.045, 2, 2800, 2],
-  ["长须 4A1", 25, 30, 680, 580, 0.028, 1.8, 5500, 3],
-  ["虎斑 7.62", 35, 25, 500, 570, 0.06, 2.2, 6200, 3],
-  ["三花卡宾", 24, 30, 650, 520, 0.032, 1.6, 4200, 2],
-  ["黑尾战斗步枪", 39, 20, 420, 650, 0.035, 2.3, 10500, 4],
-  ["罐头开盖器", 42, 15, 260, 700, 0.018, 2.1, 8500, 3],
-  ["望月栓狙", 85, 5, 45, 1000, 0, 2.8, 7000, 3],
-  ["静爪半自动", 62, 10, 150, 900, 0, 2.4, 12000, 4],
-  ["九命重狙", 125, 3, 28, 1200, 0, 3, 24000, 5],
-].map((r, i) => ({
+// Preserve legacy IDs and never shrink their magazines: existing saves keep all loaded rounds.
+const weaponRows: [
+  string,
+  WeaponClass,
+  number,
+  number,
+  number,
+  number,
+  number,
+  number,
+  number,
+  number,
+  number?,
+][] = [
+  ["卷尾猫兹", "smg", 18, 30, 720, 360, 0.12, 1.5, 900, 1],
+  ["折耳MP5", "smg", 19, 40, 800, 390, 0.09, 1.7, 2100, 2],
+  ["罐头汤姆逊", "smg", 23, 50, 600, 350, 0.14, 2.4, 3200, 2],
+  ["三尾47", "rifle", 28, 30, 600, 550, 0.045, 2, 2800, 2],
+  ["爪钩M4", "rifle", 25, 30, 680, 580, 0.028, 1.8, 5500, 3],
+  ["虎斑95", "rifle", 30, 30, 650, 570, 0.04, 2.2, 6200, 3],
+  ["长须M16", "rifle", 27, 30, 650, 560, 0.032, 1.9, 4200, 2],
+  ["猫靴SCAR", "rifle", 39, 20, 480, 650, 0.035, 2.3, 10500, 4],
+  ["鱼脊G36", "rifle", 30, 30, 720, 620, 0.027, 2.1, 8500, 3],
+  ["棉云AWM", "sniper", 85, 5, 45, 1000, 0, 2.8, 7000, 3],
+  ["鱼叉SVD", "sniper", 62, 10, 150, 900, 0, 2.4, 12000, 4],
+  ["巨爪巴雷特", "sniper", 125, 5, 28, 1200, 0, 3, 24000, 5],
+  ["鱼骨P90", "smg", 19, 50, 900, 420, 0.11, 2.3, 5800, 3],
+  ["折爪维克托", "smg", 20, 33, 1100, 340, 0.15, 1.9, 9500, 4],
+  ["午睡AUG", "rifle", 28, 30, 650, 600, 0.024, 2.1, 7200, 3],
+  ["折纸法喵斯", "rifle", 26, 25, 950, 580, 0.04, 2.5, 11500, 4],
+  ["抓板870", "shotgun", 14, 6, 70, 230, 0.17, 2.8, 1600, 1, 7],
+  ["虎牙686", "shotgun", 16, 2, 260, 210, 0.2, 2.4, 3300, 2, 8],
+  ["铃铛1887", "shotgun", 17, 5, 75, 260, 0.15, 2.9, 6500, 3, 8],
+  ["炸毛AA12", "shotgun", 13, 20, 300, 240, 0.23, 3.2, 21000, 5, 8],
+];
+export const weapons: ItemDef[] = weaponRows.map((r, i) => ({
   id: `w${i}`,
   name: r[0] as string,
   kind: "weapon",
-  icon: i < 3 ? "smg" : i < 9 ? "rifle" : "sniper",
-  damage: r[1] as number,
-  mag: r[2] as number,
-  rpm: r[3] as number,
-  range: r[4] as number,
-  spread: r[5] as number,
-  reload: r[6] as number,
-  price: r[7] as number,
-  tier: r[8] as number,
-  durability: [100, 125, 150, 185, 220][(r[8] as number) - 1],
-  unlock: Math.min(3, Math.max(0, (r[8] as number) - 2)),
+  icon: r[1],
+  weaponClass: r[1],
+  damage: r[2],
+  mag: r[3],
+  rpm: r[4],
+  range: r[5],
+  spread: r[6],
+  reload: r[7],
+  price: r[8],
+  tier: r[9],
+  pellets: r[10] ?? 1,
+  durability: [100, 125, 150, 185, 220][r[9] - 1],
+  unlock: Math.min(3, Math.max(0, r[9] - 2)),
   desc:
-    i < 3
+    r[1] === "smg"
       ? "近距离 · 全自动 · 快速压制"
-      : i < 9
+      : r[1] === "rifle"
         ? "中距离 · 稳定点射"
-        : "远距离 · 精准射击 · 无散布",
+        : r[1] === "sniper"
+          ? "远距离 · 精准射击 · 无散布"
+          : "近距离 · 多弹丸爆发 · 远距离衰减",
 }));
+export function randomWeapon(
+  random: () => number,
+  map: number,
+  category?: WeaponClass,
+  minTier = 1,
+) {
+  const unlocked = weapons.filter((w) => (w.unlock ?? 0) <= map);
+  const ranked = unlocked.filter((w) => w.tier >= minTier);
+  const available = ranked.length ? ranked : unlocked;
+  const matching = available.filter(
+    (w) => !category || w.weaponClass === category,
+  );
+  const pool = matching.length ? matching : available;
+  const weights = pool.map((w) => [0, 24, 12, 6, 3, 1][w.tier]);
+  let pick = random() * weights.reduce((sum, n) => sum + n, 0);
+  for (let i = 0; i < pool.length; i++)
+    if ((pick -= weights[i]) < 0) return pool[i];
+  return pool[pool.length - 1];
+}
 export const armorDur = [40, 60, 80, 105, 130],
   helmetDur = [25, 40, 55, 75, 95];
 const defenses: ItemDef[] = Array.from({ length: 5 }, (_, i) => [
@@ -537,7 +591,7 @@ export const bosses: BossDef[] = [
     map: 0,
     breed: 13,
     hp: 650,
-    weapon: 2,
+    weapon: 18,
     skill: "shotgun",
     x: 1920,
     y: 590,
