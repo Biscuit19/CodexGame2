@@ -964,32 +964,29 @@ kbd {
   position: relative;
   z-index: 2;
 }
-#game-menu {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  pointer-events: auto;
-}
-#game-menu .modal-backdrop {
-  z-index: 1001;
-}
-#game-menu.hidden {
-  display: none;
-}
 #game-menu,
 #base-menu {
   position: fixed;
   inset: 0;
+  z-index: 2147483647;
+  pointer-events: auto;
   margin: 0;
   width: 100vw;
   height: 100vh;
   max-width: none;
   max-height: none;
-  padding: 0;
+  padding: 24px;
   border: 0;
-  background: transparent;
+  /* Paint the backdrop on the dialog itself. Avoid nested fixed layers and
+     backdrop-filter over WebGL, which can fail in Chrome GPU compositing. */
+  background: #14271feb;
   color: inherit;
   overflow: auto;
+}
+#game-menu[open],
+#base-menu[open] {
+  display: grid;
+  place-items: center;
 }
 #game-menu:not([open]),
 #base-menu:not([open]) {
@@ -1013,24 +1010,6 @@ kbd {
   padding: 8px 12px;
   min-height: 40px;
   margin-bottom: 20px;
-}
-.slot-grid .item-slot .item-visual {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  width: 100%;
-  height: 26px;
-}
-.item-visual svg {
-  width: 18px;
-  height: 18px;
-}
-.item-visual .item-value {
-  font-size: 18px;
-  line-height: 1.2;
-  color: #e4c58c;
-  font-variant-numeric: tabular-nums;
 }
 .item-sale-value {
   color: #e4c58c;
@@ -1719,9 +1698,6 @@ kbd {
 .equipped-item span {
   font-size: 18px;
   color: #bdc9ae;
-}
-.equipped-item .item-value {
-  color: #edcd91;
 }
 .item-menu,
 .item-tooltip {

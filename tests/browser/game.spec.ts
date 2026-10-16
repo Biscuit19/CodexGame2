@@ -1,5 +1,66 @@
 import { test, expect, type Page } from "@playwright/test";
 
+test("原生弹窗调用异常仍显示可点击菜单，不会只暂停而无菜单", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    HTMLDialogElement.prototype.showModal = () => {
+      throw new DOMException("测试模态打开失败");
+    };
+  });
+  await start(page);
+  await page.getByRole("button", { name: "设置", exact: true }).click();
+  await expect(page.locator("#base-menu")).toBeVisible();
+  await page
+    .locator("#base-menu")
+    .getByRole("button", { name: "设置", exact: true })
+    .click();
+  await expect(
+    page.locator("#base-menu").getByText("主音量", { exact: true }),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.locator("#base-menu")).toBeHidden();
+  await deploy(page);
+  await page.keyboard.press("Escape");
+  await expect(page.locator("#game-menu")).toBeVisible();
+  await page
+    .locator("#game-menu")
+    .getByRole("button", { name: "继续游戏", exact: true })
+    .click();
+  await expect(page.locator("#game-menu")).toBeHidden();
+});
+
+test("接近容器时方向键未松开，第一次 E 同时打开两栏并持续搜索", async ({
+  page,
+}) => {
+  await start(page);
+  await deploy(page);
+  await page.evaluate(async () => {
+    const g = (window as any).__game,
+      r = g.raid;
+    const d = await import("/src/data.ts");
+    r.enemies = [];
+    const c = r.containers[0];
+    c.items = [d.makeItem("c4_0")];
+    c.revealed = 0;
+    r.p.x = c.x - 25;
+    r.p.y = c.y;
+  });
+  await page.keyboard.down("KeyD");
+  await page.keyboard.press("KeyE");
+  await page.waitForTimeout(250);
+  await expect(page.getByRole("region", { name: "左侧背包" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "右侧容器" })).toBeVisible();
+  expect(
+    await page.evaluate(() => (window as any).__game.raid.searchProgress),
+  ).toBeGreaterThan(0);
+  await page.keyboard.up("KeyD");
+  await page.screenshot({ path: "test-results/first-e-search.png" });
+  await page.keyboard.down("KeyA");
+  await expect(page.getByRole("region", { name: "右侧容器" })).toHaveCount(0);
+  await page.keyboard.up("KeyA");
+});
+
 test("基地设置在声音失败时仍打开顶层菜单，设置、指南和返回开始均可使用", async ({
   page,
 }) => {
@@ -19,6 +80,10 @@ test("基地设置在声音失败时仍打开顶层菜单，设置、指南和�
   await page.getByRole("button", { name: "设置", exact: true }).click();
   const dialog = page.locator("#base-menu");
   expect(await dialog.evaluate((el) => el.matches(":modal"))).toBe(true);
+  await expect(dialog.locator(".modal-backdrop")).toHaveCount(0);
+  expect(await dialog.evaluate((el) => getComputedStyle(el).display)).toBe(
+    "grid",
+  );
   for (const name of ["返回开始界面", "设置", "操作指南"])
     await expect(
       dialog.getByRole("button", { name, exact: true }),
@@ -84,14 +149,20 @@ test("Esc 菜单高于最高层级游戏画面，实际可点击并关闭", asyn
   );
 });
 
-test("仓库背包物品显示价值、可出售和全部放回，武器可修复并损耗上限", async ({
+test("价值仅在描述展示，背包可出售和全部放回，武器可修复并损耗上限", async ({
   page,
 }) => {
   await start(page);
   await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
   await expect(
     page.locator('[data-grid="pack"] [data-item="m1"] .item-value'),
-  ).toBeVisible();
+  ).toHaveCount(0);
+  await expect(page.locator(".equipped-grid .item-value")).toHaveCount(0);
+  await page.locator('[data-grid="pack"] [data-item="m1"]').click();
+  await expect(page.locator("#item-menu .item-sale-value")).toContainText(
+    "出售价值",
+  );
+  await page.getByRole("heading", { name: "背包", exact: true }).click();
   await page.locator('[data-grid="pack"] [data-item="f1"]').click();
   await expect(page.locator("#item-menu .item-sale-value")).toContainText(
     "出售价值",
@@ -117,6 +188,9 @@ test("仓库背包物品显示价值、可出售和全部放回，武器可修�
     g.render();
   });
   await page.locator('[data-slot="primary"] .equipped-item').click();
+  await expect(page.locator("#item-menu .item-sale-value")).toContainText(
+    "出售价值",
+  );
   await expect(page.locator("#item-menu")).toContainText("威力 58%");
   await page
     .locator("#item-menu")

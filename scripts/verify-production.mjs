@@ -17,9 +17,9 @@ if (process.env.EXPECTED_BUILD) {
     throw Error("Published revision did not reach the requested commit");
 }
 const browser = await chromium.launch({
-  executablePath: process.env.CI
-    ? undefined
-    : process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE || "/usr/bin/chromium",
+  executablePath:
+    process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE ||
+    (process.env.CI ? undefined : "/usr/bin/chromium"),
   args: [
     "--no-sandbox",
     "--disable-dev-shm-usage",
@@ -131,9 +131,8 @@ try {
   await expect(page.getByRole("region", { name: "左侧背包" })).toBeVisible();
   await expect(page.getByRole("region", { name: "右侧仓库" })).toBeVisible();
   await expect(page.locator('[data-grid="stash"] > *')).toHaveCount(60);
-  await expect(
-    page.locator('[data-grid="pack"] .item-value').first(),
-  ).toBeVisible();
+  await expect(page.locator('[data-grid="pack"] .item-value')).toHaveCount(0);
+  await expect(page.locator(".equipped-grid .item-value")).toHaveCount(0);
   await page.locator('[data-grid="pack"] [data-item="f1"]').click();
   await expect(
     page.locator("#item-menu").getByRole("button", { name: /^出售/ }),

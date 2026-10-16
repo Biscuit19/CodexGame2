@@ -68,11 +68,19 @@ document.body.append(baseMenu);
 function setDialog(dialog: HTMLDialogElement, content: string) {
   if (!content) {
     if (dialog.open) dialog.close();
+    dialog.removeAttribute("open");
     dialog.innerHTML = "";
     return;
   }
   dialog.innerHTML = content;
-  if (!dialog.open) dialog.showModal();
+  if (!dialog.open) {
+    try {
+      dialog.showModal();
+    } catch {
+      // A failed native modal must still leave a visible, usable menu.
+      dialog.setAttribute("open", "");
+    }
+  }
 }
 function syncGameMenu() {
   setDialog(gameMenu, raid && !raid.done && raid.paused ? raidOverlay() : "");
@@ -86,7 +94,7 @@ function syncBaseMenu() {
         : modal === "base-settings"
           ? `${heading("设置")}${settingsContent()}${btn("返回基地菜单", "settings", "", "secondary full")}`
           : `${guide()}${btn("返回基地菜单", "settings", "", "secondary full")}`;
-    content = `<div class="modal-backdrop"><section class="modal pause-modal panel">${btn("×", "close-modal", 'aria-label="关闭"', "close")}${content}</section></div>`;
+    content = `<section class="modal pause-modal panel">${btn("×", "close-modal", 'aria-label="关闭"', "close")}${content}</section>`;
   }
   setDialog(baseMenu, content);
 }
@@ -192,7 +200,7 @@ function card(i: Item, from: string, shop = false) {
   const d = db[i.id],
     chosen = selected?.uid === i.uid,
     locked = shop && unlocked(s) < (d.unlock ?? 0);
-  return `<button class="item-slot ${chosen ? "selected" : ""}" style="--rarity:${colors[d.tier]}" data-action="${shop ? "buy" : from === "loot" ? "loot-select" : "select"}" data-id="${shop ? i.id : i.uid}" data-from="${from}" data-item="${i.id}" ${shop ? "" : 'draggable="true"'} ${locked ? "disabled" : ""} title="${esc(name(i.id) + "：" + d.desc)}"><span class="quality">${rarity[d.tier]}</span>${!shop && ["weapon", "ammo", "food"].includes(d.kind) ? `<span class="item-visual">${itemIcon(i, 18)}<span class="item-value" aria-label="出售价值 ${sale(i)} 金币">${sale(i)}</span></span>` : itemIcon(i, 52)}<strong>${name(i.id)}</strong><span>${shop ? (locked ? "尚未解锁" : `◈ ${money(d.price)}`) : d.kind === "ammo" ? `${i.qty} 发` : i.durability !== undefined ? `${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}` : d.kind === "collectible" ? `◈ ${money(sale(i))}` : kindNames[d.kind]}</span>${shop ? `<small>${d.damage ? `伤害 ${d.damage} · 弹匣 ${d.mag}` : d.capacity ? `${d.capacity} 格` : d.heal ? `恢复 ${d.heal} 生命` : d.kind === "ammo" ? "每组 90 发" : `${d.tier} 级防护`}</small>` : ""}</button>`;
+  return `<button class="item-slot ${chosen ? "selected" : ""}" style="--rarity:${colors[d.tier]}" data-action="${shop ? "buy" : from === "loot" ? "loot-select" : "select"}" data-id="${shop ? i.id : i.uid}" data-from="${from}" data-item="${i.id}" ${shop ? "" : 'draggable="true"'} ${locked ? "disabled" : ""} title="${esc(name(i.id) + "：" + d.desc)}"><span class="quality">${rarity[d.tier]}</span>${itemIcon(i, 52)}<strong>${name(i.id)}</strong><span>${shop ? (locked ? "尚未解锁" : `◈ ${money(d.price)}`) : d.kind === "ammo" ? `${i.qty} 发` : i.durability !== undefined ? `${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}` : d.kind === "collectible" ? `◈ ${money(sale(i))}` : kindNames[d.kind]}</span>${shop ? `<small>${d.damage ? `伤害 ${d.damage} · 弹匣 ${d.mag}` : d.capacity ? `${d.capacity} 格` : d.heal ? `恢复 ${d.heal} 生命` : d.kind === "ammo" ? "每组 90 发" : `${d.tier} 级防护`}</small>` : ""}</button>`;
 }
 function remember() {
   persist(s);
@@ -290,7 +298,7 @@ function equipped() {
   )
     .map(([slot, label, ic]) => {
       const i = s.equipment[slot];
-      return `<div class="equipped-slot" data-drop="equipment" data-slot="${slot}" aria-label="${label}装备位"><span class="equipment-title">${label}</span><button class="equipped-item" data-action="select" data-from="equipment" data-item="${i?.id || ""}" data-id="${i?.uid || ""}" ${i ? 'draggable="true"' : "disabled"} title="${i ? esc(db[i.id].desc) : "未装备"}">${i ? itemIcon(i, 32) : icon(ic, "#7c917b", 32)}<strong>${i ? name(i.id) : "未装备"}</strong>${i && ["weapon", "ammo"].includes(db[i.id].kind) ? `<span class="item-value">◈ ${money(sale(i))}</span>` : ""}${slot === "ammo" ? `<span>${i?.qty ?? 0} 发备弹</span><span>弹匣 ${raid?.mag ?? s.equipment.primary?.loaded?.count ?? 0} 发</span>` : ""}${i?.durability !== undefined ? `<span>耐久 ${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}</span>` : ""}</button></div>`;
+      return `<div class="equipped-slot" data-drop="equipment" data-slot="${slot}" aria-label="${label}装备位"><span class="equipment-title">${label}</span><button class="equipped-item" data-action="select" data-from="equipment" data-item="${i?.id || ""}" data-id="${i?.uid || ""}" ${i ? 'draggable="true"' : "disabled"} title="${i ? esc(db[i.id].desc) : "未装备"}">${i ? itemIcon(i, 32) : icon(ic, "#7c917b", 32)}<strong>${i ? name(i.id) : "未装备"}</strong>${slot === "ammo" ? `<span>${i?.qty ?? 0} 发备弹</span><span>弹匣 ${raid?.mag ?? s.equipment.primary?.loaded?.count ?? 0} 发</span>` : ""}${i?.durability !== undefined ? `<span>耐久 ${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}</span>` : ""}</button></div>`;
     })
     .join("")}</div>`;
 }
@@ -566,7 +574,7 @@ function raidOverlay() {
   if (!raid) return "";
   const r = raid;
   if (r.paused)
-    return `<div class="modal-backdrop"><section class="modal pause-modal panel">${pausePage === "settings" ? `${settingsContent(true)}${btn("返回暂停菜单", "pause-menu", "", "secondary full")}` : pausePage === "help" ? `${guide()}${btn("返回暂停菜单", "pause-menu", "", "secondary full")}` : `<h1>游戏菜单</h1>${btn("继续游戏", "pause", "", "primary full")}${btn("设置", "pause-settings", "", "secondary full")}${btn("操作指南", "pause-help", "", "secondary full")}${btn("退出本局", "abort", "", "secondary full")}<p>恢复出击前状态，不带出本局物品。</p>`}</section></div>`;
+    return `<section class="modal pause-modal panel">${pausePage === "settings" ? `${settingsContent(true)}${btn("返回暂停菜单", "pause-menu", "", "secondary full")}` : pausePage === "help" ? `${guide()}${btn("返回暂停菜单", "pause-menu", "", "secondary full")}` : `<h1>游戏菜单</h1>${btn("继续游戏", "pause", "", "primary full")}${btn("设置", "pause-settings", "", "secondary full")}${btn("操作指南", "pause-help", "", "secondary full")}${btn("退出本局", "abort", "", "secondary full")}<p>恢复出击前状态，不带出本局物品。</p>`}</section>`;
   if (r.mapOpen)
     return `<div class="modal-backdrop"><section class="modal large-map panel">${heading(maps[r.map].name, "绿色：撤离点　橙色：首领")}<canvas id="full-map" width="960" height="720"></canvas>${btn("关闭地图", "toggle-map", "", "secondary full")}</section></div>`;
   const bag = r.inventory || r.search || r.puzzle ? inventoryPanel() : "";
@@ -1274,7 +1282,12 @@ window.addEventListener(
     }
     if (e.code === "KeyE") {
       r.interact();
-      if (r.search || r.puzzle) r.inventory = true;
+      if (r.search || r.puzzle) {
+        r.inventory = true;
+        // Do not let the approach movement cancel a search on the next frame.
+        keys.clear();
+        mouse.down = false;
+      }
       overlay();
     }
     if (e.code === "KeyR") r.loadMagazine();

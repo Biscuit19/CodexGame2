@@ -22,6 +22,12 @@ jobs:
       - run: npm test
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
+      - name: Verify menus and first container interaction in Google Chrome
+        env:
+          PLAYWRIGHT_CHROMIUM_EXECUTABLE: /usr/bin/google-chrome
+        run: |
+          google-chrome --version
+          npm run test:e2e -- --grep '菜单|接近容器|价值'
       - run: npm run build
       - name: Publish the existing Pages branch
         uses: peaceiris/actions-gh-pages@v4
@@ -38,6 +44,7 @@ jobs:
       - name: Verify the published revision, gameplay and offline reload
         env:
           EXPECTED_BUILD: ${{ github.sha }}
+          PLAYWRIGHT_CHROMIUM_EXECUTABLE: /usr/bin/google-chrome
         run: node scripts/verify-production.mjs https://biscuit19.github.io/CodexGame2/
       - uses: actions/upload-artifact@v4
         if: always()

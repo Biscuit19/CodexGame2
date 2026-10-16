@@ -7,9 +7,9 @@ export default defineConfig({
     baseURL: "http://127.0.0.1:5173",
     viewport: { width: 1440, height: 1000 },
     launchOptions: {
-      executablePath: process.env.CI
-        ? undefined
-        : process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE || "/usr/bin/chromium",
+      executablePath:
+        process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE ||
+        (process.env.CI ? undefined : "/usr/bin/chromium"),
       args: [
         "--no-sandbox",
         "--disable-dev-shm-usage",
