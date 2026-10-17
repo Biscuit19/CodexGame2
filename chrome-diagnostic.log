@@ -1,0 +1,48 @@
+
+> operation-tricat@1.0.0 test:e2e
+> playwright test --reporter=list,github
+
+
+Running 38 tests using 1 worker
+
+  ✓   1 tests/browser/cat-model.spec.ts:2:1 › 矮胖猫的装备、眨眼、尾巴和前后滚翻实际渲染，通知均位于顶部 (26.0s)
+  ✓   2 tests/browser/chrome-ui.spec.ts:41:1 › Chrome图鉴详情使用顶层弹窗，简洁问号、品质文字、关闭与Esc均可见可用 (2.3s)
+  ✓   3 tests/browser/chrome-ui.spec.ts:114:1 › 隐藏测试入口资金与地图图鉴全解锁，购买、退出、结算和刷新不占用或覆盖存档 (6.0s)
+  ✓   4 tests/browser/chrome-ui.spec.ts:183:1 › 补给按五份分堆、拖拽合并，食用只扣一份 (8.3s)
+  ✓   5 tests/browser/chrome-ui.spec.ts:235:1 › 首次发现顶部居中，五档颜色与描述门槛正确，武器弹药大图随切换更新 (27.9s)
+  ✓   6 tests/browser/chrome-ui.spec.ts:328:1 › 实际逐件搜索仅收藏品在顶部首次提示，高品质没有右下角重复通知 (15.3s)
+  ✓   7 tests/browser/chrome-ui.spec.ts:402:1 › 商店补给按价格、枪械按品质排序，图鉴仅已发现物品有悬浮描述 (2.1s)
+  ✓   8 tests/browser/chrome-ui.spec.ts:436:1 › Chrome 连续停留撤离点后显示顶层结算，截图、命中测试和返回基地均正常 (5.9s)
+  ✓   9 tests/browser/chrome-ui.spec.ts:494:1 › 基地子页面按 Esc 返回基地，详情先关闭且结算不会被误退 (1.5s)
+  ✓  10 tests/browser/chrome-ui.spec.ts:523:1 › 实际撤离带入物资价值为零，再次出击只计算新捡且最终保留的战利品 (13.4s)
+  ✓  11 tests/browser/collections.spec.ts:11:1 › 70件收藏使用独立彩色PNG，只有已发现物品可以打开幽默描述 (1.9s)
+  ✓  12 tests/browser/collections.spec.ts:88:3 › 装备和安全箱常驻，可从背包底部拖枪、主副互换和空位移动 1366 (15.6s)
+  ✓  13 tests/browser/collections.spec.ts:88:3 › 装备和安全箱常驻，可从背包底部拖枪、主副互换和空位移动 1440 (20.7s)
+  ✓  14 tests/browser/collections.spec.ts:195:1 › 撤离显示实际物资价值和鼓励按钮，仓库每次打开默认按类型与价值排列 (3.3s)
+  ✓  15 tests/browser/food-feature.spec.ts:14:1 › 发现提示图文顺序、字号与四字文案正确，更稀有提示覆盖后不重播旧提示 (7.9s)
+  ✓  16 tests/browser/food-feature.spec.ts:75:3 › 自动食物装备、战斗图标与完整安全箱格可见 1440 (20.8s)
+  ✓  17 tests/browser/food-feature.spec.ts:75:3 › 自动食物装备、战斗图标与完整安全箱格可见 1366 (9.1s)
+  ✓  18 tests/browser/food-feature.spec.ts:155:1 › 收藏保持70件且无饮食造型，旧餐盒转补给并迁移图鉴，替换物使用新PNG (1.1s)
+  ✓  19 tests/browser/game.spec.ts:3:1 › 原生弹窗调用异常仍显示可点击菜单，不会只暂停而无菜单 (5.4s)
+  ✓  20 tests/browser/game.spec.ts:33:1 › 接近容器时方向键未松开，第一次 E 同时打开两栏并持续搜索 (8.0s)
+  ✓  21 tests/browser/game.spec.ts:73:1 › 基地设置在声音失败时仍打开顶层菜单，设置、指南和返回开始均可使用 (1.4s)
+  ✓  22 tests/browser/game.spec.ts:134:1 › Esc 菜单高于最高层级游戏画面，实际可点击并关闭 (8.0s)
+  ✓  23 tests/browser/game.spec.ts:161:1 › 价值仅在描述展示，背包可出售和全部放回，武器可修复并损耗上限 (1.7s)
+  ✓  24 tests/browser/game.spec.ts:217:1 › 空装备位双击默认穿戴，拾取弹药优先补满原堆叠至120发 (6.8s)
+  ✓  25 tests/browser/game.spec.ts:258:1 › 撤离后不重读即可连续入库，弹匣不卸弹且没有待整理物品 (3.1s)
+  ✓  26 tests/browser/game.spec.ts:300:1 › 真实失焦打开独立游戏菜单，Esc 关闭背包后再次打开菜单 (6.5s)
+  ✓  27 tests/browser/game.spec.ts:334:1 › 一次 E 同时开两栏、容器直接进食、拖出背包丢弃、近战与五列布局 (14.3s)
+  ✓  28 tests/browser/game.spec.ts:421:1 › 原描述、物品旁菜单、正方形格子、仓库拖拽装备与筛选容量 (2.4s)
+  ✓  29 tests/browser/game.spec.ts:492:1 › 满包舔包双击更强头甲、旧甲留在容器，Esc 先关闭搜索再开菜单 (12.0s)
+  ✓  30 tests/browser/game.spec.ts:550:1 › 地图一远离原点仍绘制双方弹道、枪口和命中特效 (4.9s)
+  ✓  31 tests/browser/game.spec.ts:607:1 › 开始菜单、标准模式默认、简洁基地、仓库右侧和固定空格 (2.3s)
+  ✓  32 tests/browser/game.spec.ts:650:1 › 地图一立体模型、默认疾跑与持刀加速、暂停设置与完整回滚 (13.9s)
+  ✓  33 tests/browser/game.spec.ts:755:1 › 容器立即打开，自动显示左侧背包，逐件搜索后双击拾取 (11.4s)
+  ✓  34 tests/browser/game.spec.ts:840:1 › 立体瞄准与真实射击，翻滚和换弹后仍能开火 (10.8s)
+  ✓  35 tests/browser/supplies.spec.ts:11:1 › 首次搜索未拾取也点亮图鉴，顶中提示、未发现问号与大字描述正常 (4.5s)
+  ✓  36 tests/browser/supplies.spec.ts:75:1 › 十种补给展示三种回血效果，持续回血可暂停且没有浏览器title重复提示 (12.5s)
+  ✓  37 tests/browser/weapons.spec.ts:11:1 › 20款枪和全部装备使用独立PNG图标，可按四类筛选并查看霰弹数值 (3.2s)
+  ✓  38 tests/browser/weapons.spec.ts:91:1 › 手持实体切换20款独立枪械模型，三尾与霰弹枪实际可见 (8.4s)
+
+  38 passed (5.7m)
+::notice title=🎭 Playwright Run Summary::  38 passed (5.7m)
