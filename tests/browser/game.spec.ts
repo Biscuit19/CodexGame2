@@ -214,7 +214,9 @@ test("价值仅在描述展示，背包可出售和全部放回，武器可修�
   await page.screenshot({ path: "test-results/warehouse-bulk-sale.png" });
 });
 
-test("空装备位双击默认穿戴，拾取弹药优先补满原堆叠至120发", async ({ page }) => {
+test("空装备位双击默认穿戴，拾取弹药优先补满原堆叠至120发", async ({
+  page,
+}) => {
   await start(page);
   await page.evaluate(() => {
     const g = (window as any).__game;
@@ -682,11 +684,15 @@ test("地图一立体模型、默认疾跑与持刀加速、暂停设置与完�
     (x) => (window as any).__game.raid.p.x > x + 30,
     firstX,
   );
+  const runningStamina = await page.evaluate(
+    () => (window as any).__game.raid.p.stamina,
+  );
+  expect(runningStamina).toBeLessThan(100);
   await page.keyboard.up("KeyD");
   await expect(page.locator("#sprint-state")).toHaveText("疾跑");
   expect(
     await page.evaluate(() => (window as any).__game.raid.p.stamina),
-  ).toBeLessThan(100);
+  ).toBeGreaterThanOrEqual(runningStamina);
   expect(
     await page.evaluate(() => (window as any).__game.raid.movementSpeed),
   ).toBe(220);

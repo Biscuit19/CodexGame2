@@ -877,6 +877,7 @@ export class ThreeRenderer {
     armor = 1,
     bag = true,
     rollDirection = angle,
+    rollAim = angle,
   ) {
     rig.root.position.set(x, 0, y);
     rig.root.rotation.y = Math.PI / 2 - angle;
@@ -920,15 +921,14 @@ export class ThreeRenderer {
     rig.pack.visible = bag;
     if (roll > 0) {
       const progress = Math.min(1, (0.35 - roll) / 0.35);
-      // Rotate around the movement-perpendicular horizontal axis, never yaw-spin.
-      const localDirection =
-        Math.PI / 2 - angle - (Math.PI / 2 - rollDirection);
-      const axis = new THREE.Vector3(
-        Math.cos(localDirection),
-        0,
-        -Math.sin(localDirection),
+      // Turn sideways/diagonal dodges into the same tucked somersault as forward/backward dodges.
+      const forward = Math.cos(rollDirection - rollAim) >= -1e-6;
+      const facing = rollDirection + (forward ? 0 : Math.PI);
+      rig.root.rotation.y = Math.PI / 2 - facing;
+      rig.body.quaternion.setFromAxisAngle(
+        new THREE.Vector3(1, 0, 0),
+        (forward ? 1 : -1) * progress * Math.PI * 2,
       );
-      rig.body.quaternion.setFromAxisAngle(axis, progress * Math.PI * 2);
       rig.body.position.y = 29 + Math.sin(progress * Math.PI) * 9;
       rig.body.position.z = 0;
       rig.head.rotation.x = -0.18;
@@ -958,6 +958,7 @@ export class ThreeRenderer {
       r.save.equipment.armor ? db[r.save.equipment.armor.id].tier : 0,
       !!r.save.equipment.bag,
       Math.atan2(r.p.rollY, r.p.rollX),
+      r.p.rollAim,
     );
     const player = this.actors.get("player")!;
     if (r.weaponItem && r.activeWeapon !== "melee")

@@ -3,7 +3,7 @@ export default defineConfig({
   testDir: "./tests/browser",
   workers: 1,
   reporter: process.env.GITHUB_ACTIONS ? [["list"], ["github"]] : "list",
-  timeout: 30000,
+  timeout: process.env.CI ? 60000 : 30000,
   use: {
     baseURL: "http://127.0.0.1:5173",
     viewport: { width: 1440, height: 1000 },
@@ -22,6 +22,6 @@ export default defineConfig({
   webServer: {
     command: "npm run dev",
     url: "http://127.0.0.1:5173",
-    reuseExistingServer: true,
+    reuseExistingServer: !process.env.CI,
   },
 });

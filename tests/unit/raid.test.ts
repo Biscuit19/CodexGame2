@@ -170,6 +170,50 @@ describe("真实战区逻辑", () => {
     r.finish(true, "成功撤离");
     expect(s.result?.value).toBe(sale(makeItem("f1")) + sale(makeItem("a5")));
   });
+  it("卸下所有枪械后仍可选择并补满备弹，空武器位不会阻止弹药装备", () => {
+    const { s, r } = start();
+    s.equipment.primary = null;
+    s.equipment.secondary = null;
+    r.activeWeapon = "primary";
+    const ammo = makeItem("m2", 22);
+    s.pack = [ammo, makeItem("m2", 120), makeItem("m2", 20)];
+    expect(r.loadAmmo("pack", ammo.uid)).toBe(true);
+    expect(s.equipment.ammo).toMatchObject({ id: "m2", qty: 120 });
+    expect(s.pack.filter((i) => i.id === "m2").map((i) => i.qty)).toEqual([42]);
+  });
+  it("战斗拖弹立即换品质装弹，装填后自动补满备弹，带入弹药收益仍为零", () => {
+    const { s, r } = start(0, (s) => {
+      s.equipment.primary!.loaded = { tier: 1, count: 17 };
+      s.equipment.ammo = makeItem("m1", 15);
+      s.pack = [makeItem("m2", 22), makeItem("m2", 120), makeItem("m2", 20)];
+    });
+    const original = r.mag + s.equipment.ammo!.qty;
+    const chosen = s.pack.find((i) => i.id === "m2")!;
+    expect(r.loadAmmo("pack", chosen.uid, "primary")).toBe(true);
+    expect(r.ammoTier).toBe(2);
+    expect(r.mag).toBe(db[s.equipment.primary!.id].mag);
+    expect(s.equipment.ammo).toMatchObject({ id: "m2", qty: 120 });
+    expect(
+      s.pack.filter((i) => i.id === "m1").reduce((n, i) => n + i.qty, 0),
+    ).toBe(original);
+    expect(r.extractedLootValue()).toBe(0);
+    r.shoot();
+    r.loadMagazine();
+    r.finishReload();
+    expect(s.equipment.ammo!.qty).toBe(120);
+    expect(r.extractedLootValue()).toBe(0);
+    const c = r.containers[0],
+      ammo = makeItem("m4", 40);
+    c.items = [ammo];
+    c.revealed = 1;
+    r.startSearch(c);
+    expect(r.loadAmmo("loot", ammo.uid, "primary")).toBe(true);
+    expect(c.items).toHaveLength(0);
+    expect(c.revealed).toBe(0);
+    expect(r.ammoTier).toBe(4);
+    expect(r.mag + s.equipment.ammo!.qty).toBe(40);
+    expect(r.extractedLootValue()).toBeGreaterThan(0);
+  });
   it("带入弹药换装卸弹仍为零收益，新捡弹药装入原枪后仅计算未射出的新弹药", () => {
     const original = start(0, (s) => {
       s.equipment.primary!.loaded = { tier: 1, count: 30 };
@@ -632,6 +676,24 @@ describe("真实战区逻辑", () => {
     x = r.p.x;
     advance(r, 0.2, new Set(["KeyD"]));
     expect(r.p.x - x).toBeCloseTo(54, 1);
+  });
+  it("停止疾跑的第一帧立即恢复体力，疲劳行走和翻滚中同样恢复", () => {
+    const { r } = start();
+    r.p.stamina = 50;
+    advance(r, 0.1, new Set(["KeyD"]));
+    const drained = r.p.stamina;
+    advance(r, 1 / 60);
+    expect(r.p.stamina).toBeGreaterThan(drained);
+    r.p.exhausted = true;
+    r.p.stamina = 5;
+    advance(r, 1 / 60, new Set(["KeyD"]));
+    expect(r.p.stamina).toBeGreaterThan(5);
+    r.p.stamina = 50;
+    r.p.rollCooldown = 0;
+    r.roll(1, 1);
+    const afterRoll = r.p.stamina;
+    advance(r, 1 / 60, new Set(["KeyD"]));
+    expect(r.p.stamina).toBeGreaterThan(afterRoll);
   });
   it("满体力100可持续跑30秒，耗尽疲劳，休息后自动恢复", () => {
     const { r } = start();

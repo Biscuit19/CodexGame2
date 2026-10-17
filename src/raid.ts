@@ -40,6 +40,8 @@ import {
   settle,
   normalizeAmmo,
   swapWeaponSlots,
+  selectAmmo,
+  refillAmmo,
 } from "./store";
 import { Sound } from "./audio";
 export interface Rect {
@@ -162,7 +164,7 @@ export class Raid {
     rollCooldown: 0,
     rollX: 0,
     rollY: 0,
-    regen: 0,
+    rollAim: 0,
     exhausted: false,
     hit: 0,
   };
@@ -262,7 +264,9 @@ export class Raid {
         .map((i) => db[i.id].tier),
     );
     if (!save.equipment.primary) this.activeWeapon = "melee";
-    this.ammoTier = this.weaponItem?.loaded?.tier ?? this.ammoTier;
+    this.ammoTier =
+      this.weaponItem?.loaded?.tier ??
+      (save.equipment.ammo ? db[save.equipment.ammo.id].tier : this.ammoTier);
     this.build();
     this.loadMagazine(true);
     this.sound.mode = "raid";
@@ -786,7 +790,7 @@ export class Raid {
     });
     if (brought) loaded.raidBrought = (loaded.raidBrought ?? 0) + brought;
     this.save.pack = this.save.pack.filter((i) => i.qty > 0);
-    if (this.save.equipment.ammo?.qty === 0) this.save.equipment.ammo = null;
+    refillAmmo(this.save, this.ammoTier);
     normalizeAmmo(this.save.pack);
     this.syncLoaded();
     persist(this.save);
@@ -832,6 +836,7 @@ export class Raid {
   equipLoot(uid: string, secondary = true) {
     const item = this.save.pack.find((i) => i.uid === uid);
     if (!item) return false;
+    if (db[item.id].kind === "ammo") return this.loadAmmo("pack", uid);
     this.syncLoaded();
     const ok = equip(this.save, "pack", uid, secondary);
     if (ok && db[item.id].kind === "weapon") {
@@ -842,34 +847,71 @@ export class Raid {
       this.reload = 0;
       this.syncLoaded();
     }
-    if (ok && db[item.id].kind === "ammo") this.switchAmmo(db[item.id].tier);
+
     return ok;
   }
-  switchAmmo(tier: number) {
-    if (tier === this.ammoTier || tier < 1 || tier > 4) return;
-    const simulated = structuredClone(this.save.pack);
-    let left = this.mag,
-      brought = this.weaponItem?.loaded?.raidBrought ?? 0;
-    while (left) {
-      const n = Math.min(AMMO_STACK, left),
-        item = makeItem(`m${this.ammoTier}`, n);
-      if (brought) item.raidBrought = Math.min(brought, n);
-      brought -= item.raidBrought ?? 0;
-      if (!put(simulated, item, packCapacity(this.save))) {
-        this.notify("背包空间不足，无法卸下当前弹匣");
-        return;
-      }
-      left -= n;
-    }
-    this.save.pack = simulated;
-    this.mag = 0;
-    this.ammoTier = tier;
-    this.magazineTiers[this.weaponItem!.uid] = tier;
+  loadAmmo(
+    from: "pack" | "stash" | "secure" | "overflow" | "equipment" | "loot",
+    uid: string,
+    target?: "primary" | "secondary",
+  ) {
     this.syncLoaded();
+    const slot =
+      target ??
+      (this.activeWeapon !== "melee" && this.weaponItem
+        ? this.activeWeapon
+        : this.save.equipment.primary
+          ? "primary"
+          : this.save.equipment.secondary
+            ? "secondary"
+            : undefined);
+    const oldTier = this.ammoTier;
+    const container = from === "loot" ? this.search : undefined;
+    const external = container?.items
+      .slice(0, container.revealed)
+      .find((i) => i.uid === uid);
+    if (from === "loot" && !external) return false;
+    if (!selectAmmo(this.save, from, uid, slot, !!target, external)) {
+      this.notify("背包空间不足，无法卸下当前弹药");
+      return false;
+    }
+    if (external && container) {
+      container.items = container.items.filter((i) => i.uid !== uid);
+      container.revealed--;
+    }
+    for (const key of ["primary", "secondary"] as const) {
+      const weapon = this.save.equipment[key];
+      if (weapon) {
+        this.magazines[weapon.uid] = weapon.loaded?.count ?? 0;
+        this.magazineTiers[weapon.uid] = weapon.loaded?.tier ?? 1;
+      }
+    }
+    this.ammoTier =
+      this.weaponItem?.loaded?.tier ??
+      (this.save.equipment.ammo
+        ? db[this.save.equipment.ammo.id].tier
+        : oldTier);
     this.reload = 0;
-    this.loadMagazine();
+    if (!target && oldTier !== this.ammoTier && this.weaponItem)
+      this.loadMagazine();
     persist(this.save);
     this.onChange();
+    return true;
+  }
+  switchAmmo(tier: number) {
+    if (
+      tier < 1 ||
+      tier > 4 ||
+      !this.weaponItem ||
+      this.activeWeapon === "melee"
+    )
+      return;
+    const equipped = this.save.equipment.ammo;
+    const item =
+      equipped?.id === `m${tier}`
+        ? equipped
+        : this.save.pack.find((i) => i.id === `m${tier}`);
+    if (item) this.loadAmmo(item === equipped ? "equipment" : "pack", item.uid);
   }
   unequipToPack(slot: keyof Save["equipment"]) {
     const i = this.save.equipment[slot];
@@ -897,7 +939,7 @@ export class Raid {
     this.interrupt(true);
     this.p.stamina -= MOVEMENT.rollCost;
     if (this.p.stamina <= 0) this.p.exhausted = true;
-    this.p.regen = 0.8;
+    this.p.rollAim = this.p.angle;
     this.p.roll = 0.35;
     this.p.rollCooldown = 0.6;
     const l = Math.hypot(dx, dy);
@@ -1274,11 +1316,21 @@ export class Raid {
     const i = c.items[index],
       target = safe ? this.save.secure : this.save.pack,
       cap = safe ? [1, 2, 4, 6][this.save.safe] : packCapacity(this.save);
-    if (!canPut(target, i, cap)) {
+    if (!safe && kind === "ammo") {
+      const next = structuredClone(this.save);
+      next.pack.push(structuredClone(i));
+      refillAmmo(next, this.ammoTier);
+      if (next.pack.length > cap) {
+        this.notify("背包已满");
+        return;
+      }
+      this.save.pack = next.pack;
+      this.save.equipment.ammo = next.equipment.ammo;
+    } else if (!canPut(target, i, cap)) {
       this.notify(safe ? "安全箱已满" : "背包已满 · 丢弃物品或更换背包");
       return;
     }
-    put(target, i, cap);
+    if (safe || kind !== "ammo") put(target, i, cap);
     if (!safe && db[i.id].kind === "food") this.ensureFood();
     this.discover(i);
     this.value += sale(i);
@@ -1295,6 +1347,14 @@ export class Raid {
     this.syncLoaded();
     const item = c.items[index],
       kind = db[item.id].kind;
+    if (kind === "ammo")
+      return this.loadAmmo(
+        "loot",
+        uid,
+        requested === "primary" || requested === "secondary"
+          ? requested
+          : undefined,
+      );
     const slot = requested ?? (kind === "weapon" ? "secondary" : kind);
     if (
       !(["primary", "secondary"].includes(slot)
@@ -1542,14 +1602,14 @@ export class Raid {
     this.fireCool -= dt;
     this.meleeCooldown = Math.max(0, this.meleeCooldown - dt);
     this.shake = Math.max(0, this.shake - dt * 20);
-    p.regen -= dt;
-    const sprint = l > 0 && !this.mapOpen && p.stamina > 0 && !p.exhausted;
-    if (l && !this.mapOpen) {
+
+    const sprint =
+      l > 0 && !this.mapOpen && !p.roll && p.stamina > 0 && !p.exhausted;
+    if (l && !this.mapOpen && !p.roll) {
       this.interrupt(false);
       if (sprint) {
         p.stamina = Math.max(0, p.stamina - dt * MOVEMENT.drainPerSecond);
         if (p.stamina < 1e-8) p.stamina = 0;
-        p.regen = 0.8;
         if (p.stamina <= 0) {
           p.exhausted = true;
         }
@@ -1564,7 +1624,8 @@ export class Raid {
     if (p.roll > 0) {
       p.roll = Math.max(0, p.roll - dt);
       this.moveActor(p, p.rollX * 390 * dt, p.rollY * 390 * dt);
-    } else if (p.regen <= 0)
+    }
+    if (!sprint)
       p.stamina = Math.min(
         MOVEMENT.maxStamina,
         p.stamina + MOVEMENT.recoveryPerSecond * dt,

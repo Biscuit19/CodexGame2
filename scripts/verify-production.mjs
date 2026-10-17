@@ -138,6 +138,19 @@ try {
   await page
     .locator('[data-slot="secondary"] .equipped-item')
     .dragTo(page.locator('[data-slot="primary"]'));
+  await page.locator('[data-action="safe-menu"]').click();
+  await expect(page.locator("#base-menu")).toBeVisible();
+  await expect(page.locator("#base-menu")).toContainText("升级安全箱");
+  expect(
+    await page.locator("#base-menu").evaluate((el) => el.matches(":modal")),
+  ).toBe(true);
+  await page.screenshot({
+    path: "test-results/production-chrome-safe-upgrade.png",
+  });
+  await page
+    .locator("#base-menu")
+    .getByRole("button", { name: "关闭", exact: true })
+    .click();
   await expect(page.locator("#sort")).toHaveValue("type");
   await page.getByRole("button", { name: "返回基地", exact: true }).click();
   await page.getByRole("button", { name: "战区地图", exact: true }).click();
@@ -379,6 +392,7 @@ try {
         chromeRealExtractionNativeDialog: true,
         broughtInItemsExcludedFromExtractionValue: true,
         baseSubpageEscape: true,
+        chromeSafeUpgradeNativeDialog: true,
         errors,
         failed,
       },

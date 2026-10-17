@@ -54,6 +54,7 @@ import {
   canPut,
   put,
   normalizeAmmo,
+  selectAmmo,
   type Save,
   type Result,
   type Equipment,
@@ -103,14 +104,9 @@ function nextDiscovery() {
   }
   const d = db[activeDiscovery.id],
     color = itemNameColor(d.id) || colors[d.tier];
-  const headline = [
-    "",
-    "",
-    "",
-    "捡到宝了！",
-    "金色传说！",
-    "天降横财！",
-  ][d.tier];
+  const headline = ["", "", "", "捡到宝了！", "金色传说！", "天降横财！"][
+    d.tier
+  ];
   discoveryFeed.innerHTML = `<section class="discovery-card tier-${d.tier}" data-item="${d.id}" style="--discovery-color:${color}"><div class="discovery-main"><span class="discovery-intro">${headline ? `<span class="discovery-headline">${headline}</span>` : ""}<span class="discovery-unlock">解锁</span></span><strong class="discovery-name"><span style="color:${color}">${esc(d.name)}</span></strong>${itemIcon(activeDiscovery, 76)}</div>${d.tier >= 3 ? `<p class="discovery-description">${esc(d.desc)}</p>` : ""}</section>`;
   const expire = () => {
     if (raid?.paused) {
@@ -175,14 +171,26 @@ function syncGameMenu() {
 }
 function syncBaseMenu() {
   let content = "";
-  if (!title && ["base-menu", "base-settings", "base-help"].includes(modal)) {
-    content =
-      modal === "base-menu"
+  if (
+    !title &&
+    [
+      "base-menu",
+      "base-settings",
+      "base-help",
+      "safe",
+      "help",
+      "settings",
+    ].includes(modal)
+  ) {
+    content = ["safe", "help", "settings"].includes(modal)
+      ? baseModal()
+      : modal === "base-menu"
         ? `<h1>基地菜单</h1>${btn("返回开始界面", "to-title", "", "secondary full")}${btn("设置", "base-settings", "", "secondary full")}${btn("操作指南", "base-help", "", "secondary full")}${btn("继续整备", "close-modal", "", "primary full")}`
         : modal === "base-settings"
           ? `${heading("设置")}${settingsContent()}${btn("返回基地菜单", "settings", "", "secondary full")}`
           : `${guide()}${btn("返回基地菜单", "settings", "", "secondary full")}`;
-    content = `<section class="modal pause-modal panel">${btn("×", "close-modal", 'aria-label="关闭"', "close")}${content}</section>`;
+    if (!["safe", "help", "settings"].includes(modal))
+      content = `<section class="modal pause-modal panel">${btn("×", "close-modal", 'aria-label="关闭"', "close")}${content}</section>`;
   }
   setDialog(baseMenu, content);
 }
@@ -520,6 +528,33 @@ function equipSelected(slot?: keyof Equipment) {
   if (!i || !selected) return false;
   const kind = db[i.id].kind;
   if (
+    kind === "ammo" &&
+    (!slot || ["ammo", "primary", "secondary"].includes(slot)) &&
+    selected.from !== "shop"
+  ) {
+    const weaponSlot =
+      slot === "primary" || slot === "secondary" ? slot : undefined;
+    const ok = raid
+      ? raid.loadAmmo(selected.from, i.uid, weaponSlot)
+      : selectAmmo(
+          s,
+          selected.from,
+          i.uid,
+          weaponSlot ??
+            (s.equipment.primary
+              ? "primary"
+              : s.equipment.secondary
+                ? "secondary"
+                : undefined),
+          !!weaponSlot,
+        );
+    if (!ok && !raid) toast("背包空间不足，无法更换弹药");
+    closeItemMenu();
+    if (raid) overlay();
+    else render();
+    return ok;
+  }
+  if (
     slot &&
     !(["primary", "secondary"].includes(slot)
       ? kind === "weapon"
@@ -689,8 +724,7 @@ function render() {
   }
   root.innerHTML =
     header() +
-    `<main class="base-main ${page === "loadout" ? "inventory-page" : ""}">${page === "base" ? dashboard() : page === "loadout" ? warehouse() : page === "shop" ? shop() : page === "maps" ? mapsPage() : page === "collection" ? collection() : `<section class="panel settings-panel">${settingsContent()}</section>`}</main>` +
-    baseModal();
+    `<main class="base-main ${page === "loadout" ? "inventory-page" : ""}">${page === "base" ? dashboard() : page === "loadout" ? warehouse() : page === "shop" ? shop() : page === "maps" ? mapsPage() : page === "collection" ? collection() : `<section class="panel settings-panel">${settingsContent()}</section>`}</main>`;
 }
 function baseModal() {
   if (result) return "";
@@ -708,7 +742,7 @@ function baseModal() {
         : modal === "settings"
           ? settingsContent()
           : "";
-  return `<div class="modal-backdrop"><section class="modal panel">${btn("×", "close-modal", 'aria-label="关闭"', "close")}${content}</section></div>`;
+  return `<section class="modal panel">${btn("×", "close-modal", 'aria-label="关闭"', "close")}${content}</section>`;
 }
 function resultModal(r: Result) {
   return `<section class="modal result-panel panel"><h1>${s.completed && r.bosses.includes("doctor") ? "行动完成" : r.success ? "成功撤离" : "行动失败"}</h1><p>${esc(r.reason)}</p><div class="result-stats">${[

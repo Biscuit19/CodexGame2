@@ -37,6 +37,8 @@ import {
   newTestingSave,
   unlocked,
   buyBack,
+  selectAmmo,
+  refillAmmo,
 } from "../../src/store";
 const memory = new Map<string, string>();
 Object.assign(globalThis, {
@@ -340,10 +342,70 @@ describe("物品、经济与死亡事务", () => {
     expect(equip(s, "stash", bag.uid)).toBe(false);
     expect(s).toEqual(before);
   });
+  it("超量备弹拆分后每格不超过120，装备与背包不会共用物品编号", () => {
+    const s = newSave(),
+      ammo = makeItem("m2", 142);
+    s.equipment.ammo = null;
+    s.pack = [ammo];
+    expect(selectAmmo(s, "pack", ammo.uid)).toBe(true);
+    expect(s.equipment.ammo!.qty).toBe(120);
+    expect(s.pack[0].qty).toBe(22);
+    expect(s.equipment.ammo!.uid).not.toBe(s.pack[0].uid);
+  });
+  it("22发选中弹药优先补满装备栏120发，背包留下42发，异级弹药不混合", () => {
+    const s = newSave(),
+      chosen = makeItem("m2", 22);
+    s.equipment.ammo = null;
+    s.pack = [
+      chosen,
+      makeItem("m2", 120),
+      makeItem("m2", 20),
+      makeItem("m1", 7),
+    ];
+    expect(selectAmmo(s, "pack", chosen.uid)).toBe(true);
+    expect(s.equipment.ammo).toMatchObject({ id: "m2", qty: 120 });
+    expect(s.pack.filter((i) => i.id === "m2").map((i) => i.qty)).toEqual([42]);
+    expect(s.pack.find((i) => i.id === "m1")!.qty).toBe(7);
+  });
+  it("拖动异级弹药到副武器：旧弹返回背包、新弹装满弹匣并补满备弹，保留来源", () => {
+    const s = newSave(),
+      chosen = makeItem("m2", 22);
+    s.equipment.ammo = makeItem("m1", 10);
+    s.equipment.secondary = makeItem("w3");
+    s.equipment.secondary.loaded = { tier: 1, count: 17, raidBrought: 9 };
+    chosen.raidBrought = 22;
+    s.pack = [chosen, makeItem("m2", 120), makeItem("m2", 20)];
+    const total = (save: typeof s, id: string) =>
+      save.pack.filter((i) => i.id === id).reduce((n, i) => n + i.qty, 0) +
+      (save.equipment.ammo?.id === id ? save.equipment.ammo.qty : 0);
+    expect(selectAmmo(s, "pack", chosen.uid, "secondary", true)).toBe(true);
+    expect(s.equipment.secondary.loaded).toMatchObject({
+      tier: 2,
+      count: db.w3.mag,
+      raidBrought: 22,
+    });
+    expect(total(s, "m1")).toBe(27);
+    expect(total(s, "m2") + s.equipment.secondary.loaded!.count).toBe(162);
+    expect(s.equipment.ammo).toMatchObject({ id: "m2", qty: 120 });
+    expect(
+      s.pack.find((i) => i.id === "m1" && i.raidBrought)?.raidBrought,
+    ).toBe(9);
+  });
+  it("换弹卸弹没有足够空间时整笔回滚，不修改原弹匣、备弹和来源", () => {
+    const s = newSave(),
+      chosen = makeItem("m2", 22);
+    s.equipment.primary!.loaded = { tier: 3, count: 30, raidBrought: 11 };
+    s.equipment.ammo = makeItem("m1", 120);
+    s.pack = [chosen, ...Array.from({ length: 19 }, () => makeItem("c0_0"))];
+    const before = structuredClone(s);
+    expect(selectAmmo(s, "pack", chosen.uid, "primary", true)).toBe(false);
+    expect(s).toEqual(before);
+  });
   it("空间不足的移动不会丢失或复制弹药", () => {
     const s = newSave();
     s.pack = Array.from({ length: 19 }, () => makeItem("c0_0"));
     s.pack.push(makeItem("m1", 119));
+    s.equipment.ammo = makeItem("m1", 120);
     const i = makeItem("m1", 30);
     s.stash = [i];
     expect(move(s, "stash", "pack", i.uid)).toBe(false);
@@ -353,11 +415,12 @@ describe("物品、经济与死亡事务", () => {
   it("合并不足 30 发的弹药，装备交换保留原物品", () => {
     const s = newSave(),
       i = makeItem("m1", 10);
+    s.equipment.ammo = makeItem("m1", 90);
     s.pack = [makeItem("m1", 20)];
     s.stash = [i];
     expect(move(s, "stash", "pack", i.uid)).toBe(true);
-    expect(s.pack).toHaveLength(1);
-    expect(s.pack[0].qty).toBe(30);
+    expect(s.pack).toHaveLength(0);
+    expect(s.equipment.ammo!.qty).toBe(120);
     const w = makeItem("w3"),
       old = s.equipment.primary!.uid;
     s.stash = [w];

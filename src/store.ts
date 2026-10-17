@@ -140,6 +140,7 @@ export function newSave(slot = 0): Save {
   };
   normalizeAmmo(save.pack);
   normalizeAmmo(save.stash);
+  refillAmmo(save);
   return save;
 }
 export function newTestingSave() {
@@ -502,6 +503,7 @@ export function migrateInventory(s: Save) {
       s.warehouse++;
   }
   [s.pack, s.stash, s.secure].forEach(normalizeAmmo);
+  refillAmmo(s);
   return s;
 }
 // Capacity is checked before merging, so a failed move never partially mutates a stack.
@@ -530,6 +532,18 @@ export function move(
       : to === "pack"
         ? packCapacity(s)
         : safeCap[s.safe];
+  if (to === "pack" && db[i.id].kind === "ammo") {
+    const next = structuredClone(s);
+    next[from] = next[from].filter((x) => x.uid !== uid);
+    next.pack.push(structuredClone(i));
+    refillAmmo(next);
+    if (next.pack.length > cap) return false;
+    s[from] = next[from];
+    s.pack = next.pack;
+    s.equipment.ammo = next.equipment.ammo;
+    persist(s);
+    return true;
+  }
   if (!canPut(s[to], i, cap)) return false;
   s[from] = s[from].filter((x) => x.uid !== uid);
   put(s[to], i, cap);
@@ -546,6 +560,95 @@ export function swapWeaponSlots(
   persist(s);
   return true;
 }
+/** Top up the selected reserve stack without changing bullet ownership/provenance. */
+export function refillAmmo(s: Save, tier?: number) {
+  let target = s.equipment.ammo;
+  if (!target && tier) {
+    const index = s.pack.findIndex((i) => i.id === `m${tier}`);
+    if (index >= 0) target = s.equipment.ammo = s.pack.splice(index, 1)[0];
+  }
+  if (!target) return;
+  if (target.qty > AMMO_STACK) {
+    const excess = takeQuantity(target, target.qty - AMMO_STACK);
+    excess.uid = crypto.randomUUID();
+    s.pack.push(excess);
+  }
+  for (const item of s.pack) {
+    if (item.id !== target.id || target.qty >= AMMO_STACK) continue;
+    const part = takeQuantity(
+      item,
+      Math.min(item.qty, AMMO_STACK - target.qty),
+    );
+    target.qty += part.qty;
+    if (part.raidBrought)
+      target.raidBrought = (target.raidBrought ?? 0) + part.raidBrought;
+  }
+  s.pack = s.pack.filter((i) => i.qty > 0);
+  normalizeAmmo(s.pack);
+  if (!target.qty) s.equipment.ammo = null;
+}
+/** Commit reserve selection, magazine unloading and loading as one capacity-checked transaction. */
+export function selectAmmo(
+  s: Save,
+  from: "pack" | "stash" | "secure" | "overflow" | "equipment" | "loot",
+  uid: string,
+  weaponSlot?: "primary" | "secondary",
+  loadWeapon = false,
+  external?: Item,
+) {
+  const next = structuredClone(s);
+  const source =
+    from === "loot"
+      ? external
+        ? [structuredClone(external)]
+        : []
+      : from === "equipment"
+        ? [next.equipment.ammo].filter((i): i is Item => !!i)
+        : next[from];
+  const chosen = source.find((i) => i.uid === uid && db[i.id].kind === "ammo");
+  if (!chosen) return false;
+  if (from === "equipment") next.equipment.ammo = null;
+  else if (from !== "loot")
+    next[from] = next[from].filter((i) => i.uid !== uid);
+  const old = next.equipment.ammo;
+  next.equipment.ammo = chosen;
+  if (old) next.pack.push(old);
+  const weapon = weaponSlot ? next.equipment[weaponSlot] : null;
+  if (weaponSlot && !weapon) return false;
+  const tier = db[chosen.id].tier;
+  if (weapon) {
+    if (weapon.loaded && weapon.loaded.tier !== tier && weapon.loaded.count) {
+      const unloaded = makeItem(`m${weapon.loaded.tier}`, weapon.loaded.count);
+      if (weapon.loaded.raidBrought)
+        unloaded.raidBrought = weapon.loaded.raidBrought;
+      next.pack.push(unloaded);
+    }
+    if (weapon.loaded?.tier !== tier) weapon.loaded = { tier, count: 0 };
+    weapon.loaded ??= { tier, count: 0 };
+  }
+  refillAmmo(next);
+  if (weapon && loadWeapon && next.equipment.ammo) {
+    const part = takeQuantity(
+      next.equipment.ammo,
+      Math.min(
+        db[weapon.id].mag! - weapon.loaded!.count,
+        next.equipment.ammo.qty,
+      ),
+    );
+    weapon.loaded!.count += part.qty;
+    if (part.raidBrought)
+      weapon.loaded!.raidBrought =
+        (weapon.loaded!.raidBrought ?? 0) + part.raidBrought;
+    refillAmmo(next);
+  }
+  if (next.pack.length > packCapacity(next)) return false;
+  s.pack = next.pack;
+  s.equipment = next.equipment;
+  if (from !== "equipment" && from !== "pack" && from !== "loot")
+    s[from] = next[from];
+  persist(s);
+  return true;
+}
 export function equip(
   s: Save,
   from: "stash" | "pack" | "overflow" | "secure",
@@ -556,6 +659,17 @@ export function equip(
     i = list.find((x) => x.uid === uid);
   if (!i) return false;
   const kind = db[i.id].kind;
+  if (kind === "ammo")
+    return selectAmmo(
+      s,
+      from,
+      uid,
+      s.equipment.primary
+        ? "primary"
+        : s.equipment.secondary
+          ? "secondary"
+          : undefined,
+    );
   const slot =
     kind === "weapon"
       ? secondary
