@@ -271,6 +271,34 @@ try {
     path: "test-results/production-collectibles-offline.png",
     fullPage: true,
   });
+  await page.getByRole("button", { name: "返回基地", exact: true }).click();
+  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await expect(page.locator("#raid-time")).toBeVisible();
+  await page.keyboard.press("Digit3");
+  await page.keyboard.down("KeyA");
+  await page.waitForTimeout(330);
+  await page.keyboard.up("KeyA");
+  await page.keyboard.down("KeyW");
+  await page.waitForTimeout(1667);
+  await page.keyboard.up("KeyW");
+  const resultDialog = page.locator("#result-dialog");
+  await expect(resultDialog).toBeVisible({ timeout: 10000 });
+  expect(await resultDialog.evaluate((el) => el.matches(":modal"))).toBe(true);
+  await expect(
+    resultDialog.getByRole("heading", { name: "成功撤离", exact: true }),
+  ).toBeVisible();
+  await expect(resultDialog.locator(".result-stats")).toContainText(
+    "带出物资价值",
+  );
+  await page.screenshot({
+    path: "test-results/production-chrome-extraction-result.png",
+  });
+  await resultDialog.locator('[data-action="close-result"]').click();
+  await expect(resultDialog).toBeHidden();
+  await expect(
+    page.getByRole("heading", { name: "暖窝基地", exact: true }),
+  ).toBeVisible();
   if (errors.length || failed.length)
     throw Error(JSON.stringify({ errors, failed }));
   console.log(
@@ -294,6 +322,7 @@ try {
         chromeCollectionNativeDialog: true,
         temporaryTestingDoesNotCreateSlots: true,
         largeWeaponAndAmmoIcons: true,
+        chromeRealExtractionNativeDialog: true,
         errors,
         failed,
       },

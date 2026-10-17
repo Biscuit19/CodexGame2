@@ -241,6 +241,8 @@ test("首次发现顶部居中，五档颜色与描述门槛正确，武器弹�
     g.save.discovered = [];
     g.save.collection = [];
   });
+  await page.clock.install();
+  await page.clock.pauseAt(new Date(Date.now() + 1000));
   for (let n = 0; n < ids.length; n++) {
     await page.evaluate(async (id) => {
       const g = (window as any).__game,
@@ -260,21 +262,33 @@ test("首次发现顶部居中，五档颜色与描述门槛正确，武器弹�
     const rect = await banner.boundingBox();
     expect(rect!.y).toBeLessThan(70);
     expect(Math.abs(rect!.x + rect!.width / 2 - 720)).toBeLessThan(3);
-    if (n === 0) {
-      await page.waitForTimeout(4100);
-      await expect(banner).toBeVisible();
+    await page.clock.runFor(400);
+    if (n === 4) {
+      await expect(banner).toContainText("哇！金色传说！");
+      await page.screenshot({
+        path: "test-results/chrome-legend-discovery-and-weapon-hud.png",
+      });
     }
+    await page.clock.fastForward([1000, 1000, 2000, 3000, 5000][n] - 450);
+    await expect(banner).toBeVisible();
+    await page.clock.runFor(100);
+    await expect(banner).toHaveCount(0);
   }
-  await expect(page.locator(".discovery-card")).toContainText("哇！金色传说！");
-  await page.screenshot({
-    path: "test-results/chrome-legend-discovery-and-weapon-hud.png",
-  });
+  await page.clock.resume();
   await expect(page.locator('#weapon-art [data-art="w0"]')).toBeVisible();
   await expect(page.locator('#ammo-art [data-art="m1"]')).toBeVisible();
   const gun = await page.locator("#weapon-art .item-art").boundingBox(),
     ammo = await page.locator("#ammo-art .item-art").boundingBox();
   expect(gun!.width).toBeGreaterThan(ammo!.width * 3);
   expect(gun!.height).toBeGreaterThan(ammo!.height * 2);
+  const hud = await page.locator(".weapon-hud").boundingBox();
+  expect(hud!.height).toBeLessThan(190);
+  expect(hud!.width / hud!.height).toBeGreaterThan(2);
+  expect(
+    await page
+      .locator("#weapon-art")
+      .evaluate((el) => getComputedStyle(el).backgroundColor),
+  ).toBe("rgba(0, 0, 0, 0)");
   await page.evaluate(async () => {
     const g = (window as any).__game,
       d = await import("/src/data.ts");
@@ -291,4 +305,184 @@ test("首次发现顶部居中，五档颜色与描述门槛正确，武器弹�
   await expect(page.locator('#weapon-art [data-art="k0"]')).toBeVisible();
   await expect(page.locator("#ammo-art")).toBeHidden();
   await expect(page.locator("#ammo-name")).toHaveText("不消耗弹药");
+  await page.mouse.move(800, 450);
+  for (const [delta, id] of [
+    [100, "w0"],
+    [100, "w16"],
+    [100, "k0"],
+    [-100, "w16"],
+    [-100, "w0"],
+    [-100, "k0"],
+  ] as const) {
+    await page.mouse.wheel(0, delta);
+    await expect(page.locator(`#weapon-art [data-art="${id}"]`)).toBeVisible();
+  }
+  await page.keyboard.press("Digit1");
+  await page.screenshot({ path: "test-results/chrome-compact-weapon-hud.png" });
+});
+
+test("实际逐件搜索仅收藏品在顶部首次提示，高品质没有右下角重复通知", async ({
+  page,
+}) => {
+  test.setTimeout(60000);
+  await start(page);
+  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  const searched = ["m4", "a5", "h5", "f4", "w3", "c0_6", "c2_4", "c4_0"];
+  await page.evaluate(async (ids) => {
+    const g = (window as any).__game,
+      d = await import("/src/data.ts"),
+      r = g.raid,
+      c = r.containers[0];
+    r.enemies = [];
+    g.save.collection = [];
+    g.save.discovered = [];
+    c.items = ids.map((id) => d.makeItem(id));
+    c.revealed = 0;
+    c.locked = false;
+    c.cooldown = 0;
+    c.x = r.p.x;
+    c.y = r.p.y;
+    r.near = c;
+    r.containers = [c];
+  }, searched);
+  await page.keyboard.press("KeyE");
+  for (let n = 0; n < searched.length; n++) {
+    await page.evaluate(async () => {
+      const r = (window as any).__game.raid,
+        d = await import("/src/data.ts");
+      r.searchProgress = d.searchTime(r.search.items[r.search.revealed]) - 0.02;
+    });
+    await expect(
+      page.locator(`.loot-panel [data-item="${searched[n]}"]`),
+    ).toBeVisible();
+    const banner = page.locator(".discovery-card");
+    if (n < 5) await expect(banner).toHaveCount(0);
+    else {
+      await expect(banner).toHaveAttribute("data-item", searched[n]);
+      await expect(banner.locator("h2")).not.toBeEmpty();
+      await expect(banner.locator(".discovery-description")).not.toBeEmpty();
+      const box = await banner.boundingBox();
+      expect(box!.y).toBeLessThan(70);
+      expect(Math.abs(box!.x + box!.width / 2 - 720)).toBeLessThan(3);
+    }
+  }
+  await expect(page.locator(".discovery-card")).toContainText("哇！金色传说！");
+  await page.screenshot({
+    path: "test-results/chrome-actual-search-legend.png",
+  });
+  await expect(page.locator("#toasts")).not.toContainText(
+    /发现|首次|传说|稀世/,
+  );
+  expect(
+    await page.evaluate(() => (window as any).__game.save.discovered),
+  ).toEqual(searched.slice(5));
+  await expect(page.locator(".discovery-card")).toHaveCount(0, {
+    timeout: 12000,
+  });
+  await page.evaluate(async () => {
+    const r = (window as any).__game.raid,
+      d = await import("/src/data.ts"),
+      c = r.search;
+    c.items = [d.makeItem("c4_0")];
+    c.revealed = 0;
+    r.searchProgress = 6.99;
+  });
+  await expect(page.locator('.loot-panel [data-item="c4_0"]')).toBeVisible();
+  await expect(page.locator(".discovery-card")).toHaveCount(0);
+  await expect(page.locator("#toasts")).not.toContainText(
+    /发现|首次|传说|稀世/,
+  );
+});
+
+test("商店补给按价格、枪械按品质排序，图鉴仅已发现物品有悬浮描述", async ({
+  page,
+}) => {
+  await start(page);
+  await page.getByRole("button", { name: "补给商店", exact: true }).click();
+  const values = async (field: "tier" | "price") =>
+    page.locator(".shop-grid .item-slot").evaluateAll(async (els, field) => {
+      const d = await import("/src/data.ts");
+      return els.map((el) => d.db[(el as HTMLElement).dataset.item!][field]);
+    }, field);
+  const tiers = await values("tier");
+  expect(tiers).toEqual([...tiers].sort((a, b) => a - b));
+  await page.locator('[data-action="category"][data-id="food"]').click();
+  const prices = await values("price");
+  expect(prices).toEqual([...prices].sort((a, b) => a - b));
+  await page.evaluate(() => {
+    const g = (window as any).__game;
+    g.save.collection = ["c4_0"];
+    g.save.discovered = ["c4_0"];
+  });
+  await page.getByRole("button", { name: "返回基地", exact: true }).click();
+  await page.getByRole("button", { name: "收藏图鉴", exact: true }).click();
+  await page.locator('.collection-item[data-id="c4_0"]').hover();
+  await expect(page.locator("#item-tooltip")).toContainText("那颗非洲来的心");
+  await expect(page.locator("#item-tooltip")).toContainText("星洲猫心");
+  await page.screenshot({
+    path: "test-results/chrome-collection-hover-description.png",
+  });
+  await page.locator('.collection-item[data-id="c5_14"]').hover();
+  await expect(page.locator("#item-tooltip")).toHaveCount(0);
+  await page.waitForTimeout(400);
+  await expect(page.locator("#item-tooltip")).toHaveCount(0);
+});
+
+test("Chrome 连续停留撤离点后显示顶层结算，截图、命中测试和返回基地均正常", async ({
+  page,
+}) => {
+  await start(page);
+  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await page.evaluate(async () => {
+    const g = (window as any).__game,
+      d = await import("/src/data.ts"),
+      r = g.raid;
+    r.enemies = [];
+    g.save.pack = [d.makeItem("c4_0")];
+    g.save.secure = [];
+    r.elapsed = 123;
+    const exit = r.exits.find((e: any) => e.active && !e.paid);
+    r.p.x = exit.x;
+    r.p.y = exit.y;
+    r.extract = 0;
+    const cover = document.createElement("div");
+    cover.id = "chrome-extraction-cover";
+    cover.style.cssText =
+      "position:fixed;inset:0;z-index:2147483647;background:#101820;pointer-events:none";
+    document.body.append(cover);
+  });
+  const dialog = page.locator("#result-dialog");
+  await expect(dialog).toBeVisible({ timeout: 7000 });
+  expect(await dialog.evaluate((el) => el.matches(":modal"))).toBe(true);
+  await expect(
+    dialog.getByRole("heading", { name: "成功撤离", exact: true }),
+  ).toBeVisible();
+  await expect(dialog.locator(".result-stats")).toContainText("22,750");
+  await expect(dialog.locator(".result-stats")).toContainText(/2分\d+秒/);
+  const button = dialog.getByRole("button", {
+    name: /^一辈子花不完\s*（返回基地）$/,
+  });
+  expect(
+    await button.evaluate((el) => {
+      const b = el.getBoundingClientRect();
+      return !!document
+        .elementFromPoint(b.x + b.width / 2, b.y + b.height / 2)
+        ?.closest("#result-dialog");
+    }),
+  ).toBe(true);
+  await page.screenshot({
+    path: "test-results/chrome-extraction-native-result.png",
+  });
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeVisible();
+  await button.click();
+  await expect(dialog).toBeHidden();
+  await page.evaluate(() =>
+    document.querySelector("#chrome-extraction-cover")?.remove(),
+  );
+  await expect(
+    page.getByRole("heading", { name: "暖窝基地", exact: true }),
+  ).toBeVisible();
 });

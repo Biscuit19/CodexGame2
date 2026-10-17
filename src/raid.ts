@@ -786,7 +786,7 @@ export class Raid {
     persist(this.save);
     return true;
   }
-  selectWeapon(slot: "primary" | "secondary") {
+  selectWeapon(slot: "primary" | "secondary" | "melee") {
     const item = this.save.equipment[slot];
     if (!item) return false;
     this.syncLoaded();
@@ -796,16 +796,20 @@ export class Raid {
     this.reload = 0;
     return true;
   }
-  switchWeapon() {
-    const next =
-      this.activeWeapon === "primary"
-        ? "secondary"
-        : this.activeWeapon === "secondary" || this.save.equipment.primary
-          ? "primary"
-          : "secondary";
-    if (this.selectWeapon(next)) {
-      this.interrupt();
-      this.onChange();
+  switchWeapon(direction = 1) {
+    const slots = ["primary", "secondary", "melee"] as const;
+    const current = slots.indexOf(this.activeWeapon);
+    for (let step = 1; step <= slots.length; step++) {
+      const next =
+        slots[
+          (current + Math.sign(direction || 1) * step + slots.length) %
+            slots.length
+        ];
+      if (this.selectWeapon(next)) {
+        this.interrupt();
+        this.onChange();
+        return;
+      }
     }
   }
   equipLoot(uid: string, secondary = true) {
@@ -1188,6 +1192,7 @@ export class Raid {
     this.sound.play("search");
   }
   discover(item: Item) {
+    if (db[item.id].kind !== "collectible") return false;
     const known = (this.save.discovered ??= [...this.save.collection]);
     const fresh = !known.includes(item.id);
     if (
@@ -1546,12 +1551,8 @@ export class Raid {
           c.revealed++;
           this.searchProgress = 0;
           this.sound.play("loot", db[item.id].tier);
-          const fresh = this.discover(item);
-          if (db[item.id].tier >= 4) {
-            if (!fresh)
-              this.notify(
-                `发现${db[item.id].tier === 5 ? "传说" : "稀世"}物品 · ${db[item.id].name}`,
-              );
+          this.discover(item);
+          if (db[item.id].kind === "collectible" && db[item.id].tier >= 3) {
             this.emit(c.x, c.y - 20, 25, colors[db[item.id].tier]);
           }
           this.onChange();

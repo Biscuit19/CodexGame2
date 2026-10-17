@@ -75,6 +75,10 @@ document.body.append(baseMenu);
 const collectionDialog = document.createElement("dialog");
 collectionDialog.id = "collection-dialog";
 document.body.append(collectionDialog);
+const resultDialog = document.createElement("dialog");
+resultDialog.id = "result-dialog";
+document.body.append(resultDialog);
+resultDialog.addEventListener("cancel", (e) => e.preventDefault());
 const discoveryFeed = document.createElement("aside");
 discoveryFeed.id = "discovery-feed";
 discoveryFeed.setAttribute("aria-live", "polite");
@@ -117,10 +121,11 @@ function nextDiscovery() {
   };
   discoveryTimer = setTimeout(
     expire,
-    [0, 7000, 8000, 10000, 12000, 14000][d.tier],
+    [0, 1000, 1000, 2000, 3000, 5000][d.tier],
   );
 }
 function showDiscovery(item: Item) {
+  if (db[item.id].kind !== "collectible") return;
   discoveryQueue.push({ ...item });
   if (!activeDiscovery) nextDiscovery();
   else if (db[item.id].tier > db[activeDiscovery.id].tier) {
@@ -589,6 +594,9 @@ function shop() {
           weaponFilter === "all" ||
           d.weaponClass === weaponFilter),
   );
+  if (category === "food") products.sort((a, b) => a.price - b.price);
+  else if (category === "weapon")
+    products.sort((a, b) => a.tier - b.tier || a.price - b.price);
   return `<div class="shop-layout"><aside class="panel shop-categories">${heading("补给商店")}${[
     ["weapon", "武器"],
     ["armor", "护具与背包"],
@@ -648,7 +656,7 @@ function collection() {
           .filter((d) => d.kind === "collectible" && d.tier === t)
           .map(
             (d) =>
-              `<button class="collection-item ${s.collection.includes(d.id) ? "found" : ""}" data-action="collection-detail" data-id="${d.id}" ${s.collection.includes(d.id) ? "" : "disabled"}>${s.collection.includes(d.id) ? itemIcon({ id: d.id, uid: d.id, qty: 1 }, 80) : unknownCollectible()}<strong style="color:${itemNameColor(d.id)}">${name(d.id)}</strong>${s.collection.includes(d.id) ? `<span>已发现 · ◈ ${money(Math.floor(d.price * 0.65))}</span>` : ""}</button>`,
+              `<button class="collection-item ${s.collection.includes(d.id) ? "found" : ""}" data-action="collection-detail" data-id="${d.id}" ${s.collection.includes(d.id) ? `data-item="${d.id}"` : "disabled"}>${s.collection.includes(d.id) ? itemIcon({ id: d.id, uid: d.id, qty: 1 }, 80) : unknownCollectible()}<strong style="color:${itemNameColor(d.id)}">${name(d.id)}</strong>${s.collection.includes(d.id) ? `<span>已发现 · ◈ ${money(Math.floor(d.price * 0.65))}</span>` : ""}</button>`,
           )
           .join("")}</div></section>`,
     )
@@ -666,6 +674,7 @@ function render() {
   document.body.classList.remove("in-raid");
   syncBaseMenu();
   syncCollectionDialog();
+  setDialog(resultDialog, !title && result ? resultModal(result) : "");
   if (title) {
     root.innerHTML = titleScreen();
     return;
@@ -676,7 +685,7 @@ function render() {
     baseModal();
 }
 function baseModal() {
-  if (result) return resultModal(result);
+  if (result) return "";
   if (
     !modal ||
     modal.startsWith("collection:") ||
@@ -694,7 +703,7 @@ function baseModal() {
   return `<div class="modal-backdrop"><section class="modal panel">${btn("×", "close-modal", 'aria-label="关闭"', "close")}${content}</section></div>`;
 }
 function resultModal(r: Result) {
-  return `<div class="modal-backdrop"><section class="modal result-panel panel"><h1>${s.completed && r.bosses.includes("doctor") ? "行动完成" : r.success ? "成功撤离" : "行动失败"}</h1><p>${esc(r.reason)}</p><div class="result-stats">${[
+  return `<section class="modal result-panel panel"><h1>${s.completed && r.bosses.includes("doctor") ? "行动完成" : r.success ? "成功撤离" : "行动失败"}</h1><p>${esc(r.reason)}</p><div class="result-stats">${[
     ["击败敌人", r.kills],
     ["搜索容器", r.searches],
     [
@@ -706,7 +715,7 @@ function resultModal(r: Result) {
     .map(([a, b]) => `<div><span>${a}</span><strong>${b}</strong></div>`)
     .join(
       "",
-    )}</div><p>${r.success ? "背包物品已保留，请自行整理到仓库。" : s.mode === "easy" ? "轻松模式：物品全部保留。" : "标准模式：安全箱保留，其余出战物品丢失。"}</p>${btn(r.success ? `${r.value >= 20000 ? "一辈子花不完" : r.value > 0 ? "这波收获满满" : "好耶，猫回来了"}<small>（返回基地）</small>` : "回家，再来一局（返回基地）", "close-result", "", "primary full")}</section></div>`;
+    )}</div><p>${r.success ? "背包物品已保留，请自行整理到仓库。" : s.mode === "easy" ? "轻松模式：物品全部保留。" : "标准模式：安全箱保留，其余出战物品丢失。"}</p>${btn(r.success ? `${r.value >= 20000 ? "一辈子花不完" : r.value > 0 ? "这波收获满满" : "好耶，猫回来了"}<small>（返回基地）</small>` : "回家，再来一局（返回基地）", "close-result", "", "primary full")}</section>`;
 }
 function renderRaid() {
   if (!raid) return;
@@ -714,7 +723,7 @@ function renderRaid() {
   canvas.classList.remove("hidden");
   document.body.classList.add("in-raid");
   if (r.map !== 0) scene3d?.show(false);
-  root.innerHTML = `<div class="raid-hud"><div class="raid-top"><strong>${maps[r.map].name}</strong><div id="boss-hud"></div>${btn('<b id="raid-time">15:00</b><span>菜单</span>', "pause", "", "raid-timer")}</div><canvas id="minimap" width="200" height="150" data-action="toggle-map" aria-label="打开战区地图"></canvas><div class="raid-bottom"><section class="vitals"><div><strong id="hp-number">100</strong><span>生命</span></div><div class="meter"><i id="hp-fill"></i></div><div class="stamina-row"><span>体力</span><strong id="st-number">${MOVEMENT.maxStamina}</strong><span id="sprint-state">疾跑</span></div><div class="meter stamina"><i id="st-fill"></i></div><span id="armor-readout"></span><span id="regen-readout"></span></section><div class="raid-shortcuts"><span>空格 翻滚</span><span>E 搜索</span><span>Tab 背包</span><span>M 地图</span></div><section class="weapon-hud"><strong id="weapon-name"></strong><div id="weapon-art" class="hud-weapon-art" aria-hidden="true"></div><div class="hud-ammo-row"><span id="ammo-art" class="hud-ammo-art" aria-hidden="true"></span><div class="hud-ammo-copy"><div class="hud-rounds"><b id="mag-count"></b><span id="reserve-count"></span></div><span id="ammo-name"></span></div></div><span id="weapon-condition"></span></section></div><div id="action-progress" class="action-progress hidden"></div><div id="crosshair"></div></div><div id="raid-overlay">${raidOverlay()}</div>`;
+  root.innerHTML = `<div class="raid-hud"><div class="raid-top"><strong>${maps[r.map].name}</strong><div id="boss-hud"></div>${btn('<b id="raid-time">15:00</b><span>菜单</span>', "pause", "", "raid-timer")}</div><canvas id="minimap" width="200" height="150" data-action="toggle-map" aria-label="打开战区地图"></canvas><div class="raid-bottom"><section class="vitals"><div><strong id="hp-number">100</strong><span>生命</span></div><div class="meter"><i id="hp-fill"></i></div><div class="stamina-row"><span>体力</span><strong id="st-number">${MOVEMENT.maxStamina}</strong><span id="sprint-state">疾跑</span></div><div class="meter stamina"><i id="st-fill"></i></div><span id="armor-readout"></span><span id="regen-readout"></span></section><div class="raid-shortcuts"><span>空格 翻滚</span><span>E 搜索</span><span>Tab 背包</span><span>M 地图</span></div><section class="weapon-hud"><div class="hud-weapon-column"><strong id="weapon-name"></strong><div id="weapon-art" class="hud-weapon-art" aria-hidden="true"></div><span id="weapon-condition"></span></div><div class="hud-ammo-column"><div class="hud-rounds"><b id="mag-count"></b><span id="reserve-count"></span></div><div class="hud-ammo-details"><span id="ammo-art" class="hud-ammo-art" aria-hidden="true"></span><span id="ammo-name"></span></div></div></section></div><div id="action-progress" class="action-progress hidden"></div><div id="crosshair"></div></div><div id="raid-overlay">${raidOverlay()}</div>`;
   overlay();
   updateHUD();
 }
@@ -1502,8 +1511,7 @@ window.addEventListener(
         (keys.has("KeyS") ? 1 : 0) - (keys.has("KeyW") ? 1 : 0),
       );
     if (e.code === "Digit3") {
-      r.activeWeapon = "melee";
-      r.reload = 0;
+      r.selectWeapon("melee");
       r.interrupt();
       overlay();
     }
@@ -1575,7 +1583,7 @@ canvas.addEventListener(
     )
       return;
     e.preventDefault();
-    raid.switchWeapon();
+    if (e.deltaY) raid.switchWeapon(e.deltaY);
   },
   { passive: false },
 );

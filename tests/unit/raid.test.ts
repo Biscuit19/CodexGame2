@@ -168,9 +168,60 @@ describe("真实战区逻辑", () => {
     s.equipment.secondary = null;
     expect(r.swapWeapons("primary", "secondary")).toBe(true);
     expect(() => r.switchWeapon()).not.toThrow();
+    expect(r.activeWeapon).toBe("melee");
+    r.switchWeapon();
     expect(r.activeWeapon).toBe("secondary");
     expect(r.selectWeapon("primary")).toBe(false);
     expect(r.ammoTier).toBe(2);
+  });
+  it("滚轮按方向循环主枪、副枪和近战，跳过空位并保留各枪弹药", () => {
+    const { s, r } = start();
+    const secondary = makeItem("w16");
+    secondary.loaded = { tier: 3, count: 4 };
+    s.pack = [secondary];
+    expect(r.equipLoot(secondary.uid, true)).toBe(true);
+    r.mag = 17;
+    for (const slot of ["secondary", "melee", "primary", "secondary"]) {
+      r.switchWeapon(1);
+      expect(r.activeWeapon).toBe(slot);
+    }
+    expect(r.mag).toBe(4);
+    expect(r.ammoTier).toBe(3);
+    r.switchWeapon(-1);
+    expect(r.activeWeapon).toBe("primary");
+    expect(r.mag).toBe(17);
+    expect(r.ammoTier).toBe(1);
+    r.switchWeapon(-1);
+    expect(r.activeWeapon).toBe("melee");
+    s.equipment.secondary = null;
+    r.switchWeapon(-1);
+    expect(r.activeWeapon).toBe("primary");
+    s.equipment.primary = null;
+    r.switchWeapon();
+    expect(r.activeWeapon).toBe("melee");
+  });
+  it("只有收藏品触发首次发现，装备补给不写入发现记录，高品质重复搜索不弹右下角通知", () => {
+    const { s, r } = start(),
+      notices: string[] = [],
+      discoveries: string[] = [];
+    r.notify = (message) => notices.push(message);
+    r.onDiscover = (item) => discoveries.push(item.id);
+    for (const id of ["w3", "m4", "a5", "h5", "f4", "c1_9"])
+      expect(r.discover(makeItem(id))).toBe(false);
+    expect(s.discovered).toEqual([]);
+    expect(discoveries).toEqual([]);
+    const c = r.containers[0];
+    c.x = r.p.x;
+    c.y = r.p.y;
+    for (let repeat = 0; repeat < 2; repeat++) {
+      c.items = [makeItem("c4_0")];
+      c.revealed = 0;
+      r.startSearch(c);
+      advance(r, 7.1);
+    }
+    expect(discoveries).toEqual(["c4_0"]);
+    expect(s.collection).toEqual(["c4_0"]);
+    expect(notices).toEqual([]);
   });
   it("战斗中拖换主副武器保持实际弹药、弹种，并支持空装备位", () => {
     const { s, r } = start(),
