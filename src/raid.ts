@@ -22,6 +22,7 @@ import {
   weaponDamageScale,
   randomWeapon,
   sale,
+  foods,
   type Item,
   type BossDef,
 } from "./data";
@@ -196,6 +197,7 @@ export class Raid {
   healSource?: Container;
   meleeCooldown = 0;
   healDuration = 0;
+  regeneration = { remaining: 0, rate: 0 };
   extract = 0;
   exit?: Exit;
   search?: Container;
@@ -441,8 +443,12 @@ export class Raid {
       );
       if (type === "weapon")
         entries[0] = makeItem(randomWeapon(this.random, m).id);
-      if (type === "medical")
-        entries[0] = makeItem(`f${1 + Math.floor(this.random() * 3)}`);
+      if (type === "medical") {
+        const available = foods.filter((f) => f.tier <= Math.min(4, m + 2));
+        entries[0] = makeItem(
+          available[Math.floor(this.random() * available.length)].id,
+        );
+      }
       if (i % 3 === 0)
         entries.push(
           makeItem(
@@ -883,7 +889,12 @@ export class Raid {
         ).find((i) => i.uid === uid && db[i.id].kind === "food")
       : this.save.pack
           .filter((i) => db[i.id].kind === "food")
-          .sort((a, b) => db[a.id].heal! - db[b.id].heal!)[0];
+          .sort(
+            (a, b) =>
+              db[a.id].heal! +
+              (db[a.id].healOverTime ?? 0) -
+              (db[b.id].heal! + (db[b.id].healOverTime ?? 0)),
+          )[0];
     if (!food) {
       this.notify("没有食物 · 搜索医疗箱或回基地购买");
       return;
@@ -1167,12 +1178,28 @@ export class Raid {
     this.onChange();
   }
   startSearch(c: Container) {
+    for (const item of c.items.slice(0, c.revealed)) this.discover(item);
     this.search = c;
     this.searchProgress = 0;
     this.stats.searches += c.open ? 0 : 1;
     c.open = true;
     this.inventory = true;
     this.sound.play("search");
+  }
+  discover(item: Item) {
+    const known = (this.save.discovered ??= [...this.save.collection]);
+    const fresh = !known.includes(item.id);
+    if (
+      db[item.id].kind === "collectible" &&
+      !this.save.collection.includes(item.id)
+    )
+      this.save.collection.push(item.id);
+    if (fresh) {
+      known.push(item.id);
+      this.notify(`首次发现 · ${db[item.id].name}`);
+      persist(this.save);
+    }
+    return fresh;
   }
   take(index: number, safe = false, autoEquip = false) {
     const c = this.search;
@@ -1195,8 +1222,7 @@ export class Raid {
       return;
     }
     put(target, i, cap);
-    if (db[i.id].kind === "collectible" && !this.save.collection.includes(i.id))
-      this.save.collection.push(i.id);
+    this.discover(i);
     this.value += Math.floor(
       db[i.id].price *
         0.65 *
@@ -1475,6 +1501,14 @@ export class Raid {
       this.reload -= dt;
       if (this.reload <= 0) this.finishReload();
     }
+    if (this.regeneration.remaining > 0) {
+      const duration = Math.min(dt, this.regeneration.remaining);
+      p.hp = Math.min(100, p.hp + duration * this.regeneration.rate);
+      this.regeneration.remaining = Math.max(
+        0,
+        this.regeneration.remaining - duration,
+      );
+    }
     if (this.heal > 0) {
       this.heal -= dt;
       if (this.heal <= 0) {
@@ -1482,7 +1516,13 @@ export class Raid {
         const source = this.healSource?.items ?? this.save.pack;
         const food = source.find((i) => i.uid === this.healItem);
         if (food) {
-          p.hp = Math.min(100, p.hp + db[food.id].heal!);
+          const d = db[food.id];
+          p.hp = Math.min(100, p.hp + (d.heal ?? 0));
+          if (d.healOverTime && d.healSeconds)
+            this.regeneration = {
+              remaining: d.healSeconds,
+              rate: d.healOverTime / d.healSeconds,
+            };
           if (this.healSource) {
             const index = source.indexOf(food);
             source.splice(index, 1);
@@ -1506,10 +1546,12 @@ export class Raid {
           c.revealed++;
           this.searchProgress = 0;
           this.sound.play("loot", db[item.id].tier);
+          const fresh = this.discover(item);
           if (db[item.id].tier >= 4) {
-            this.notify(
-              `发现${db[item.id].tier === 5 ? "传说" : "稀世"}物品 · ${db[item.id].name}`,
-            );
+            if (!fresh)
+              this.notify(
+                `发现${db[item.id].tier === 5 ? "传说" : "稀世"}物品 · ${db[item.id].name}`,
+              );
             this.emit(c.x, c.y - 20, 25, colors[db[item.id].tier]);
           }
           this.onChange();

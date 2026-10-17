@@ -57,16 +57,22 @@ const result = (success: boolean, bosses: string[] = []): Result => ({
   reward: success ? 300 : 0,
 });
 describe("配置与战斗", () => {
-  it("全部物品使用独立幽默描述，60件旧编号收藏重分品质且传说仅6件", () => {
-    expect(collectibles).toHaveLength(60);
+  it("全部物品使用独立幽默描述，70件收藏分布为8、9、25、16、12，旧编号保留", () => {
+    expect(collectibles).toHaveLength(70);
     expect(new Set(items.map((i) => i.desc)).size).toBe(items.length);
-    expect(collectibles.filter((i) => i.tier === 5)).toHaveLength(6);
-    expect(collectibles.filter((i) => i.tier === 1).length).toBeGreaterThan(15);
+    expect(
+      [1, 2, 3, 4, 5].map(
+        (t) => collectibles.filter((i) => i.tier === t).length,
+      ),
+    ).toEqual([8, 9, 25, 16, 12]);
+    expect(db.c2_4.tier).toBe(4);
+    expect(db.c4_1.tier).toBe(5);
+    expect(db.c4_9.tier).toBe(5);
     for (let group = 0; group < 5; group++)
       for (let n = 0; n < 12; n++) expect(db[`c${group}_${n}`]).toBeDefined();
     expect(db.c2_6.tier).toBe(4);
     expect(db.c2_7.desc).toBe("车不一定会来，附近的猫一定会来。");
-    expect(db.c4_8.tier).toBe(1);
+    expect(db.c4_8.tier).toBe(2);
     expect(db.c4_0.name).toBe("星洲猫心");
     expect(searchTime(makeItem("c4_0"))).toBe(7);
   });
@@ -131,7 +137,7 @@ describe("配置与战斗", () => {
     expect(weapons.filter((w) => w.weaponClass === "rifle")).toHaveLength(8);
     expect(weapons.filter((w) => w.weaponClass === "sniper")).toHaveLength(3);
     expect(weapons.filter((w) => w.weaponClass === "shotgun")).toHaveLength(4);
-    expect(collectibles).toHaveLength(60);
+    expect(collectibles).toHaveLength(70);
     expect(bosses.filter((b) => b.map === 3)).toHaveLength(3);
     expect(new Set(items.map((i) => i.id)).size).toBe(items.length);
   });
@@ -171,6 +177,18 @@ describe("配置与战斗", () => {
   });
 });
 describe("物品、经济与死亡事务", () => {
+  it("旧收藏里的五件补给迁移后仍保留实物和发现记录，不再占图鉴数量", () => {
+    const s = newSave();
+    const ids = ["c1_1", "c1_9", "c1_10", "c3_1", "c4_11"];
+    s.collection = [...ids, "c4_0"];
+    s.pack = ids.map((id) => makeItem(id));
+    delete s.discovered;
+    const migrated = validateSave(s);
+    expect(migrated.collection).toEqual(["c4_0"]);
+    expect(migrated.discovered).toEqual([...ids, "c4_0"]);
+    expect(migrated.pack.map((i) => i.id)).toEqual(ids);
+    for (const id of ids) expect(db[id].kind).toBe("food");
+  });
   it("全部放回保留装备，仓库不足时留下背包余物，背包可直接出售", () => {
     const s = newSave(),
       equipment = structuredClone(s.equipment);

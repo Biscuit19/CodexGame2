@@ -32,6 +32,97 @@ function advance(r: Raid, seconds: number, keys = new Set<string>()) {
 }
 beforeEach(() => memory.clear());
 describe("真实战区逻辑", () => {
+  it("九种补给分别提供小额即时、持续、混合恢复，持续部分不会提前到账", () => {
+    for (const [id, instant, overtime, seconds] of [
+      ["f1", 8, 0, 0],
+      ["f2", 14, 0, 0],
+      ["f3", 22, 0, 0],
+      ["f4", 18, 24, 16],
+      ["c1_1", 0, 18, 12],
+      ["c1_9", 0, 10, 10],
+      ["c1_10", 20, 0, 0],
+      ["c3_1", 12, 0, 0],
+      ["c4_11", 16, 24, 16],
+    ] as const) {
+      const { s, r } = start();
+      s.pack = [makeItem(id)];
+      r.p.hp = 20;
+      r.useFood(s.pack[0].uid);
+      for (let n = 0; n < 300 && r.heal > 0; n++) advance(r, 1 / 60);
+      expect(r.heal, id).toBe(0);
+      expect(s.pack, id).toHaveLength(0);
+      expect(r.p.hp, id).toBeCloseTo(20 + instant, 6);
+      advance(r, seconds || 2);
+      expect(r.p.hp, id).toBeCloseTo(20 + instant + overtime, 5);
+      expect(r.regeneration.remaining, id).toBeCloseTo(0, 5);
+    }
+  });
+  it("持续回血移动不中断、暂停不计时、刷新不叠加、生命不超过100", () => {
+    const { s, r } = start();
+    r.walls = [];
+    r.p.x = r.p.y = 1000;
+    r.p.hp = 40;
+    s.pack = [makeItem("c1_1"), makeItem("c1_9")];
+    r.useFood(s.pack[0].uid);
+    advance(r, 1.5);
+    const afterEating = r.p.hp;
+    advance(r, 2, new Set(["KeyD"]));
+    expect(r.p.hp - afterEating).toBeCloseTo(3, 4);
+    const hp = r.p.hp,
+      time = r.regeneration.remaining;
+    r.paused = true;
+    advance(r, 5);
+    expect(r.p.hp).toBe(hp);
+    expect(r.regeneration.remaining).toBe(time);
+    r.paused = false;
+    r.useFood(s.pack[0].uid);
+    for (let n = 0; n < 120 && r.heal > 0; n++) advance(r, 1 / 60);
+    expect(r.regeneration.rate).toBe(1);
+    expect(r.regeneration.remaining).toBe(10);
+    r.p.hp = 99;
+    advance(r, 10);
+    expect(r.p.hp).toBe(100);
+  });
+  it("食用持续补给途中疾跑会取消，物品和生命不变，也不产生持续效果", () => {
+    const { s, r } = start();
+    r.p.hp = 30;
+    const food = makeItem("c4_11");
+    s.pack = [food];
+    r.useFood(food.uid);
+    advance(r, 0.2, new Set(["KeyD"]));
+    expect(r.heal).toBe(0);
+    expect(r.p.hp).toBe(30);
+    expect(s.pack[0].uid).toBe(food.uid);
+    expect(r.regeneration.remaining).toBe(0);
+  });
+  it("满包仅搜索就点亮图鉴并只提示一次，死亡保留、主动退出撤销首次发现", () => {
+    const { s, r } = start(),
+      c = r.containers[0],
+      messages: string[] = [];
+    r.notify = (m) => messages.push(m);
+    s.pack = Array.from({ length: 20 }, () => makeItem("f1"));
+    c.items = [makeItem("c0_0")];
+    c.revealed = 0;
+    c.x = r.p.x;
+    c.y = r.p.y;
+    r.startSearch(c);
+    advance(r, 0.8);
+    expect(c.revealed).toBe(1);
+    expect(s.collection).toContain("c0_0");
+    expect(s.discovered).toContain("c0_0");
+    expect(s.pack.some((i) => i.id === "c0_0")).toBe(false);
+    r.take(0);
+    r.startSearch(c);
+    expect(messages.filter((m) => m.includes("首次发现"))).toHaveLength(1);
+    r.finish(false, "测试死亡");
+    expect(s.collection).toContain("c0_0");
+    const second = start();
+    second.r.discover(makeItem("c5_14"));
+    expect(second.s.collection).toContain("c5_14");
+    second.r.abort();
+    expect(second.s.collection).not.toContain("c5_14");
+    expect(second.s.discovered).not.toContain("c5_14");
+  });
   it("从背包或容器拖换当前主武器后使用新枪的真实弹种", () => {
     const { s, r } = start(),
       gun = makeItem("w16");
@@ -200,7 +291,7 @@ describe("真实战区逻辑", () => {
     r.p.hp = 50;
     r.useFood(c.items[0].uid, "loot");
     advance(r, 1.6);
-    expect(r.p.hp).toBe(85);
+    expect(r.p.hp).toBe(64);
     expect(c.items).toHaveLength(0);
     r.interrupt();
     r.inventory = false;
@@ -420,11 +511,11 @@ describe("真实战区逻辑", () => {
     r.p.hp = 30;
     r.useFood();
     advance(r, 1.2);
-    expect(r.p.hp).toBe(50);
+    expect(r.p.hp).toBe(38);
     expect(r.heal).toBe(0);
     r.useFood();
     advance(r, 1.6);
-    expect(r.p.hp).toBe(85);
+    expect(r.p.hp).toBe(52);
     s.pack.push(makeItem("f3"));
     r.useFood();
     advance(r, 0.1, new Set(["KeyD"]));

@@ -8,7 +8,7 @@ async function start(page: Page) {
     .click();
 }
 
-test("60件收藏使用独立彩色PNG，只有已发现物品可以打开幽默描述", async ({
+test("70件收藏使用独立彩色PNG，只有已发现物品可以打开幽默描述", async ({
   page,
 }) => {
   await start(page);
@@ -18,10 +18,19 @@ test("60件收藏使用独立彩色PNG，只有已发现物品可以打开幽默
     g.render();
   });
   await page.getByRole("button", { name: "收藏图鉴", exact: true }).click();
-  await expect(page.locator(".collection-item")).toHaveCount(60);
-  await expect(page.locator(".collection-item .item-art")).toHaveCount(60);
+  await expect(page.locator(".collection-item")).toHaveCount(70);
+  await expect(page.locator(".collection-item .item-art")).toHaveCount(70);
   await expect(page.locator(".collection-item svg")).toHaveCount(0);
   await expect(page.locator('.collection-item[data-id="c4_0"]')).toBeDisabled();
+  await expect(
+    page.locator('.collection-item[data-id="c4_0"] [data-art="unknown"]'),
+  ).toHaveCount(1);
+  await expect(
+    page.locator('.collection-item[data-id="c4_0"] [data-art="c4_0"]'),
+  ).toHaveCount(0);
+  await expect(
+    page.locator('.collection-item[data-id="c4_0"]'),
+  ).not.toContainText("◈");
   await page.locator('.collection-item[data-id="c2_7"]').click();
   await expect(page.locator(".collection-description")).toHaveText(
     "车不一定会来，附近的猫一定会来。",
@@ -59,7 +68,7 @@ test("60件收藏使用独立彩色PNG，只有已发现物品可以打开幽默
           .size,
       };
     });
-  expect(atlases).toEqual({ count: 3, unique: 60 });
+  expect(atlases).toEqual({ count: 4, unique: 70 });
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.mouse.move(900, 700);
   await page.mouse.wheel(0, 800);

@@ -42,6 +42,7 @@ export interface Save {
   equipment: Equipment;
   defeated: string[];
   collection: string[];
+  discovered?: string[];
   overflow: Item[];
   buyback: Item[];
   stock?: Record<string, number>;
@@ -120,6 +121,7 @@ export function newSave(slot = 0): Save {
     },
     defeated: [],
     collection: [],
+    discovered: [],
     overflow: [],
     buyback: [],
     stats: { raids: 0, extracts: 0, kills: 0, deaths: 0, value: 0, time: 0 },
@@ -301,6 +303,15 @@ export function validateSave(data: unknown): Save {
     s.collection.some((id) => !db[id])
   )
     throw Error("进度数据无效");
+  if (
+    s.discovered !== undefined &&
+    (!Array.isArray(s.discovered) || s.discovered.some((id) => !db[id]))
+  )
+    throw Error("发现记录无效");
+  s.discovered = [...new Set([...(s.discovered ?? []), ...s.collection])];
+  s.collection = [
+    ...new Set(s.collection.filter((id) => db[id].kind === "collectible")),
+  ];
   for (const n of Object.values(s.stats))
     if (!Number.isFinite(n) || n < 0) throw Error("统计数据无效");
   for (const n of ["master", "music", "sfx", "shake"] as const)

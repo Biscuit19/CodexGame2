@@ -2,6 +2,8 @@ import Phaser from "phaser";
 import "./app.css";
 import {
   db,
+  collectibles,
+  foodEffect,
   items,
   maps,
   bosses,
@@ -55,6 +57,7 @@ import {
   type Equipment,
 } from "./store";
 import { icon, itemIcon } from "./art";
+import { equipmentSprite } from "./equipment-art";
 import { Sound } from "./audio";
 import { Raid } from "./raid";
 import { Renderer, miniMap } from "./render";
@@ -194,7 +197,7 @@ function toast(message: string) {
   box.textContent = message;
   const target = document.querySelector("#toasts")!;
   target.append(box);
-  while (target.children.length > 2) target.firstElementChild!.remove();
+  while (target.children.length > 4) target.firstElementChild!.remove();
   setTimeout(() => box.remove(), 3500);
 }
 function logo(large = false) {
@@ -204,7 +207,7 @@ function card(i: Item, from: string, shop = false) {
   const d = db[i.id],
     chosen = selected?.uid === i.uid,
     locked = shop && unlocked(s) < (d.unlock ?? 0);
-  return `<button class="item-slot ${chosen ? "selected" : ""}" style="--rarity:${colors[d.tier]}" data-action="${shop ? "buy" : from === "loot" ? "loot-select" : "select"}" data-id="${shop ? i.id : i.uid}" data-from="${from}" data-item="${i.id}" ${shop ? "" : 'draggable="true"'} ${locked ? "disabled" : ""} title="${esc(name(i.id) + "：" + d.desc)}"><span class="quality">${rarity[d.tier]}</span>${itemIcon(i, 52)}<strong>${name(i.id)}</strong><span>${shop ? (locked ? "尚未解锁" : `◈ ${money(d.price)}`) : d.kind === "ammo" ? `${i.qty} 发` : i.durability !== undefined ? `${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}` : d.kind === "collectible" ? `◈ ${money(sale(i))}` : kindNames[d.kind]}</span>${shop ? `<small>${d.damage ? `伤害 ${d.damage}${d.pellets! > 1 ? `×${d.pellets}` : ""} · 弹匣 ${d.mag}` : d.capacity ? `${d.capacity} 格` : d.heal ? `恢复 ${d.heal} 生命` : d.kind === "ammo" ? "每组 90 发" : `${d.tier} 级防护`}</small>` : ""}</button>`;
+  return `<button class="item-slot ${chosen ? "selected" : ""}" style="--rarity:${colors[d.tier]}" data-action="${shop ? "buy" : from === "loot" ? "loot-select" : "select"}" data-id="${shop ? i.id : i.uid}" data-from="${from}" data-item="${i.id}" ${shop ? "" : 'draggable="true"'} ${locked ? "disabled" : ""}><span class="quality">${rarity[d.tier]}</span>${itemIcon(i, 52)}<strong>${name(i.id)}</strong><span>${shop ? (locked ? "尚未解锁" : `◈ ${money(d.price)}`) : d.kind === "ammo" ? `${i.qty} 发` : i.durability !== undefined ? `${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}` : d.kind === "collectible" ? `◈ ${money(sale(i))}` : kindNames[d.kind]}</span>${shop ? `<small>${d.damage ? `伤害 ${d.damage}${d.pellets! > 1 ? `×${d.pellets}` : ""} · 弹匣 ${d.mag}` : d.capacity ? `${d.capacity} 格` : d.kind === "food" ? foodEffect(d) : d.kind === "ammo" ? "每组 90 发" : `${d.tier} 级防护`}</small>` : ""}</button>`;
 }
 function remember() {
   persist(s);
@@ -266,7 +269,7 @@ function header() {
   return `<header class="base-header">${btn(logo(), "nav", 'data-id="base"', "logo-button")}<div class="header-state"><span>${esc(s.name)}</span><span>${s.mode === "standard" ? "标准模式" : "轻松模式"}</span><strong>◈ ${money(s.coins)}</strong></div><div class="header-actions">${btn("设置", "settings", "", "secondary")}${page !== "base" ? btn("返回基地", "nav", 'data-id="base"', "secondary") : btn("开始界面", "to-title", "", "secondary")}</div></header>`;
 }
 function dashboard() {
-  return `<div class="base-tiles"><section class="base-tile base-summary">${icon("paw", "#e4c890", 70)}<h1>暖窝基地</h1><div class="summary-stats"><div><strong>${s.defeated.length}/6</strong><span>主线首领</span></div><div><strong>${s.stats.extracts}</strong><span>成功撤离</span></div><div><strong>${s.collection.length}/60</strong><span>物品收藏</span></div></div>${btn("进入地图一", "quick-deploy", "", "primary")}</section>${[
+  return `<div class="base-tiles"><section class="base-tile base-summary">${icon("paw", "#e4c890", 70)}<h1>暖窝基地</h1><div class="summary-stats"><div><strong>${s.defeated.length}/6</strong><span>主线首领</span></div><div><strong>${s.stats.extracts}</strong><span>成功撤离</span></div><div><strong>${s.collection.length}/${collectibles.length}</strong><span>物品收藏</span></div></div>${btn("进入地图一", "quick-deploy", "", "primary")}</section>${[
     [
       "loadout",
       "仓库与整备",
@@ -275,7 +278,12 @@ function dashboard() {
     ],
     ["shop", "补给商店", "box", ""],
     ["maps", "战区地图", "map", ""],
-    ["collection", "收藏图鉴", "gem", `${s.collection.length}/60`],
+    [
+      "collection",
+      "收藏图鉴",
+      "gem",
+      `${s.collection.length}/${collectibles.length}`,
+    ],
   ]
     .map(([id, label, i, info]) =>
       btn(
@@ -301,7 +309,7 @@ function equipped() {
   )
     .map(([slot, label, ic]) => {
       const i = s.equipment[slot];
-      return `<div class="equipped-slot" data-drop="equipment" data-slot="${slot}" aria-label="${label}装备位"><span class="equipment-title">${label}</span><button class="equipped-item" data-action="select" data-from="equipment" data-item="${i?.id || ""}" data-id="${i?.uid || ""}" ${i ? 'draggable="true"' : "disabled"} title="${i ? esc(db[i.id].desc) : "未装备"}">${i ? itemIcon(i, 32) : icon(ic, "#7c917b", 32)}<strong>${i ? name(i.id) : "未装备"}</strong>${slot === "ammo" ? `<span>${i?.qty ?? 0} 发备弹</span><span>弹匣 ${raid?.mag ?? s.equipment.primary?.loaded?.count ?? 0} 发</span>` : ""}${i?.durability !== undefined ? `<span>耐久 ${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}</span>` : ""}</button></div>`;
+      return `<div class="equipped-slot" data-drop="equipment" data-slot="${slot}" aria-label="${label}装备位"><span class="equipment-title">${label}</span><button class="equipped-item" data-action="select" data-from="equipment" data-item="${i?.id || ""}" data-id="${i?.uid || ""}" ${i ? 'draggable="true"' : "disabled"}>${i ? itemIcon(i, 32) : icon(ic, "#7c917b", 32)}<strong>${i ? name(i.id) : "未装备"}</strong>${slot === "ammo" ? `<span>${i?.qty ?? 0} 发备弹</span><span>弹匣 ${raid?.mag ?? s.equipment.primary?.loaded?.count ?? 0} 发</span>` : ""}${i?.durability !== undefined ? `<span>耐久 ${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}</span>` : ""}</button></div>`;
     })
     .join("")}</div>`;
 }
@@ -378,7 +386,7 @@ function selectedActions() {
       : d.kind === "bag"
         ? `容量 ${d.capacity} 格`
         : d.kind === "food"
-          ? `恢复 ${d.heal} 生命 · 用时 ${d.useTime} 秒`
+          ? `${foodEffect(d)} · 食用 ${d.useTime} 秒${d.healOverTime ? "；持续效果不叠加，食用新的持续补给会刷新效果" : ""}`
           : d.kind === "ammo"
             ? `${d.tier} 级弹药 · 每组最多 90 发`
             : "";
@@ -552,7 +560,7 @@ function mapsPage() {
     )}</div><div class="button-row">${btn("查看整备", "nav", 'data-id="loadout"', "secondary")}${btn("开始行动", "deploy", mapIndex > unlocked(s) || (!s.equipment.primary && !s.equipment.melee) ? "disabled" : "", "primary")}</div>${!s.equipment.primary && !s.equipment.melee ? '<p class="warning-text">请先装备武器。</p>' : ""}</section></section>`;
 }
 function collection() {
-  return `<section>${heading("收藏图鉴", `${s.collection.length}/60`)}${[
+  return `<section>${heading("收藏图鉴", `${s.collection.length}/${collectibles.length}`)}${[
     1, 2, 3, 4, 5,
   ]
     .map(
@@ -561,7 +569,7 @@ function collection() {
           .filter((d) => d.kind === "collectible" && d.tier === t)
           .map(
             (d) =>
-              `<button class="collection-item ${s.collection.includes(d.id) ? "found" : ""}" data-action="collection-detail" data-id="${d.id}" ${s.collection.includes(d.id) ? "" : "disabled"}>${itemIcon({ id: d.id, uid: d.id, qty: 1 }, 80)}<strong>${name(d.id)}</strong><span>${s.collection.includes(d.id) ? "已发现" : "未发现"} · ◈ ${money(Math.floor(d.price * 0.65))}</span></button>`,
+              `<button class="collection-item ${s.collection.includes(d.id) ? "found" : ""}" data-action="collection-detail" data-id="${d.id}" ${s.collection.includes(d.id) ? "" : "disabled"}>${s.collection.includes(d.id) ? itemIcon({ id: d.id, uid: d.id, qty: 1 }, 80) : equipmentSprite("unknown", 80)}<strong>${name(d.id)}</strong>${s.collection.includes(d.id) ? `<span>已发现 · ◈ ${money(Math.floor(d.price * 0.65))}</span>` : ""}</button>`,
           )
           .join("")}</div></section>`,
     )
@@ -627,7 +635,7 @@ function renderRaid() {
   canvas.classList.remove("hidden");
   document.body.classList.add("in-raid");
   if (r.map !== 0) scene3d?.show(false);
-  root.innerHTML = `<div class="raid-hud"><div class="raid-top"><strong>${maps[r.map].name}</strong><div id="boss-hud"></div>${btn('<b id="raid-time">15:00</b><span>菜单</span>', "pause", "", "raid-timer")}</div><canvas id="minimap" width="200" height="150" data-action="toggle-map" aria-label="打开战区地图"></canvas><div class="raid-bottom"><section class="vitals"><div><strong id="hp-number">100</strong><span>生命</span></div><div class="meter"><i id="hp-fill"></i></div><div class="stamina-row"><span>体力</span><strong id="st-number">${MOVEMENT.maxStamina}</strong><span id="sprint-state">疾跑</span></div><div class="meter stamina"><i id="st-fill"></i></div><span id="armor-readout"></span></section><div class="raid-shortcuts"><span>空格 翻滚</span><span>E 搜索</span><span>Tab 背包</span><span>M 地图</span></div><section class="weapon-hud"><strong id="weapon-name"></strong><div><b id="mag-count"></b><span id="reserve-count"></span></div><span id="ammo-name"></span><span id="weapon-condition"></span></section></div><div id="action-progress" class="action-progress hidden"></div><div id="crosshair"></div></div><div id="raid-overlay">${raidOverlay()}</div>`;
+  root.innerHTML = `<div class="raid-hud"><div class="raid-top"><strong>${maps[r.map].name}</strong><div id="boss-hud"></div>${btn('<b id="raid-time">15:00</b><span>菜单</span>', "pause", "", "raid-timer")}</div><canvas id="minimap" width="200" height="150" data-action="toggle-map" aria-label="打开战区地图"></canvas><div class="raid-bottom"><section class="vitals"><div><strong id="hp-number">100</strong><span>生命</span></div><div class="meter"><i id="hp-fill"></i></div><div class="stamina-row"><span>体力</span><strong id="st-number">${MOVEMENT.maxStamina}</strong><span id="sprint-state">疾跑</span></div><div class="meter stamina"><i id="st-fill"></i></div><span id="armor-readout"></span><span id="regen-readout"></span></section><div class="raid-shortcuts"><span>空格 翻滚</span><span>E 搜索</span><span>Tab 背包</span><span>M 地图</span></div><section class="weapon-hud"><strong id="weapon-name"></strong><div><b id="mag-count"></b><span id="reserve-count"></span></div><span id="ammo-name"></span><span id="weapon-condition"></span></section></div><div id="action-progress" class="action-progress hidden"></div><div id="crosshair"></div></div><div id="raid-overlay">${raidOverlay()}</div>`;
   overlay();
   updateHUD();
 }
@@ -698,6 +706,12 @@ function updateHUD() {
   set(
     "armor-readout",
     `护甲 ${Math.ceil(s.equipment.armor?.durability ?? 0)}　头盔 ${Math.ceil(s.equipment.helmet?.durability ?? 0)}`,
+  );
+  set(
+    "regen-readout",
+    r.regeneration.remaining > 0
+      ? `持续回血 · 剩余 ${Math.ceil(r.regeneration.remaining)} 秒`
+      : "",
   );
   const hp = document.getElementById("hp-fill"),
     st = document.getElementById("st-fill");
@@ -1171,7 +1185,7 @@ root.addEventListener("pointerover", (e) => {
     const tip = document.createElement("div");
     tip.id = "item-tooltip";
     tip.className = "panel item-tooltip";
-    tip.innerHTML = `<strong>${esc(name(d.id))}</strong><p>${esc(d.desc)}</p>`;
+    tip.innerHTML = `<strong>${esc(name(d.id))}</strong><p>${esc(d.desc)}</p>${d.kind === "food" ? `<p>${foodEffect(d)}</p>` : ""}`;
     root.append(tip);
     const r = el.getBoundingClientRect(),
       b = tip.getBoundingClientRect();

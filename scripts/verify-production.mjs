@@ -83,6 +83,18 @@ try {
     path: "test-results/production-weapon-shop.png",
     fullPage: true,
   });
+  await page.locator('[data-action="category"][data-id="food"]').click();
+  await expect(page.locator(".shop-grid .item-slot")).toHaveCount(9);
+  await expect(page.locator("[data-item][title]")).toHaveCount(0);
+  await page.locator('.shop-grid [data-item="c1_9"]').click();
+  await expect(page.locator("#item-menu")).toContainText(
+    "10 秒内持续恢复 10 生命",
+  );
+  await page.locator('.shop-grid [data-item="f4"]').click();
+  await expect(page.locator("#item-menu")).toContainText(
+    "立即恢复 18 生命，16 秒内持续恢复 24 生命",
+  );
+  await page.screenshot({ path: "test-results/production-supplies.png" });
   await page.getByRole("button", { name: "返回基地", exact: true }).click();
   await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
   await page
@@ -196,10 +208,19 @@ try {
   ).toHaveCount(0);
   await page.getByRole("button", { name: "返回基地", exact: true }).click();
   await page.getByRole("button", { name: "收藏图鉴", exact: true }).click();
-  await expect(page.locator(".collection-item")).toHaveCount(60);
-  await expect(page.locator(".collection-item .item-art")).toHaveCount(60);
+  await expect(page.locator(".collection-item")).toHaveCount(70);
+  await expect(page.locator(".collection-item .item-art")).toHaveCount(70);
   await expect(page.locator(".collection-item svg")).toHaveCount(0);
   await expect(page.locator('.collection-item[data-id="c4_0"]')).toBeDisabled();
+  await expect(
+    page.locator('.collection-item[data-id="c4_0"] [data-art="unknown"]'),
+  ).toHaveCount(1);
+  await expect(
+    page.locator('.collection-item[data-id="c4_0"] [data-art="c4_0"]'),
+  ).toHaveCount(0);
+  await expect(page.locator('.collection-item[data-id="c4_0"]')).toHaveText(
+    "星洲猫心",
+  );
   const collectibleAtlasCount = await page
     .locator(".collection-item .art-glyph")
     .evaluateAll(async (els) => {
@@ -213,7 +234,7 @@ try {
       }
       return urls.length;
     });
-  expect(collectibleAtlasCount).toBe(3);
+  expect(collectibleAtlasCount).toBe(1);
   await page.screenshot({
     path: "test-results/production-collectibles-offline.png",
     fullPage: true,
@@ -234,8 +255,10 @@ try {
         offlineLoad: true,
         pngEquipmentAndTwentyWeapons: true,
         shotgunPurchaseEquipAndFire: true,
-        sixtyCollectibleIconsOffline: true,
+        seventyMysteryCollectibleIconsOffline: true,
         primarySecondaryDrag: true,
+        nineSuppliesAndThreeHealingEffects: true,
+        unknownCollectionConcealsArtAndPrice: true,
         errors,
         failed,
       },

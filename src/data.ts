@@ -1,4 +1,4 @@
-import { collectibleRows } from "./collectibles";
+import { collectibleRows, foodHomageRows } from "./collectibles";
 export type Kind =
   | "weapon"
   | "armor"
@@ -31,6 +31,8 @@ export interface ItemDef {
   reload?: number;
   capacity?: number;
   heal?: number;
+  healOverTime?: number;
+  healSeconds?: number;
   useTime?: number;
   durability?: number;
   unlock?: number;
@@ -259,28 +261,65 @@ export const ammo: ItemDef[] = [
   ][i],
   unlock: Math.max(0, i - 1),
 }));
+// Instant recovery is applied when eating completes; ongoing recovery continues while moving.
 export const foods: ItemDef[] = [
-  "小鱼干",
-  "肉泥猫条",
-  "金枪鱼罐头",
-  "豪华海鲜拼盘",
-].map((name, i) => ({
-  id: `f${i + 1}`,
-  name,
-  kind: "food",
-  tier: i + 1,
-  price: [120, 260, 520, 1000][i],
-  heal: [20, 35, 60, 100][i],
-  useTime: [1, 1.4, 2, 3][i],
-  icon: ["fish", "tube", "can", "meal"][i],
-  desc: [
-    "没有哪次受伤是一根鱼干解决不了的，有就再来一根。",
-    "撕开包装的声音，比基地集合号有效十倍。",
-    "拉环一响，附近的隐身猫全部解除潜行。",
-    "吃完回满的是血量，清空的是本周伙食预算。",
-  ][i],
-  unlock: 0,
-}));
+  ...["小鱼干", "肉泥猫条", "金枪鱼罐头", "豪华海鲜拼盘"].map(
+    (name, i): ItemDef => ({
+      id: `f${i + 1}`,
+      name,
+      kind: "food",
+      tier: i + 1,
+      price: [120, 260, 520, 1000][i],
+      heal: [8, 14, 22, 18][i],
+      healOverTime: i === 3 ? 24 : 0,
+      healSeconds: i === 3 ? 16 : 0,
+      useTime: [1, 1.4, 2, 3][i],
+      icon: ["fish", "tube", "can", "meal"][i],
+      unlock: 0,
+      desc: [
+        "没有哪次受伤是一根鱼干解决不了的，有就再来一根。",
+        "撕开包装的声音，比基地集合号有效十倍。",
+        "拉环一响，附近的隐身猫全部解除潜行。",
+        "盘子里是海鲜盛宴，盘子外是钱包的追悼会。",
+      ][i],
+    }),
+  ),
+  ...foodHomageRows.map(([id, name, tier, desc]): ItemDef => {
+    const [heal, healOverTime, healSeconds, useTime, price] = (
+      {
+        c1_1: [0, 18, 12, 1.4, 260],
+        c1_9: [0, 10, 10, 1, 120],
+        c1_10: [20, 0, 0, 1.8, 520],
+        c3_1: [12, 0, 0, 1.2, 260],
+        c4_11: [16, 24, 16, 2.4, 900],
+      } as Record<string, number[]>
+    )[id];
+    return {
+      id,
+      name,
+      tier,
+      desc,
+      heal,
+      healOverTime,
+      healSeconds,
+      useTime,
+      price,
+      kind: "food",
+      icon: "meal",
+      unlock: 0,
+    };
+  }),
+];
+export function foodEffect(d: ItemDef) {
+  return [
+    d.heal ? `立即恢复 ${d.heal} 生命` : "",
+    d.healOverTime
+      ? `${d.healSeconds} 秒内持续恢复 ${d.healOverTime} 生命`
+      : "",
+  ]
+    .filter(Boolean)
+    .join("，");
+}
 export const collectibles: ItemDef[] = collectibleRows.map(
   ([id, name, tier, desc]) => {
     const peers = collectibleRows.filter((r) => r[2] === tier);

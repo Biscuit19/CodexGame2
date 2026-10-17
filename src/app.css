@@ -1703,6 +1703,20 @@ kbd {
   font-size: 18px;
   line-height: 1.3;
 }
+.shop-grid .item-slot {
+  aspect-ratio: auto;
+  min-height: 270px;
+  padding: 16px 10px;
+  gap: 6px;
+  justify-content: flex-start;
+}
+.shop-grid .item-slot > * {
+  flex-shrink: 0;
+}
+.shop-grid .item-slot > strong {
+  white-space: normal;
+  overflow: visible;
+}
 .weapon-filter {
   display: flex;
   align-items: center;
@@ -1925,8 +1939,11 @@ kbd {
   cursor: not-allowed;
 }
 .collection-item:not(.found) .item-art {
-  filter: grayscale(1);
-  opacity: 0.35;
+  filter: none;
+  opacity: 1;
+}
+.collection-item:not(.found) {
+  opacity: 0.8;
 }
 .collection-item.found:hover {
   border-color: #edbd69;
@@ -1946,8 +1963,21 @@ kbd {
   --art-h: 160px;
 }
 .collection-description {
-  font-size: 24px;
+  font-size: 28px;
   line-height: 1.8;
+}
+.in-raid #toasts,
+.in-raid:has(.inventory-panel) #toasts {
+  left: auto;
+  right: 25px;
+  top: auto;
+  bottom: 24px;
+  transform: none;
+  max-width: 380px;
+}
+#regen-readout {
+  color: #a9dda1;
+  font-size: 18px;
 }
 .result-panel button small {
   display: inline;

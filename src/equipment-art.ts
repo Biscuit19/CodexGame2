@@ -5,9 +5,20 @@ import collectible0 from "./assets/icons/collectibles-0.png";
 import collectible1 from "./assets/icons/collectibles-1.png";
 import collectible2 from "./assets/icons/collectibles-2.png";
 import { collectibleFrames } from "./collectible-frames";
+import collectible3 from "./assets/icons/collectibles-3.png";
+import { extraCollectibleFrames } from "./extra-collectible-frames";
 
 // Generated PNG atlases: exact row-major order, one complete icon in each cell.
 export function equipmentFrame(id: string) {
+  if (id === "unknown" || (/^c5_(\d+)$/.test(id) && Number(id.slice(3)) < 15)) {
+    return {
+      url: collectible3,
+      ...extraCollectibleFrames,
+      rect: extraCollectibleFrames.frames[
+        id === "unknown" ? 15 : Number(id.slice(3))
+      ],
+    };
+  }
   const collectible = /^c([0-4])_(\d+)$/.exec(id);
   if (collectible && Number(collectible[2]) < 12) {
     const index = Number(collectible[1]) * 12 + Number(collectible[2]),

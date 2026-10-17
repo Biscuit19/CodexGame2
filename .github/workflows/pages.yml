@@ -27,7 +27,7 @@ jobs:
           PLAYWRIGHT_CHROMIUM_EXECUTABLE: /usr/bin/google-chrome
         run: |
           google-chrome --version
-          npm run test:e2e -- --grep '菜单|接近容器|价值|PNG|20款独立|常驻'
+          npm run test:e2e -- --grep '菜单|接近容器|价值|PNG|20款独立|常驻|补给|首次搜索'
       - run: npm run build
       - name: Publish the existing Pages branch
         uses: peaceiris/actions-gh-pages@v4

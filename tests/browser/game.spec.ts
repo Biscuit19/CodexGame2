@@ -363,7 +363,7 @@ test("一次 E 同时开两栏、容器直接进食、拖出背包丢弃、近�
     .locator("#item-menu")
     .getByRole("button", { name: "食用", exact: true })
     .click();
-  await page.waitForFunction(() => (window as any).__game.raid.p.hp === 85);
+  await page.waitForFunction(() => (window as any).__game.raid.p.hp === 64);
   await page.keyboard.press("Escape");
   await page.keyboard.press("Tab");
   const item = page.locator('[data-grid="pack"] [data-item="f1"]');
