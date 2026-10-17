@@ -342,6 +342,20 @@ describe("物品、经济与死亡事务", () => {
     expect(equip(s, "stash", bag.uid)).toBe(false);
     expect(s).toEqual(before);
   });
+  it("未选择备弹时入包仍合并同级弹药，满包已有80发可接收40发", () => {
+    const s = newSave(),
+      incoming = makeItem("m1", 40);
+    s.equipment.ammo = null;
+    s.pack = [
+      ...Array.from({ length: 19 }, () => makeItem("c0_0")),
+      makeItem("m1", 80),
+    ];
+    s.stash = [incoming];
+    expect(move(s, "stash", "pack", incoming.uid)).toBe(true);
+    expect(s.pack).toHaveLength(20);
+    expect(s.pack.at(-1)!.qty).toBe(120);
+    expect(s.stash).toHaveLength(0);
+  });
   it("超量备弹拆分后每格不超过120，装备与背包不会共用物品编号", () => {
     const s = newSave(),
       ammo = makeItem("m2", 142);

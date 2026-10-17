@@ -567,7 +567,10 @@ export function refillAmmo(s: Save, tier?: number) {
     const index = s.pack.findIndex((i) => i.id === `m${tier}`);
     if (index >= 0) target = s.equipment.ammo = s.pack.splice(index, 1)[0];
   }
-  if (!target) return;
+  if (!target) {
+    normalizeAmmo(s.pack);
+    return;
+  }
   if (target.qty > AMMO_STACK) {
     const excess = takeQuantity(target, target.qty - AMMO_STACK);
     excess.uid = crypto.randomUUID();
