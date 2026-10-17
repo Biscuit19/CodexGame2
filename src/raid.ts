@@ -22,6 +22,7 @@ import {
   weaponDamageScale,
   randomWeapon,
   sale,
+  takeQuantity,
   foods,
   type Item,
   type BossDef,
@@ -236,6 +237,14 @@ export class Raid {
     this.onEnd = onEnd;
     this.notify = notify;
     if (!beginRaid(save)) throw Error("请先完成整备");
+    for (const item of [
+      ...save.pack,
+      ...save.secure,
+      ...Object.values(save.equipment).filter((i): i is Item => !!i),
+    ]) {
+      item.raidBrought = item.qty;
+      if (item.loaded) item.loaded.raidBrought = item.loaded.count;
+    }
     save.pendingMap = map;
     for (const slot of ["primary", "secondary"] as const) {
       const i = save.equipment[slot];
@@ -755,7 +764,8 @@ export class Raid {
   finishReload() {
     this.reload = 0;
     if (!this.weapon) return;
-    let count = Math.min(this.weapon.mag! - this.mag, this.reserve);
+    let count = Math.min(this.weapon.mag! - this.mag, this.reserve),
+      brought = 0;
     this.mag += count;
     this.magazineTiers[this.weaponItem!.uid] = this.ammoTier;
     for (const i of [
@@ -764,10 +774,15 @@ export class Raid {
     ]) {
       if (i.id === `m${this.ammoTier}` && count > 0) {
         const used = Math.min(count, i.qty);
-        i.qty -= used;
+        brought += takeQuantity(i, used).raidBrought ?? 0;
         count -= used;
       }
     }
+    const loaded = (this.weaponItem!.loaded ??= {
+      tier: this.ammoTier,
+      count: this.mag,
+    });
+    if (brought) loaded.raidBrought = (loaded.raidBrought ?? 0) + brought;
     this.save.pack = this.save.pack.filter((i) => i.qty > 0);
     if (this.save.equipment.ammo?.qty === 0) this.save.equipment.ammo = null;
     normalizeAmmo(this.save.pack);
@@ -831,10 +846,13 @@ export class Raid {
   switchAmmo(tier: number) {
     if (tier === this.ammoTier || tier < 1 || tier > 4) return;
     const simulated = structuredClone(this.save.pack);
-    let left = this.mag;
+    let left = this.mag,
+      brought = this.weaponItem?.loaded?.raidBrought ?? 0;
     while (left) {
       const n = Math.min(AMMO_STACK, left),
         item = makeItem(`m${this.ammoTier}`, n);
+      if (brought) item.raidBrought = Math.min(brought, n);
+      brought -= item.raidBrought ?? 0;
       if (!put(simulated, item, packCapacity(this.save))) {
         this.notify("背包空间不足，无法卸下当前弹匣");
         return;
@@ -931,6 +949,8 @@ export class Raid {
     }
     this.interrupt();
     this.mag--;
+    if (this.weaponItem?.loaded?.raidBrought)
+      this.weaponItem.loaded.raidBrought--;
     this.syncLoaded();
     this.fireCool = 60 / this.weapon.rpm!;
     const count = this.weapon.pellets ?? 1;
@@ -976,6 +996,14 @@ export class Raid {
         w.loaded = {
           tier: this.magazineTiers[w.uid] ?? w.loaded?.tier ?? this.ammoTier,
           count: this.magazines[w.uid] ?? w.loaded?.count ?? 0,
+          ...(w.loaded?.raidBrought
+            ? {
+                raidBrought: Math.min(
+                  w.loaded.raidBrought,
+                  this.magazines[w.uid] ?? w.loaded.count,
+                ),
+              }
+            : {}),
         };
     }
     delete this.save.loadedRounds;
@@ -1400,10 +1428,7 @@ export class Raid {
       reason,
       map: this.map,
       ...this.stats,
-      value: [...this.save.pack, ...this.save.secure].reduce(
-        (sum, item) => sum + sale(item),
-        0,
-      ),
+      value: this.extractedLootValue(),
       time: this.elapsed,
       bosses: success ? this.pendingBosses : [],
       reward: success ? 300 + this.map * 350 : 0,
@@ -1412,6 +1437,30 @@ export class Raid {
     this.sound.mode = "base";
     this.sound.play(success ? "success" : "death");
     this.onEnd(result);
+  }
+  extractedLootValue() {
+    const carried = [
+      ...this.save.pack,
+      ...this.save.secure,
+      ...Object.values(this.save.equipment).filter((i): i is Item => !!i),
+    ];
+    return carried.reduce((sum, item) => {
+      const fresh = Math.max(0, item.qty - (item.raidBrought ?? 0));
+      const rounds = item.loaded
+        ? Math.max(0, item.loaded.count - (item.loaded.raidBrought ?? 0))
+        : 0;
+      return (
+        sum +
+        (fresh ? sale({ ...item, qty: fresh }) : 0) +
+        (rounds
+          ? sale({
+              id: `m${item.loaded!.tier}`,
+              uid: item.uid + ":loaded",
+              qty: rounds,
+            })
+          : 0)
+      );
+    }, 0);
   }
   emit(x: number, y: number, n: number, color: string) {
     for (let i = 0; i < n; i++) {
@@ -1526,7 +1575,7 @@ export class Raid {
               remaining: d.healSeconds,
               rate: d.healOverTime / d.healSeconds,
             };
-          food.qty--;
+          takeQuantity(food, 1);
           if (food.qty === 0) {
             if (this.healSource) {
               source.splice(source.indexOf(food), 1);

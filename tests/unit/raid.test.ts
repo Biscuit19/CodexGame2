@@ -1,7 +1,7 @@
 import { beforeEach, describe, it, expect } from "vitest";
 import { Raid, projectileFalloff } from "../../src/raid";
 import { newSave, recoverInterrupted, validateSave } from "../../src/store";
-import { makeItem, weapons, db } from "../../src/data";
+import { makeItem, weapons, db, sale } from "../../src/data";
 import type { Sound } from "../../src/audio";
 const memory = new Map<string, string>();
 Object.assign(globalThis, {
@@ -12,17 +12,18 @@ Object.assign(globalThis, {
   window: {},
 });
 const sound = { mode: "base", play: () => {} } as unknown as Sound;
-function start(map = 0) {
-  const s = newSave(),
-    r = new Raid(
-      s,
-      map,
-      sound,
-      () => {},
-      () => {},
-      () => {},
-      42,
-    );
+function start(map = 0, prepare?: (s: ReturnType<typeof newSave>) => void) {
+  const s = newSave();
+  prepare?.(s);
+  const r = new Raid(
+    s,
+    map,
+    sound,
+    () => {},
+    () => {},
+    () => {},
+    42,
+  );
   r.enemies = [];
   return { s, r };
 }
@@ -32,6 +33,126 @@ function advance(r: Raid, seconds: number, keys = new Set<string>()) {
 }
 beforeEach(() => memory.clear());
 describe("真实战区逻辑", () => {
+  it("空手搜刮前直接撤离价值为零，原有背包、安全箱、装备与弹匣均不计入", () => {
+    const { s, r } = start(0, (s) => {
+      s.pack = [makeItem("c4_0"), makeItem("f1", 5), makeItem("m2", 90)];
+      s.secure = [makeItem("c5_14")];
+      s.equipment.primary!.loaded = { tier: 1, count: 17 };
+    });
+    expect(r.extractedLootValue()).toBe(0);
+    r.finish(true, "成功撤离");
+    expect(s.result?.value).toBe(0);
+    expect(s.stats.value).toBe(0);
+    const carried = [
+      ...s.pack,
+      ...s.secure,
+      ...Object.values(s.equipment).filter(Boolean),
+    ];
+    expect(
+      carried.every(
+        (i) =>
+          i!.raidBrought === undefined && i!.loaded?.raidBrought === undefined,
+      ),
+    ).toBe(true);
+    const next = new Raid(
+      s,
+      0,
+      sound,
+      () => {},
+      () => {},
+      () => {},
+      42,
+    );
+    expect(next.extractedLootValue()).toBe(0);
+  });
+  it("带入物丢弃重捡不计收益；新补给与弹药混堆、食用和丢弃后只计实际带回部分", () => {
+    const { s, r } = start(0, (s) => {
+      s.pack = [makeItem("f1", 4), makeItem("m2", 80), makeItem("c4_0")];
+    });
+    const original = s.pack.find((i) => i.id === "c4_0")!;
+    r.dropItem(original.uid);
+    const dropped = r.containers.find((c) =>
+      c.items.some((i) => i.uid === original.uid),
+    )!;
+    r.startSearch(dropped);
+    dropped.revealed = dropped.items.length;
+    r.take(dropped.items.findIndex((i) => i.uid === original.uid));
+    expect(r.extractedLootValue()).toBe(0);
+    const c = r.containers[0];
+    c.items = [makeItem("f1", 4), makeItem("m2", 40)];
+    c.revealed = 2;
+    c.x = r.p.x;
+    c.y = r.p.y;
+    r.startSearch(c);
+    r.take(0);
+    r.take(0);
+    expect(r.extractedLootValue()).toBe(
+      sale(makeItem("f1", 4)) + sale(makeItem("m2", 40)),
+    );
+    r.p.hp = 20;
+    r.useFood(s.pack.find((i) => i.id === "f1")!.uid);
+    advance(r, 1.1);
+    expect(r.extractedLootValue()).toBe(
+      sale(makeItem("f1", 4)) + sale(makeItem("m2", 40)),
+    );
+    const newFood = s.pack.find((i) => i.id === "f1" && !i.raidBrought)!;
+    r.dropItem(newFood.uid);
+    r.finish(true, "成功撤离");
+    expect(s.result?.value).toBe(
+      sale(makeItem("f1", 1)) + sale(makeItem("m2", 40)),
+    );
+  });
+  it("先吃掉自带补给后捡到同种补给仍计收益，直接穿戴的敌方护甲也计入", () => {
+    const { s, r } = start(0, (s) => {
+      s.pack = [makeItem("f1")];
+    });
+    r.p.hp = 20;
+    r.useFood(s.pack[0].uid);
+    advance(r, 1.1);
+    const c = r.containers[0];
+    c.items = [makeItem("f1"), makeItem("a5")];
+    c.revealed = 2;
+    c.x = r.p.x;
+    c.y = r.p.y;
+    r.startSearch(c);
+    r.take(0);
+    expect(r.equipContainer(c.items[0].uid, "armor")).toBe(true);
+    r.finish(true, "成功撤离");
+    expect(s.result?.value).toBe(sale(makeItem("f1")) + sale(makeItem("a5")));
+  });
+  it("带入弹药换装卸弹仍为零收益，新捡弹药装入原枪后仅计算未射出的新弹药", () => {
+    const original = start(0, (s) => {
+      s.equipment.primary!.loaded = { tier: 1, count: 30 };
+      s.pack = [makeItem("m2", 40)];
+    });
+    original.r.switchAmmo(2);
+    original.r.finishReload();
+    expect(original.r.extractedLootValue()).toBe(0);
+    expect(validateSave(structuredClone(original.s)).pending).toBe(true);
+    const { s, r } = start(0, (s) => {
+      s.pack = [];
+      s.equipment.ammo = null;
+      s.equipment.primary!.loaded = { tier: 2, count: 0 };
+    });
+    const c = r.containers[0];
+    c.items = [makeItem("m2", 30)];
+    c.revealed = 1;
+    c.x = r.p.x;
+    c.y = r.p.y;
+    r.startSearch(c);
+    r.take(0);
+    r.inventory = false;
+    r.interrupt();
+    r.finishReload();
+    expect(r.mag).toBe(30);
+    for (let n = 0; n < 5; n++) {
+      r.fireCool = 0;
+      r.shoot();
+    }
+    r.finish(true, "成功撤离");
+    expect(s.result?.value).toBe(sale(makeItem("m2", 25)));
+  });
+
   it("堆叠补给食用只扣一份，容器仍保留剩余堆叠与已搜索状态", () => {
     const { s, r } = start();
     r.p.hp = 20;
@@ -239,7 +360,11 @@ describe("真实战区逻辑", () => {
     expect(r.mag).toBe(4);
     expect(r.ammoTier).toBe(3);
     expect(r.reload).toBe(0);
-    expect(s.equipment.secondary?.loaded).toEqual({ tier: 2, count: 17 });
+    expect(s.equipment.secondary?.loaded).toEqual({
+      tier: 2,
+      count: 17,
+      raidBrought: 17,
+    });
     expect(r.unequipToPack("primary")).toBe(true);
     expect(r.swapWeapons("secondary", "primary")).toBe(true);
     expect(r.weaponItem?.uid).toBe(a.uid);

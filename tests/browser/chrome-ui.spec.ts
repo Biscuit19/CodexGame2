@@ -269,7 +269,7 @@ test("首次发现顶部居中，五档颜色与描述门槛正确，武器弹�
         path: "test-results/chrome-legend-discovery-and-weapon-hud.png",
       });
     }
-    await page.clock.fastForward([1000, 1000, 2000, 3000, 5000][n] - 450);
+    await page.clock.fastForward([1000, 1500, 3500, 4500, 6000][n] - 450);
     await expect(banner).toBeVisible();
     await page.clock.runFor(100);
     await expect(banner).toHaveCount(0);
@@ -378,7 +378,7 @@ test("实际逐件搜索仅收藏品在顶部首次提示，高品质没有右�
     await page.evaluate(() => (window as any).__game.save.discovered),
   ).toEqual(searched.slice(5));
   await expect(page.locator(".discovery-card")).toHaveCount(0, {
-    timeout: 12000,
+    timeout: 16000,
   });
   await page.evaluate(async () => {
     const r = (window as any).__game.raid,
@@ -485,4 +485,90 @@ test("Chrome 连续停留撤离点后显示顶层结算，截图、命中测试�
   await expect(
     page.getByRole("heading", { name: "暖窝基地", exact: true }),
   ).toBeVisible();
+});
+
+test("基地子页面按 Esc 返回基地，详情先关闭且结算不会被误退", async ({
+  page,
+}) => {
+  await start(page);
+  for (const name of ["仓库与整备", "补给商店", "战区地图", "收藏图鉴"]) {
+    await page.getByRole("button", { name, exact: true }).click();
+    if (name === "仓库与整备") {
+      await page.locator('.pack-grid [data-item="f1"]').click();
+      await expect(page.locator("#item-menu")).toBeVisible();
+    }
+    await page.keyboard.press("Escape");
+    await expect(page.locator(".base-tile")).toHaveCount(5);
+    await expect(page.locator("#item-menu")).toHaveCount(0);
+    await expect(
+      page.getByRole("heading", { name: "暖窝基地", exact: true }),
+    ).toBeVisible();
+  }
+  await page.evaluate(
+    () => ((window as any).__game.save.collection = ["c4_0"]),
+  );
+  await page.getByRole("button", { name: "收藏图鉴", exact: true }).click();
+  await page.locator('.collection-item[data-id="c4_0"]').click();
+  await page.keyboard.press("Escape");
+  await expect(page.locator("#collection-dialog")).toBeHidden();
+  await expect(page.locator(".collection-item")).toHaveCount(70);
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".base-tile")).toHaveCount(5);
+});
+
+test("实际撤离带入物资价值为零，再次出击只计算新捡且最终保留的战利品", async ({
+  page,
+}) => {
+  await start(page);
+  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  const moveToExit = async () =>
+    page.evaluate(() => {
+      const r = (window as any).__game.raid;
+      r.enemies = [];
+      const exit = r.exits.find((e: any) => e.active && !e.paid);
+      r.p.x = exit.x;
+      r.p.y = exit.y;
+      r.extract = 0;
+      r.inventory = false;
+      r.interrupt();
+    });
+  const value = page
+    .locator("#result-dialog .result-stats > div")
+    .filter({ has: page.locator("span", { hasText: "带出物资价值" }) })
+    .locator("strong");
+  await moveToExit();
+  await expect(value).toHaveText("◈ 0", { timeout: 7000 });
+  await page.screenshot({
+    path: "test-results/chrome-extraction-zero-starting-gear.png",
+  });
+  await page.locator('[data-action="close-result"]').click();
+  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await page.evaluate(async () => {
+    const g = (window as any).__game,
+      r = g.raid,
+      d = await import("/src/data.ts"),
+      c = r.containers[0];
+    r.enemies = [];
+    c.x = r.p.x;
+    c.y = r.p.y;
+    c.items = [d.makeItem("f1", 2), d.makeItem("c4_0"), d.makeItem("c5_14")];
+    c.revealed = 3;
+    r.startSearch(c);
+    r.take(0);
+    r.take(0);
+    r.take(0);
+    r.dropItem(g.save.pack.find((i: any) => i.id === "c5_14").uid);
+  });
+  await moveToExit();
+  await expect(value).toHaveText("◈ 22,906", { timeout: 7000 });
+  await page.screenshot({
+    path: "test-results/chrome-extraction-new-loot-only.png",
+  });
+  await page.locator('[data-action="close-result"]').click();
+  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await moveToExit();
+  await expect(value).toHaveText("◈ 0", { timeout: 7000 });
 });

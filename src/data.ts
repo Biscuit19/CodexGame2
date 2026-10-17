@@ -43,9 +43,23 @@ export interface Item {
   uid: string;
   id: string;
   qty: number;
+  /** Quantity carried into this raid; absent means newly acquired. Cleared at settlement. */
+  raidBrought?: number;
   durability?: number;
   maxDurability?: number;
-  loaded?: { tier: number; count: number };
+  loaded?: { tier: number; count: number; raidBrought?: number };
+}
+export function takeQuantity(item: Item, quantity: number): Item {
+  const qty = Math.min(quantity, item.qty),
+    brought = Math.min(item.raidBrought ?? 0, qty),
+    part = { ...item, qty };
+  if (brought) part.raidBrought = brought;
+  else delete part.raidBrought;
+  item.qty -= qty;
+  const remaining = (item.raidBrought ?? 0) - brought;
+  if (remaining) item.raidBrought = remaining;
+  else delete item.raidBrought;
+  return part;
 }
 export const AMMO_STACK = 90,
   FOOD_STACK = 5,

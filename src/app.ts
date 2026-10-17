@@ -121,7 +121,7 @@ function nextDiscovery() {
   };
   discoveryTimer = setTimeout(
     expire,
-    [0, 1000, 1000, 2000, 3000, 5000][d.tier],
+    [0, 1000, 1500, 3500, 4500, 6000][d.tier],
   );
 }
 function showDiscovery(item: Item) {
@@ -1472,6 +1472,14 @@ window.addEventListener(
     if (["Tab", "Space"].includes(e.code)) e.preventDefault();
     if (!raid || raid.done) {
       if (e.code === "Escape" && !title) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        closeItemMenu();
+        // Close a detail/menu first; otherwise leave the base subpage.
+        if (!modal && !result) {
+          page = "base";
+          selected = undefined;
+        }
         modal = "";
         render();
       }

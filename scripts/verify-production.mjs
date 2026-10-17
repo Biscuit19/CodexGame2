@@ -271,17 +271,62 @@ try {
     path: "test-results/production-collectibles-offline.png",
     fullPage: true,
   });
-  await page.getByRole("button", { name: "返回基地", exact: true }).click();
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".base-tile")).toHaveCount(5);
   await page.getByRole("button", { name: "进入地图一", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await expect(page.locator("#raid-time")).toBeVisible();
   await page.keyboard.press("Digit3");
-  await page.keyboard.down("KeyA");
-  await page.waitForTimeout(330);
-  await page.keyboard.up("KeyA");
-  await page.keyboard.down("KeyW");
-  await page.waitForTimeout(1667);
-  await page.keyboard.up("KeyW");
+  // Navigate using the rendered minimap instead of fixed key durations, which
+  // can overshoot on a busy software-rendering runner. No development helpers.
+  for (let step = 0; step < 24; step++) {
+    if (await page.locator("#result-dialog").isVisible()) break;
+    const position = await page.locator("#minimap").evaluate((canvas) => {
+      const c = canvas.getContext("2d"),
+        pixels = c.getImageData(0, 0, canvas.width, canvas.height).data;
+      let x = 0,
+        y = 0,
+        count = 0;
+      for (let n = 0; n < pixels.length; n += 4) {
+        if (
+          pixels[n] > 235 &&
+          pixels[n + 1] > 200 &&
+          pixels[n + 1] < 230 &&
+          pixels[n + 2] > 130 &&
+          pixels[n + 2] < 165
+        ) {
+          x += ((n / 4) % canvas.width) + 0.5;
+          y += Math.floor(n / 4 / canvas.width) + 0.5;
+          count++;
+        }
+      }
+      if (!count)
+        throw Error("Player marker missing from the rendered minimap");
+      return {
+        x: (x / count / canvas.width) * 2400,
+        y: (y / count / canvas.height) * 1800,
+      };
+    });
+    const dx = 170 - position.x,
+      dy = 1000 - position.y;
+    if (Math.abs(dx) < 22 && Math.abs(dy) < 22) break;
+    const horizontal = Math.abs(dx) > 22;
+    const key = horizontal
+      ? dx < 0
+        ? "KeyA"
+        : "KeyD"
+      : dy < 0
+        ? "KeyW"
+        : "KeyS";
+    const milliseconds = Math.max(
+      60,
+      Math.min(300, (Math.abs(horizontal ? dx : dy) / 270) * 1000),
+    );
+    await page.keyboard.down(key);
+    await page.waitForTimeout(milliseconds);
+    await page.keyboard.up(key);
+    await page.waitForTimeout(100);
+  }
   const resultDialog = page.locator("#result-dialog");
   await expect(resultDialog).toBeVisible({ timeout: 10000 });
   expect(await resultDialog.evaluate((el) => el.matches(":modal"))).toBe(true);
@@ -291,6 +336,12 @@ try {
   await expect(resultDialog.locator(".result-stats")).toContainText(
     "带出物资价值",
   );
+  await expect(
+    resultDialog
+      .locator(".result-stats > div")
+      .filter({ has: page.locator("span", { hasText: "带出物资价值" }) })
+      .locator("strong"),
+  ).toHaveText("◈ 0");
   await page.screenshot({
     path: "test-results/production-chrome-extraction-result.png",
   });
@@ -323,6 +374,8 @@ try {
         temporaryTestingDoesNotCreateSlots: true,
         largeWeaponAndAmmoIcons: true,
         chromeRealExtractionNativeDialog: true,
+        broughtInItemsExcludedFromExtractionValue: true,
+        baseSubpageEscape: true,
         errors,
         failed,
       },

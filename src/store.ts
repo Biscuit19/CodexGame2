@@ -11,6 +11,7 @@ import {
   AMMO_STACK,
   BASE_PACK,
   stackLimit,
+  takeQuantity,
   collectibles,
 } from "./data";
 export type Equipment = {
@@ -263,7 +264,11 @@ export function validateSave(data: unknown): Save {
       ids.has(i.uid) ||
       !Number.isInteger(i.qty) ||
       i.qty < 1 ||
-      i.qty > stackLimit(i.id)
+      i.qty > stackLimit(i.id) ||
+      (i.raidBrought !== undefined &&
+        (!Number.isInteger(i.raidBrought) ||
+          i.raidBrought < 0 ||
+          i.raidBrought > i.qty))
     )
       throw Error("物品数据无效");
     ids.add(i.uid);
@@ -282,7 +287,11 @@ export function validateSave(data: unknown): Save {
         i.loaded.count > db[i.id].mag! ||
         !Number.isInteger(i.loaded.tier) ||
         i.loaded.tier < 1 ||
-        i.loaded.tier > 4)
+        i.loaded.tier > 4 ||
+        (i.loaded.raidBrought !== undefined &&
+          (!Number.isInteger(i.loaded.raidBrought) ||
+            i.loaded.raidBrought < 0 ||
+            i.loaded.raidBrought > i.loaded.count)))
     )
       throw Error("武器弹匣无效");
     if (
@@ -439,53 +448,34 @@ export function put(list: Item[], item: Item, capacity: number) {
     list.push(item);
     return true;
   }
-  let remaining = item.qty;
+  appendStack(list, item);
+  return true;
+}
+function appendStack(list: Item[], item: Item) {
+  const remaining = { ...item },
+    limit = stackLimit(item.id);
   for (const stack of list) {
     if (stack.id !== item.id) continue;
-    const n = Math.min(limit - stack.qty, remaining);
-    stack.qty += n;
-    remaining -= n;
-    if (!remaining) return true;
+    const part = takeQuantity(
+      remaining,
+      Math.min(limit - stack.qty, remaining.qty),
+    );
+    stack.qty += part.qty;
+    if (part.raidBrought)
+      stack.raidBrought = (stack.raidBrought ?? 0) + part.raidBrought;
+    if (!remaining.qty) return;
   }
-  while (remaining > 0) {
-    const qty = Math.min(limit, remaining);
-    list.push({
-      ...item,
-      uid: list.some((i) => i.uid === item.uid)
-        ? crypto.randomUUID()
-        : item.uid,
-      qty,
-    });
-    remaining -= qty;
+  while (remaining.qty > 0) {
+    const part = takeQuantity(remaining, Math.min(limit, remaining.qty));
+    if (list.some((i) => i.uid === part.uid)) part.uid = crypto.randomUUID();
+    list.push(part);
   }
-  return true;
 }
 export function normalizeStacks(list: Item[]) {
   const result: Item[] = [];
   for (const item of list) {
-    const limit = stackLimit(item.id);
-    if (limit === 1) {
-      result.push(item);
-      continue;
-    }
-    let left = item.qty;
-    for (const existing of result) {
-      if (existing.id !== item.id) continue;
-      const n = Math.min(limit - existing.qty, left);
-      existing.qty += n;
-      left -= n;
-    }
-    while (left > 0) {
-      const qty = Math.min(limit, left);
-      result.push({
-        ...item,
-        uid: result.some((i) => i.uid === item.uid)
-          ? crypto.randomUUID()
-          : item.uid,
-        qty,
-      });
-      left -= qty;
-    }
+    if (stackLimit(item.id) === 1) result.push(item);
+    else appendStack(result, item);
   }
   list.splice(0, list.length, ...result);
 }
@@ -718,6 +708,14 @@ export function beginRaid(s: Save) {
 export function settle(s: Save, r: Result) {
   if (!s.pending) return false;
   s.pending = false;
+  for (const item of [
+    ...s.pack,
+    ...s.secure,
+    ...Object.values(s.equipment).filter((i): i is Item => !!i),
+  ]) {
+    delete item.raidBrought;
+    if (item.loaded) delete item.loaded.raidBrought;
+  }
   delete s.raidBackup;
   s.stock = {};
   const kept = r.success || s.mode === "easy";
