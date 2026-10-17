@@ -7,9 +7,18 @@ import collectible2 from "./assets/icons/collectibles-2.png";
 import { collectibleFrames } from "./collectible-frames";
 import collectible3 from "./assets/icons/collectibles-3.png";
 import { extraCollectibleFrames } from "./extra-collectible-frames";
+import householdUrl from "./assets/icons/collectibles-household.png";
+import { householdFrames } from "./household-frames";
 
 // Generated PNG atlases: exact row-major order, one complete icon in each cell.
 export function equipmentFrame(id: string) {
+  if (Object.hasOwn(householdFrames.frames, id))
+    return {
+      url: householdUrl,
+      width: householdFrames.width,
+      height: householdFrames.height,
+      rect: householdFrames.frames[id as keyof typeof householdFrames.frames],
+    };
   if (id === "unknown" || (/^c5_(\d+)$/.test(id) && Number(id.slice(3)) < 15)) {
     return {
       url: collectible3,

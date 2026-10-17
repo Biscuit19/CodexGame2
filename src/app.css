@@ -2157,3 +2157,157 @@ kbd {
   color: #c8d4b8;
   line-height: 1.3;
 }
+
+/* Discovery: compact prefix, largest item name, readable description below. */
+#discovery-feed {
+  width: min(900px, calc(100vw - 240px));
+}
+.discovery-card {
+  padding: 14px 22px 18px;
+}
+.discovery-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+.discovery-intro {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+  color: #e5d7ad;
+  white-space: nowrap;
+}
+.discovery-headline,
+.discovery-unlock {
+  font-size: 20px;
+  font-weight: 600;
+}
+.discovery-name {
+  font-size: 34px;
+  line-height: 1.3;
+}
+.discovery-main > .item-art {
+  --art-w: 76px;
+  --art-h: 72px;
+  flex: 0 0 76px;
+}
+.discovery-description {
+  font-size: 27px;
+  line-height: 1.5;
+  margin: 10px 0 0;
+}
+.discovery-card.tier-5 .discovery-intro {
+  color: #ffe07a;
+}
+
+/* Full sized safe slots share the backpack cell geometry. */
+.inventory-panel {
+  container-type: inline-size;
+  --inventory-cell: calc((100cqw - 32px) / 5);
+}
+.inventory-panel .pack-grid {
+  gap: 8px;
+}
+.safe-fixed {
+  display: block;
+  padding-top: 12px;
+}
+.safe-label {
+  width: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 9px;
+}
+.safe-label strong,
+.safe-label span {
+  font-size: 24px;
+  line-height: 1.3;
+  color: #ffe08b;
+}
+.safe-label span {
+  margin-left: auto;
+  white-space: nowrap;
+}
+.inventory-panel .safe-grid {
+  width: 100%;
+  max-width: 100%;
+  display: grid;
+  grid-template-columns: repeat(var(--safe-slots), var(--inventory-cell));
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+}
+.safe-fixed .safe-grid .item-slot,
+.safe-fixed .safe-grid .empty-slot {
+  width: var(--inventory-cell);
+  aspect-ratio: 1;
+  padding: 2px;
+}
+.safe-fixed .item-slot strong {
+  display: block;
+  font-size: 18px;
+}
+.safe-fixed .safe-grid .item-slot > .item-art {
+  --art-w: 62px;
+  --art-h: 34px;
+}
+.safe-fixed .item-slot > .stack-quantity {
+  position: static;
+  background: transparent;
+  padding: 0;
+  font-size: 18px;
+  display: block;
+}
+.food-hud {
+  width: 158px;
+  flex: 0 0 158px;
+  background: #223d2eec;
+  border: 1px solid #c9d6ad44;
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+.food-hud #food-art {
+  height: 64px;
+  display: flex;
+  align-items: center;
+}
+.food-hud .item-art {
+  --art-w: 88px;
+  --art-h: 64px;
+}
+.food-hud strong {
+  font-size: 20px;
+  line-height: 1.3;
+  color: #f4e6b5;
+}
+.food-hud span,
+.food-hud small {
+  font-size: 18px;
+  color: #c7d8b5;
+}
+.safe-fixed .item-slot strong {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  line-height: 1.1;
+  max-height: none;
+  overflow-wrap: anywhere;
+}
+.safe-fixed .item-slot > .stack-quantity {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: auto;
+  background: #142a22e8;
+  padding: 1px 2px;
+  border-radius: 3px;
+}

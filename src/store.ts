@@ -22,6 +22,7 @@ export type Equipment = {
   bag: Item | null;
   ammo: Item | null;
   melee: Item | null;
+  food: Item | null;
 };
 export interface Settings {
   master: number;
@@ -122,6 +123,7 @@ export function newSave(slot = 0): Save {
       bag: makeItem("b1"),
       ammo: makeItem("m1", 90),
       melee: makeItem("k0"),
+      food: null,
     },
     defeated: [],
     collection: [],
@@ -313,6 +315,7 @@ export function validateSave(data: unknown): Save {
     bag: "bag",
     ammo: "ammo",
     melee: "melee",
+    food: "food",
   })) {
     const i = s.equipment[slot as keyof Equipment];
     if (i && db[i.id].kind !== kind) throw Error("装备栏位无效");
@@ -483,6 +486,7 @@ export function normalizeStacks(list: Item[]) {
 export const normalizeAmmo = normalizeStacks;
 export function migrateInventory(s: Save) {
   s.equipment.ammo ??= null;
+  s.equipment.food ??= null;
   if (!Object.hasOwn(s.equipment, "melee")) s.equipment.melee = makeItem("k0");
   for (const r of s.loadedRounds ?? []) {
     const w = [s.equipment.primary, s.equipment.secondary].find(
@@ -557,7 +561,7 @@ export function equip(
       ? secondary
         ? "secondary"
         : "primary"
-      : ["armor", "helmet", "bag", "ammo", "melee"].includes(kind)
+      : ["armor", "helmet", "bag", "ammo", "melee", "food"].includes(kind)
         ? (kind as keyof Equipment)
         : null;
   if (!slot) return false;
@@ -734,6 +738,7 @@ export function settle(s: Save, r: Result) {
       bag: null,
       ammo: null,
       melee: makeItem("k0"),
+      food: null,
     };
   } else if (!r.success) {
     // Easy-mode death keeps its original return-to-stash rule; successful raids keep the backpack.

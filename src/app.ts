@@ -106,12 +106,12 @@ function nextDiscovery() {
   const headline = [
     "",
     "",
-    "",
-    "好家伙，捡到宝了！",
-    "壕！这下真的壕！",
-    "哇！金色传说！",
+    "捡到宝了！",
+    "捡到宝了！",
+    "金色传说！",
+    "天降横财！",
   ][d.tier];
-  discoveryFeed.innerHTML = `<section class="discovery-card tier-${d.tier}" data-item="${d.id}" style="--discovery-color:${color}">${d.tier >= 3 ? `<h2>${headline}</h2><p class="discovery-description">${esc(d.desc)}</p>` : ""}<strong class="discovery-name">首次解锁 <span style="color:${color}">${esc(d.name)}</span></strong></section>`;
+  discoveryFeed.innerHTML = `<section class="discovery-card tier-${d.tier}" data-item="${d.id}" style="--discovery-color:${color}"><div class="discovery-main"><span class="discovery-intro">${headline ? `<span class="discovery-headline">${headline}</span>` : ""}<span class="discovery-unlock">解锁</span></span><strong class="discovery-name"><span style="color:${color}">${esc(d.name)}</span></strong>${itemIcon(activeDiscovery, 76)}</div>${d.tier >= 3 ? `<p class="discovery-description">${esc(d.desc)}</p>` : ""}</section>`;
   const expire = () => {
     if (raid?.paused) {
       discoveryTimer = setTimeout(expire, 1000);
@@ -121,7 +121,7 @@ function nextDiscovery() {
   };
   discoveryTimer = setTimeout(
     expire,
-    [0, 1000, 1500, 3500, 4500, 6000][d.tier],
+    [0, 1000, 1500, 4000, 5500, 7000][d.tier],
   );
 }
 function showDiscovery(item: Item) {
@@ -129,7 +129,6 @@ function showDiscovery(item: Item) {
   discoveryQueue.push({ ...item });
   if (!activeDiscovery) nextDiscovery();
   else if (db[item.id].tier > db[activeDiscovery.id].tier) {
-    discoveryQueue.push(activeDiscovery);
     nextDiscovery();
   }
 }
@@ -389,25 +388,32 @@ function equipped() {
       ["bag", "背包", "bag"],
       ["ammo", "子弹", "ammo"],
       ["melee", "近战武器", "sword"],
+      ["food", "食物", "meal"],
     ] as const
   )
     .map(([slot, label, ic]) => {
       const i = s.equipment[slot];
-      return `<div class="equipped-slot" data-drop="equipment" data-slot="${slot}" aria-label="${label}装备位"><span class="equipment-title">${label}</span><button class="equipped-item" data-action="select" data-from="equipment" data-item="${i?.id || ""}" data-id="${i?.uid || ""}" ${i ? 'draggable="true"' : "disabled"}>${i ? itemIcon(i, 32) : icon(ic, "#7c917b", 32)}<strong>${i ? name(i.id) : "未装备"}</strong>${slot === "ammo" ? `<span>${i?.qty ?? 0} 发备弹</span><span>弹匣 ${raid?.mag ?? s.equipment.primary?.loaded?.count ?? 0} 发</span>` : ""}${i?.durability !== undefined ? `<span>耐久 ${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}</span>` : ""}</button></div>`;
+      return `<div class="equipped-slot" data-drop="equipment" data-slot="${slot}" aria-label="${label}装备位"><span class="equipment-title">${label}</span><button class="equipped-item" data-action="select" data-from="equipment" data-item="${i?.id || ""}" data-id="${i?.uid || ""}" ${i ? 'draggable="true"' : "disabled"}>${i ? itemIcon(i, 32) : icon(ic, "#7c917b", 32)}<strong>${i ? name(i.id) : "未装备"}</strong>${slot === "food" && i ? `<span>${i.qty} 份</span>` : ""}${slot === "ammo" ? `<span>${i?.qty ?? 0} 发备弹</span><span>弹匣 ${raid?.mag ?? s.equipment.primary?.loaded?.count ?? 0} 发</span>` : ""}${i?.durability !== undefined ? `<span>耐久 ${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}</span>` : ""}</button></div>`;
     })
     .join("")}</div>`;
 }
 function inventoryPanel() {
-  return `<section class="panel inventory-panel" aria-label="左侧背包"><div class="equipment-fixed">${heading("当前装备")}${equipped()}</div><div class="pack-heading">${heading("背包", `${s.pack.length}/${packCapacity(s)} 格`)}${!raid ? btn("全部放回", "stash-all", s.pack.length ? "" : "disabled", "secondary") : ""}</div><div class="inventory-scroll" data-drop="pack"><div class="slot-grid pack-grid" data-grid="pack">${s.pack.map((i) => card(i, "pack")).join("")}${emptySlots(packCapacity(s) - s.pack.length)}</div></div><div class="safe-fixed" data-drop="secure"><div class="safe-label"><strong>${safeNames[s.safe]}（安全箱）</strong>${!raid ? btn("升级", "safe-menu", "", "secondary") : `<span>${s.secure.length}/${safeCap[s.safe]} 格</span>`}</div><div class="slot-grid safe-grid" data-grid="secure" style="--safe-slots:${safeCap[s.safe]}">${s.secure.map((i) => card(i, "secure")).join("")}${emptySlots(safeCap[s.safe] - s.secure.length)}</div></div></section>`;
+  return `<section class="panel inventory-panel" aria-label="左侧背包"><div class="equipment-fixed">${heading("当前装备")}${equipped()}</div><div class="pack-heading">${heading("背包", `${s.pack.length}/${packCapacity(s)} 格`)}${!raid ? btn("全部放回", "stash-all", s.pack.length ? "" : "disabled", "secondary") : ""}</div><div class="inventory-scroll" data-drop="pack"><div class="slot-grid pack-grid" data-grid="pack">${s.pack.map((i) => card(i, "pack")).join("")}${emptySlots(packCapacity(s) - s.pack.length)}</div></div><div class="safe-fixed" data-drop="secure"><div class="safe-label"><strong>${safeNames[s.safe]}（安全箱）</strong><span>${s.secure.length}/${safeCap[s.safe]} 格</span>${!raid ? btn("升级", "safe-menu", "", "secondary") : ""}</div><div class="slot-grid safe-grid" data-grid="secure" style="--safe-slots:${safeCap[s.safe]}">${s.secure.map((i) => card(i, "secure")).join("")}${emptySlots(safeCap[s.safe] - s.secure.length)}</div></div></section>`;
 }
 function selectedActions() {
   const i = selectedItem();
   if (!i || !selected) return "";
   const d = db[i.id],
     f = selected.from,
-    gear = ["weapon", "armor", "helmet", "bag", "ammo", "melee"].includes(
-      d.kind,
-    );
+    gear = [
+      "weapon",
+      "armor",
+      "helmet",
+      "bag",
+      "ammo",
+      "melee",
+      "food",
+    ].includes(d.kind);
   let options = "";
   if (f === "shop")
     options = btn(
@@ -417,6 +423,8 @@ function selectedActions() {
       "item-option",
     );
   else if (f === "equipment") {
+    if (raid && d.kind === "food")
+      options += btn("食用", "eat", `data-id="${i.uid}"`, "item-option");
     if (!raid)
       options =
         btn(
@@ -723,7 +731,7 @@ function renderRaid() {
   canvas.classList.remove("hidden");
   document.body.classList.add("in-raid");
   if (r.map !== 0) scene3d?.show(false);
-  root.innerHTML = `<div class="raid-hud"><div class="raid-top"><strong>${maps[r.map].name}</strong><div id="boss-hud"></div>${btn('<b id="raid-time">15:00</b><span>菜单</span>', "pause", "", "raid-timer")}</div><canvas id="minimap" width="200" height="150" data-action="toggle-map" aria-label="打开战区地图"></canvas><div class="raid-bottom"><section class="vitals"><div><strong id="hp-number">100</strong><span>生命</span></div><div class="meter"><i id="hp-fill"></i></div><div class="stamina-row"><span>体力</span><strong id="st-number">${MOVEMENT.maxStamina}</strong><span id="sprint-state">疾跑</span></div><div class="meter stamina"><i id="st-fill"></i></div><span id="armor-readout"></span><span id="regen-readout"></span></section><div class="raid-shortcuts"><span>空格 翻滚</span><span>E 搜索</span><span>Tab 背包</span><span>M 地图</span></div><section class="weapon-hud"><div class="hud-weapon-column"><strong id="weapon-name"></strong><div id="weapon-art" class="hud-weapon-art" aria-hidden="true"></div><span id="weapon-condition"></span></div><div class="hud-ammo-column"><div class="hud-rounds"><b id="mag-count"></b><span id="reserve-count"></span></div><div class="hud-ammo-details"><span id="ammo-art" class="hud-ammo-art" aria-hidden="true"></span><span id="ammo-name"></span></div></div></section></div><div id="action-progress" class="action-progress hidden"></div><div id="crosshair"></div></div><div id="raid-overlay">${raidOverlay()}</div>`;
+  root.innerHTML = `<div class="raid-hud"><div class="raid-top"><strong>${maps[r.map].name}</strong><div id="boss-hud"></div>${btn('<b id="raid-time">15:00</b><span>菜单</span>', "pause", "", "raid-timer")}</div><canvas id="minimap" width="200" height="150" data-action="toggle-map" aria-label="打开战区地图"></canvas><div class="raid-bottom"><section class="vitals"><div><strong id="hp-number">100</strong><span>生命</span></div><div class="meter"><i id="hp-fill"></i></div><div class="stamina-row"><span>体力</span><strong id="st-number">${MOVEMENT.maxStamina}</strong><span id="sprint-state">疾跑</span></div><div class="meter stamina"><i id="st-fill"></i></div><span id="armor-readout"></span><span id="regen-readout"></span></section><section class="food-hud" aria-label="当前食物"><div id="food-art"></div><strong id="food-name"></strong><span id="food-quantity"></span><small>F 食用</small></section><div class="raid-shortcuts"><span>空格 翻滚</span><span>E 搜索</span><span>Tab 背包</span><span>M 地图</span></div><section class="weapon-hud"><div class="hud-weapon-column"><strong id="weapon-name"></strong><div id="weapon-art" class="hud-weapon-art" aria-hidden="true"></div><span id="weapon-condition"></span></div><div class="hud-ammo-column"><div class="hud-rounds"><b id="mag-count"></b><span id="reserve-count"></span></div><div class="hud-ammo-details"><span id="ammo-art" class="hud-ammo-art" aria-hidden="true"></span><span id="ammo-name"></span></div></div></section></div><div id="action-progress" class="action-progress hidden"></div><div id="crosshair"></div></div><div id="raid-overlay">${raidOverlay()}</div>`;
   overlay();
   updateHUD();
 }
@@ -792,6 +800,16 @@ function updateHUD() {
       ? itemIcon({ id: ammoId, uid: ammoId, qty: 1 }, 48)
       : "";
     ammoArt.classList.toggle("hidden", !ammoId);
+  }
+  const currentFood = s.equipment.food;
+  set("food-name", currentFood ? name(currentFood.id) : "没有食物");
+  set("food-quantity", currentFood ? `${currentFood.qty} 份` : "背包无补给");
+  const foodArt = document.getElementById("food-art");
+  if (foodArt && foodArt.dataset.artId !== (currentFood?.id ?? "empty")) {
+    foodArt.dataset.artId = currentFood?.id ?? "empty";
+    foodArt.innerHTML = currentFood
+      ? itemIcon(currentFood, 64)
+      : icon("meal", "#95a48b", 48);
   }
   const gun = r.weaponItem;
   set(
@@ -1240,7 +1258,8 @@ root.addEventListener("dblclick", (e) => {
     const empty =
       kind === "weapon"
         ? !s.equipment.primary
-        : kind && ["armor", "helmet", "bag", "ammo", "melee"].includes(kind)
+        : kind &&
+            ["armor", "helmet", "bag", "ammo", "melee", "food"].includes(kind)
           ? !s.equipment[kind as keyof Equipment]
           : false;
     if (empty) equipSelected();

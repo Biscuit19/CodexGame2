@@ -73,7 +73,7 @@ test("20款枪和全部装备使用独立PNG图标，可按四类筛选并查看
   for (const [category, count] of [
     ["armor", 15],
     ["ammo", 4],
-    ["food", 9],
+    ["food", 10],
   ] as const) {
     await page
       .locator(`[data-action="category"][data-id="${category}"]`)

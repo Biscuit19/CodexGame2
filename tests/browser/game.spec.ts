@@ -56,7 +56,7 @@ test("接近容器时方向键未松开，第一次 E 同时打开两栏并持�
   ).toBeGreaterThan(0);
   await page.keyboard.up("KeyD");
   await page.screenshot({ path: "test-results/first-e-search.png" });
-  await page.locator('[data-grid="pack"] [data-item="f1"]').click();
+  await page.locator('[data-slot="food"] .equipped-item').click();
   await expect(page.locator("#item-menu")).toBeVisible();
   await page.keyboard.press("KeyE");
   await expect(page.getByRole("region", { name: "左侧背包" })).toHaveCount(0);
@@ -277,7 +277,11 @@ test("撤离后不重读即可连续入库，弹匣不卸弹且没有待整理�
       () => (window as any).__game.save.equipment.primary.loaded.count,
     ),
   ).toBe(17);
-  for (let n = 0; n < 3; n++) {
+  const initialPack = await page
+    .locator('[data-grid="pack"] .item-slot')
+    .count();
+  expect(initialPack).toBe(2);
+  for (let n = 0; n < initialPack; n++) {
     const card = page.locator('[data-grid="pack"] .item-slot').first();
     await card.click();
     await page
@@ -363,10 +367,10 @@ test("一次 E 同时开两栏、容器直接进食、拖出背包丢弃、近�
     .locator("#item-menu")
     .getByRole("button", { name: "食用", exact: true })
     .click();
-  await page.waitForFunction(() => (window as any).__game.raid.p.hp === 64);
+  await page.waitForFunction(() => (window as any).__game.raid.p.hp === 70);
   await page.keyboard.press("Escape");
   await page.keyboard.press("Tab");
-  const item = page.locator('[data-grid="pack"] [data-item="f1"]');
+  const item = page.locator('[data-grid="pack"] [data-item="f2"]');
   const uid = await item.getAttribute("data-id");
   await item.dragTo(page.locator("#world"), {
     targetPosition: { x: 750, y: 500 },

@@ -31,9 +31,8 @@ test("首次搜索未拾取也点亮图鉴，顶中提示、未发现问号与�
   });
   await page.keyboard.press("KeyE");
   await expect(page.locator('.loot-panel [data-item="c0_0"]')).toBeVisible();
-  await expect(page.locator("#discovery-feed")).toContainText(
-    "首次解锁 宜猫六角扳手",
-  );
+  await expect(page.locator("#discovery-feed")).toContainText("宜猫六角扳手");
+  await expect(page.locator(".discovery-unlock")).toHaveText("解锁");
   const toast = await page.locator("#discovery-feed").boundingBox();
   expect(Math.abs(toast!.x + toast!.width / 2 - 720)).toBeLessThan(2);
   expect(toast!.y).toBeLessThan(80);
@@ -73,13 +72,13 @@ test("首次搜索未拾取也点亮图鉴，顶中提示、未发现问号与�
   ).toBeGreaterThanOrEqual(28);
 });
 
-test("九种补给展示三种回血效果，持续回血可暂停且没有浏览器title重复提示", async ({
+test("十种补给展示三种回血效果，持续回血可暂停且没有浏览器title重复提示", async ({
   page,
 }) => {
   await start(page);
   await page.getByRole("button", { name: "补给商店", exact: true }).click();
   await page.locator('[data-action="category"][data-id="food"]').click();
-  await expect(page.locator(".shop-grid .item-slot")).toHaveCount(9);
+  await expect(page.locator(".shop-grid .item-slot")).toHaveCount(10);
   expect(
     await page
       .locator(".shop-grid .item-slot > strong")
@@ -96,13 +95,13 @@ test("九种补给展示三种回血效果，持续回血可暂停且没有浏�
   await expect(page.locator("[data-item][title]")).toHaveCount(0);
   await page.locator('.shop-grid [data-item="c1_9"]').hover();
   await expect(page.locator("#item-tooltip")).toContainText(
-    "10 秒内持续恢复 10 生命",
+    "10 秒内持续恢复 22 生命",
   );
   await page.waitForTimeout(800);
   await expect(page.locator("#item-tooltip")).toHaveCount(1);
   await page.locator('.shop-grid [data-item="f4"]').click();
   await expect(page.locator("#item-menu")).toContainText(
-    "立即恢复 18 生命，16 秒内持续恢复 24 生命",
+    "立即恢复 26 生命，16 秒内持续恢复 36 生命",
   );
   await page.screenshot({ path: "test-results/supply-healing-effects.png" });
   await page.getByRole("button", { name: "返回基地", exact: true }).click();

@@ -293,8 +293,8 @@ export const foods: ItemDef[] = [
       kind: "food",
       tier: i + 1,
       price: [120, 260, 520, 1000][i],
-      heal: [8, 14, 22, 18][i],
-      healOverTime: i === 3 ? 24 : 0,
+      heal: [12, 20, 30, 26][i],
+      healOverTime: i === 3 ? 36 : 0,
       healSeconds: i === 3 ? 16 : 0,
       useTime: [1, 1.4, 2, 3][i],
       icon: ["fish", "tube", "can", "meal"][i],
@@ -310,11 +310,12 @@ export const foods: ItemDef[] = [
   ...foodHomageRows.map(([id, name, tier, desc]): ItemDef => {
     const [heal, healOverTime, healSeconds, useTime, price] = (
       {
-        c1_1: [0, 18, 12, 1.4, 260],
-        c1_9: [0, 10, 10, 1, 120],
-        c1_10: [20, 0, 0, 1.8, 520],
-        c3_1: [12, 0, 0, 1.2, 260],
-        c4_11: [16, 24, 16, 2.4, 900],
+        c1_1: [0, 32, 12, 1.4, 260],
+        c1_9: [0, 22, 10, 1, 120],
+        c1_10: [28, 0, 0, 1.8, 520],
+        c3_1: [18, 0, 0, 1.2, 260],
+        c4_11: [24, 36, 16, 2.4, 900],
+        c4_8: [12, 18, 10, 1.8, 300],
       } as Record<string, number[]>
     )[id];
     return {

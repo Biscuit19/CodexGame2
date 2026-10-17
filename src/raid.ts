@@ -245,6 +245,7 @@ export class Raid {
       item.raidBrought = item.qty;
       if (item.loaded) item.loaded.raidBrought = item.loaded.count;
     }
+    this.ensureFood(true);
     save.pendingMap = map;
     for (const slot of ["primary", "secondary"] as const) {
       const i = save.equipment[slot];
@@ -265,6 +266,7 @@ export class Raid {
     this.build();
     this.loadMagazine(true);
     this.sound.mode = "raid";
+    persist(save);
   }
   get weaponItem() {
     return this.save.equipment[this.activeWeapon];
@@ -903,21 +905,41 @@ export class Raid {
     this.p.rollY = l ? dy / l : Math.sin(this.p.angle);
     this.sound.play("roll");
   }
+  ensureFood(forceLowest = false) {
+    if (!forceLowest && this.save.equipment.food?.qty) return;
+    const available = [
+      ...this.save.pack,
+      ...(this.save.equipment.food ? [this.save.equipment.food] : []),
+    ]
+      .filter((i) => db[i.id].kind === "food" && i.qty > 0)
+      .sort(
+        (a, b) =>
+          db[a.id].tier - db[b.id].tier || db[a.id].price - db[b.id].price,
+      );
+    const next = available[0];
+    if (!next) {
+      this.save.equipment.food = null;
+      return;
+    }
+    if (this.save.equipment.food?.uid === next.uid) return;
+    const old = this.save.equipment.food;
+    this.save.pack = this.save.pack.filter((i) => i.uid !== next.uid);
+    this.save.equipment.food = next;
+    if (old?.qty) put(this.save.pack, old, packCapacity(this.save));
+  }
   useFood(uid?: string, source: "pack" | "loot" = "pack") {
     if (this.heal || this.p.hp >= 100) return;
+    this.ensureFood();
+    const owned = [
+      ...this.save.pack,
+      ...(this.save.equipment.food ? [this.save.equipment.food] : []),
+    ];
     const food = uid
       ? (source === "loot"
           ? (this.search?.items.slice(0, this.search.revealed) ?? [])
-          : this.save.pack
+          : owned
         ).find((i) => i.uid === uid && db[i.id].kind === "food")
-      : this.save.pack
-          .filter((i) => db[i.id].kind === "food")
-          .sort(
-            (a, b) =>
-              db[a.id].heal! +
-              (db[a.id].healOverTime ?? 0) -
-              (db[b.id].heal! + (db[b.id].healOverTime ?? 0)),
-          )[0];
+      : this.save.equipment.food;
     if (!food) {
       this.notify("没有食物 · 搜索医疗箱或回基地购买");
       return;
@@ -1257,6 +1279,7 @@ export class Raid {
       return;
     }
     put(target, i, cap);
+    if (!safe && db[i.id].kind === "food") this.ensureFood();
     this.discover(i);
     this.value += sale(i);
     c.items.splice(index, 1);
@@ -1277,7 +1300,7 @@ export class Raid {
       !(["primary", "secondary"].includes(slot)
         ? kind === "weapon"
         : kind === slot &&
-          ["armor", "helmet", "bag", "ammo", "melee"].includes(slot))
+          ["armor", "helmet", "bag", "ammo", "melee", "food"].includes(slot))
     )
       return false;
     const key = slot as keyof Save["equipment"];
@@ -1565,7 +1588,10 @@ export class Raid {
       this.heal -= dt;
       if (this.heal <= 0) {
         this.heal = 0;
-        const source = this.healSource?.items ?? this.save.pack;
+        const source = this.healSource?.items ?? [
+          ...this.save.pack,
+          ...(this.save.equipment.food ? [this.save.equipment.food] : []),
+        ];
         const food = source.find((i) => i.uid === this.healItem);
         if (food) {
           const d = db[food.id];
@@ -1580,9 +1606,12 @@ export class Raid {
             if (this.healSource) {
               source.splice(source.indexOf(food), 1);
               this.healSource.revealed--;
-            } else this.save.pack = this.save.pack.filter((i) => i !== food);
+            } else if (this.save.equipment.food?.uid === food.uid)
+              this.save.equipment.food = null;
+            else this.save.pack = this.save.pack.filter((i) => i !== food);
           }
           this.healSource = undefined;
+          this.ensureFood();
           this.sound.play("heal");
           persist(this.save);
           this.onChange();

@@ -68,7 +68,7 @@ test("70件收藏使用独立彩色PNG，只有已发现物品可以打开幽默
           .size,
       };
     });
-  expect(atlases).toEqual({ count: 4, unique: 70 });
+  expect(atlases).toEqual({ count: 5, unique: 70 });
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.mouse.move(900, 700);
   await page.mouse.wheel(0, 800);

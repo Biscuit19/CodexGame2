@@ -33,6 +33,39 @@ function advance(r: Raid, seconds: number, keys = new Set<string>()) {
 }
 beforeEach(() => memory.clear());
 describe("真实战区逻辑", () => {
+  it("进图选择最低品质食物，整堆逐份食用，吃完按品质自动续装直到无食物", () => {
+    const { s, r } = start(0, (s) => {
+      s.pack = [
+        makeItem("f3"),
+        makeItem("f2"),
+        makeItem("f1", 2),
+        makeItem("c1_9"),
+      ];
+    });
+    expect(s.equipment.food?.id).toBe("f1");
+    expect(s.equipment.food?.qty).toBe(2);
+    expect(s.pack).toHaveLength(3);
+    for (const [id, qty] of [
+      ["f1", 1],
+      ["c1_9", 1],
+      ["f2", 1],
+      ["f3", 1],
+      [null, 0],
+    ] as const) {
+      r.p.hp = 1;
+      r.useFood();
+      for (let n = 0; n < 300 && r.heal > 0; n++) advance(r, 1 / 60);
+      expect(s.equipment.food?.id ?? null).toBe(id);
+      expect(s.equipment.food?.qty ?? 0).toBe(qty);
+    }
+    expect(s.pack).toHaveLength(0);
+    r.useFood();
+    expect(r.heal).toBe(0);
+    r.abort();
+    expect(s.equipment.food).toBeNull();
+    expect(s.pack).toHaveLength(4);
+  });
+
   it("空手搜刮前直接撤离价值为零，原有背包、安全箱、装备与弹匣均不计入", () => {
     const { s, r } = start(0, (s) => {
       s.pack = [makeItem("c4_0"), makeItem("f1", 5), makeItem("m2", 90)];
@@ -78,6 +111,7 @@ describe("真实战区逻辑", () => {
     dropped.revealed = dropped.items.length;
     r.take(dropped.items.findIndex((i) => i.uid === original.uid));
     expect(r.extractedLootValue()).toBe(0);
+    r.unequipToPack("food");
     const c = r.containers[0];
     c.items = [makeItem("f1", 4), makeItem("m2", 40)];
     c.revealed = 2;
@@ -90,7 +124,7 @@ describe("真实战区逻辑", () => {
       sale(makeItem("f1", 4)) + sale(makeItem("m2", 40)),
     );
     r.p.hp = 20;
-    r.useFood(s.pack.find((i) => i.id === "f1")!.uid);
+    r.useFood();
     advance(r, 1.1);
     expect(r.extractedLootValue()).toBe(
       sale(makeItem("f1", 4)) + sale(makeItem("m2", 40)),
@@ -107,7 +141,7 @@ describe("真实战区逻辑", () => {
       s.pack = [makeItem("f1")];
     });
     r.p.hp = 20;
-    r.useFood(s.pack[0].uid);
+    r.useFood();
     advance(r, 1.1);
     const c = r.containers[0];
     c.items = [makeItem("f1"), makeItem("a5")];
@@ -159,7 +193,7 @@ describe("真实战区逻辑", () => {
     s.pack = [makeItem("f1", 5)];
     r.useFood(s.pack[0].uid);
     advance(r, 1.1);
-    expect(r.p.hp).toBe(28);
+    expect(r.p.hp).toBe(32);
     expect(s.pack[0].qty).toBe(4);
     const c = r.containers[0];
     c.items = [makeItem("f1", 2)];
@@ -175,19 +209,20 @@ describe("真实战区逻辑", () => {
     advance(r, 1.1);
     expect(c.items).toHaveLength(0);
     expect(c.revealed).toBe(0);
-    expect(r.p.hp).toBe(44);
+    expect(r.p.hp).toBe(56);
   });
-  it("九种补给分别提供小额即时、持续、混合恢复，持续部分不会提前到账", () => {
+  it("十种补给分别提供小额即时、持续、混合恢复，持续部分不会提前到账", () => {
     for (const [id, instant, overtime, seconds] of [
-      ["f1", 8, 0, 0],
-      ["f2", 14, 0, 0],
-      ["f3", 22, 0, 0],
-      ["f4", 18, 24, 16],
-      ["c1_1", 0, 18, 12],
-      ["c1_9", 0, 10, 10],
-      ["c1_10", 20, 0, 0],
-      ["c3_1", 12, 0, 0],
-      ["c4_11", 16, 24, 16],
+      ["f1", 12, 0, 0],
+      ["f2", 20, 0, 0],
+      ["f3", 30, 0, 0],
+      ["f4", 26, 36, 16],
+      ["c1_1", 0, 32, 12],
+      ["c1_9", 0, 22, 10],
+      ["c1_10", 28, 0, 0],
+      ["c3_1", 18, 0, 0],
+      ["c4_11", 24, 36, 16],
+      ["c4_8", 12, 18, 10],
     ] as const) {
       const { s, r } = start();
       s.pack = [makeItem(id)];
@@ -212,7 +247,7 @@ describe("真实战区逻辑", () => {
     advance(r, 1.5);
     const afterEating = r.p.hp;
     advance(r, 2, new Set(["KeyD"]));
-    expect(r.p.hp - afterEating).toBeCloseTo(3, 4);
+    expect(r.p.hp - afterEating).toBeCloseTo(32 / 6, 4);
     const hp = r.p.hp,
       time = r.regeneration.remaining;
     r.paused = true;
@@ -222,7 +257,7 @@ describe("真实战区逻辑", () => {
     r.paused = false;
     r.useFood(s.pack[0].uid);
     for (let n = 0; n < 120 && r.heal > 0; n++) advance(r, 1 / 60);
-    expect(r.regeneration.rate).toBe(1);
+    expect(r.regeneration.rate).toBe(2.2);
     expect(r.regeneration.remaining).toBe(10);
     r.p.hp = 99;
     advance(r, 10);
@@ -491,7 +526,7 @@ describe("真实战区逻辑", () => {
     r.p.hp = 50;
     r.useFood(c.items[0].uid, "loot");
     advance(r, 1.6);
-    expect(r.p.hp).toBe(64);
+    expect(r.p.hp).toBe(70);
     expect(c.items).toHaveLength(0);
     r.interrupt();
     r.inventory = false;
@@ -711,11 +746,11 @@ describe("真实战区逻辑", () => {
     r.p.hp = 30;
     r.useFood();
     advance(r, 1.2);
-    expect(r.p.hp).toBe(38);
+    expect(r.p.hp).toBe(42);
     expect(r.heal).toBe(0);
     r.useFood();
     advance(r, 1.6);
-    expect(r.p.hp).toBe(52);
+    expect(r.p.hp).toBe(62);
     s.pack.push(makeItem("f3"));
     r.useFood();
     advance(r, 0.1, new Set(["KeyD"]));

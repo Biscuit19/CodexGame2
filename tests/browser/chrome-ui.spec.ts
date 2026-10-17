@@ -209,20 +209,24 @@ test("补给按五份分堆、拖拽合并，食用只扣一份", async ({ page 
     r.p.hp = 20;
   });
   await page.keyboard.press("Tab");
-  await page.locator('.pack-grid [data-item="f1"]').first().click();
+  await page.locator('[data-slot="food"] .equipped-item').click();
   await page
     .locator("#item-menu")
     .getByRole("button", { name: "食用", exact: true })
     .click();
   await expect
-    .poll(() => page.evaluate(() => (window as any).__game.save.pack[0].qty))
+    .poll(() =>
+      page.evaluate(() => (window as any).__game.save.equipment.food.qty),
+    )
     .toBe(4);
   expect(
     await page.evaluate(() =>
-      (window as any).__game.save.pack.reduce(
-        (n: number, i: any) => n + i.qty,
-        0,
-      ),
+      [
+        (window as any).__game.save.equipment.food,
+        ...(window as any).__game.save.pack,
+      ]
+        .filter(Boolean)
+        .reduce((n: number, i: any) => n + i.qty, 0),
     ),
   ).toBe(6);
   await page.screenshot({ path: "test-results/chrome-food-stacks.png" });
@@ -264,12 +268,12 @@ test("首次发现顶部居中，五档颜色与描述门槛正确，武器弹�
     expect(Math.abs(rect!.x + rect!.width / 2 - 720)).toBeLessThan(3);
     await page.clock.runFor(400);
     if (n === 4) {
-      await expect(banner).toContainText("哇！金色传说！");
+      await expect(banner).toContainText("天降横财！");
       await page.screenshot({
         path: "test-results/chrome-legend-discovery-and-weapon-hud.png",
       });
     }
-    await page.clock.fastForward([1000, 1500, 3500, 4500, 6000][n] - 450);
+    await page.clock.fastForward([1000, 1500, 4000, 5500, 7000][n] - 450);
     await expect(banner).toBeVisible();
     await page.clock.runFor(100);
     await expect(banner).toHaveCount(0);
@@ -360,14 +364,14 @@ test("实际逐件搜索仅收藏品在顶部首次提示，高品质没有右�
     if (n < 5) await expect(banner).toHaveCount(0);
     else {
       await expect(banner).toHaveAttribute("data-item", searched[n]);
-      await expect(banner.locator("h2")).not.toBeEmpty();
+      await expect(banner.locator(".discovery-headline")).not.toBeEmpty();
       await expect(banner.locator(".discovery-description")).not.toBeEmpty();
       const box = await banner.boundingBox();
       expect(box!.y).toBeLessThan(70);
       expect(Math.abs(box!.x + box!.width / 2 - 720)).toBeLessThan(3);
     }
   }
-  await expect(page.locator(".discovery-card")).toContainText("哇！金色传说！");
+  await expect(page.locator(".discovery-card")).toContainText("天降横财！");
   await page.screenshot({
     path: "test-results/chrome-actual-search-legend.png",
   });
@@ -378,7 +382,7 @@ test("实际逐件搜索仅收藏品在顶部首次提示，高品质没有右�
     await page.evaluate(() => (window as any).__game.save.discovered),
   ).toEqual(searched.slice(5));
   await expect(page.locator(".discovery-card")).toHaveCount(0, {
-    timeout: 16000,
+    timeout: 20000,
   });
   await page.evaluate(async () => {
     const r = (window as any).__game.raid,

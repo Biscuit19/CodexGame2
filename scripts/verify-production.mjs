@@ -112,15 +112,15 @@ try {
     fullPage: true,
   });
   await page.locator('[data-action="category"][data-id="food"]').click();
-  await expect(page.locator(".shop-grid .item-slot")).toHaveCount(9);
+  await expect(page.locator(".shop-grid .item-slot")).toHaveCount(10);
   await expect(page.locator("[data-item][title]")).toHaveCount(0);
   await page.locator('.shop-grid [data-item="c1_9"]').click();
   await expect(page.locator("#item-menu")).toContainText(
-    "10 秒内持续恢复 10 生命",
+    "10 秒内持续恢复 22 生命",
   );
   await page.locator('.shop-grid [data-item="f4"]').click();
   await expect(page.locator("#item-menu")).toContainText(
-    "立即恢复 18 生命，16 秒内持续恢复 24 生命",
+    "立即恢复 26 生命，16 秒内持续恢复 36 生命",
   );
   await page.screenshot({ path: "test-results/production-supplies.png" });
   await page.getByRole("button", { name: "返回基地", exact: true }).click();
@@ -147,6 +147,8 @@ try {
   await expect(page.locator("#scene3d")).toBeVisible();
   await expect(page.locator("#raid-time")).toBeVisible();
   await expect(page.locator("#weapon-name")).toHaveText("抓板870");
+  await expect(page.locator("#food-name")).toHaveText("小鱼干");
+  await expect(page.locator('#food-art [data-art="f1"]')).toBeVisible();
   await expect(page.locator("#mag-count")).toHaveText("06");
   await page.mouse.move(1000, 500);
   await page.mouse.down();
@@ -227,6 +229,8 @@ try {
   await expect(
     page.locator("#item-menu").getByRole("button", { name: /^出售/ }),
   ).toBeVisible();
+  await page.locator('[data-grid="stash"] .empty-slot').last().click();
+  await expect(page.locator("#item-menu")).toHaveCount(0);
   await page.getByRole("button", { name: "全部放回", exact: true }).click();
   await expect(page.locator('[data-grid="pack"] .item-slot')).toHaveCount(0);
   await page.locator('[data-grid="stash"] [data-item="w3"]').click();
@@ -368,7 +372,8 @@ try {
         shotgunPurchaseEquipAndFire: true,
         seventyMysteryCollectibleIconsOffline: true,
         primarySecondaryDrag: true,
-        nineSuppliesAndThreeHealingEffects: true,
+        tenSuppliesAndThreeHealingEffects: true,
+        automaticFoodEquipmentAndHUD: true,
         unknownCollectionConcealsArtAndPrice: true,
         chromeCollectionNativeDialog: true,
         temporaryTestingDoesNotCreateSlots: true,
