@@ -2,7 +2,7 @@ import { test, expect, type Page } from "@playwright/test";
 
 async function start(page: Page) {
   await page.goto("/?test=1");
-  await page.getByRole("button", { name: "开始游戏", exact: true }).click();
+  await page.getByRole("button", { name: "新的游戏", exact: true }).click();
   await page
     .getByRole("button", { name: "创建并进入基地", exact: true })
     .click();
@@ -101,7 +101,7 @@ test("十种补给展示三种回血效果，持续回血可暂停且没有浏�
   await expect(page.locator("#item-tooltip")).toHaveCount(1);
   await page.locator('.shop-grid [data-item="f4"]').click();
   await expect(page.locator("#item-menu")).toContainText(
-    "立即恢复 26 生命，16 秒内持续恢复 36 生命",
+    "立即恢复 60 生命",
   );
   await page.screenshot({ path: "test-results/supply-healing-effects.png" });
   await page.getByRole("button", { name: "返回基地", exact: true }).click();

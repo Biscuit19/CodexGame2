@@ -2,7 +2,7 @@ import { test, expect, type Page } from "@playwright/test";
 
 async function start(page: Page) {
   await page.goto("/?test=1");
-  await page.getByRole("button", { name: "开始游戏", exact: true }).click();
+  await page.getByRole("button", { name: "新的游戏", exact: true }).click();
   await page
     .getByRole("button", { name: "创建并进入基地", exact: true })
     .click();

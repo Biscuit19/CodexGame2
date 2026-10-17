@@ -75,7 +75,7 @@ describe("配置与战斗", () => {
       for (let n = 0; n < 12; n++) expect(db[`c${group}_${n}`]).toBeDefined();
     expect(db.c2_6.tier).toBe(4);
     expect(db.c2_7.desc).toBe("车不一定会来，附近的猫一定会来。");
-    expect(db.c4_8.tier).toBe(2);
+    expect(db.c4_8.tier).toBe(3);
     expect(db.c4_0.name).toBe("星洲猫心");
     expect(searchTime(makeItem("c4_0"))).toBe(7);
   });
@@ -284,7 +284,7 @@ describe("物品、经济与死亡事务", () => {
     const migrated = validateSave(s);
     expect(migrated.equipment.primary!.durability).toBe(db.w0.durability);
   });
-  it("同级子弹始终合并至90发，不同等级分开且旧存档迁移不丢物品", () => {
+  it("同级子弹始终合并至120发，不同等级分开且旧存档迁移不丢物品", () => {
     const list = [
       makeItem("m1", 30),
       makeItem("m1", 30),
@@ -294,9 +294,9 @@ describe("物品、经济与死亡事务", () => {
     normalizeAmmo(list);
     expect(list.filter((i) => i.id === "m1")).toHaveLength(1);
     expect(list[0].qty).toBe(80);
-    expect(put(list, makeItem("m1", 20), 3)).toBe(true);
+    expect(put(list, makeItem("m1", 50), 3)).toBe(true);
     expect(list.filter((i) => i.id === "m1").map((i) => i.qty)).toEqual([
-      90, 10,
+      120, 10,
     ]);
     const s = newSave();
     delete (s.equipment as any).ammo;
@@ -343,11 +343,11 @@ describe("物品、经济与死亡事务", () => {
   it("空间不足的移动不会丢失或复制弹药", () => {
     const s = newSave();
     s.pack = Array.from({ length: 19 }, () => makeItem("c0_0"));
-    s.pack.push(makeItem("m1", 89));
+    s.pack.push(makeItem("m1", 119));
     const i = makeItem("m1", 30);
     s.stash = [i];
     expect(move(s, "stash", "pack", i.uid)).toBe(false);
-    expect(s.pack.at(-1)!.qty).toBe(89);
+    expect(s.pack.at(-1)!.qty).toBe(119);
     expect(s.stash[0].qty).toBe(30);
   });
   it("合并不足 30 发的弹药，装备交换保留原物品", () => {

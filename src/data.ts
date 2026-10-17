@@ -61,7 +61,7 @@ export function takeQuantity(item: Item, quantity: number): Item {
   else delete item.raidBrought;
   return part;
 }
-export const AMMO_STACK = 90,
+export const AMMO_STACK = 120,
   FOOD_STACK = 5,
   BASE_PACK = 20,
   EXTRACT_SECONDS = 3;
@@ -293,10 +293,10 @@ export const foods: ItemDef[] = [
       kind: "food",
       tier: i + 1,
       price: [120, 260, 520, 1000][i],
-      heal: [12, 20, 30, 26][i],
-      healOverTime: i === 3 ? 36 : 0,
-      healSeconds: i === 3 ? 16 : 0,
-      useTime: [1, 1.4, 2, 3][i],
+      heal: [12, 20, 30, 60][i],
+      healOverTime: 0,
+      healSeconds: 0,
+      useTime: [1, 1.4, 2, 1.2][i],
       icon: ["fish", "tube", "can", "meal"][i],
       unlock: 0,
       desc: [
@@ -314,8 +314,8 @@ export const foods: ItemDef[] = [
         c1_9: [0, 22, 10, 1, 120],
         c1_10: [28, 0, 0, 1.8, 520],
         c3_1: [18, 0, 0, 1.2, 260],
-        c4_11: [24, 36, 16, 2.4, 900],
-        c4_8: [12, 18, 10, 1.8, 300],
+        c4_11: [24, 48, 16, 2.4, 1000],
+        c4_8: [18, 28, 10, 1.8, 650],
       } as Record<string, number[]>
     )[id];
     return {

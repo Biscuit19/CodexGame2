@@ -731,7 +731,7 @@ export class Raid {
     }
     e.path = out;
   }
-  interrupt(cancelHeal = true) {
+  interrupt(cancelHeal = false) {
     if (this.search || this.puzzle) {
       this.search = undefined;
       this.puzzle = undefined;
@@ -894,7 +894,7 @@ export class Raid {
       this.p.roll
     )
       return;
-    this.interrupt();
+    this.interrupt(true);
     this.p.stamina -= MOVEMENT.rollCost;
     if (this.p.stamina <= 0) this.p.exhausted = true;
     this.p.regen = 0.8;
@@ -969,7 +969,7 @@ export class Raid {
       this.loadMagazine();
       return;
     }
-    this.interrupt();
+    this.interrupt(true);
     this.mag--;
     if (this.weaponItem?.loaded?.raidBrought)
       this.weaponItem.loaded.raidBrought--;
@@ -1041,7 +1041,7 @@ export class Raid {
     )
       return;
     this.meleeCooldown = 0.45;
-    this.interrupt();
+    this.interrupt(true);
     this.sound.play("roll");
     this.combatFX.push({
       kind: "melee",
@@ -1406,7 +1406,7 @@ export class Raid {
       makeItem(`w${e.weapon}`),
       makeItem(`a${e.tier}`),
       makeItem(`h${e.tier}`),
-      makeItem(`m${Math.min(4, e.tier)}`, 20),
+      makeItem(`m${Math.min(4, e.tier)}`, 20 + Math.floor(this.random() * 31)),
     ];
     items[0].durability = e.weaponDurability;
     items[1].durability = e.armorDurability;
@@ -1547,7 +1547,6 @@ export class Raid {
     if (l && !this.mapOpen) {
       this.interrupt(false);
       if (sprint) {
-        if (this.heal > 0) this.interrupt();
         p.stamina = Math.max(0, p.stamina - dt * MOVEMENT.drainPerSecond);
         if (p.stamina < 1e-8) p.stamina = 0;
         p.regen = 0.8;

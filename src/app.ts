@@ -106,7 +106,7 @@ function nextDiscovery() {
   const headline = [
     "",
     "",
-    "捡到宝了！",
+    "",
     "捡到宝了！",
     "金色传说！",
     "天降横财！",
@@ -289,7 +289,7 @@ function card(i: Item, from: string, shop = false) {
   const d = db[i.id],
     chosen = selected?.uid === i.uid,
     locked = shop && unlocked(s) < (d.unlock ?? 0);
-  return `<button class="item-slot ${chosen ? "selected" : ""}" style="--rarity:${colors[d.tier]}" data-action="${shop ? "buy" : from === "loot" ? "loot-select" : "select"}" data-id="${shop ? i.id : i.uid}" data-from="${from}" data-item="${i.id}" ${shop ? "" : 'draggable="true"'} ${locked ? "disabled" : ""}><span class="quality">${rarity[d.tier]}</span>${itemIcon(i, 52)}<strong style="color:${itemNameColor(i.id) || "inherit"}">${name(i.id)}</strong><span class="${["food", "ammo"].includes(d.kind) ? "stack-quantity" : ""}">${shop ? (locked ? "尚未解锁" : `◈ ${money(d.price)}`) : d.kind === "ammo" ? `${i.qty} 发` : d.kind === "food" ? `${i.qty} 份` : i.durability !== undefined ? `${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}` : d.kind === "collectible" ? `◈ ${money(sale(i))}` : kindNames[d.kind]}</span>${shop ? `<small>${d.damage ? `伤害 ${d.damage}${d.pellets! > 1 ? `×${d.pellets}` : ""} · 弹匣 ${d.mag}` : d.capacity ? `${d.capacity} 格` : d.kind === "food" ? foodEffect(d) : d.kind === "ammo" ? "每组 90 发" : `${d.tier} 级防护`}</small>` : ""}</button>`;
+  return `<button class="item-slot ${chosen ? "selected" : ""}" style="--rarity:${colors[d.tier]}" data-action="${shop ? "buy" : from === "loot" ? "loot-select" : "select"}" data-id="${shop ? i.id : i.uid}" data-from="${from}" data-item="${i.id}" ${shop ? "" : 'draggable="true"'} ${locked ? "disabled" : ""}><span class="quality">${rarity[d.tier]}</span>${itemIcon(i, 52)}<strong style="color:${itemNameColor(i.id) || "inherit"}">${name(i.id)}</strong><span class="${["food", "ammo"].includes(d.kind) ? "stack-quantity" : ""}">${shop ? (locked ? "尚未解锁" : `◈ ${money(d.price)}`) : d.kind === "ammo" ? `${i.qty} 发` : d.kind === "food" ? `${i.qty} 份` : i.durability !== undefined ? `${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}` : d.kind === "collectible" ? `◈ ${money(sale(i))}` : kindNames[d.kind]}</span>${shop ? `<small>${d.damage ? `伤害 ${d.damage}${d.pellets! > 1 ? `×${d.pellets}` : ""} · 弹匣 ${d.mag}` : d.capacity ? `${d.capacity} 格` : d.kind === "food" ? foodEffect(d) : d.kind === "ammo" ? "每组 120 发" : `${d.tier} 级防护`}</small>` : ""}</button>`;
 }
 function remember() {
   if (s.temporary) return;
@@ -339,11 +339,11 @@ function guide() {
 function titleScreen() {
   let content = "";
   if (titlePage === "main")
-    content = `${logo(true)}<div class="title-options">${btn("开始游戏", "title-new", "", "primary")}${btn("读取存档", "title-load", "", "secondary")}${btn("设置", "title-settings", "", "secondary")}</div>`;
+    content = `${logo(true)}<div class="title-options">${btn("新的游戏", "title-new", "", "primary")}${btn("继续游戏", "title-load", "", "secondary")}${btn("设置", "title-settings", "", "secondary")}</div>`;
   if (titlePage === "new")
-    content = `${logo()}<h1>开始游戏</h1><div class="mode-picker">${btn("<strong>标准模式</strong><span>死亡掉落，安全箱保留</span>", "new-mode", 'data-id="standard"', newMode === "standard" ? "selected" : "")}${btn("<strong>轻松模式</strong><span>死亡保留所有物品</span>", "new-mode", 'data-id="easy"', newMode === "easy" ? "selected" : "")}</div><label class="name-field">干员名字<input id="new-name" value="${esc(newName)}" maxlength="24"/></label><div class="slot-picker">${slots.map((slot, i) => btn(`存档 ${i + 1}<span>${slot ? esc(slot.name) : "空存档"}</span>`, "new-slot", `data-id="${i}"`, newSlot === i ? "selected" : "")).join("")}</div>${replaceSave ? '<p class="warning-text">此位置已有存档，再次点击会替换。请先导出需要保留的存档。</p>' : ""}${btn(replaceSave ? "替换存档并进入基地" : "创建并进入基地", "create", "", "primary full")}${btn("返回", "title-main", "", "secondary full")}`;
+    content = `${logo()}<h1>新的游戏</h1><div class="mode-picker">${btn("<strong>标准模式</strong><span>死亡掉落，安全箱保留</span>", "new-mode", 'data-id="standard"', newMode === "standard" ? "selected" : "")}${btn("<strong>轻松模式</strong><span>死亡保留所有物品</span>", "new-mode", 'data-id="easy"', newMode === "easy" ? "selected" : "")}</div><label class="name-field">干员名字<input id="new-name" value="${esc(newName)}" maxlength="24"/></label><div class="slot-picker">${slots.map((slot, i) => btn(`存档 ${i + 1}<span>${slot ? esc(slot.name) : "空存档"}</span>`, "new-slot", `data-id="${i}"`, newSlot === i ? "selected" : "")).join("")}</div>${replaceSave ? '<p class="warning-text">此位置已有存档，再次点击会替换。请先导出需要保留的存档。</p>' : ""}${btn(replaceSave ? "替换存档并进入基地" : "创建并进入基地", "create", "", "primary full")}${btn("返回", "title-main", "", "secondary full")}`;
   if (titlePage === "load")
-    content = `${logo()}<h1>读取存档</h1><div class="save-list">${slots.map((slot, i) => `<div class="save-row"><div><strong>存档 ${i + 1}${slot ? ` · ${esc(slot.name)}` : ""}</strong><span>${slot ? `${slot.mode === "standard" ? "标准模式" : "轻松模式"} · ◈ ${money(slot.coins)} · 首领 ${slot.defeated.length}/6` : "空存档"}</span></div>${btn("读取", "load-slot", `data-id="${i}" ${!slot ? "disabled" : ""}`, "secondary")}</div>`).join("")}</div>${btn("返回", "title-main", "", "secondary full")}`;
+    content = `${logo()}<h1>继续游戏</h1><div class="save-list">${slots.map((slot, i) => `<div class="save-row"><div><strong>存档 ${i + 1}${slot ? ` · ${esc(slot.name)}` : ""}</strong><span>${slot ? `${slot.mode === "standard" ? "标准模式" : "轻松模式"} · ◈ ${money(slot.coins)} · 首领 ${slot.defeated.length}/6` : "空存档"}</span></div>${btn("读取", "load-slot", `data-id="${i}" ${!slot ? "disabled" : ""}`, "secondary")}</div>`).join("")}</div>${btn("返回", "title-main", "", "secondary full")}`;
   if (titlePage === "settings")
     content = `${heading("设置")}${settingsContent()}${btn("返回", "title-main", "", "secondary full")}`;
   return `<main class="title-screen"><section class="title-card ${titlePage === "main" ? "title-main" : ""}">${content}</section>${titlePage === "main" ? btn("·", "test-entry", 'aria-label="临时测试入口"', "test-entry") : ""}</main>`;
@@ -480,7 +480,7 @@ function selectedActions() {
         : d.kind === "food"
           ? `${foodEffect(d)} · 食用 ${d.useTime} 秒${d.healOverTime ? "；持续效果不叠加，食用新的持续补给会刷新效果" : ""}`
           : d.kind === "ammo"
-            ? `${d.tier} 级弹药 · 每组最多 90 发`
+            ? `${d.tier} 级弹药 · 每组最多 120 发`
             : "";
   return `<h3 style="color:${itemNameColor(i.id) || "inherit"}">${esc(name(i.id))}</h3><span style="color:${colors[d.tier]}">${rarity[d.tier]} · ${kindNames[d.kind]}</span><p class="item-description">${esc(d.desc)}</p><p class="item-sale-value">出售价值 ◈ ${money(sale(i))} 金币</p>${d.kind === "weapon" ? `<p>耐久 ${Math.ceil(i.durability ?? d.durability!)}/${Math.ceil(i.maxDurability ?? d.durability!)} · 威力 ${Math.round(weaponDamageScale(i.durability ?? d.durability!) * 100)}%</p>` : ""}${spec ? `<p>${spec}</p>` : ""}${d.kind === "armor" || d.kind === "helmet" ? `<p>防护评分 ${Math.round(protection(i))}（等级×剩余耐久）</p>` : ""}<div class="item-options">${options}</div>`;
 }

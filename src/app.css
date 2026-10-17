@@ -2311,3 +2311,20 @@ kbd {
   padding: 1px 2px;
   border-radius: 3px;
 }
+
+/* All routine messages share the top-center notification area. */
+#toasts,
+.in-raid #toasts,
+.in-raid:has(.inventory-panel) #toasts {
+  top: 24px;
+  bottom: auto;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: min(680px, calc(100vw - 40px));
+  align-items: center;
+}
+body:has(.discovery-card) #toasts {
+  top: 228px;
+}

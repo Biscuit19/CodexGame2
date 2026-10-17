@@ -33,6 +33,22 @@ function advance(r: Raid, seconds: number, keys = new Set<string>()) {
 }
 beforeEach(() => memory.clear());
 describe("真实战区逻辑", () => {
+  it("敌猫备弹在20至50发间随机，包含两端且并非固定数量", () => {
+    const { r } = start();
+    const amounts = new Set<number>();
+    for (let n = 0; n < 240; n++) {
+      const enemy = r.spawn(1000, 1000, 0, 1);
+      r.kill(enemy);
+      const corpse = r.containers.at(-1)!;
+      const qty = corpse.items.find((i) => db[i.id].kind === "ammo")!.qty;
+      expect(qty).toBeGreaterThanOrEqual(20);
+      expect(qty).toBeLessThanOrEqual(50);
+      amounts.add(qty);
+    }
+    expect(amounts.has(20)).toBe(true);
+    expect(amounts.has(50)).toBe(true);
+    expect(amounts.size).toBeGreaterThan(20);
+  });
   it("进图选择最低品质食物，整堆逐份食用，吃完按品质自动续装直到无食物", () => {
     const { s, r } = start(0, (s) => {
       s.pack = [
@@ -216,13 +232,13 @@ describe("真实战区逻辑", () => {
       ["f1", 12, 0, 0],
       ["f2", 20, 0, 0],
       ["f3", 30, 0, 0],
-      ["f4", 26, 36, 16],
+      ["f4", 60, 0, 0],
       ["c1_1", 0, 32, 12],
       ["c1_9", 0, 22, 10],
       ["c1_10", 28, 0, 0],
       ["c3_1", 18, 0, 0],
-      ["c4_11", 24, 36, 16],
-      ["c4_8", 12, 18, 10],
+      ["c4_11", 24, 48, 16],
+      ["c4_8", 18, 28, 10],
     ] as const) {
       const { s, r } = start();
       s.pack = [makeItem(id)];
@@ -263,13 +279,15 @@ describe("真实战区逻辑", () => {
     advance(r, 10);
     expect(r.p.hp).toBe(100);
   });
-  it("食用持续补给途中疾跑会取消，物品和生命不变，也不产生持续效果", () => {
+  it("食用持续补给途中疾跑不中断，攻击才取消且不消耗物品", () => {
     const { s, r } = start();
     r.p.hp = 30;
     const food = makeItem("c4_11");
     s.pack = [food];
     r.useFood(food.uid);
     advance(r, 0.2, new Set(["KeyD"]));
+    expect(r.heal).toBeGreaterThan(0);
+    r.shoot();
     expect(r.heal).toBe(0);
     expect(r.p.hp).toBe(30);
     expect(s.pack[0].uid).toBe(food.uid);
@@ -741,7 +759,7 @@ describe("真实战区逻辑", () => {
       expect(count).toBe(0);
     }
   });
-  it("站立可进食，默认疾跑会打断，完成后能再次吃食物", () => {
+  it("站立和疾跑均可进食，只有攻击和翻滚会打断", () => {
     const { s, r } = start();
     r.p.hp = 30;
     r.useFood();
@@ -754,6 +772,10 @@ describe("真实战区逻辑", () => {
     s.pack.push(makeItem("f3"));
     r.useFood();
     advance(r, 0.1, new Set(["KeyD"]));
+    expect(r.heal).toBeGreaterThan(0);
+    r.hurtPlayer(1, 1);
+    expect(r.heal).toBeGreaterThan(0);
+    r.roll(1, 0);
     expect(r.heal).toBe(0);
   });
   it("真实弹道能击中敌人并生成带装备的战利品", () => {

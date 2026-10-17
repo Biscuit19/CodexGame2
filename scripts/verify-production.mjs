@@ -63,12 +63,12 @@ try {
   await page.getByRole("button", { name: "返回基地", exact: true }).click();
   await page.getByRole("button", { name: "开始界面", exact: true }).click();
   await page.reload({ waitUntil: "networkidle" });
-  await page.getByRole("button", { name: "读取存档", exact: true }).click();
+  await page.getByRole("button", { name: "继续游戏", exact: true }).click();
   await expect(
     page.locator('.save-row [data-action="load-slot"]:disabled'),
   ).toHaveCount(3);
   await page.getByRole("button", { name: "返回", exact: true }).click();
-  await page.getByRole("button", { name: "开始游戏", exact: true }).click();
+  await page.getByRole("button", { name: "新的游戏", exact: true }).click();
   await expect(
     page.locator('[data-action="new-mode"][data-id="standard"]'),
   ).toHaveClass(/selected/);
@@ -119,9 +119,7 @@ try {
     "10 秒内持续恢复 22 生命",
   );
   await page.locator('.shop-grid [data-item="f4"]').click();
-  await expect(page.locator("#item-menu")).toContainText(
-    "立即恢复 26 生命，16 秒内持续恢复 36 生命",
-  );
+  await expect(page.locator("#item-menu")).toContainText("立即恢复 60 生命");
   await page.screenshot({ path: "test-results/production-supplies.png" });
   await page.getByRole("button", { name: "返回基地", exact: true }).click();
   await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
@@ -214,7 +212,7 @@ try {
   ).toBeVisible();
   await context.setOffline(true);
   await page.reload({ waitUntil: "domcontentloaded" });
-  await page.getByRole("button", { name: "读取存档", exact: true }).click();
+  await page.getByRole("button", { name: "继续游戏", exact: true }).click();
   await page.getByRole("button", { name: "读取", exact: true }).first().click();
   await expect(
     page.getByRole("heading", { name: "暖窝基地", exact: true }),

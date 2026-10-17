@@ -8,7 +8,7 @@ export const foodHomageRows: [string, string, number, string][] = [
   [
     "c4_8",
     "金拱喵快乐餐盒",
-    2,
+    3,
     "买的是玩具，附赠一顿饭。猫先救玩具，再救自己。",
   ],
 ];

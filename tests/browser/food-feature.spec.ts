@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 async function start(page: Page) {
   await page.goto("/?test=1");
-  await page.getByRole("button", { name: "开始游戏", exact: true }).click();
+  await page.getByRole("button", { name: "新的游戏", exact: true }).click();
   await page
     .getByRole("button", { name: "创建并进入基地", exact: true })
     .click();
@@ -19,7 +19,7 @@ test("发现提示图文顺序、字号与四字文案正确，更稀有提示�
   await page.clock.install();
   await page.clock.pauseAt(new Date(Date.now() + 1000));
   for (const [id, headline] of [
-    ["c0_1", "捡到宝了！"],
+    ["c0_1", ""],
     ["c0_6", "捡到宝了！"],
     ["c2_4", "金色传说！"],
     ["c4_0", "天降横财！"],
@@ -33,7 +33,9 @@ test("发现提示图文顺序、字号与四字文案正确，更稀有提示�
     );
     const banner = page.locator(".discovery-card");
     await expect(banner).toHaveAttribute("data-item", id);
-    await expect(banner.locator(".discovery-headline")).toHaveText(headline);
+    if (headline)
+      await expect(banner.locator(".discovery-headline")).toHaveText(headline);
+    else await expect(banner.locator(".discovery-headline")).toHaveCount(0);
     await expect(banner.locator(".discovery-unlock")).toHaveText("解锁");
     await expect(banner.locator(`[data-art="${id}"]`)).toBeVisible();
     await page.clock.runFor(100);

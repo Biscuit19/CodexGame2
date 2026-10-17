@@ -126,7 +126,7 @@ test("基地设置在声音失败时仍打开顶层菜单，设置、指南和�
     .click();
   await expect(dialog).toBeHidden();
   await expect(
-    page.getByRole("button", { name: "读取存档", exact: true }),
+    page.getByRole("button", { name: "继续游戏", exact: true }),
   ).toBeVisible();
   expect(errors).toEqual([]);
 });
@@ -214,7 +214,7 @@ test("价值仅在描述展示，背包可出售和全部放回，武器可修�
   await page.screenshot({ path: "test-results/warehouse-bulk-sale.png" });
 });
 
-test("空装备位双击默认穿戴，拾取弹药优先补满原堆叠至90发", async ({ page }) => {
+test("空装备位双击默认穿戴，拾取弹药优先补满原堆叠至120发", async ({ page }) => {
   await start(page);
   await page.evaluate(() => {
     const g = (window as any).__game;
@@ -251,7 +251,7 @@ test("空装备位双击默认穿戴，拾取弹药优先补满原堆叠至90发
     await page.evaluate(() =>
       (window as any).__game.save.pack.map((i: any) => i.qty),
     ),
-  ).toEqual([90, 30]);
+  ).toEqual([120]);
   await page.screenshot({ path: "test-results/inventory-v4.png" });
 });
 
@@ -586,7 +586,7 @@ test("地图一远离原点仍绘制双方弹道、枪口和命中特效", async
 });
 async function start(page: Page, mode = "standard") {
   await page.goto("/?test=1");
-  await page.getByRole("button", { name: "开始游戏", exact: true }).click();
+  await page.getByRole("button", { name: "新的游戏", exact: true }).click();
   await expect(
     page.locator('[data-action="new-mode"][data-id="standard"]'),
   ).toHaveClass(/selected/);
@@ -609,13 +609,13 @@ test("开始菜单、标准模式默认、简洁基地、仓库右侧和固定�
 }) => {
   await page.goto("/?test=1");
   await expect(
-    page.getByRole("button", { name: "开始游戏", exact: true }),
+    page.getByRole("button", { name: "新的游戏", exact: true }),
   ).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "读取存档", exact: true }),
+    page.getByRole("button", { name: "继续游戏", exact: true }),
   ).toBeVisible();
   await page.screenshot({ path: "test-results/title-v2.png" });
-  await page.getByRole("button", { name: "开始游戏", exact: true }).click();
+  await page.getByRole("button", { name: "新的游戏", exact: true }).click();
   await expect(
     page.locator('[data-action="new-mode"][data-id="standard"]'),
   ).toHaveClass(/selected/);
@@ -640,7 +640,7 @@ test("开始菜单、标准模式默认、简洁基地、仓库右侧和固定�
   await page.screenshot({ path: "test-results/inventory-v2.png" });
   await page.getByRole("button", { name: "返回基地", exact: true }).click();
   await page.getByRole("button", { name: "开始界面", exact: true }).click();
-  await page.getByRole("button", { name: "读取存档", exact: true }).click();
+  await page.getByRole("button", { name: "继续游戏", exact: true }).click();
   await page.getByRole("button", { name: "读取", exact: true }).first().click();
   await expect(
     page.getByRole("heading", { name: "暖窝基地", exact: true }),
@@ -804,7 +804,7 @@ test("容器立即打开，自动显示左侧背包，逐件搜索后双击拾�
   ).toBeVisible({ timeout: 15000 });
   await page.locator('[data-action="close-result"]').click();
   await page.reload();
-  await page.getByRole("button", { name: "读取存档", exact: true }).click();
+  await page.getByRole("button", { name: "继续游戏", exact: true }).click();
   await page.getByRole("button", { name: "读取", exact: true }).first().click();
   expect(
     await page.evaluate(() => (window as any).__game.save.stats.extracts),

@@ -9,7 +9,7 @@ const rgb = [
 ];
 async function start(page: Page) {
   await page.goto("/?test=1");
-  await page.getByRole("button", { name: "开始游戏", exact: true }).click();
+  await page.getByRole("button", { name: "新的游戏", exact: true }).click();
   await page
     .getByRole("button", { name: "创建并进入基地", exact: true })
     .click();
@@ -172,7 +172,7 @@ test("隐藏测试入口资金与地图图鉴全解锁，购买、退出、结�
   expect(await stored(page)).toEqual(before);
   await page.reload();
   expect(await stored(page)).toEqual(before);
-  await page.getByRole("button", { name: "读取存档", exact: true }).click();
+  await page.getByRole("button", { name: "继续游戏", exact: true }).click();
   await page.getByRole("button", { name: "读取", exact: true }).first().click();
   await expect(page.locator(".header-state")).toContainText("12,345");
   expect(

@@ -16,7 +16,9 @@ type Rig = {
   gun: THREE.Group;
   knife: THREE.Group;
   helmet: THREE.Group;
-  vest: THREE.Mesh;
+  vest: THREE.Group;
+  eyes: THREE.Group[];
+  tailJoints: THREE.Group[];
   pack: THREE.Group;
 };
 const materials = new Map<string, THREE.MeshStandardMaterial>();
@@ -364,25 +366,34 @@ function makeCat(breed = -2, boss = false): Rig {
     pack = new THREE.Group();
   root.add(body);
   body.position.y = 5;
-  ball(body, b.fur, 0, 25, 0, 17, 23, 13);
-  const vest = block(body, "#536c4e", 0, 28, 1, 31, 30, 26, 8);
-  block(body, "#879368", -8, 25, 15, 11, 12, 5, 2);
-  block(body, "#8a9267", 8, 25, 15, 11, 12, 5, 2);
-  block(body, "#c1b17d", 0, 37, 15, 5, 6, 3, 1);
+  root.scale.setScalar(0.78);
+  const eyes: THREE.Group[] = [],
+    tailJoints: THREE.Group[] = [];
+  root.userData.blinkPhase = Math.random() * 5;
+  ball(body, b.fur, 0, 21, 0, 21, 18, 16);
+  ball(body, "#f2e2c6", 0, 20, 13, 13, 13, 5);
+  const vest = new THREE.Group();
+  body.add(vest);
+  block(vest, "#536c4e", 0, 25, 14, 25, 17, 7, 5);
+  for (const side of [-1, 1]) {
+    block(vest, "#879368", side * 7, 23, 19, 8, 8, 4, 2);
+    block(vest, "#536c4e", side * 14, 31, 3, 4, 5, 23, 2);
+  }
+  block(vest, "#d7c18b", 0, 30, 19, 4, 4, 2, 1);
   body.add(pack);
   block(pack, "#717958", 0, 27, -16, 25, 29, 13, 5);
   block(pack, "#a3a77b", 0, 27, -24, 18, 12, 4, 2);
   block(pack, "#3b5140", 0, 39, -20, 13, 3, 5, 1);
   const legs = [new THREE.Group(), new THREE.Group()];
   legs.forEach((leg, i) => {
-    leg.position.set(i ? 9 : -9, 13, 0);
+    leg.position.set(i ? 11 : -11, 10, 0);
     body.add(leg);
-    ball(leg, b.fur, 0, -6, 0, 7, 11, 7);
-    ball(leg, "#404e3b", 0, -12, 4, 8, 5, 10);
+    ball(leg, b.fur, 0, -3, 0, 8, 8, 8);
+    ball(leg, b.fur, 0, -7, 5, 9, 5, 11);
   });
-  head.position.set(0, 53, 1);
+  head.position.set(0, 45, 2);
   body.add(head);
-  ball(head, b.fur, 0, 0, 0, 23, 20, 19);
+  ball(head, b.fur, 0, 0, 0, 26, 21, 21);
   if (breed === -2) {
     ball(head, "#776452", -12, 5, -1, 12, 15, 13);
     ball(head, b.patch, 11, 8, 2, 10, 12, 16);
@@ -410,7 +421,7 @@ function makeCat(breed = -2, boss = false): Rig {
       head,
       new THREE.ConeGeometry(10, earHeight, 3),
       b.fur,
-      side * 15,
+      side * 19,
       19,
       0,
     );
@@ -420,7 +431,7 @@ function makeCat(breed = -2, boss = false): Rig {
       head,
       new THREE.ConeGeometry(6, earHeight * 0.7, 3),
       "#ce9e98",
-      side * 15,
+      side * 19,
       20,
       4,
     );
@@ -438,9 +449,15 @@ function makeCat(breed = -2, boss = false): Rig {
       tuft.rotation.z = -side * 0.2;
     }
     ball(head, "#f2e2c6", side * 7, -7, 16, 10, 7, 6);
-    ball(head, b.eye, side * 9, 2, 17, 5, 6, 2.5);
-    ball(head, "#23352e", side * 9, 2, 19, 2, 4.5, 1);
-    ball(head, "#ffffff", side * 9 - 1, 4, 19.9, 1.3, 1.5, 0.6);
+    const eye = new THREE.Group();
+    eye.position.set(side * 10, 1, 20);
+    head.add(eye);
+    eyes.push(eye);
+    ball(eye, "#fff5df", 0, 0, 0, 6.3, 6.8, 2);
+    ball(eye, b.eye, side * 0.7, -0.2, 1.4, 4.3, 5.4, 1.5);
+    ball(eye, "#23352e", side * 0.7, -0.4, 2.4, 2.4, 4.1, 0.8);
+    ball(eye, "#ffffff", -1, 2, 3, 1.5, 1.7, 0.6);
+    ball(head, "#e6a4a0", side * 18, -6, 17, 4, 2, 1.2);
     const whisker = new THREE.LineBasicMaterial({ color: "#625f4b" });
     for (let i = 0; i < 2; i++) {
       const geo = new THREE.BufferGeometry().setFromPoints([
@@ -453,29 +470,33 @@ function makeCat(breed = -2, boss = false): Rig {
   ball(head, "#a66e6d", 0, -5, 21, 3.1, 2.2, 1.8);
   ball(head, "#6c6854", 0, -10, 21, 1, 2, 0.6);
   head.add(helmet);
-  const cap = ball(helmet, "#526c4b", 0, 13, -1, 24, 13, 20);
-  cap.scale.y = 9;
-  block(helmet, "#849366", 0, 13, 15, 43, 5, 11, 2);
-  block(helmet, "#d7c18b", 0, 19, 20, 9, 8, 2, 1);
+  // A narrow cap sits between the ears; no solid shell intersects their roots.
+  ball(helmet, "#526c4b", 0, 18, -1, 10, 7, 15);
+  block(helmet, "#849366", 0, 16, 14, 19, 3, 8, 2);
+  block(helmet, "#d7c18b", 0, 20, 14, 5, 5, 2, 1);
   helmet.visible = breed !== -1;
-  tail.position.set(0, 20, -10);
+  tail.position.set(0, 17, -12);
   body.add(tail);
-  const curve = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(0, 0, 0),
-    new THREE.Vector3(-15, -1, -12),
-    new THREE.Vector3(-27, 8, -13),
-    new THREE.Vector3(-23, 20, -10),
-  ]);
-  mesh(
-    tail,
-    new THREE.TubeGeometry(curve, 14, 4.3, 7, false),
-    b.patch,
-    0,
-    0,
-    0,
-  );
-  ball(tail, b.fur, -23, 20, -10, 4.5, 4.5, 4.5);
-  gun.position.set(-20, 31, 14);
+  let jointParent = tail;
+  for (let i = 0; i < 6; i++) {
+    const joint = new THREE.Group();
+    joint.position.set(0, i ? 2 : 0, i ? -6 : 0);
+    jointParent.add(joint);
+    ball(
+      joint,
+      i === 5 ? b.fur : b.patch,
+      0,
+      1,
+      -3,
+      4.2 - i * 0.3,
+      4.2 - i * 0.3,
+      5,
+    );
+    tailJoints.push(joint);
+    jointParent = joint;
+  }
+  gun.position.set(-19, 26, 14);
+  gun.scale.setScalar(0.78);
   body.add(gun);
   block(gun, "#334941", 0, 0, 9, 8, 8, 30, 2);
   block(gun, "#929475", 0, 1, 3, 9, 7, 15, 2);
@@ -485,7 +506,7 @@ function makeCat(breed = -2, boss = false): Rig {
   block(gun, "#b6a480", 0, 5, 10, 4, 2, 7, 1);
   ball(body, b.fur, -20, 29, 15, 5.5, 6, 6);
   ball(body, b.fur, -8, 30, 23, 5, 5, 5);
-  if (boss) root.scale.setScalar(breed === 14 ? 1.5 : 1.22);
+  if (boss) root.scale.multiplyScalar(breed === 14 ? 1.3 : 1.15);
   [head, helmet, pack, gun].forEach(batchStatic);
   root.traverse((o) => {
     if (o instanceof THREE.Mesh) o.castShadow = false;
@@ -496,13 +517,29 @@ function makeCat(breed = -2, boss = false): Rig {
   root.add(shadow);
   const knife = new THREE.Group();
   knife.position.copy(gun.position);
+  knife.scale.setScalar(0.78);
   body.add(knife);
   block(knife, "#b8563c", 0, 0, 5, 5, 5, 16, 1);
   block(knife, "#f3dea3", 0, 0, 23, 3, 7, 24, 1);
   ball(knife, "#ee9bad", 0, 4, 6, 5, 2, 5);
   for (const x of [-4, 0, 4]) ball(knife, "#f3b3c3", x, 4, 11, 2, 2, 2);
   knife.visible = false;
-  return { root, body, head, legs, tail, gun, helmet, vest, pack, knife };
+  // Put the rotation pivot inside the belly for a compact somersault.
+  body.children.forEach((child) => (child.position.y -= 29));
+  return {
+    root,
+    body,
+    head,
+    legs,
+    tail,
+    gun,
+    helmet,
+    vest,
+    pack,
+    knife,
+    eyes,
+    tailJoints,
+  };
 }
 
 /** Map one uses real geometry, orthographic projection, light and articulated models. */
@@ -836,30 +873,66 @@ export class ThreeRenderer {
     angle: number,
     walk: number,
     roll = 0,
-    helmet = true,
-    armor = true,
+    helmet = 1,
+    armor = 1,
     bag = true,
+    rollDirection = angle,
   ) {
     rig.root.position.set(x, 0, y);
     rig.root.rotation.y = Math.PI / 2 - angle;
+    const time = performance.now() / 1000;
     rig.body.position.y =
-      5 +
-      (walk
-        ? Math.abs(Math.sin(walk)) * 3.8
-        : Math.sin(performance.now() / 450) * 0.4);
-    rig.body.rotation.z = walk ? Math.sin(walk) * 0.13 : 0;
-    rig.head.rotation.z = walk ? -Math.sin(walk) * 0.06 : 0;
-    rig.head.rotation.x = Math.sin(walk * 2) * 0.035;
+      34 + (walk ? Math.abs(Math.sin(walk)) * 2.1 : Math.sin(time * 2.5) * 0.5);
+    rig.body.rotation.set(0, 0, walk ? Math.sin(walk) * 0.1 : 0);
+    rig.head.rotation.z = walk
+      ? -Math.sin(walk) * 0.08
+      : Math.sin(time * 1.3) * 0.025;
+    rig.head.rotation.x = Math.sin(time * 2) * 0.025;
     rig.legs.forEach(
-      (leg, i) => (leg.rotation.x = Math.sin(walk + (i ? Math.PI : 0)) * 0.65),
+      (leg, i) =>
+        (leg.rotation.x = walk ? Math.sin(walk + i * Math.PI) * 0.5 : 0),
     );
-    rig.tail.rotation.y = Math.sin(walk * 0.6 + performance.now() / 900) * 0.22;
-    rig.helmet.visible = helmet;
-    rig.vest.visible = armor;
+    rig.tailJoints.forEach((joint, i) => {
+      joint.rotation.y =
+        Math.sin(time * 2.8 - i * 0.46 + rig.root.userData.blinkPhase) *
+        (0.13 + i * 0.025);
+      joint.rotation.x = -0.18 + Math.sin(time * 2.1 - i * 0.38) * 0.08;
+    });
+    const blinkTime = (time + rig.root.userData.blinkPhase) % 4.6;
+    const blink =
+      blinkTime < 0.18 ? Math.max(0.06, Math.abs(blinkTime - 0.09) / 0.09) : 1;
+    rig.eyes.forEach((eye) => (eye.scale.y = blink));
+    rig.helmet.visible = helmet > 0;
+    rig.vest.visible = armor > 0;
+    const gearColors = ["#7f8d69", "#5c9877", "#648fad", "#ac8bb9", "#ccaa5f"];
+    for (const [gear, tier] of [
+      [rig.helmet, helmet],
+      [rig.vest, armor],
+    ] as const) {
+      if (gear.userData.tier !== tier) {
+        gear.traverse((o) => {
+          if (o instanceof THREE.Mesh)
+            o.material = material(gearColors[Math.max(0, tier - 1)]);
+        });
+        gear.userData.tier = tier;
+      }
+    }
     rig.pack.visible = bag;
     if (roll > 0) {
-      rig.body.rotation.z = (0.35 - roll) * Math.PI * 4;
-      rig.body.position.y = 25;
+      const progress = Math.min(1, (0.35 - roll) / 0.35);
+      // Rotate around the movement-perpendicular horizontal axis, never yaw-spin.
+      const localDirection =
+        Math.PI / 2 - angle - (Math.PI / 2 - rollDirection);
+      const axis = new THREE.Vector3(
+        Math.cos(localDirection),
+        0,
+        -Math.sin(localDirection),
+      );
+      rig.body.quaternion.setFromAxisAngle(axis, progress * Math.PI * 2);
+      rig.body.position.y = 29 + Math.sin(progress * Math.PI) * 9;
+      rig.body.position.z = 0;
+      rig.head.rotation.x = -0.18;
+      rig.legs.forEach((leg) => (leg.rotation.x = -0.75));
     }
   }
   render(r: Raid, flat: Renderer) {
@@ -881,9 +954,10 @@ export class ThreeRenderer {
       r.p.angle,
       r.p.walk,
       r.p.roll,
-      !!r.save.equipment.helmet,
-      !!r.save.equipment.armor,
+      r.save.equipment.helmet ? db[r.save.equipment.helmet.id].tier : 0,
+      r.save.equipment.armor ? db[r.save.equipment.armor.id].tier : 0,
       !!r.save.equipment.bag,
+      Math.atan2(r.p.rollY, r.p.rollX),
     );
     const player = this.actors.get("player")!;
     if (r.weaponItem && r.activeWeapon !== "melee")
@@ -912,8 +986,8 @@ export class ThreeRenderer {
         e.angle,
         e.walk,
         0,
-        e.tier > 1,
-        e.tier > 0,
+        e.helmetDurability > 0 ? e.tier : 0,
+        e.armorDurability > 0 ? e.tier : 0,
         true,
       );
     }
