@@ -690,9 +690,9 @@ test("地图一立体模型、默认疾跑与持刀加速、暂停设置与完�
   expect(runningStamina).toBeLessThan(100);
   await page.keyboard.up("KeyD");
   await expect(page.locator("#sprint-state")).toHaveText("疾跑");
-  expect(
-    await page.evaluate(() => (window as any).__game.raid.p.stamina),
-  ).toBeGreaterThanOrEqual(runningStamina);
+  await expect
+    .poll(() => page.evaluate(() => (window as any).__game.raid.p.stamina))
+    .toBeGreaterThanOrEqual(runningStamina);
   expect(
     await page.evaluate(() => (window as any).__game.raid.movementSpeed),
   ).toBe(220);
