@@ -965,7 +965,8 @@ kbd {
   z-index: 2;
 }
 #game-menu,
-#base-menu {
+#base-menu,
+#collection-dialog {
   position: fixed;
   inset: 0;
   z-index: 2147483647;
@@ -984,16 +985,19 @@ kbd {
   overflow: auto;
 }
 #game-menu[open],
-#base-menu[open] {
+#base-menu[open],
+#collection-dialog[open] {
   display: grid;
   place-items: center;
 }
 #game-menu:not([open]),
-#base-menu:not([open]) {
+#base-menu:not([open]),
+#collection-dialog:not([open]) {
   display: none;
 }
 #game-menu::backdrop,
-#base-menu::backdrop {
+#base-menu::backdrop,
+#collection-dialog::backdrop {
   background: transparent;
 }
 .pack-heading {
@@ -1983,4 +1987,187 @@ kbd {
   display: inline;
   font-size: 18px;
   margin-left: 8px;
+}
+
+/* Collectible detail follows the Chrome-safe native dialog pattern used by menus. */
+.collection-modal {
+  width: min(760px, calc(100vw - 48px));
+}
+.collection-modal .panel-heading h2 > span {
+  font: inherit;
+}
+.collection-item .unknown-collectible {
+  color: #c6d1ca;
+}
+.unknown-collectible svg {
+  width: 60px;
+  height: 60px;
+}
+.test-entry {
+  position: fixed;
+  bottom: 8px;
+  right: 8px;
+  width: 34px;
+  height: 34px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #dac690;
+  opacity: 0.04;
+  font-size: 24px;
+}
+.test-entry:hover,
+.test-entry:focus-visible {
+  opacity: 0.85;
+  background: #d7c18b15;
+}
+#discovery-feed {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(680px, calc(100vw - 260px));
+  z-index: 180;
+  pointer-events: none;
+}
+.discovery-card {
+  background: #162d25f5;
+  border: 1px solid var(--discovery-color);
+  border-top: 4px solid var(--discovery-color);
+  border-radius: 13px;
+  padding: 22px 30px;
+  text-align: center;
+  box-shadow: 0 10px 35px #07150f99;
+  animation: discovery-arrival 0.35s ease-out;
+}
+.discovery-card h2 {
+  font-size: 32px;
+  line-height: 1.35;
+  color: var(--discovery-color);
+  margin: 0 0 12px;
+}
+.discovery-description {
+  font-size: 23px;
+  line-height: 1.55;
+  color: #f2f1df;
+  margin: 0 0 16px;
+}
+.discovery-name {
+  display: block;
+  font-size: 26px;
+  line-height: 1.5;
+  color: #e0e8d9;
+}
+.discovery-name span {
+  font-weight: 700;
+}
+.discovery-card.tier-5 {
+  border-color: #ffe07a;
+  background: linear-gradient(120deg, #30271bf7, #162d25fa, #35251ff7);
+  box-shadow:
+    0 0 35px #e9b65255,
+    0 10px 40px #07150faa;
+}
+.discovery-card.tier-5 h2 {
+  color: #ffe07a;
+  font-size: 36px;
+}
+.discovery-card.tier-4 {
+  box-shadow:
+    0 0 22px #ffd86c44,
+    0 10px 35px #07150faa;
+}
+@keyframes discovery-arrival {
+  from {
+    opacity: 0;
+    transform: translateY(-18px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.safe-fixed .item-slot > .stack-quantity {
+  display: block;
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  background: #142a22e8;
+  color: #f5f5e9;
+  font-size: 18px;
+  padding: 0 2px;
+  border-radius: 3px;
+  line-height: 1.1;
+}
+.weapon-hud {
+  width: 350px;
+  min-width: 350px;
+  padding: 16px 22px 18px;
+}
+.weapon-hud > strong {
+  display: block;
+  font-size: 24px;
+  line-height: 1.3;
+}
+.weapon-hud .hud-weapon-art {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 112px;
+  margin: 10px 0;
+  border-radius: 8px;
+  background: #10291f60;
+}
+.hud-weapon-art .item-art {
+  --art-w: 284px;
+  --art-h: 104px;
+}
+.weapon-hud .hud-ammo-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 8px;
+}
+.hud-ammo-art {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  flex: 0 0 50px;
+}
+.hud-ammo-art .item-art {
+  --art-w: 50px;
+  --art-h: 48px;
+}
+.hud-ammo-copy {
+  flex: 1;
+  min-width: 0;
+}
+.hud-rounds {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.hud-rounds b {
+  font-size: 42px;
+  line-height: 1;
+  color: #f3f1dc;
+}
+.hud-rounds span {
+  font-size: 24px;
+  color: #bdcbae;
+}
+#ammo-name {
+  display: block;
+  margin-top: 6px;
+  color: #d3debc;
+  font-size: 18px;
+}
+#weapon-condition {
+  font-size: 18px;
+  color: #c8d4b8;
+  line-height: 1.3;
 }

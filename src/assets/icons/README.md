@@ -12,5 +12,5 @@
 - `collectibles-0.png`、`collectibles-1.png`、`collectibles-2.png`：各 4 列×5 行，总计 60 个历史物品图标（其中5件现为补给），按 `c0_0…c0_11,c1_0…c4_11` 连续排列，每图 20 件。稳定编号与名称见 `src/collectibles.ts`。
 - `src/collectible-frames.ts`：原图透明像素测得的独立边界，按物品编号映射，图片原件不改动。图鉴、背包、仓库与容器共用这些 PNG，图鉴未发现图标仅用 CSS 降低饱和度。
 
-- `collectibles-3.png`：4列×4行，依次为 `c5_0…c5_14` 的15件新增收藏，最后一格为未发现图鉴使用的统一问号。对应边界在 `src/extra-collectible-frames.ts`。
+- `collectibles-3.png`：4列×4行，依次为 `c5_0…c5_14` 的15件新增收藏，最后一格为历史问号图标（已停用，现使用简单SVG描边问号）。对应边界在 `src/extra-collectible-frames.ts`。
 - 五件转为补给的旧编号仍从原收藏图集取图；旧三张图集不修改，不会丢失存档物品或图标。

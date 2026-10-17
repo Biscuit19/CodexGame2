@@ -10,6 +10,8 @@ import {
   type Item,
   AMMO_STACK,
   BASE_PACK,
+  stackLimit,
+  collectibles,
 } from "./data";
 export type Equipment = {
   primary: Item | null;
@@ -28,6 +30,7 @@ export interface Settings {
   aim: string;
 }
 export interface Save {
+  temporary?: boolean;
   version: 1;
   slot: number;
   name: string;
@@ -136,6 +139,15 @@ export function newSave(slot = 0): Save {
   normalizeAmmo(save.stash);
   return save;
 }
+export function newTestingSave() {
+  const save = newSave();
+  save.temporary = true;
+  save.name = "测试干员";
+  save.coins = 999999;
+  save.collection = collectibles.map((item) => item.id);
+  save.discovered = [...save.collection];
+  return save;
+}
 const key = (slot: number) => `tricat.save.${slot}`;
 let database: IDBDatabase | undefined;
 export let saveIssue = "";
@@ -156,6 +168,7 @@ export function validateSave(data: unknown): Save {
   if (
     !s ||
     s.version !== 1 ||
+    (s.temporary !== undefined && typeof s.temporary !== "boolean") ||
     !Number.isInteger(s.slot) ||
     s.slot < 0 ||
     s.slot > 2 ||
@@ -250,7 +263,7 @@ export function validateSave(data: unknown): Save {
       ids.has(i.uid) ||
       !Number.isInteger(i.qty) ||
       i.qty < 1 ||
-      i.qty > (db[i.id].kind === "ammo" ? AMMO_STACK : 1)
+      i.qty > stackLimit(i.id)
     )
       throw Error("物品数据无效");
     ids.add(i.uid);
@@ -344,6 +357,7 @@ export function validateSave(data: unknown): Save {
   return migrateInventory(s);
 }
 export function persist(s: Save) {
+  if (s.temporary) return;
   s.updated = Date.now();
   try {
     const old = localStorage.getItem(key(s.slot));
@@ -408,59 +422,75 @@ export async function load(slot: number): Promise<Save | null> {
   return best ? migrateInventory(best) : null;
 }
 export const unlocked = (s: Save) =>
-  Math.min(
-    3,
-    ["iron", "swift", "yeed"].filter((id) => s.defeated.includes(id)).length,
-  );
+  s.temporary
+    ? 3
+    : Math.min(
+        3,
+        ["iron", "swift", "yeed"].filter((id) => s.defeated.includes(id))
+          .length,
+      );
 export const packCapacity = (s: Save) =>
   s.equipment.bag ? db[s.equipment.bag.id].capacity! : BASE_PACK;
 export function put(list: Item[], item: Item, capacity: number) {
-  normalizeAmmo(list);
   if (!canPut(list, item, capacity)) return false;
-  if (db[item.id].kind === "ammo") {
-    let remaining = item.qty;
-    for (const stack of list) {
-      if (stack.id === item.id && stack.qty < AMMO_STACK) {
-        const n = Math.min(AMMO_STACK - stack.qty, remaining);
-        stack.qty += n;
-        remaining -= n;
-        if (!remaining) return true;
-      }
-    }
-    if (remaining > 0) list.push({ ...item, qty: remaining });
+  normalizeStacks(list);
+  const limit = stackLimit(item.id);
+  if (limit === 1) {
+    list.push(item);
     return true;
   }
-  list.push(item);
+  let remaining = item.qty;
+  for (const stack of list) {
+    if (stack.id !== item.id) continue;
+    const n = Math.min(limit - stack.qty, remaining);
+    stack.qty += n;
+    remaining -= n;
+    if (!remaining) return true;
+  }
+  while (remaining > 0) {
+    const qty = Math.min(limit, remaining);
+    list.push({
+      ...item,
+      uid: list.some((i) => i.uid === item.uid)
+        ? crypto.randomUUID()
+        : item.uid,
+      qty,
+    });
+    remaining -= qty;
+  }
   return true;
 }
-export function normalizeAmmo(list: Item[]) {
+export function normalizeStacks(list: Item[]) {
   const result: Item[] = [];
   for (const item of list) {
-    if (db[item.id].kind !== "ammo") {
+    const limit = stackLimit(item.id);
+    if (limit === 1) {
       result.push(item);
       continue;
     }
     let left = item.qty;
-    for (const existing of result)
-      if (existing.id === item.id && existing.qty < AMMO_STACK) {
-        const n = Math.min(AMMO_STACK - existing.qty, left);
-        existing.qty += n;
-        left -= n;
-      }
+    for (const existing of result) {
+      if (existing.id !== item.id) continue;
+      const n = Math.min(limit - existing.qty, left);
+      existing.qty += n;
+      left -= n;
+    }
     while (left > 0) {
-      const n = Math.min(left, AMMO_STACK);
+      const qty = Math.min(limit, left);
       result.push({
         ...item,
         uid: result.some((i) => i.uid === item.uid)
           ? crypto.randomUUID()
           : item.uid,
-        qty: n,
+        qty,
       });
-      left -= n;
+      left -= qty;
     }
   }
   list.splice(0, list.length, ...result);
 }
+// Legacy imports continue normalizing both ammunition and supplies.
+export const normalizeAmmo = normalizeStacks;
 export function migrateInventory(s: Save) {
   s.equipment.ammo ??= null;
   if (!Object.hasOwn(s.equipment, "melee")) s.equipment.melee = makeItem("k0");
@@ -482,13 +512,14 @@ export function migrateInventory(s: Save) {
 }
 // Capacity is checked before merging, so a failed move never partially mutates a stack.
 export function canPut(list: Item[], item: Item, capacity: number) {
-  return (
-    list.length < capacity ||
-    (db[item.id].kind === "ammo" &&
-      list
-        .filter((i) => i.id === item.id)
-        .reduce((n, i) => n + AMMO_STACK - i.qty, 0) >= item.qty)
-  );
+  const limit = stackLimit(item.id);
+  const free =
+    limit > 1
+      ? list
+          .filter((i) => i.id === item.id)
+          .reduce((n, i) => n + Math.max(0, limit - i.qty), 0)
+      : 0;
+  return free + Math.max(0, capacity - list.length) * limit >= item.qty;
 }
 export function move(
   s: Save,
@@ -589,7 +620,14 @@ export function buyBack(s: Save, uid: string) {
   )
     return false;
   const d = db[lost.id],
-    cost = Math.ceil(d.price * (d.kind === "ammo" ? lost.qty / AMMO_STACK : 1));
+    cost = Math.ceil(
+      d.price *
+        (d.kind === "ammo"
+          ? lost.qty / AMMO_STACK
+          : d.kind === "food"
+            ? lost.qty
+            : 1),
+    );
   if (s.coins < cost || !canPut(s.stash, lost, capacities[s.warehouse]))
     return false;
   s.coins -= cost;

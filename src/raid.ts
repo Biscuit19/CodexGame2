@@ -215,6 +215,7 @@ export class Raid {
   onChange: () => void;
   onEnd: (r: Result) => void;
   notify: (s: string) => void;
+  onDiscover?: (item: Item) => void;
   tick = 0;
   checkpoint = 0;
   constructor(
@@ -1196,7 +1197,8 @@ export class Raid {
       this.save.collection.push(item.id);
     if (fresh) {
       known.push(item.id);
-      this.notify(`首次发现 · ${db[item.id].name}`);
+      if (this.onDiscover) this.onDiscover(item);
+      else this.notify(`首次发现 · ${db[item.id].name}`);
       persist(this.save);
     }
     return fresh;
@@ -1223,11 +1225,7 @@ export class Raid {
     }
     put(target, i, cap);
     this.discover(i);
-    this.value += Math.floor(
-      db[i.id].price *
-        0.65 *
-        (db[i.id].kind === "ammo" ? i.qty / AMMO_STACK : 1),
-    );
+    this.value += sale(i);
     c.items.splice(index, 1);
     c.revealed--;
     persist(this.save);
@@ -1523,12 +1521,14 @@ export class Raid {
               remaining: d.healSeconds,
               rate: d.healOverTime / d.healSeconds,
             };
-          if (this.healSource) {
-            const index = source.indexOf(food);
-            source.splice(index, 1);
-            this.healSource.revealed--;
-            this.healSource = undefined;
-          } else this.save.pack = this.save.pack.filter((i) => i !== food);
+          food.qty--;
+          if (food.qty === 0) {
+            if (this.healSource) {
+              source.splice(source.indexOf(food), 1);
+              this.healSource.revealed--;
+            } else this.save.pack = this.save.pack.filter((i) => i !== food);
+          }
+          this.healSource = undefined;
           this.sound.play("heal");
           persist(this.save);
           this.onChange();

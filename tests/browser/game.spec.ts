@@ -496,7 +496,7 @@ test("满包舔包双击更强头甲、旧甲留在容器，Esc 先关闭搜索�
       g = (window as any).__game,
       r = g.raid;
     r.enemies = [];
-    g.save.pack = Array.from({ length: 20 }, () => d.makeItem("f1"));
+    g.save.pack = Array.from({ length: 20 }, () => d.makeItem("c0_0"));
     const c = r.containers[0];
     c.items = [d.makeItem("a3"), d.makeItem("h3")];
     c.revealed = 2;
@@ -632,7 +632,7 @@ test("开始菜单、标准模式默认、简洁基地、仓库右侧和固定�
   expect(bag!.x).toBeLessThan(stash!.x);
   await expect(page.locator('[data-grid="pack"] > *')).toHaveCount(20);
   await expect(page.locator('[data-grid="stash"] > *')).toHaveCount(60);
-  await expect(page.locator('[data-grid="stash"] .empty-slot')).toHaveCount(56);
+  await expect(page.locator('[data-grid="stash"] .empty-slot')).toHaveCount(57);
   await page.screenshot({ path: "test-results/inventory-v2.png" });
   await page.getByRole("button", { name: "返回基地", exact: true }).click();
   await page.getByRole("button", { name: "开始界面", exact: true }).click();

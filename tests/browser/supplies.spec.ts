@@ -8,7 +8,7 @@ async function start(page: Page) {
     .click();
 }
 
-test("首次搜索未拾取也点亮图鉴，右下提示、未发现问号与大字描述正常", async ({
+test("首次搜索未拾取也点亮图鉴，顶中提示、未发现问号与大字描述正常", async ({
   page,
 }) => {
   await start(page);
@@ -20,7 +20,7 @@ test("首次搜索未拾取也点亮图鉴，右下提示、未发现问号与�
       r = g.raid,
       c = r.containers[0];
     r.enemies = [];
-    g.save.pack = Array.from({ length: 20 }, () => d.makeItem("f1"));
+    g.save.pack = Array.from({ length: 20 }, () => d.makeItem("c0_1"));
     c.items = [d.makeItem("c0_0")];
     c.revealed = 0;
     c.locked = false;
@@ -31,12 +31,12 @@ test("首次搜索未拾取也点亮图鉴，右下提示、未发现问号与�
   });
   await page.keyboard.press("KeyE");
   await expect(page.locator('.loot-panel [data-item="c0_0"]')).toBeVisible();
-  await expect(page.locator("#toasts")).toContainText(
-    "首次发现 · 宜猫六角扳手",
+  await expect(page.locator("#discovery-feed")).toContainText(
+    "首次解锁 宜猫六角扳手",
   );
-  const toast = await page.locator("#toasts").boundingBox();
-  expect(toast!.x).toBeGreaterThan(720);
-  expect(toast!.y).toBeGreaterThan(500);
+  const toast = await page.locator("#discovery-feed").boundingBox();
+  expect(Math.abs(toast!.x + toast!.width / 2 - 720)).toBeLessThan(2);
+  expect(toast!.y).toBeLessThan(80);
   const discovered = await page.evaluate(() => {
     const s = (window as any).__game.save;
     return {

@@ -34,6 +34,9 @@ import {
   sell,
   swapWeaponSlots,
   type Result,
+  newTestingSave,
+  unlocked,
+  buyBack,
 } from "../../src/store";
 const memory = new Map<string, string>();
 Object.assign(globalThis, {
@@ -177,6 +180,65 @@ describe("配置与战斗", () => {
   });
 });
 describe("物品、经济与死亡事务", () => {
+  it("补给自动合并为每格5份，余量另开格，不同补给不混合", () => {
+    const list = [makeItem("f1", 4), makeItem("f2", 2)];
+    expect(put(list, makeItem("f1", 3), 3)).toBe(true);
+    expect(list.map((i) => [i.id, i.qty])).toEqual([
+      ["f1", 5],
+      ["f2", 2],
+      ["f1", 2],
+    ]);
+    const sum = list.reduce((n, i) => n + i.qty, 0);
+    normalizeAmmo(list);
+    expect(list.reduce((n, i) => n + i.qty, 0)).toBe(sum);
+    const s = newSave();
+    s.pack = [makeItem("f1"), makeItem("f1", 4), makeItem("f1", 2)];
+    expect(validateSave(s).pack.map((i) => i.qty)).toEqual([5, 2]);
+    s.pack = [makeItem("f1", 6)];
+    expect(() => validateSave(s)).toThrow();
+  });
+  it("满容量补给堆叠移动失败不部分转移，有空格则守恒分堆", () => {
+    const list = [makeItem("f1", 4)],
+      item = makeItem("f1", 2),
+      before = structuredClone(list);
+    expect(canPut(list, item, 1)).toBe(false);
+    expect(put(list, item, 1)).toBe(false);
+    expect(list).toEqual(before);
+    expect(item.qty).toBe(2);
+    expect(put(list, item, 2)).toBe(true);
+    expect(list.map((i) => i.qty)).toEqual([5, 1]);
+    expect(new Set(list.map((i) => i.uid)).size).toBe(2);
+  });
+  it("整堆补给按份数出售与死亡回购，售价仍为65%", () => {
+    const s = newSave();
+    s.pack = [makeItem("f1", 5)];
+    expect(sale(s.pack[0])).toBe(390);
+    beginRaid(s);
+    settle(s, result(false));
+    const lost = s.buyback.find((i) => i.id === "f1")!,
+      coins = s.coins;
+    expect(buyBack(s, lost.uid)).toBe(true);
+    expect(s.coins).toBe(coins - 600);
+    const food = s.stash.find((i) => i.id === "f1")!;
+    expect(food.qty).toBe(5);
+    expect(sell(s, "stash", food.uid)).toBe(390);
+  });
+  it("测试权限资金与地图图鉴全解锁，购买、设置、死亡结算都不写正式存档", () => {
+    const real = newSave();
+    persist(real);
+    const before = [...memory.entries()];
+    const s = newTestingSave();
+    expect(s.coins).toBe(999999);
+    expect(unlocked(s)).toBe(3);
+    expect(s.collection).toHaveLength(70);
+    expect(buy(s, "f1")).toBe(true);
+    s.settings.master = 0.2;
+    persist(s);
+    beginRaid(s);
+    settle(s, result(false));
+    persist(s);
+    expect([...memory.entries()]).toEqual(before);
+  });
   it("旧收藏里的五件补给迁移后仍保留实物和发现记录，不再占图鉴数量", () => {
     const s = newSave();
     const ids = ["c1_1", "c1_9", "c1_10", "c3_1", "c4_11"];
@@ -195,7 +257,7 @@ describe("物品、经济与死亡事务", () => {
     expect(stashAll(s).left).toBe(0);
     expect(s.pack).toHaveLength(0);
     expect(s.equipment).toEqual(equipment);
-    s.stash = Array.from({ length: 59 }, () => makeItem("f1"));
+    s.stash = Array.from({ length: 59 }, () => makeItem("c0_0"));
     s.pack = [makeItem("f1"), makeItem("f2")];
     expect(stashAll(s)).toEqual({ moved: 1, left: 1 });
     expect(s.stash).toHaveLength(60);
@@ -263,7 +325,7 @@ describe("物品、经济与死亡事务", () => {
   });
   it("满背包可直接替换护甲，背包缩容失败不会改动任何物品", () => {
     const s = newSave();
-    s.pack = Array.from({ length: 19 }, () => makeItem("f1"));
+    s.pack = Array.from({ length: 19 }, () => makeItem("c0_0"));
     const a = makeItem("a2");
     s.pack.push(a);
     const old = s.equipment.armor!.uid;
@@ -271,7 +333,7 @@ describe("物品、经济与死亡事务", () => {
     expect(s.pack).toHaveLength(20);
     expect(s.pack.some((i) => i.uid === old)).toBe(true);
     s.equipment.bag = makeItem("b3");
-    s.pack = Array.from({ length: 25 }, () => makeItem("f1"));
+    s.pack = Array.from({ length: 25 }, () => makeItem("c0_0"));
     const bag = makeItem("b1");
     s.stash.push(bag);
     const before = structuredClone(s);
@@ -280,7 +342,7 @@ describe("物品、经济与死亡事务", () => {
   });
   it("空间不足的移动不会丢失或复制弹药", () => {
     const s = newSave();
-    s.pack = Array.from({ length: 19 }, () => makeItem("f1"));
+    s.pack = Array.from({ length: 19 }, () => makeItem("c0_0"));
     s.pack.push(makeItem("m1", 89));
     const i = makeItem("m1", 30);
     s.stash = [i];

@@ -48,6 +48,7 @@ export interface Item {
   loaded?: { tier: number; count: number };
 }
 export const AMMO_STACK = 90,
+  FOOD_STACK = 5,
   BASE_PACK = 20,
   EXTRACT_SECONDS = 3;
 export const MOVEMENT = {
@@ -80,6 +81,14 @@ export const colors = [
   "#72bce2",
   "#bf9ae9",
   "#edbd69",
+];
+export const collectibleColors = [
+  "",
+  "#f8faf3",
+  "#9cf2a4",
+  "#81ceff",
+  "#ffe07a",
+  "#ff7d79",
 ];
 export const capacities = [60, 80, 120, 200, 450],
   warehouseCosts = [0, 8000, 25000, 70000, 160000];
@@ -393,8 +402,18 @@ export function wearWeapon(i: Item) {
 }
 export const sale = (i: Item) =>
   Math.floor(
-    db[i.id].price * 0.65 * (db[i.id].kind === "ammo" ? i.qty / AMMO_STACK : 1),
+    db[i.id].price *
+      0.65 *
+      (db[i.id].kind === "ammo"
+        ? i.qty / AMMO_STACK
+        : db[i.id].kind === "food"
+          ? i.qty
+          : 1),
   );
+export const stackLimit = (id: string) =>
+  db[id].kind === "ammo" ? AMMO_STACK : db[id].kind === "food" ? FOOD_STACK : 1;
+export const itemNameColor = (id: string) =>
+  db[id].kind === "collectible" ? collectibleColors[db[id].tier] : "";
 export const searchTime = (i: Item) => {
   const d = db[i.id];
   if (d.name === "星洲猫心") return 7;

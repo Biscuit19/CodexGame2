@@ -20,7 +20,7 @@ test("70件收藏使用独立彩色PNG，只有已发现物品可以打开幽默
   await page.getByRole("button", { name: "收藏图鉴", exact: true }).click();
   await expect(page.locator(".collection-item")).toHaveCount(70);
   await expect(page.locator(".collection-item .item-art")).toHaveCount(70);
-  await expect(page.locator(".collection-item svg")).toHaveCount(0);
+  await expect(page.locator(".collection-item.found svg")).toHaveCount(0);
   await expect(page.locator('.collection-item[data-id="c4_0"]')).toBeDisabled();
   await expect(
     page.locator('.collection-item[data-id="c4_0"] [data-art="unknown"]'),

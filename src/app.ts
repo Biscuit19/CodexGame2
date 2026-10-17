@@ -4,6 +4,7 @@ import {
   db,
   collectibles,
   foodEffect,
+  itemNameColor,
   items,
   maps,
   bosses,
@@ -31,6 +32,7 @@ import {
   initDB,
   load,
   newSave,
+  newTestingSave,
   persist,
   saveIssue,
   unlocked,
@@ -57,7 +59,6 @@ import {
   type Equipment,
 } from "./store";
 import { icon, itemIcon } from "./art";
-import { equipmentSprite } from "./equipment-art";
 import { Sound } from "./audio";
 import { Raid } from "./raid";
 import { Renderer, miniMap } from "./render";
@@ -71,6 +72,83 @@ document.body.append(gameMenu);
 const baseMenu = document.createElement("dialog");
 baseMenu.id = "base-menu";
 document.body.append(baseMenu);
+const collectionDialog = document.createElement("dialog");
+collectionDialog.id = "collection-dialog";
+document.body.append(collectionDialog);
+const discoveryFeed = document.createElement("aside");
+discoveryFeed.id = "discovery-feed";
+discoveryFeed.setAttribute("aria-live", "polite");
+discoveryFeed.setAttribute("aria-atomic", "true");
+document.body.append(discoveryFeed);
+let discoveryQueue: Item[] = [],
+  activeDiscovery: Item | undefined,
+  discoveryTimer: ReturnType<typeof setTimeout> | undefined;
+function clearDiscoveries() {
+  clearTimeout(discoveryTimer);
+  discoveryQueue = [];
+  activeDiscovery = undefined;
+  discoveryFeed.innerHTML = "";
+}
+function nextDiscovery() {
+  clearTimeout(discoveryTimer);
+  discoveryQueue.sort((a, b) => db[b.id].tier - db[a.id].tier);
+  activeDiscovery = discoveryQueue.shift();
+  if (!activeDiscovery) {
+    discoveryFeed.innerHTML = "";
+    return;
+  }
+  const d = db[activeDiscovery.id],
+    color = itemNameColor(d.id) || colors[d.tier];
+  const headline = [
+    "",
+    "",
+    "",
+    "好家伙，捡到宝了！",
+    "壕！这下真的壕！",
+    "哇！金色传说！",
+  ][d.tier];
+  discoveryFeed.innerHTML = `<section class="discovery-card tier-${d.tier}" data-item="${d.id}" style="--discovery-color:${color}">${d.tier >= 3 ? `<h2>${headline}</h2><p class="discovery-description">${esc(d.desc)}</p>` : ""}<strong class="discovery-name">首次解锁 <span style="color:${color}">${esc(d.name)}</span></strong></section>`;
+  const expire = () => {
+    if (raid?.paused) {
+      discoveryTimer = setTimeout(expire, 1000);
+      return;
+    }
+    nextDiscovery();
+  };
+  discoveryTimer = setTimeout(
+    expire,
+    [0, 7000, 8000, 10000, 12000, 14000][d.tier],
+  );
+}
+function showDiscovery(item: Item) {
+  discoveryQueue.push({ ...item });
+  if (!activeDiscovery) nextDiscovery();
+  else if (db[item.id].tier > db[activeDiscovery.id].tier) {
+    discoveryQueue.push(activeDiscovery);
+    nextDiscovery();
+  }
+}
+function unknownCollectible() {
+  return `<span class="item-art unknown-collectible" data-art="unknown" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><path d="M20 20c0-15 26-15 26 0 0 9-14 10-14 20"/><circle cx="32" cy="51" r="2"/></svg></span>`;
+}
+function collectibleDetail(id: string) {
+  const d = db[id];
+  return `${heading(`<span style="color:${itemNameColor(id)}">${esc(d.name)}</span>`)}<div class="collection-detail-art">${itemIcon({ id, uid: id, qty: 1 }, 160)}</div><p style="color:${itemNameColor(id)}">${rarity[d.tier]}</p><p class="collection-description">${esc(d.desc)}</p><p>出售价值 ◈ ${money(Math.floor(d.price * 0.65))} 金币</p>`;
+}
+function syncCollectionDialog() {
+  const id = modal.startsWith("collection:") ? modal.slice(11) : "";
+  const visible =
+    !title &&
+    !raid &&
+    db[id]?.kind === "collectible" &&
+    s.collection.includes(id);
+  setDialog(
+    collectionDialog,
+    visible
+      ? `<section class="modal panel collection-modal">${btn("×", "close-modal", 'aria-label="关闭"', "close")}${collectibleDetail(id)}</section>`
+      : "",
+  );
+}
 function setDialog(dialog: HTMLDialogElement, content: string) {
   if (!content) {
     if (dialog.open) dialog.close();
@@ -104,7 +182,7 @@ function syncBaseMenu() {
   }
   setDialog(baseMenu, content);
 }
-for (const dialog of [gameMenu, baseMenu])
+for (const dialog of [gameMenu, baseMenu, collectionDialog])
   dialog.addEventListener("cancel", (e) => {
     e.preventDefault();
     if (dialog === gameMenu && raid) {
@@ -207,11 +285,12 @@ function card(i: Item, from: string, shop = false) {
   const d = db[i.id],
     chosen = selected?.uid === i.uid,
     locked = shop && unlocked(s) < (d.unlock ?? 0);
-  return `<button class="item-slot ${chosen ? "selected" : ""}" style="--rarity:${colors[d.tier]}" data-action="${shop ? "buy" : from === "loot" ? "loot-select" : "select"}" data-id="${shop ? i.id : i.uid}" data-from="${from}" data-item="${i.id}" ${shop ? "" : 'draggable="true"'} ${locked ? "disabled" : ""}><span class="quality">${rarity[d.tier]}</span>${itemIcon(i, 52)}<strong>${name(i.id)}</strong><span>${shop ? (locked ? "尚未解锁" : `◈ ${money(d.price)}`) : d.kind === "ammo" ? `${i.qty} 发` : i.durability !== undefined ? `${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}` : d.kind === "collectible" ? `◈ ${money(sale(i))}` : kindNames[d.kind]}</span>${shop ? `<small>${d.damage ? `伤害 ${d.damage}${d.pellets! > 1 ? `×${d.pellets}` : ""} · 弹匣 ${d.mag}` : d.capacity ? `${d.capacity} 格` : d.kind === "food" ? foodEffect(d) : d.kind === "ammo" ? "每组 90 发" : `${d.tier} 级防护`}</small>` : ""}</button>`;
+  return `<button class="item-slot ${chosen ? "selected" : ""}" style="--rarity:${colors[d.tier]}" data-action="${shop ? "buy" : from === "loot" ? "loot-select" : "select"}" data-id="${shop ? i.id : i.uid}" data-from="${from}" data-item="${i.id}" ${shop ? "" : 'draggable="true"'} ${locked ? "disabled" : ""}><span class="quality">${rarity[d.tier]}</span>${itemIcon(i, 52)}<strong style="color:${itemNameColor(i.id) || "inherit"}">${name(i.id)}</strong><span class="${["food", "ammo"].includes(d.kind) ? "stack-quantity" : ""}">${shop ? (locked ? "尚未解锁" : `◈ ${money(d.price)}`) : d.kind === "ammo" ? `${i.qty} 发` : d.kind === "food" ? `${i.qty} 份` : i.durability !== undefined ? `${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}` : d.kind === "collectible" ? `◈ ${money(sale(i))}` : kindNames[d.kind]}</span>${shop ? `<small>${d.damage ? `伤害 ${d.damage}${d.pellets! > 1 ? `×${d.pellets}` : ""} · 弹匣 ${d.mag}` : d.capacity ? `${d.capacity} 格` : d.kind === "food" ? foodEffect(d) : d.kind === "ammo" ? "每组 90 发" : `${d.tier} 级防护`}</small>` : ""}</button>`;
 }
 function remember() {
+  if (s.temporary) return;
   persist(s);
-  slots[s.slot] = structuredClone(s);
+  if (!s.temporary) slots[s.slot] = structuredClone(s);
 }
 async function refreshSlots() {
   slots = await Promise.all([0, 1, 2].map((i) => load(i)));
@@ -233,7 +312,7 @@ function settingsContent(inRaid = false) {
     )
     .join(
       "",
-    )}<label><span>准星颜色</span><input aria-label="准星颜色" type="color" value="${s.settings.aim}" data-setting="aim"/></label></div>${!inRaid && !title ? `<div class="save-tools">${heading("存档管理")}<div class="button-row">${btn("导出存档", "export", "", "secondary")}<label class="button secondary">导入存档<input id="import-save" type="file" accept=".json,application/json" hidden/></label></div><p>存档保存在当前浏览器，可导出备份。</p>${btn("返回开始界面", "to-title", "", "secondary full")}</div>` : ""}`;
+    )}<label><span>准星颜色</span><input aria-label="准星颜色" type="color" value="${s.settings.aim}" data-setting="aim"/></label></div>${!inRaid && !title && !s.temporary ? `<div class="save-tools">${heading("存档管理")}<div class="button-row">${btn("导出存档", "export", "", "secondary")}<label class="button secondary">导入存档<input id="import-save" type="file" accept=".json,application/json" hidden/></label></div><p>存档保存在当前浏览器，可导出备份。</p>${btn("返回开始界面", "to-title", "", "secondary full")}</div>` : ""}`;
 }
 function guide() {
   return `${heading("操作指南")}<div class="guide-grid">${[
@@ -263,10 +342,10 @@ function titleScreen() {
     content = `${logo()}<h1>读取存档</h1><div class="save-list">${slots.map((slot, i) => `<div class="save-row"><div><strong>存档 ${i + 1}${slot ? ` · ${esc(slot.name)}` : ""}</strong><span>${slot ? `${slot.mode === "standard" ? "标准模式" : "轻松模式"} · ◈ ${money(slot.coins)} · 首领 ${slot.defeated.length}/6` : "空存档"}</span></div>${btn("读取", "load-slot", `data-id="${i}" ${!slot ? "disabled" : ""}`, "secondary")}</div>`).join("")}</div>${btn("返回", "title-main", "", "secondary full")}`;
   if (titlePage === "settings")
     content = `${heading("设置")}${settingsContent()}${btn("返回", "title-main", "", "secondary full")}`;
-  return `<main class="title-screen"><section class="title-card ${titlePage === "main" ? "title-main" : ""}">${content}</section></main>`;
+  return `<main class="title-screen"><section class="title-card ${titlePage === "main" ? "title-main" : ""}">${content}</section>${titlePage === "main" ? btn("·", "test-entry", 'aria-label="临时测试入口"', "test-entry") : ""}</main>`;
 }
 function header() {
-  return `<header class="base-header">${btn(logo(), "nav", 'data-id="base"', "logo-button")}<div class="header-state"><span>${esc(s.name)}</span><span>${s.mode === "standard" ? "标准模式" : "轻松模式"}</span><strong>◈ ${money(s.coins)}</strong></div><div class="header-actions">${btn("设置", "settings", "", "secondary")}${page !== "base" ? btn("返回基地", "nav", 'data-id="base"', "secondary") : btn("开始界面", "to-title", "", "secondary")}</div></header>`;
+  return `<header class="base-header">${btn(logo(), "nav", 'data-id="base"', "logo-button")}<div class="header-state"><span>${esc(s.name)}</span><span>${s.temporary ? "临时测试 · 不保存" : s.mode === "standard" ? "标准模式" : "轻松模式"}</span><strong>◈ ${money(s.coins)}</strong></div><div class="header-actions">${btn("设置", "settings", "", "secondary")}${page !== "base" ? btn("返回基地", "nav", 'data-id="base"', "secondary") : btn("开始界面", "to-title", "", "secondary")}</div></header>`;
 }
 function dashboard() {
   return `<div class="base-tiles"><section class="base-tile base-summary">${icon("paw", "#e4c890", 70)}<h1>暖窝基地</h1><div class="summary-stats"><div><strong>${s.defeated.length}/6</strong><span>主线首领</span></div><div><strong>${s.stats.extracts}</strong><span>成功撤离</span></div><div><strong>${s.collection.length}/${collectibles.length}</strong><span>物品收藏</span></div></div>${btn("进入地图一", "quick-deploy", "", "primary")}</section>${[
@@ -390,7 +469,7 @@ function selectedActions() {
           : d.kind === "ammo"
             ? `${d.tier} 级弹药 · 每组最多 90 发`
             : "";
-  return `<h3>${esc(name(i.id))}</h3><span style="color:${colors[d.tier]}">${rarity[d.tier]} · ${kindNames[d.kind]}</span><p class="item-description">${esc(d.desc)}</p><p class="item-sale-value">出售价值 ◈ ${money(sale(i))} 金币</p>${d.kind === "weapon" ? `<p>耐久 ${Math.ceil(i.durability ?? d.durability!)}/${Math.ceil(i.maxDurability ?? d.durability!)} · 威力 ${Math.round(weaponDamageScale(i.durability ?? d.durability!) * 100)}%</p>` : ""}${spec ? `<p>${spec}</p>` : ""}${d.kind === "armor" || d.kind === "helmet" ? `<p>防护评分 ${Math.round(protection(i))}（等级×剩余耐久）</p>` : ""}<div class="item-options">${options}</div>`;
+  return `<h3 style="color:${itemNameColor(i.id) || "inherit"}">${esc(name(i.id))}</h3><span style="color:${colors[d.tier]}">${rarity[d.tier]} · ${kindNames[d.kind]}</span><p class="item-description">${esc(d.desc)}</p><p class="item-sale-value">出售价值 ◈ ${money(sale(i))} 金币</p>${d.kind === "weapon" ? `<p>耐久 ${Math.ceil(i.durability ?? d.durability!)}/${Math.ceil(i.maxDurability ?? d.durability!)} · 威力 ${Math.round(weaponDamageScale(i.durability ?? d.durability!) * 100)}%</p>` : ""}${spec ? `<p>${spec}</p>` : ""}${d.kind === "armor" || d.kind === "helmet" ? `<p>防护评分 ${Math.round(protection(i))}（等级×剩余耐久）</p>` : ""}<div class="item-options">${options}</div>`;
 }
 function closeItemMenu() {
   document.querySelector("#item-menu")?.remove();
@@ -543,7 +622,7 @@ function shop() {
           .filter((i) => db[i.id].kind !== "collectible")
           .map(
             (i) =>
-              `<div class="buyback-item">${itemIcon(i, 44)}<strong>${name(i.id)}</strong>${btn(`购买 ◈ ${money(Math.ceil(db[i.id].price * (db[i.id].kind === "ammo" ? i.qty / AMMO_STACK : 1)))}`, "buyback", `data-id="${i.uid}"`, "secondary")}</div>`,
+              `<div class="buyback-item">${itemIcon(i, 44)}<strong>${name(i.id)}</strong>${btn(`购买 ◈ ${money(Math.ceil(db[i.id].price * (db[i.id].kind === "ammo" ? i.qty / AMMO_STACK : db[i.id].kind === "food" ? i.qty : 1)))}`, "buyback", `data-id="${i.uid}"`, "secondary")}</div>`,
           )
           .join("")}</div></div>`
       : ""
@@ -569,7 +648,7 @@ function collection() {
           .filter((d) => d.kind === "collectible" && d.tier === t)
           .map(
             (d) =>
-              `<button class="collection-item ${s.collection.includes(d.id) ? "found" : ""}" data-action="collection-detail" data-id="${d.id}" ${s.collection.includes(d.id) ? "" : "disabled"}>${s.collection.includes(d.id) ? itemIcon({ id: d.id, uid: d.id, qty: 1 }, 80) : equipmentSprite("unknown", 80)}<strong>${name(d.id)}</strong>${s.collection.includes(d.id) ? `<span>已发现 · ◈ ${money(Math.floor(d.price * 0.65))}</span>` : ""}</button>`,
+              `<button class="collection-item ${s.collection.includes(d.id) ? "found" : ""}" data-action="collection-detail" data-id="${d.id}" ${s.collection.includes(d.id) ? "" : "disabled"}>${s.collection.includes(d.id) ? itemIcon({ id: d.id, uid: d.id, qty: 1 }, 80) : unknownCollectible()}<strong style="color:${itemNameColor(d.id)}">${name(d.id)}</strong>${s.collection.includes(d.id) ? `<span>已发现 · ◈ ${money(Math.floor(d.price * 0.65))}</span>` : ""}</button>`,
           )
           .join("")}</div></section>`,
     )
@@ -586,6 +665,7 @@ function render() {
   canvas.classList.add("hidden");
   document.body.classList.remove("in-raid");
   syncBaseMenu();
+  syncCollectionDialog();
   if (title) {
     root.innerHTML = titleScreen();
     return;
@@ -597,21 +677,20 @@ function render() {
 }
 function baseModal() {
   if (result) return resultModal(result);
-  if (!modal || ["base-menu", "base-settings", "base-help"].includes(modal))
+  if (
+    !modal ||
+    modal.startsWith("collection:") ||
+    ["base-menu", "base-settings", "base-help"].includes(modal)
+  )
     return "";
-  const collectible = modal.startsWith("collection:")
-    ? db[modal.slice(11)]
-    : undefined;
   let content =
-    collectible && s.collection.includes(collectible.id)
-      ? `${heading(esc(collectible.name))}<div class="collection-detail-art">${itemIcon({ id: collectible.id, uid: collectible.id, qty: 1 }, 160)}</div><p style="color:${colors[collectible.tier]}">${rarity[collectible.tier]}</p><p class="collection-description">${esc(collectible.desc)}</p><p>出售价值 ◈ ${money(Math.floor(collectible.price * 0.65))} 金币</p>`
-      : modal === "help"
-        ? guide()
-        : modal === "safe"
-          ? `${heading("升级安全箱")}<div class="safe-options">${safeNames.map((n, i) => btn(`${icon("safe", "#d8bf88", 54)}<strong>${n}</strong><span>${safeCap[i]} 格</span><span>${i <= s.safe ? "已拥有" : i === 3 && !s.defeated.includes("yeed") ? "击败猫伊德后解锁" : `◈ ${money(safePrice[i])}`}</span>`, "safe", `data-id="${i}" ${i <= s.safe || (i === 3 && !s.defeated.includes("yeed")) ? "disabled" : ""}`)).join("")}</div>`
-          : modal === "settings"
-            ? settingsContent()
-            : "";
+    modal === "help"
+      ? guide()
+      : modal === "safe"
+        ? `${heading("升级安全箱")}<div class="safe-options">${safeNames.map((n, i) => btn(`${icon("safe", "#d8bf88", 54)}<strong>${n}</strong><span>${safeCap[i]} 格</span><span>${i <= s.safe ? "已拥有" : i === 3 && !s.defeated.includes("yeed") ? "击败猫伊德后解锁" : `◈ ${money(safePrice[i])}`}</span>`, "safe", `data-id="${i}" ${i <= s.safe || (i === 3 && !s.defeated.includes("yeed")) ? "disabled" : ""}`)).join("")}</div>`
+        : modal === "settings"
+          ? settingsContent()
+          : "";
   return `<div class="modal-backdrop"><section class="modal panel">${btn("×", "close-modal", 'aria-label="关闭"', "close")}${content}</section></div>`;
 }
 function resultModal(r: Result) {
@@ -635,7 +714,7 @@ function renderRaid() {
   canvas.classList.remove("hidden");
   document.body.classList.add("in-raid");
   if (r.map !== 0) scene3d?.show(false);
-  root.innerHTML = `<div class="raid-hud"><div class="raid-top"><strong>${maps[r.map].name}</strong><div id="boss-hud"></div>${btn('<b id="raid-time">15:00</b><span>菜单</span>', "pause", "", "raid-timer")}</div><canvas id="minimap" width="200" height="150" data-action="toggle-map" aria-label="打开战区地图"></canvas><div class="raid-bottom"><section class="vitals"><div><strong id="hp-number">100</strong><span>生命</span></div><div class="meter"><i id="hp-fill"></i></div><div class="stamina-row"><span>体力</span><strong id="st-number">${MOVEMENT.maxStamina}</strong><span id="sprint-state">疾跑</span></div><div class="meter stamina"><i id="st-fill"></i></div><span id="armor-readout"></span><span id="regen-readout"></span></section><div class="raid-shortcuts"><span>空格 翻滚</span><span>E 搜索</span><span>Tab 背包</span><span>M 地图</span></div><section class="weapon-hud"><strong id="weapon-name"></strong><div><b id="mag-count"></b><span id="reserve-count"></span></div><span id="ammo-name"></span><span id="weapon-condition"></span></section></div><div id="action-progress" class="action-progress hidden"></div><div id="crosshair"></div></div><div id="raid-overlay">${raidOverlay()}</div>`;
+  root.innerHTML = `<div class="raid-hud"><div class="raid-top"><strong>${maps[r.map].name}</strong><div id="boss-hud"></div>${btn('<b id="raid-time">15:00</b><span>菜单</span>', "pause", "", "raid-timer")}</div><canvas id="minimap" width="200" height="150" data-action="toggle-map" aria-label="打开战区地图"></canvas><div class="raid-bottom"><section class="vitals"><div><strong id="hp-number">100</strong><span>生命</span></div><div class="meter"><i id="hp-fill"></i></div><div class="stamina-row"><span>体力</span><strong id="st-number">${MOVEMENT.maxStamina}</strong><span id="sprint-state">疾跑</span></div><div class="meter stamina"><i id="st-fill"></i></div><span id="armor-readout"></span><span id="regen-readout"></span></section><div class="raid-shortcuts"><span>空格 翻滚</span><span>E 搜索</span><span>Tab 背包</span><span>M 地图</span></div><section class="weapon-hud"><strong id="weapon-name"></strong><div id="weapon-art" class="hud-weapon-art" aria-hidden="true"></div><div class="hud-ammo-row"><span id="ammo-art" class="hud-ammo-art" aria-hidden="true"></span><div class="hud-ammo-copy"><div class="hud-rounds"><b id="mag-count"></b><span id="reserve-count"></span></div><span id="ammo-name"></span></div></div><span id="weapon-condition"></span></section></div><div id="action-progress" class="action-progress hidden"></div><div id="crosshair"></div></div><div id="raid-overlay">${raidOverlay()}</div>`;
   overlay();
   updateHUD();
 }
@@ -691,6 +770,20 @@ function updateHUD() {
   set("mag-count", String(r.mag).padStart(2, "0"));
   set("reserve-count", `/ ${r.reserve}`);
   set("ammo-name", r.reload ? "换弹中" : name(`m${r.ammoTier}`));
+  const weaponArt = document.getElementById("weapon-art"),
+    ammoArt = document.getElementById("ammo-art");
+  if (weaponArt && weaponArt.dataset.artId !== (r.weaponItem?.id ?? "empty")) {
+    weaponArt.dataset.artId = r.weaponItem?.id ?? "empty";
+    weaponArt.innerHTML = r.weaponItem ? itemIcon(r.weaponItem, 140) : "";
+  }
+  const ammoId = r.activeWeapon === "melee" ? "" : `m${r.ammoTier}`;
+  if (ammoArt && ammoArt.dataset.artId !== ammoId) {
+    ammoArt.dataset.artId = ammoId;
+    ammoArt.innerHTML = ammoId
+      ? itemIcon({ id: ammoId, uid: ammoId, qty: 1 }, 48)
+      : "";
+    ammoArt.classList.toggle("hidden", !ammoId);
+  }
   const gun = r.weaponItem;
   set(
     "weapon-condition",
@@ -760,6 +853,7 @@ function updateHUD() {
   }
 }
 function deploy() {
+  clearDiscoveries();
   if (!s.equipment.primary && !s.equipment.melee) {
     page = "loadout";
     render();
@@ -789,18 +883,20 @@ function deploy() {
     sound,
     overlay,
     (r) => {
+      clearDiscoveries();
       raid = undefined;
       selected = undefined;
       keys.clear();
       mouse.down = false;
       syncGameMenu();
       result = r;
-      slots[s.slot] = structuredClone(s);
+      if (!s.temporary) slots[s.slot] = structuredClone(s);
       page = "base";
       render();
     },
     toast,
   );
+  raid.onDiscover = showDiscovery;
   renderRaid();
 }
 async function enterSlot(slot: number, create = false) {
@@ -853,7 +949,20 @@ async function action(el: HTMLElement) {
   } catch {
     /* Audio availability must never block navigation. */
   }
-  if (a === "title-new") {
+  if (a === "test-entry") {
+    clearDiscoveries();
+    s = newTestingSave();
+    s.settings = { ...sound.settings };
+    title = false;
+    page = "base";
+    modal = "";
+    result = undefined;
+    raid = undefined;
+    selected = undefined;
+    sound.settings = s.settings;
+    sound.apply();
+    render();
+  } else if (a === "title-new") {
     newMode = "standard";
     newSlot = Math.max(
       0,
@@ -895,6 +1004,7 @@ async function action(el: HTMLElement) {
   } else if (a === "load-slot") await enterSlot(Number(id));
   else if (a === "to-title") {
     if (raid && !raid.done) return;
+    clearDiscoveries();
     modal = "";
     title = true;
     titlePage = "main";
@@ -1037,11 +1147,12 @@ async function action(el: HTMLElement) {
     overlay();
   } else if (a === "abort") {
     if (raid?.abort()) {
+      clearDiscoveries();
       raid = undefined;
       result = undefined;
       selected = undefined;
       page = "base";
-      slots[s.slot] = structuredClone(s);
+      if (!s.temporary) slots[s.slot] = structuredClone(s);
       render();
       toast("已恢复出击前状态");
     } else toast("未能恢复出击前存档，已保持暂停");
@@ -1081,7 +1192,7 @@ async function action(el: HTMLElement) {
     modal = "";
     render();
     toast("已开启新周目");
-  } else if (a === "export") {
+  } else if (a === "export" && !s.temporary) {
     const url = URL.createObjectURL(
       new Blob([JSON.stringify(s, null, 2)], { type: "application/json" }),
     );
@@ -1185,7 +1296,7 @@ root.addEventListener("pointerover", (e) => {
     const tip = document.createElement("div");
     tip.id = "item-tooltip";
     tip.className = "panel item-tooltip";
-    tip.innerHTML = `<strong>${esc(name(d.id))}</strong><p>${esc(d.desc)}</p>${d.kind === "food" ? `<p>${foodEffect(d)}</p>` : ""}`;
+    tip.innerHTML = `<strong style="color:${itemNameColor(d.id) || "inherit"}">${esc(name(d.id))}</strong><p>${esc(d.desc)}</p>${d.kind === "food" ? `<p>${foodEffect(d)}</p>` : ""}`;
     root.append(tip);
     const r = el.getBoundingClientRect(),
       b = tip.getBoundingClientRect();

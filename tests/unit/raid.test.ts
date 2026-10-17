@@ -32,6 +32,30 @@ function advance(r: Raid, seconds: number, keys = new Set<string>()) {
 }
 beforeEach(() => memory.clear());
 describe("真实战区逻辑", () => {
+  it("堆叠补给食用只扣一份，容器仍保留剩余堆叠与已搜索状态", () => {
+    const { s, r } = start();
+    r.p.hp = 20;
+    s.pack = [makeItem("f1", 5)];
+    r.useFood(s.pack[0].uid);
+    advance(r, 1.1);
+    expect(r.p.hp).toBe(28);
+    expect(s.pack[0].qty).toBe(4);
+    const c = r.containers[0];
+    c.items = [makeItem("f1", 2)];
+    c.revealed = 1;
+    c.x = r.p.x;
+    c.y = r.p.y;
+    r.startSearch(c);
+    r.useFood(c.items[0].uid, "loot");
+    advance(r, 1.1);
+    expect(c.items[0].qty).toBe(1);
+    expect(c.revealed).toBe(1);
+    r.useFood(c.items[0].uid, "loot");
+    advance(r, 1.1);
+    expect(c.items).toHaveLength(0);
+    expect(c.revealed).toBe(0);
+    expect(r.p.hp).toBe(44);
+  });
   it("九种补给分别提供小额即时、持续、混合恢复，持续部分不会提前到账", () => {
     for (const [id, instant, overtime, seconds] of [
       ["f1", 8, 0, 0],
@@ -100,7 +124,7 @@ describe("真实战区逻辑", () => {
       c = r.containers[0],
       messages: string[] = [];
     r.notify = (m) => messages.push(m);
-    s.pack = Array.from({ length: 20 }, () => makeItem("f1"));
+    s.pack = Array.from({ length: 20 }, () => makeItem("c0_1"));
     c.items = [makeItem("c0_0")];
     c.revealed = 0;
     c.x = r.p.x;
@@ -310,7 +334,7 @@ describe("真实战区逻辑", () => {
   });
   it("满包双击更强头甲直接交换，旧甲留在已揭示容器；弱甲只拾取", () => {
     const { s, r } = start();
-    s.pack = Array.from({ length: 20 }, () => makeItem("f1"));
+    s.pack = Array.from({ length: 20 }, () => makeItem("c0_0"));
     const armor = makeItem("a3"),
       old = s.equipment.armor!;
     const c = r.containers[0];
@@ -599,7 +623,7 @@ describe("真实战区逻辑", () => {
   });
   it("枪内弹药保留在武器上，满包撤离不生成溢出物品，下一局弹药守恒", () => {
     const { s, r } = start();
-    s.pack = Array.from({ length: 20 }, () => makeItem("f1"));
+    s.pack = Array.from({ length: 20 }, () => makeItem("c0_0"));
     r.mag = 25;
     r.syncLoaded();
     const reserve = s.equipment.ammo!.qty;

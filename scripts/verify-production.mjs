@@ -40,6 +40,34 @@ await mkdir("test-results", { recursive: true });
 try {
   const response = await page.goto(url, { waitUntil: "networkidle" });
   expect(response.status()).toBe(200);
+  await page.getByRole("button", { name: "临时测试入口", exact: true }).click();
+  await expect(page.locator(".header-state")).toContainText("999,999");
+  await page.getByRole("button", { name: "收藏图鉴", exact: true }).click();
+  await expect(page.locator(".collection-item.found")).toHaveCount(70);
+  await page.locator('.collection-item[data-id="c4_0"]').click();
+  const collectionDialog = page.locator("#collection-dialog");
+  await expect(collectionDialog).toBeVisible();
+  expect(await collectionDialog.evaluate((el) => el.matches(":modal"))).toBe(
+    true,
+  );
+  await expect(
+    collectionDialog.locator(".collection-description"),
+  ).toContainText("那颗非洲来的心");
+  await page.screenshot({
+    path: "test-results/production-chrome-collection-detail.png",
+  });
+  await page.keyboard.press("Escape");
+  await page.getByRole("button", { name: "返回基地", exact: true }).click();
+  await page.getByRole("button", { name: "战区地图", exact: true }).click();
+  await expect(page.locator(".map-cards")).not.toContainText("尚未解锁");
+  await page.getByRole("button", { name: "返回基地", exact: true }).click();
+  await page.getByRole("button", { name: "开始界面", exact: true }).click();
+  await page.reload({ waitUntil: "networkidle" });
+  await page.getByRole("button", { name: "读取存档", exact: true }).click();
+  await expect(
+    page.locator('.save-row [data-action="load-slot"]:disabled'),
+  ).toHaveCount(3);
+  await page.getByRole("button", { name: "返回", exact: true }).click();
   await page.getByRole("button", { name: "开始游戏", exact: true }).click();
   await expect(
     page.locator('[data-action="new-mode"][data-id="standard"]'),
@@ -140,6 +168,8 @@ try {
   await expect(page.locator(".equipped-grid")).toBeVisible();
   await expect(page.locator('[data-slot="ammo"]')).toBeVisible();
   await expect(page.locator('[data-slot="melee"]')).toBeVisible();
+  await expect(page.locator('#weapon-art [data-art="w16"]')).toBeVisible();
+  await expect(page.locator('#ammo-art [data-art="m1"]')).toBeVisible();
   await expect(
     page.getByText("旧铁盒（安全箱）", { exact: true }),
   ).toBeVisible();
@@ -210,7 +240,9 @@ try {
   await page.getByRole("button", { name: "收藏图鉴", exact: true }).click();
   await expect(page.locator(".collection-item")).toHaveCount(70);
   await expect(page.locator(".collection-item .item-art")).toHaveCount(70);
-  await expect(page.locator(".collection-item svg")).toHaveCount(0);
+  await expect(
+    page.locator(".collection-item .unknown-collectible svg"),
+  ).toHaveCount(70);
   await expect(page.locator('.collection-item[data-id="c4_0"]')).toBeDisabled();
   await expect(
     page.locator('.collection-item[data-id="c4_0"] [data-art="unknown"]'),
@@ -234,7 +266,7 @@ try {
       }
       return urls.length;
     });
-  expect(collectibleAtlasCount).toBe(1);
+  expect(collectibleAtlasCount).toBe(0);
   await page.screenshot({
     path: "test-results/production-collectibles-offline.png",
     fullPage: true,
@@ -259,6 +291,9 @@ try {
         primarySecondaryDrag: true,
         nineSuppliesAndThreeHealingEffects: true,
         unknownCollectionConcealsArtAndPrice: true,
+        chromeCollectionNativeDialog: true,
+        temporaryTestingDoesNotCreateSlots: true,
+        largeWeaponAndAmmoIcons: true,
         errors,
         failed,
       },
