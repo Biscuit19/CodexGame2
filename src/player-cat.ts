@@ -8,7 +8,8 @@ export type PlayerPose = {
   ears: THREE.Group[];
   face: { blink: Uniform; gaze: Uniform; earL: Uniform; earR: Uniform };
   blinkAt: number;
-  blinkStart: number;
+  blinkElapsed: number;
+  blinkLast: number;
   phase: number;
 };
 export type PlayerCatRig = {
@@ -343,7 +344,8 @@ export function createPlayerCat(): PlayerCatRig {
       earR: { value: 0 },
     },
     blinkAt: 0,
-    blinkStart: -10,
+    blinkElapsed: -1,
+    blinkLast: 0,
     phase: Math.random() * 5,
   };
   const headMaterial = skin("head", pose);
@@ -437,6 +439,31 @@ export function createPlayerCat(): PlayerCatRig {
     player: pose,
   };
 }
+/** Advance through visible blink poses even when a render frame takes longer than the blink. */
+export function updateBlink(
+  pose: Pick<PlayerPose, "blinkAt" | "blinkElapsed" | "blinkLast" | "phase">,
+  time: number,
+) {
+  const dt = pose.blinkLast
+    ? Math.min(0.06, Math.max(0, time - pose.blinkLast))
+    : 0;
+  pose.blinkLast = time;
+  if (!pose.blinkAt) pose.blinkAt = time + 1.2 + pose.phase * 0.25;
+  if (time >= pose.blinkAt && pose.blinkElapsed < 0) pose.blinkElapsed = 0;
+  if (pose.blinkElapsed < 0) return 1;
+  const previous = pose.blinkElapsed;
+  pose.blinkElapsed += dt;
+  if (previous < 0.12 && pose.blinkElapsed >= 0.12) return 0.055;
+  if (pose.blinkElapsed >= 0.24 - 1e-8) {
+    pose.blinkElapsed = -1;
+    pose.blinkAt = time + 3.1 + Math.sin(time) * 0.5;
+    return 1;
+  }
+  return Math.max(
+    0.055,
+    Math.min(1, Math.abs(pose.blinkElapsed - 0.12) / 0.12),
+  );
+}
 export function animatePlayerCat(
   rig: PlayerCatRig,
   time: number,
@@ -489,14 +516,7 @@ export function animatePlayerCat(
   });
   pose.face.earL.value = pose.ears[0].rotation.z;
   pose.face.earR.value = pose.ears[1].rotation.z;
-  if (!pose.blinkAt) pose.blinkAt = time + 1.2 + pose.phase * 0.25;
-  if (time >= pose.blinkAt) {
-    pose.blinkStart = time;
-    pose.blinkAt = time + 3.1 + Math.sin(time) * 0.5;
-  }
-  const blinkTime = time - pose.blinkStart;
-  const blink =
-    blinkTime < 0.24 ? Math.max(0.055, Math.abs(blinkTime - 0.12) / 0.12) : 1;
+  const blink = updateBlink(pose, time);
   pose.face.blink.value = blink;
   pose.face.gaze.value = Math.sin(time * 0.75) * 0.36;
   rig.eyes.forEach((eye) => (eye.scale.y = blink));

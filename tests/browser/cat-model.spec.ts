@@ -69,12 +69,30 @@ test("B方案圆团三花玩家的连续轮廓、独立四肢和待机动作在C
   const idle = await inspect();
   expect(idle.tail).not.toEqual(before.tail);
   expect(idle.ears).not.toEqual(before.ears);
-  let blink = false;
-  for (let n = 0; n < 55; n++) {
-    if ((await inspect()).eyes[0] < 0.8) blink = true;
-    await page.waitForTimeout(90);
-  }
-  expect(blink).toBe(true);
+  // Observe every rendered frame rather than sampling over RPC and missing brief poses.
+  await page.evaluate(() => {
+    const rig = (window as any).__game.renderer3d.actors.get("player");
+    rig.root.userData.minimumBlink = 1;
+    const observe = () => {
+      rig.root.userData.minimumBlink = Math.min(
+        rig.root.userData.minimumBlink,
+        rig.player.face.blink.value,
+      );
+      requestAnimationFrame(observe);
+    };
+    requestAnimationFrame(observe);
+  });
+  await expect
+    .poll(
+      () =>
+        page.evaluate(
+          () =>
+            (window as any).__game.renderer3d.actors.get("player").root.userData
+              .minimumBlink,
+        ),
+      { timeout: 12000 },
+    )
+    .toBeLessThan(0.15);
   await page.screenshot({ path: "test-results/chrome-player-c-normal.png" });
   const poses = await page.evaluate(async () => {
     const g = (window as any).__game,
