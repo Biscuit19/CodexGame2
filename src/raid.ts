@@ -175,6 +175,10 @@ export class Raid {
   exits: Exit[] = [];
   bullets: Bullet[] = [];
   particles: Particle[] = [];
+  /** Transient map-one paw marks: simulation time freezes their fade while paused. */
+  footprints: { x: number; y: number; angle: number; life: number }[] = [];
+  private footstepDistance = 0;
+  private footstepSide = 1;
   combatFX: {
     kind: "muzzle" | "hit" | "melee";
     x: number;
@@ -1573,6 +1577,9 @@ export class Raid {
     dt = Math.min(0.05, dt);
     this.time -= dt;
     this.elapsed += dt;
+    this.footprints = this.footprints.filter(
+      (mark) => (mark.life -= dt) > 1e-8,
+    );
     if (this.time <= 0) {
       this.finish(false, "行动超时，未能撤离");
       return;
@@ -1614,13 +1621,33 @@ export class Raid {
           p.exhausted = true;
         }
       }
+      const oldX = p.x,
+        oldY = p.y;
       this.moveActor(
         p,
         dx * this.movementSpeed * dt,
         dy * this.movementSpeed * dt,
       );
+      if (this.map === 0) {
+        const moved = Math.hypot(p.x - oldX, p.y - oldY);
+        this.footstepDistance += moved;
+        if (moved > 0 && this.footstepDistance >= 52) {
+          this.footstepDistance %= 52;
+          const angle = Math.atan2(p.y - oldY, p.x - oldX);
+          this.footprints.push({
+            x: p.x - Math.sin(angle) * this.footstepSide * 5.5,
+            y: p.y + Math.cos(angle) * this.footstepSide * 5.5,
+            angle,
+            life: 2,
+          });
+          this.footstepSide *= -1;
+        }
+      }
       p.walk += dt * (sprint ? 15 : 10);
-    } else p.walk = 0;
+    } else {
+      p.walk = 0;
+      this.footstepDistance = 0;
+    }
     if (p.roll > 0) {
       p.roll = Math.max(0, p.roll - dt);
       this.moveActor(p, p.rollX * 390 * dt, p.rollY * 390 * dt);

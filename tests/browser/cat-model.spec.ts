@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 test.use({ video: "on" });
-test("C方案三花玩家的连续轮廓、独立四肢和待机动作在Chrome实际渲染", async ({
+test("B方案圆团三花玩家的连续轮廓、独立四肢和待机动作在Chrome实际渲染", async ({
   page,
 }) => {
   test.setTimeout(60000);
@@ -128,6 +128,46 @@ test("C方案三花玩家的连续轮廓、独立四肢和待机动作在Chrome�
   expect(
     await page.evaluate(() => (window as any).__game.raid.p.x),
   ).toBeGreaterThan(startX + 200);
+  const marks = await page.evaluate(() => {
+    const g = (window as any).__game;
+    return {
+      count: g.raid.footprints.length,
+      visible: g.renderer3d.pawPrints.marks.filter((m: any) => m.visible)
+        .length,
+      opacity: g.renderer3d.pawPrints.marks
+        .filter((m: any) => m.visible)
+        .map((m: any) => m.material.opacity),
+    };
+  });
+  expect(marks.count).toBeGreaterThan(2);
+  expect(marks.count).toBeLessThan(12);
+  expect(marks.visible).toBeGreaterThan(0);
+  expect(marks.opacity.every((n: number) => n > 0 && n <= 0.34)).toBe(true);
+  await page.evaluate(() => {
+    const g = (window as any).__game;
+    g.raid.paused = true;
+    g.renderer3d.camera.zoom = 2;
+    g.renderer3d.camera.updateProjectionMatrix();
+  });
+  await page.waitForTimeout(120);
+  await page.screenshot({ path: "test-results/chrome-player-b-paw-trail.png" });
+  await page.evaluate(() => {
+    (window as any).__game.raid.paused = false;
+  });
+  await expect
+    .poll(
+      () => page.evaluate(() => (window as any).__game.raid.footprints.length),
+      { timeout: 10000 },
+    )
+    .toBe(0);
+  await page.waitForTimeout(100);
+  expect(
+    await page.evaluate(() =>
+      (window as any).__game.renderer3d.pawPrints.marks.some(
+        (m: any) => m.visible,
+      ),
+    ),
+  ).toBe(false);
   await page.evaluate(() => {
     (window as any).__game.raid.paused = true;
   });

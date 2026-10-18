@@ -6,6 +6,7 @@ import { weaponPalette } from "./equipment-art";
 import type { Raid, Enemy, Container } from "./raid";
 import { Renderer } from "./render";
 import { text, round } from "./art";
+import { PawPrints } from "./pawprints";
 import {
   createPlayerCat,
   animatePlayerCat,
@@ -565,6 +566,7 @@ export class ThreeRenderer {
   scene = new THREE.Scene();
   camera = new THREE.OrthographicCamera();
   world = new THREE.Group();
+  pawPrints = new PawPrints();
   actors = new Map<string, Rig>();
   containers = new Map<Container, { group: THREE.Group; lid: THREE.Group }>();
   wallMeshes: { mesh: THREE.Mesh; rect: Raid["walls"][number] }[] = [];
@@ -624,7 +626,7 @@ export class ThreeRenderer {
     const fill = new THREE.DirectionalLight("#dcead8", 0.5);
     fill.position.set(-800, 400, 1200);
     this.scene.add(fill);
-    this.scene.add(this.world);
+    this.scene.add(this.world, this.pawPrints.group);
     const bg = new THREE.BufferGeometry();
     bg.setAttribute(
       "position",
@@ -988,6 +990,7 @@ export class ThreeRenderer {
       Math.atan2(r.p.rollY, r.p.rollX),
       r.p.rollAim,
     );
+    this.pawPrints.update(r.footprints);
     const player = this.actors.get("player")!;
     if (r.weaponItem && r.activeWeapon !== "melee")
       weaponModel(player.gun, r.weaponItem.id);

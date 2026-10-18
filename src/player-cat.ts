@@ -43,22 +43,22 @@ function sculptHead(mat: THREE.Material) {
         const px = ((x / resolution) * 2 - 1) * bound;
         const py = ((y / resolution) * 2 - 1) * bound;
         const pz = ((z / resolution) * 2 - 1) * bound;
-        const cheeks = 0.86 + 0.14 * Math.max(0, Math.min(1, (py + 17) / 22));
+        const cheeks = 1.02 - 0.1 * Math.max(0, Math.min(1, (py + 14) / 30));
         let distance =
-          (Math.hypot(px / (24 * cheeks), py / 18.5, pz / 18.5) - 1) * 18.5;
+          (Math.hypot(px / (26.5 * cheeks), py / 17.5, pz / 17.5) - 1) * 17.5;
         for (const side of [-1, 1]) {
-          const ey = py - 13;
-          const ex = px - side * (16.2 + ey * 0.14);
-          const radial = Math.hypot(ex, (pz + 1.5) * 1.45);
-          const slope = (7.0 - 1.6) / 13.0,
+          const ey = py - 12;
+          const ex = px - side * (18.2 + ey * 0.13);
+          const radial = Math.hypot(ex, (pz + 1.0) * 1.25);
+          const slope = (8.3 - 3.0) / 12.0,
             cosine = Math.sqrt(1 - slope * slope);
           const k = -slope * radial + cosine * ey;
           const ear =
             k < 0
-              ? Math.hypot(radial, ey) - 7
-              : k > cosine * 13
-                ? Math.hypot(radial, ey - 13) - 1.6
-                : cosine * radial + slope * ey - 7;
+              ? Math.hypot(radial, ey) - 8.3
+              : k > cosine * 12
+                ? Math.hypot(radial, ey - 12) - 3.0
+                : cosine * radial + slope * ey - 8.3;
           distance = smoothMin(distance, ear, 3.5);
         }
         surface.field[z * resolution * resolution + y * resolution + x] =
@@ -102,7 +102,7 @@ function skin(
     metalness: 0,
   });
   mat.name = `player-calico-${kind}`;
-  mat.customProgramCacheKey = () => `calico-c-${kind}-v1`;
+  mat.customProgramCacheKey = () => `calico-b-${kind}-v2`;
   mat.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, {
       catBlink: pose.face.blink,
@@ -116,10 +116,10 @@ function skin(
     const earDeform =
       kind === "head"
         ? /* glsl */ `
-      float earWeight = smoothstep(11.0,25.0,position.y) * smoothstep(8.0,15.0,abs(position.x));
+      float earWeight = smoothstep(10.0,26.0,position.y) * smoothstep(10.0,17.0,abs(position.x));
       float earAngle = mix(catEarL,catEarR,step(0.0,position.x)) * earWeight;
       float earCos = cos(earAngle), earSin = sin(earAngle);
-      vec2 pivot = vec2(sign(position.x)*16.2,13.0);
+      vec2 pivot = vec2(sign(position.x)*18.2,12.0);
       transformed.xy = pivot + mat2(earCos,earSin,-earSin,earCos)*(transformed.xy-pivot);
       transformed.z += sin(earAngle)*earWeight*2.0;
     `
@@ -129,16 +129,19 @@ function skin(
       `#include <begin_vertex>\ncatLocal=position;\n${earDeform}`,
     );
     const headPaint = /* glsl */ `
-      float orange = smoothstep(-1.0,1.0,-p.x-3.5+(p.y-3.)*.27+sin(p.y*.20)*1.5) * smoothstep(0.0,2.0,p.y + p.x*.35-3.0);
-      float brown = smoothstep(-1.0,1.0,p.x-3.5+(p.y-3.)*.25+sin(p.y*.19+.8)) * smoothstep(0.0,2.0,p.y - p.x*.32-3.0);
-      pigment=mix(pigment,vec3(.70,.27,.056),orange);
-      pigment=mix(pigment,vec3(.10,.045,.027),brown);
-      float innerEar = oval(vec2(abs(p.x)-17.5,p.y-21.0),vec2(3.3,5.0))*smoothstep(0.5,2.2,p.z);
+      // Part at the crown, then sweep OUTWARD towards the cheeks: the white blaze widens below.
+      float down = max(0.,19.-p.y);
+      float blazeHalf = .6 + .64*down + .008*down*down;
+      float bangs = smoothstep(blazeHalf-.55,blazeHalf+.55,abs(p.x));
+      float backPatch = smoothstep(-8.,-5.,p.y+sin(p.x*.14)*1.5);
+      float furMask = mix(backPatch,bangs,smoothstep(-8.,4.,p.z));
+      pigment=mix(pigment,p.x<0.?vec3(.70,.27,.056):vec3(.10,.045,.027),furMask);
+      float innerEar = oval(vec2(abs(p.x)-19.0,p.y-21.5),vec2(4.5,6.2))*smoothstep(0.5,2.2,p.z);
       pigment=mix(pigment,vec3(.55,.16,.14),innerEar);
-      float front=smoothstep(11.0,15.0,p.z);
+      float front=smoothstep(10.0,14.0,p.z);
       vec2 eyeLeft=p.xy-vec2(-8.4+catGaze,-1.5);
       vec2 eyeRight=p.xy-vec2(8.4+catGaze,-1.5);
-      float eye= max(oval(eyeLeft,vec2(3.35,max(.25,4.7*catBlink))),oval(eyeRight,vec2(3.35,max(.25,4.7*catBlink))));
+      float eye= max(oval(eyeLeft,vec2(3.7,max(.25,4.9*catBlink))),oval(eyeRight,vec2(3.7,max(.25,4.9*catBlink))));
       pigment=mix(pigment,vec3(.020,.013,.010),eye*front);
       float light = max(oval(eyeLeft-vec2(-.8,1.8*catBlink),vec2(.78,.95*catBlink)),oval(eyeRight-vec2(-.8,1.8*catBlink),vec2(.78,.95*catBlink)));
       pigment=mix(pigment,vec3(1.0,.97,.89),light*front*smoothstep(.35,.7,catBlink));
@@ -162,12 +165,21 @@ function skin(
       float belt=1.-smoothstep(1.0,1.4,abs(p.y+7.5));
       pigment=mix(pigment,vec3(.26,.17,.115),belt);
     `;
+    // All four paws remain white. Toe creases are pigment, not separate fingers/claws.
     const limbPaint =
-      kind === "armL"
-        ? `pigment=mix(pigment,vec3(.70,.27,.056),smoothstep(-5.0,-2.0,p.y));`
-        : kind === "armR"
-          ? `pigment=mix(pigment,vec3(.10,.045,.027),smoothstep(-1.0,3.0,p.y));`
-          : "";
+      kind === "foot"
+        ? /* glsl */ `
+      pigment=vec3(.98,.97,.93);
+      float toes=stroke(p.xz,vec2(-1.5,3.0),vec2(-1.7,6.3),.18);
+      toes=max(toes,stroke(p.xz,vec2(1.5,3.0),vec2(1.7,6.3),.18));
+      pigment=mix(pigment,vec3(.065,.045,.035),toes*smoothstep(-.5,1.,p.y));
+    `
+        : /* glsl */ `
+      pigment=vec3(.98,.97,.93);
+      float toes=stroke(p.xy,vec2(-1.4,-2.0),vec2(-1.7,-4.1),.18);
+      toes=max(toes,stroke(p.xy,vec2(1.4,-2.0),vec2(1.7,-4.1),.18));
+      pigment=mix(pigment,vec3(.065,.045,.035),toes*smoothstep(3.0,4.0,p.z));
+    `;
     shader.fragmentShader = shader.fragmentShader.replace(
       "#include <color_fragment>",
       `#include <color_fragment>\nvec3 p=catLocal; vec3 pigment=vec3(.97,.88,.73);\n${kind === "head" ? headPaint : kind === "body" ? bodyPaint : limbPaint}\ndiffuseColor.rgb=pigment;`,
@@ -207,23 +219,23 @@ function limb(
     positions = geometry.getAttribute("position");
   for (let i = 0; i < positions.count; i++) {
     const py = positions.getY(i),
-      forward = foot ? Math.pow(Math.max(0, -py), 1.5) * 4.3 : 0;
+      forward = foot ? Math.pow(Math.max(0, -py), 1.5) * 2.6 : 0;
     positions.setXYZ(
       i,
-      positions.getX(i) * (foot ? 6.0 : 5.4),
+      positions.getX(i) * 4.8,
       py * length,
-      positions.getZ(i) * (foot ? 6.4 : 5.5) + forward,
+      positions.getZ(i) * (foot ? 5.0 : 4.8) + forward,
     );
   }
   geometry.computeVertexNormals();
   const shape = new THREE.Mesh(geometry, mat);
-  shape.position.set(0, -length + 2, foot ? 2 : 3);
+  shape.position.set(0, -length + 2, foot ? 5 : 4);
   group.add(shape);
   return group;
 }
 function continuousTail(parent: THREE.Group) {
   const tail = new THREE.Group();
-  tail.position.set(0, 20, -11);
+  tail.position.set(0, 15, -12);
   parent.add(tail);
   const curve = new THREE.CatmullRomCurve3([
     new THREE.Vector3(0, 0, 0),
@@ -309,7 +321,7 @@ export function createPlayerCat(): PlayerCatRig {
   const root = new THREE.Group(),
     body = new THREE.Group(),
     head = new THREE.Group();
-  root.name = "player-calico-c";
+  root.name = "player-calico-b";
   root.scale.setScalar(0.75);
   root.add(body);
   const eyes = [new THREE.Group(), new THREE.Group()],
@@ -332,31 +344,31 @@ export function createPlayerCat(): PlayerCatRig {
   headMesh.name = "continuous-head-and-ears";
   head.add(headMesh);
   head.add(...eyes, ...ears);
-  head.position.set(0, 48, 2);
+  head.position.set(0, 40, 2);
   body.add(head);
-  ellipsoid(body, skin("body", pose), 0, 25, 0, 18, 20, 13.5).name =
+  ellipsoid(body, skin("body", pose), 0, 20, 0, 20, 15, 14.5).name =
     "rounded-calico-body";
   const arms = [
-    limb(body, skin("armL", pose), -17, 35, 8),
-    limb(body, skin("armR", pose), 17, 35, 8),
+    limb(body, skin("armL", pose), -19, 28.5, 7),
+    limb(body, skin("armR", pose), 19, 28.5, 7),
   ];
   pose.arms = arms;
   const legs = [
-    limb(body, skin("foot", pose), -8.5, 8, 6.5, true),
-    limb(body, skin("foot", pose), 8.5, 8, 6.5, true),
+    limb(body, skin("foot", pose), -7.5, 5, 5.5, true),
+    limb(body, skin("foot", pose), 7.5, 5, 5.5, true),
   ];
   const pouch = new THREE.Group();
   pouch.name = "small-cloth-pouch";
-  pouch.position.set(15, 17, 5);
+  pouch.position.set(18.5, 12.8, 8);
   pouch.rotation.y = -0.3;
   body.add(pouch);
   const cloth = new THREE.MeshStandardMaterial({
     color: "#76523b",
     roughness: 1,
   });
-  pouch.add(new THREE.Mesh(new RoundedBoxGeometry(8, 8, 4, 4, 1.5), cloth));
+  pouch.add(new THREE.Mesh(new RoundedBoxGeometry(7, 6.5, 3.5, 4, 1.4), cloth));
   const flap = new THREE.Mesh(
-    new RoundedBoxGeometry(8.2, 3, 1.2, 4, 0.5),
+    new RoundedBoxGeometry(7.2, 2.6, 1.2, 4, 0.5),
     new THREE.MeshStandardMaterial({ color: "#956b4a", roughness: 1 }),
   );
   flap.position.set(0, 2, 2);
@@ -364,7 +376,7 @@ export function createPlayerCat(): PlayerCatRig {
   const { tail, bones } = continuousTail(body);
   const gun = new THREE.Group(),
     knife = new THREE.Group();
-  gun.position.set(0, -12, 7);
+  gun.position.set(0, -9, 8);
   gun.scale.setScalar(0.68);
   knife.position.copy(gun.position);
   knife.scale.copy(gun.scale);

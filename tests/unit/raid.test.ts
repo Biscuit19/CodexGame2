@@ -33,6 +33,52 @@ function advance(r: Raid, seconds: number, keys = new Set<string>()) {
 }
 beforeEach(() => memory.clear());
 describe("真实战区逻辑", () => {
+  it("跑动留下稀疏交替脚印，暂停冻结，停止后两秒消失", () => {
+    const { r } = start();
+    r.walls = [];
+    advance(r, 1, new Set(["KeyD"]));
+    expect(r.footprints.length).toBeGreaterThanOrEqual(3);
+    expect(r.footprints.length).toBeLessThanOrEqual(5);
+    for (let i = 1; i < r.footprints.length; i++) {
+      expect(r.footprints[i].x - r.footprints[i - 1].x).toBeGreaterThan(45);
+      expect(
+        Math.abs(r.footprints[i].y - r.footprints[i - 1].y),
+      ).toBeGreaterThan(8);
+    }
+    const life = r.footprints.map((f) => f.life);
+    r.paused = true;
+    advance(r, 3);
+    expect(r.footprints.map((f) => f.life)).toEqual(life);
+    r.paused = false;
+    advance(r, 1);
+    expect(r.footprints.every((f, i) => f.life < life[i])).toBe(true);
+    advance(r, 1.01);
+    expect(r.footprints).toHaveLength(0);
+  });
+  it("原地顶墙及整个翻滚过程中都不产生脚印", () => {
+    const { r } = start();
+    r.walls = [
+      {
+        x: r.p.x + 30,
+        y: r.p.y,
+        w: 30,
+        h: 300,
+        z: 30,
+        color: "#444",
+        type: "wall",
+      },
+    ];
+    advance(r, 1, new Set(["KeyD"]));
+    expect(r.footprints).toHaveLength(0);
+    r.walls = [];
+    const oldX = r.p.x;
+    r.roll(1, 0);
+    advance(r, 0.35, new Set(["KeyD"]));
+    expect(r.p.x).toBeGreaterThan(oldX + 100);
+    expect(r.footprints).toHaveLength(0);
+    advance(r, 0.3, new Set(["KeyD"]));
+    expect(r.footprints.length).toBeGreaterThan(0);
+  });
   it("敌猫备弹在20至50发间随机，包含两端且并非固定数量", () => {
     const { r } = start();
     const amounts = new Set<number>();
