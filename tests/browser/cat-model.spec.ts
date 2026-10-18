@@ -1,7 +1,14 @@
 import { test, expect } from "@playwright/test";
-test("矮胖猫的装备、眨眼、尾巴和前后滚翻实际渲染，通知均位于顶部", async ({
+test.use({ video: "on" });
+test("C方案三花玩家的连续轮廓、独立四肢和待机动作在Chrome实际渲染", async ({
   page,
 }) => {
+  test.setTimeout(60000);
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  page.on("console", (m) => {
+    if (m.type() === "error") errors.push(m.text());
+  });
   await page.goto("/?test=1");
   await page.getByRole("button", { name: "新的游戏", exact: true }).click();
   await page
@@ -14,7 +21,7 @@ test("矮胖猫的装备、眨眼、尾巴和前后滚翻实际渲染，通知�
       d = await import("/src/data.ts");
     g.raid.enemies = [];
     g.raid.p.x = 1000;
-    g.raid.p.y = 1000;
+    g.raid.p.y = 820;
     g.save.equipment.helmet = d.makeItem("h3");
     g.save.equipment.armor = d.makeItem("a3");
     g.raid.spawn(1100, 1000, 4, 2).cool = 999;
@@ -33,21 +40,97 @@ test("矮胖猫的装备、眨眼、尾巴和前后滚翻实际渲染，通知�
         tail: rig.tailJoints.map((x: any) => x.rotation.y),
         helmet: rig.helmet.visible,
         vest: rig.vest.visible,
+        pack: rig.pack.visible,
+        hiddenGearMeshes: [rig.helmet, rig.vest, rig.pack].reduce(
+          (n: number, x: any) => n + x.children.length,
+          0,
+        ),
+        wornHelmet: g.save.equipment.helmet.id,
+        enemyPlayerRig: !![...renderer.actors.values()].find(
+          (r: any) => r !== rig,
+        )?.player,
+        faceMeshes: rig.head.children
+          .filter((x: any) => x.isMesh)
+          .map((x: any) => x.name),
+        pouch: !!rig.body.getObjectByName("small-cloth-pouch"),
+        ears: rig.player.ears.map((x: any) => x.rotation.z),
       };
     });
   const before = await inspect();
   expect(before.scale).toBeLessThan(0.85);
-  expect(before.helmet && before.vest).toBe(true);
+  expect(before.helmet || before.vest || before.pack).toBe(false);
+  expect(before.hiddenGearMeshes).toBe(0);
+  expect(before.wornHelmet).toBe("h3");
+  expect(before.enemyPlayerRig).toBe(false);
+  expect(before.faceMeshes).toEqual(["continuous-head-and-ears"]);
+  expect(before.pouch).toBe(true);
   expect(before.tail).toHaveLength(6);
   await page.waitForTimeout(200);
-  expect((await inspect()).tail).not.toEqual(before.tail);
+  const idle = await inspect();
+  expect(idle.tail).not.toEqual(before.tail);
+  expect(idle.ears).not.toEqual(before.ears);
   let blink = false;
   for (let n = 0; n < 55; n++) {
     if ((await inspect()).eyes[0] < 0.8) blink = true;
     await page.waitForTimeout(90);
   }
   expect(blink).toBe(true);
-  await page.screenshot({ path: "test-results/chrome-chubby-cats.png" });
+  await page.screenshot({ path: "test-results/chrome-player-c-normal.png" });
+  const poses = await page.evaluate(async () => {
+    const g = (window as any).__game,
+      rig = g.renderer3d.actors.get("player");
+    const d = await import("/src/player-cat.ts");
+    return [0.5, 0.5 + Math.PI].map((walk) => {
+      d.animatePlayerCat(rig, performance.now() / 1000, walk, 0, 0, 0, 0);
+      return {
+        arms: rig.player.arms.map((x: any) => x.rotation.x),
+        legs: rig.legs.map((x: any) => x.rotation.x),
+        head: rig.head.rotation.x,
+        sway: rig.body.rotation.z,
+      };
+    });
+  });
+  for (const pose of poses) {
+    expect(pose.arms[0] * pose.arms[1]).toBeLessThan(0);
+    expect(pose.legs[0] * pose.legs[1]).toBeLessThan(0);
+    expect(pose.arms[0] * pose.legs[0]).toBeLessThan(0);
+    expect(Math.abs(pose.sway)).toBeGreaterThan(0.01);
+    expect(Math.abs(pose.head)).toBeLessThan(0.05);
+  }
+  expect(poses[0].arms[0] * poses[1].arms[0]).toBeLessThan(0);
+  await page.evaluate(() => {
+    const g = (window as any).__game;
+    g.renderer3d.camera.zoom = 4;
+    g.renderer3d.camera.updateProjectionMatrix();
+  });
+  for (const [name, angle] of [
+    ["front", Math.PI / 2],
+    ["quarter", Math.PI / 4],
+    ["back", -Math.PI / 2],
+  ] as const) {
+    await page.evaluate((angle) => {
+      (window as any).__game.raid.p.angle = angle;
+    }, angle);
+    await page.waitForTimeout(180);
+    await page.screenshot({ path: `test-results/chrome-player-c-${name}.png` });
+  }
+  await page.evaluate(() => {
+    const g = (window as any).__game;
+    g.raid.enemies = [];
+    g.raid.paused = false;
+  });
+  await page.mouse.move(1100, 880);
+  const startX = await page.evaluate(() => (window as any).__game.raid.p.x);
+  await page.keyboard.down("KeyD");
+  await page.waitForTimeout(2000);
+  await page.screenshot({ path: "test-results/chrome-player-c-running.png" });
+  await page.keyboard.up("KeyD");
+  expect(
+    await page.evaluate(() => (window as any).__game.raid.p.x),
+  ).toBeGreaterThan(startX + 200);
+  await page.evaluate(() => {
+    (window as any).__game.raid.paused = true;
+  });
   for (const direction of [1, -1]) {
     const rotation = await page.evaluate((direction) => {
       const g = (window as any).__game,
@@ -90,4 +173,5 @@ test("矮胖猫的装备、眨眼、尾巴和前后滚翻实际渲染，通知�
   const box = await page.locator("#toasts").boundingBox();
   expect(box!.y).toBeLessThan(100);
   expect(Math.abs(box!.x + box!.width / 2 - 720)).toBeLessThan(5);
+  expect(errors).toEqual([]);
 });

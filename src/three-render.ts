@@ -6,6 +6,12 @@ import { weaponPalette } from "./equipment-art";
 import type { Raid, Enemy, Container } from "./raid";
 import { Renderer } from "./render";
 import { text, round } from "./art";
+import {
+  createPlayerCat,
+  animatePlayerCat,
+  type PlayerCatRig,
+  type PlayerPose,
+} from "./player-cat";
 
 type Rig = {
   root: THREE.Group;
@@ -18,7 +24,8 @@ type Rig = {
   helmet: THREE.Group;
   vest: THREE.Group;
   eyes: THREE.Group[];
-  tailJoints: THREE.Group[];
+  tailJoints: THREE.Object3D[];
+  player?: PlayerPose;
   pack: THREE.Group;
 };
 const materials = new Map<string, THREE.MeshStandardMaterial>();
@@ -91,12 +98,20 @@ function release(group: THREE.Object3D) {
     mats = new Set<THREE.Material>();
   group.traverse((o) => {
     if (!(o instanceof THREE.Mesh || o instanceof THREE.Line)) return;
+    if (o instanceof THREE.SkinnedMesh) o.skeleton.dispose();
     if (!cached.has(o.geometry)) geometries.add(o.geometry);
     for (const m of Array.isArray(o.material) ? o.material : [o.material])
       if (!shared.has(m)) mats.add(m);
   });
   geometries.forEach((g) => g.dispose());
-  mats.forEach((m) => m.dispose());
+  mats.forEach((m) => {
+    if (
+      m instanceof THREE.MeshBasicMaterial &&
+      m.name === "player-contact-shadow"
+    )
+      m.map?.dispose();
+    m.dispose();
+  });
 }
 const rounded = new Map<string, THREE.BufferGeometry>();
 function mesh(
@@ -351,6 +366,7 @@ function weaponModel(g: THREE.Group, id: string) {
   g.userData.weaponId = id;
 }
 function makeCat(breed = -2, boss = false): Rig {
+  if (breed === -2) return createPlayerCat();
   const b =
     breed === -2
       ? { fur: "#e8cb9e", patch: "#b67f4b", eye: "#81a671" }
@@ -882,6 +898,18 @@ export class ThreeRenderer {
     rig.root.position.set(x, 0, y);
     rig.root.rotation.y = Math.PI / 2 - angle;
     const time = performance.now() / 1000;
+    if (rig.player) {
+      animatePlayerCat(
+        rig as PlayerCatRig,
+        time,
+        walk,
+        angle,
+        roll,
+        rollDirection,
+        rollAim,
+      );
+      return;
+    }
     rig.body.position.y =
       34 + (walk ? Math.abs(Math.sin(walk)) * 2.1 : Math.sin(time * 2.5) * 0.5);
     rig.body.rotation.set(0, 0, walk ? Math.sin(walk) * 0.1 : 0);

@@ -666,13 +666,14 @@ test("地图一立体模型、默认疾跑与持刀加速、暂停设置与完�
       rig = g.renderer3d.actors.get("player");
     return {
       meshes: g.renderer3d.webgl.info.render.calls,
-      model: rig.head.children.length,
+      model: rig.head.getObjectByName("continuous-head-and-ears").geometry
+        .attributes.position.count,
       legs: rig.legs.length,
       context: !!g.renderer3d.webgl.getContext(),
     };
   });
   expect(geometry.context).toBe(true);
-  expect(geometry.model).toBeGreaterThan(5);
+  expect(geometry.model).toBeGreaterThan(10000);
   expect(geometry.legs).toBe(2);
   expect(geometry.meshes).toBeGreaterThan(20);
   await page.evaluate(() => {
