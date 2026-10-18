@@ -14,6 +14,8 @@ import {
   type PlayerPose,
 } from "./player-cat";
 
+const CAMERA_ELEVATION = (33 * Math.PI) / 180;
+
 type Rig = {
   root: THREE.Group;
   body: THREE.Group;
@@ -721,25 +723,14 @@ export class ThreeRenderer {
     ground.castShadow = false;
     for (const w of r.walls) {
       if (w.type === "wall") {
-        const wall = block(
-          this.world,
-          "#a9ac8c",
-          w.x,
-          w.z * 0.5,
-          w.y,
-          w.w,
-          w.z,
-          w.h,
-          2,
-        );
-        this.wallMeshes.push({ mesh: wall, rect: w });
-        wall.material = (wall.material as THREE.MeshStandardMaterial).clone();
-        (wall.material as THREE.MeshStandardMaterial).transparent = true;
-        block(this.world, "#cfccad", w.x, w.z + 1, w.y, w.w + 4, 5, w.h + 4, 1);
+        // Keep each wall and its trim together, so a lower camera never leaves an opaque cap.
+        const wallGroup = new THREE.Group();
+        block(wallGroup, "#a9ac8c", w.x, w.z * 0.5, w.y, w.w, w.z, w.h, 2);
+        block(wallGroup, "#cfccad", w.x, w.z + 1, w.y, w.w + 4, 5, w.h + 4, 1);
         if (w.w > 100)
           for (let i = 0; i < Math.floor(w.w / 75); i++)
             block(
-              this.world,
+              wallGroup,
               "#8f9677",
               w.x - w.w * 0.5 + 30 + i * 75,
               w.z * 0.5,
@@ -749,6 +740,37 @@ export class ThreeRenderer {
               2,
               1,
             );
+        const parts = wallGroup.children.map((child) => {
+          const part = child as THREE.Mesh<
+            THREE.BufferGeometry,
+            THREE.MeshStandardMaterial
+          >;
+          part.updateMatrix();
+          const geometry = part.geometry.clone().applyMatrix4(part.matrix);
+          const color = part.material.color;
+          const colors = new Float32Array(
+            geometry.attributes.position.count * 3,
+          );
+          for (let n = 0; n < colors.length; n += 3)
+            colors.set([color.r, color.g, color.b], n);
+          geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+          return geometry;
+        });
+        const geometry = mergeGeometries(parts, false)!;
+        parts.forEach((g) => g.dispose());
+        const wall = new THREE.Mesh(
+          geometry,
+          new THREE.MeshStandardMaterial({
+            vertexColors: true,
+            roughness: 0.88,
+            metalness: 0.03,
+            transparent: true,
+          }),
+        );
+        wall.name = "fading-wall-and-trim";
+        wall.castShadow = wall.receiveShadow = true;
+        this.world.add(wall);
+        this.wallMeshes.push({ mesh: wall, rect: w });
       } else if (w.type === "barrel") {
         for (let k = -1; k <= 1; k++) {
           cylinder(this.world, "#718771", w.x + k * 23, 20, w.y, 12, 12, 40);
@@ -971,7 +993,7 @@ export class ThreeRenderer {
     this.show(true);
     const px = Math.max(490, Math.min(1920, r.p.x)),
       pz = Math.max(260, Math.min(1520, r.p.y));
-    this.camera.position.set(px, 1100, pz + 1000);
+    this.camera.position.set(px, 1100 * Math.tan(CAMERA_ELEVATION), pz + 1000);
     this.camera.lookAt(px, 0, pz - 100);
     const shake = r.shake * r.save.settings.shake;
     this.camera.position.x += Math.sin(r.elapsed * 140) * shake;
@@ -1040,11 +1062,12 @@ export class ThreeRenderer {
     }
     for (const w of this.wallMeshes) {
       const hide =
-        w.rect.y > r.p.y &&
-        Math.abs(w.rect.x - r.p.x) < w.rect.w * 0.5 + 25 &&
-        w.rect.y - r.p.y < 110;
+        w.rect.y + w.rect.h * 0.5 > r.p.y &&
+        Math.abs(w.rect.x - r.p.x) < w.rect.w * 0.5 + 28 &&
+        w.rect.y - w.rect.h * 0.5 - r.p.y <
+          (w.rect.z + 15) / Math.tan(CAMERA_ELEVATION);
       const m = w.mesh.material as THREE.MeshStandardMaterial;
-      m.opacity = hide ? 0.25 : 1;
+      m.opacity = hide ? 0.16 : 1;
     }
     let n = 0;
     for (const b of r.bullets.slice(0, 600)) {

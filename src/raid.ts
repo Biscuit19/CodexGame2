@@ -1404,7 +1404,7 @@ export class Raid {
       life: 0.25,
       max: 0.25,
     });
-    this.interrupt();
+    // Taking damage preserves container search and its current reveal progress.
     const armor = this.save.equipment[head ? "helmet" : "armor"];
     let taken = damage(
       dmg,

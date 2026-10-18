@@ -33,6 +33,29 @@ function advance(r: Raid, seconds: number, keys = new Set<string>()) {
 }
 beforeEach(() => memory.clear());
 describe("真实战区逻辑", () => {
+  it("连续受击保留容器搜索对象与当前进度，仍可完成揭示和拾取", () => {
+    const { r, s } = start();
+    const c = r.containers[0];
+    r.p.x = c.x;
+    r.p.y = c.y;
+    c.items = [makeItem("c4_0")];
+    c.revealed = 0;
+    c.locked = false;
+    r.startSearch(c);
+    advance(r, 0.6);
+    const before = r.searchProgress;
+    for (let i = 0; i < 2; i++) r.hurtPlayer(5, 1);
+    expect(r.p.hp).toBeLessThan(100);
+    expect(r.search).toBe(c);
+    expect(r.inventory).toBe(true);
+    expect(r.searchProgress).toBe(before);
+    advance(r, 0.5);
+    expect(r.searchProgress).toBeGreaterThan(before);
+    advance(r, 7);
+    expect(c.revealed).toBe(1);
+    r.take(0, false, true);
+    expect(s.pack.some((i) => i.id === "c4_0")).toBe(true);
+  });
   it("跑动留下稀疏交替脚印，暂停冻结，停止后两秒消失", () => {
     const { r } = start();
     r.walls = [];
