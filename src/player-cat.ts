@@ -47,10 +47,10 @@ function sculptHead(mat: THREE.Material) {
         const pz = ((z / resolution) * 2 - 1) * bound;
         const cheeks = 1.02 - 0.1 * Math.max(0, Math.min(1, (py + 14) / 30));
         let distance =
-          (Math.hypot(px / (26.5 * cheeks), py / 17.5, pz / 17.5) - 1) * 17.5;
+          (Math.hypot(px / (24 * cheeks), py / 17.5, pz / 17.5) - 1) * 17.5;
         for (const side of [-1, 1]) {
           const ey = py - 12;
-          const ex = px - side * (16.8 + ey * 0.13);
+          const ex = px - side * (14.8 + ey * 0.13);
           const radial = Math.hypot(ex, (pz + 1.0) * 1.25);
           const slope = (9.4 - 3.0) / 12.0,
             cosine = Math.sqrt(1 - slope * slope);
@@ -94,6 +94,15 @@ float stroke(vec2 p, vec2 a, vec2 b, float width) {
   return 1.0 - smoothstep(width, width + max(fwidth(d),0.07), d);
 }
 `;
+// Used by both fur and helmet: the shell follows the same ear vertices and uniforms.
+const earDeformation = /* glsl */ `
+  float earWeight = smoothstep(10.0,26.0,position.y) * smoothstep(7.0,14.0,abs(position.x));
+  float earAngle = mix(catEarL,catEarR,step(0.0,position.x)) * earWeight;
+  float earCos = cos(earAngle), earSin = sin(earAngle);
+  vec2 pivot = vec2(sign(position.x)*14.8,12.0);
+  transformed.xy = pivot + mat2(earCos,earSin,-earSin,earCos)*(transformed.xy-pivot);
+  transformed.z += sin(earAngle)*earWeight*3.0;
+`;
 /** Calico markings and facial features are pigment on the surface, never attached eye/nose meshes. */
 function skin(
   kind: "head" | "body" | "armL" | "armR" | "foot",
@@ -105,7 +114,7 @@ function skin(
     metalness: 0,
   });
   mat.name = `player-calico-${kind}`;
-  mat.customProgramCacheKey = () => `calico-b-${kind}-v3`;
+  mat.customProgramCacheKey = () => `calico-b-${kind}-v4`;
   mat.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, {
       catBlink: pose.face.blink,
@@ -116,17 +125,7 @@ function skin(
     const common = `varying vec3 catLocal; uniform float catBlink,catGaze,catEarL,catEarR;`;
     shader.vertexShader = common + "\n" + shader.vertexShader;
     shader.fragmentShader = common + shaderMath + shader.fragmentShader;
-    const earDeform =
-      kind === "head"
-        ? /* glsl */ `
-      float earWeight = smoothstep(10.0,26.0,position.y) * smoothstep(8.0,16.0,abs(position.x));
-      float earAngle = mix(catEarL,catEarR,step(0.0,position.x)) * earWeight;
-      float earCos = cos(earAngle), earSin = sin(earAngle);
-      vec2 pivot = vec2(sign(position.x)*16.8,12.0);
-      transformed.xy = pivot + mat2(earCos,earSin,-earSin,earCos)*(transformed.xy-pivot);
-      transformed.z += sin(earAngle)*earWeight*3.0;
-    `
-        : "";
+    const earDeform = kind === "head" ? earDeformation : "";
     shader.vertexShader = shader.vertexShader.replace(
       "#include <begin_vertex>",
       `#include <begin_vertex>\ncatLocal=position;\n${earDeform}`,
@@ -139,24 +138,24 @@ function skin(
       float backPatch = smoothstep(-8.,-5.,p.y+sin(p.x*.14)*1.5);
       float furMask = mix(backPatch,bangs,smoothstep(-8.,4.,p.z));
       pigment=mix(pigment,p.x<0.?vec3(.70,.27,.056):vec3(.10,.045,.027),furMask);
-      float innerEar = oval(vec2(abs(p.x)-17.2,p.y-21.3),vec2(5.5,6.4))*smoothstep(0.5,2.2,p.z);
+      float innerEar = oval(vec2(abs(p.x)-15.2,p.y-21.3),vec2(5.5,6.4))*smoothstep(0.5,2.2,p.z);
       pigment=mix(pigment,vec3(.55,.16,.14),innerEar);
       float front=smoothstep(10.0,14.0,p.z);
-      vec2 eyeLeft=p.xy-vec2(-8.4+catGaze,.8);
-      vec2 eyeRight=p.xy-vec2(8.4+catGaze,.8);
+      vec2 eyeLeft=p.xy-vec2(-8.0+catGaze,2.3);
+      vec2 eyeRight=p.xy-vec2(8.0+catGaze,2.3);
       float eye= max(oval(eyeLeft,vec2(4.1,max(.25,5.3*catBlink))),oval(eyeRight,vec2(4.1,max(.25,5.3*catBlink))));
       pigment=mix(pigment,vec3(.020,.013,.010),eye*front);
       float light = max(oval(eyeLeft-vec2(-.9,2.0*catBlink),vec2(.86,1.0*catBlink)),oval(eyeRight-vec2(-.9,2.0*catBlink),vec2(.86,1.0*catBlink)));
       pigment=mix(pigment,vec3(1.0,.97,.89),light*front*smoothstep(.35,.7,catBlink));
-      float nose=oval(p.xy-vec2(0.0,-4.8),vec2(2.05,1.25));
+      float nose=oval(p.xy-vec2(0.0,-3.3),vec2(2.05,1.25));
       pigment=mix(pigment,vec3(.65,.20,.16),nose*front);
-      float mouth=stroke(p.xy,vec2(0.,-5.7),vec2(0.,-7.0),.30);
-      mouth=max(mouth,stroke(p.xy,vec2(0.,-7.),vec2(-2.3,-8.1),.30));
-      mouth=max(mouth,stroke(p.xy,vec2(0.,-7.),vec2(2.3,-8.1),.30));
+      float mouth=stroke(p.xy,vec2(0.,-4.2),vec2(0.,-5.5),.30);
+      mouth=max(mouth,stroke(p.xy,vec2(0.,-5.5),vec2(-2.3,-6.6),.30));
+      mouth=max(mouth,stroke(p.xy,vec2(0.,-5.5),vec2(2.3,-6.6),.30));
       float whiskers=0.;
       for(int n=0;n<2;n++) {
-        float yy=-3.2-float(n)*3.0;
-        whiskers=max(whiskers,stroke(vec2(abs(p.x),p.y),vec2(13.0,yy),vec2(20.0,yy+.8-float(n)),.45));
+        float yy=-1.7-float(n)*3.0;
+        whiskers=max(whiskers,stroke(vec2(abs(p.x),p.y),vec2(12.5,yy),vec2(19.0,yy+.8-float(n)),.45));
       }
       pigment=mix(pigment,vec3(.12,.08,.06),max(mouth*front,whiskers*smoothstep(3.,8.,p.z))*.95);
     `;
@@ -326,6 +325,167 @@ function continuousTail(parent: THREE.Group) {
   );
   return { tail, bones };
 }
+
+/** Clip triangles to an exact horizontal hem, avoiding a sawtooth edge at the cut. */
+function surfaceAbove(source: THREE.BufferGeometry, height: number) {
+  const positions = source.getAttribute("position"),
+    normals = source.getAttribute("normal");
+  const vertices: number[] = [],
+    directions: number[] = [];
+  for (let i = 0; i < positions.count; i += 3) {
+    const triangle = [0, 1, 2].map((j) => [
+      positions.getX(i + j),
+      positions.getY(i + j),
+      positions.getZ(i + j),
+      normals.getX(i + j),
+      normals.getY(i + j),
+      normals.getZ(i + j),
+    ]);
+    const polygon: number[][] = [];
+    for (let j = 0; j < 3; j++) {
+      const a = triangle[j],
+        b = triangle[(j + 1) % 3];
+      if (a[1] >= height) polygon.push(a);
+      if (a[1] >= height !== b[1] >= height) {
+        const t = (height - a[1]) / (b[1] - a[1]);
+        polygon.push(a.map((value, k) => value + (b[k] - value) * t));
+      }
+    }
+    for (let j = 1; j + 1 < polygon.length; j++) {
+      for (const v of [polygon[0], polygon[j], polygon[j + 1]]) {
+        vertices.push(v[0], v[1], v[2]);
+        const length = Math.hypot(v[3], v[4], v[5]);
+        directions.push(v[3] / length, v[4] / length, v[5] / length);
+      }
+    }
+  }
+  return new THREE.BufferGeometry()
+    .setAttribute("position", new THREE.Float32BufferAttribute(vertices, 3))
+    .setAttribute("normal", new THREE.Float32BufferAttribute(directions, 3));
+}
+
+function createEquipment(headGeometry: THREE.BufferGeometry, pose: PlayerPose) {
+  const helmet = new THREE.Group(),
+    vest = new THREE.Group(),
+    pack = new THREE.Group();
+  helmet.name = "fitted-cat-ear-helmet";
+  vest.name = "cropped-player-vest";
+  pack.name = "compact-player-backpack";
+  const shell = new THREE.MeshStandardMaterial({
+    color: "#728b79",
+    roughness: 0.72,
+    metalness: 0.12,
+    side: THREE.DoubleSide,
+  });
+  shell.name = "player-helmet-shell";
+  shell.customProgramCacheKey = () => "fitted-animated-ear-helmet-v1";
+  shell.onBeforeCompile = (shader) => {
+    shader.uniforms.catEarL = pose.face.earL;
+    shader.uniforms.catEarR = pose.face.earR;
+    shader.vertexShader =
+      "uniform float catEarL, catEarR;\n" + shader.vertexShader;
+    shader.vertexShader = shader.vertexShader.replace(
+      "#include <begin_vertex>",
+      `#include <begin_vertex>\ntransformed *= 1.025;\n${earDeformation}`,
+    );
+  };
+  // Cut along existing smooth triangle rings, above the eyes. No bulky replacement ears.
+  helmet.add(new THREE.Mesh(surfaceAbove(headGeometry, 10.4), shell));
+  const vestMaterial = new THREE.MeshStandardMaterial({
+    color: "#728b79",
+    roughness: 0.9,
+    side: THREE.DoubleSide,
+  });
+  vestMaterial.name = "player-vest-shell";
+  const indexed = new THREE.SphereGeometry(1, 40, 28);
+  indexed.scale(16.35, 9.8, 11.9);
+  const source = indexed.toNonIndexed();
+  const plate = new THREE.Mesh(surfaceAbove(source, -4), vestMaterial);
+  plate.position.y = 15.5;
+  vest.add(plate);
+  source.dispose();
+  indexed.dispose();
+  const trim = new THREE.MeshStandardMaterial({
+    color: "#37483e",
+    roughness: 0.95,
+  });
+  for (const x of [-5.2, 5.2]) {
+    const pocket = new THREE.Mesh(
+      new RoundedBoxGeometry(5.4, 3.2, 1.8, 3, 0.7),
+      trim,
+    );
+    pocket.position.set(x, 13.7, 11.2);
+    vest.add(pocket);
+  }
+  const fabric = new THREE.MeshStandardMaterial({
+    color: "#958568",
+    roughness: 0.95,
+  });
+  fabric.name = "player-pack-fabric";
+  const bag = new THREE.Mesh(new RoundedBoxGeometry(14, 14, 7, 4, 2), fabric);
+  pack.add(bag);
+  const pocket = new THREE.Mesh(new RoundedBoxGeometry(10, 6, 2.5, 3, 1), trim);
+  pocket.position.set(0, -2, -4);
+  pack.add(pocket);
+  const handle = new THREE.Mesh(
+    new THREE.TorusGeometry(2.6, 0.65, 8, 16, Math.PI),
+    trim,
+  );
+  handle.position.set(0, 6.5, 0);
+  pack.add(handle);
+  const buckle = new THREE.Mesh(
+    new RoundedBoxGeometry(2.2, 2.2, 0.9, 2, 0.4),
+    new THREE.MeshStandardMaterial({ color: "#d5c69c", roughness: 0.65 }),
+  );
+  buckle.position.set(0, -1, -5.5);
+  pack.add(buckle);
+  pack.position.set(0, 16.5, -13.5);
+  helmet.visible = vest.visible = pack.visible = false;
+  return { helmet, vest, pack };
+}
+
+/** Update existing meshes only; changing gear never rebuilds geometry or modifies inventory. */
+export function updatePlayerEquipment(
+  rig: PlayerCatRig,
+  helmet: number,
+  armor: number,
+  bag: number,
+) {
+  const colors = ["#7c8c72", "#548570", "#5c8fac", "#9c7daa", "#c4a35c"];
+  for (const [group, tier] of [
+    [rig.helmet, helmet],
+    [rig.vest, armor],
+    [rig.pack, bag],
+  ] as const) {
+    group.visible = tier > 0;
+    if (group.userData.tier === tier) continue;
+    group.userData.tier = tier;
+    group.traverse((object) => {
+      if (
+        object instanceof THREE.Mesh &&
+        object.material instanceof THREE.MeshStandardMaterial &&
+        /shell|fabric/.test(object.material.name)
+      )
+        object.material.color.set(colors[Math.max(0, Math.min(4, tier - 1))]);
+    });
+  }
+  rig.pack.scale.setScalar(0.7 + Math.max(0, Math.min(4, bag - 1)) * 0.075);
+}
+
+/** Incommensurate waves give each cat smooth, irregular swishes with independent tip curls. */
+export function tailMotion(time: number, phase: number, joint: number) {
+  const t = joint / 5;
+  const quiet = Math.pow((1 + Math.sin(time * 0.28 + phase)) / 2, 12);
+  return {
+    y:
+      joint === 0
+        ? (0.85 - quiet * 0.63) * Math.sin(time * 1.9 + phase)
+        : Math.sin(time * 2.7 - joint * 0.62 + phase) * (0.12 + t * 0.17) +
+          Math.sin(time * 1.13 + joint * 0.51 + phase * 2) * 0.12 * t,
+    x: Math.sin(time * 1.7 - joint * 0.46 + phase) * (0.055 + t * 0.12),
+    z: Math.sin(time * 2.1 - joint * 0.73 + phase * 1.4) * t * 0.075,
+  };
+}
 export function createPlayerCat(): PlayerCatRig {
   const root = new THREE.Group(),
     body = new THREE.Group(),
@@ -354,14 +514,15 @@ export function createPlayerCat(): PlayerCatRig {
   headMesh.name = "continuous-head-and-ears";
   head.add(headMesh);
   head.add(...eyes, ...ears);
-  head.position.set(0, 40, 2);
+  head.position.set(0, 32, 2);
   body.add(head);
-  ellipsoid(body, skin("body", pose), 0, 20, 0, 20, 15, 14.5).name =
+  ellipsoid(body, skin("body", pose), 0, 15.5, 0, 16, 9.5, 11.5).name =
     "rounded-calico-body";
   const arms = [
-    limb(body, skin("armL", pose), -19, 28.5, 7),
-    limb(body, skin("armR", pose), 19, 28.5, 7),
+    limb(body, skin("armL", pose), -17, 21.5, 7),
+    limb(body, skin("armR", pose), 17, 21.5, 7),
   ];
+  arms.forEach((arm) => arm.scale.setScalar(1.1));
   pose.arms = arms;
   const legs = [
     limb(body, skin("foot", pose), -7.5, 5, 4.1, true),
@@ -369,7 +530,8 @@ export function createPlayerCat(): PlayerCatRig {
   ];
   const pouch = new THREE.Group();
   pouch.name = "small-cloth-pouch";
-  pouch.position.set(18.5, 12.8, 8);
+  pouch.position.set(14.5, 11.2, 7);
+  pouch.scale.setScalar(0.8);
   pouch.rotation.y = -0.3;
   body.add(pouch);
   const cloth = new THREE.MeshStandardMaterial({
@@ -386,8 +548,8 @@ export function createPlayerCat(): PlayerCatRig {
   const { tail, bones } = continuousTail(body);
   const gun = new THREE.Group(),
     knife = new THREE.Group();
-  gun.position.set(0, -9, 8);
-  gun.scale.setScalar(0.68);
+  gun.position.set(0, -7.5, 9);
+  gun.scale.setScalar(0.98);
   knife.position.copy(gun.position);
   knife.scale.copy(gun.scale);
   arms[0].add(gun, knife);
@@ -398,10 +560,9 @@ export function createPlayerCat(): PlayerCatRig {
   blade.position.z = 14;
   knife.add(blade);
   knife.visible = false;
-  const helmet = new THREE.Group(),
-    vest = new THREE.Group(),
-    pack = new THREE.Group();
-  helmet.visible = vest.visible = pack.visible = false;
+  const { helmet, vest, pack } = createEquipment(headMesh.geometry, pose);
+  head.add(helmet);
+  body.add(vest, pack);
   body.children.forEach((child) => (child.position.y -= 29));
   const shadowCanvas = document.createElement("canvas");
   shadowCanvas.width = shadowCanvas.height = 64;
@@ -486,32 +647,32 @@ export function animatePlayerCat(
   rig.body.position.y =
     31 +
     (walk
-      ? Math.abs(stride) * (sideways ? 0.8 : 1.1)
+      ? Math.abs(stride) * (sideways ? 1.2 : 1.5)
       : Math.sin(time * 2.2) * 0.35);
-  rig.body.rotation.set(forward * 0.045, 0, stride * 0.065 - side * 0.055);
+  rig.body.rotation.set(forward * 0.065, 0, stride * 0.1 - side * 0.075);
   rig.head.rotation.set(
     walk
-      ? Math.sin(walk * 2 + 0.5) * 0.045 * forward
+      ? Math.sin(walk * 2 + 0.5) * 0.07 * forward
       : Math.sin(time * 1.3) * 0.018,
-    Math.sin(time * 0.8) * 0.022 + side * stride * 0.035,
-    -stride * 0.035 + side * 0.025,
+    Math.sin(time * 0.8) * 0.022 + side * stride * 0.055,
+    -stride * 0.055 + side * 0.04,
   );
-  rig.head.position.x = side * Math.sin(walk * 2) * 0.4;
-  rig.head.position.z = 2 + (walk ? Math.sin(walk * 2) * 0.45 * forward : 0);
+  rig.head.position.x = side * Math.sin(walk * 2) * 0.65;
+  rig.head.position.z = 2 + (walk ? Math.sin(walk * 2) * 0.7 * forward : 0);
   rig.legs.forEach((leg, i) => {
     const phase = walk + i * Math.PI;
     const step = walk ? Math.sin(phase) : 0;
     // Lift during recovery; on the planted half-cycle the paw travels opposite locomotion.
     const lift = walk ? Math.max(0, -Math.cos(phase)) : 0;
     leg.rotation.set(
-      step * forward * (backward ? 0.48 : 0.62),
+      step * forward * (backward ? 0.65 : 0.82),
       0,
-      -step * side * 0.42,
+      -step * side * 0.58,
     );
     leg.position.set(
-      (i ? 7.5 : -7.5) - step * side * 1.8,
-      -24 + lift * 1.8,
-      -step * forward * 1.2,
+      (i ? 7.5 : -7.5) - step * side * 2.4,
+      -24 + lift * 2.3,
+      -step * forward * 1.6,
     );
   });
   pose.arms.forEach((arm, i) => {
@@ -519,21 +680,16 @@ export function animatePlayerCat(
     arm.rotation.x = walk
       ? -step *
         forward *
-        (i === 0 && (rig.gun.visible || rig.knife.visible) ? 0.32 : 0.48)
+        (i === 0 && (rig.gun.visible || rig.knife.visible) ? 0.44 : 0.65)
       : Math.sin(time * 1.7 + i) * 0.025;
     arm.rotation.z =
       (i ? -0.06 : 0.06) +
-      (walk ? step * side * 0.24 + Math.cos(walk + i * Math.PI) * 0.035 : 0);
+      (walk ? step * side * 0.34 + Math.cos(walk + i * Math.PI) * 0.05 : 0);
   });
   // Usually a broad left/right sweep, with brief softer intervals and delayed tip follow-through.
-  const quiet = Math.pow((1 + Math.sin(time * 0.28 + pose.phase)) / 2, 12);
-  const sweep = (0.85 - quiet * 0.63) * Math.sin(time * 1.9 + pose.phase);
   rig.tailJoints.forEach((joint, i) => {
-    joint.rotation.y =
-      i === 0
-        ? sweep
-        : Math.sin(time * 2.2 - i * 0.48 + pose.phase) * (0.04 + i * 0.006);
-    joint.rotation.x = Math.sin(time * 1.7 - i * 0.39) * 0.055;
+    const motion = tailMotion(time, pose.phase, i);
+    joint.rotation.set(motion.x, motion.y, motion.z);
   });
   pose.ears.forEach((ear, i) => {
     const twitch = Math.pow(
@@ -541,7 +697,9 @@ export function animatePlayerCat(
       12,
     );
     ear.rotation.z =
-      Math.sin(time * 0.85 + i * 2) * 0.06 + (i ? 1 : -1) * twitch * 0.27;
+      Math.sin(time * 0.85 + i * 2) * 0.06 +
+      (i ? 1 : -1) * twitch * 0.27 +
+      stride * 0.05;
   });
   pose.face.earL.value = pose.ears[0].rotation.z;
   pose.face.earR.value = pose.ears[1].rotation.z;
@@ -549,7 +707,6 @@ export function animatePlayerCat(
   pose.face.blink.value = blink;
   pose.face.gaze.value = Math.sin(time * 0.75) * 0.36;
   rig.eyes.forEach((eye) => (eye.scale.y = blink));
-  rig.helmet.visible = rig.vest.visible = rig.pack.visible = false;
   if (roll > 0) {
     const progress = Math.min(1, (0.35 - roll) / 0.35);
     const axis = rollAxis(rollAim, rollDirection);
@@ -560,7 +717,7 @@ export function animatePlayerCat(
     );
     rig.body.position.y = 29 + Math.sin(progress * Math.PI) * 9;
     rig.head.rotation.x = -0.18;
-    rig.head.position.set(0, 11, 2);
+    rig.head.position.set(0, 3, 2);
     rig.legs.forEach((leg, i) => {
       leg.position.set(i ? 7.5 : -7.5, -24, 0);
       leg.rotation.set(-0.75, 0, 0);

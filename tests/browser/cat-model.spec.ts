@@ -41,7 +41,7 @@ test("B方案圆团三花玩家的连续轮廓、独立四肢和待机动作在C
         helmet: rig.helmet.visible,
         vest: rig.vest.visible,
         pack: rig.pack.visible,
-        hiddenGearMeshes: [rig.helmet, rig.vest, rig.pack].reduce(
+        gearMeshes: [rig.helmet, rig.vest, rig.pack].reduce(
           (n: number, x: any) => n + x.children.length,
           0,
         ),
@@ -58,8 +58,8 @@ test("B方案圆团三花玩家的连续轮廓、独立四肢和待机动作在C
     });
   const before = await inspect();
   expect(before.scale).toBeLessThan(0.85);
-  expect(before.helmet || before.vest || before.pack).toBe(false);
-  expect(before.hiddenGearMeshes).toBe(0);
+  expect(before.helmet && before.vest && before.pack).toBe(true);
+  expect(before.gearMeshes).toBeGreaterThan(5);
   expect(before.wornHelmet).toBe("h3");
   expect(before.enemyPlayerRig).toBe(false);
   expect(before.faceMeshes).toEqual(["continuous-head-and-ears"]);
@@ -112,8 +112,9 @@ test("B方案圆团三花玩家的连续轮廓、独立四肢和待机动作在C
     expect(pose.arms[0] * pose.arms[1]).toBeLessThan(0);
     expect(pose.legs[0] * pose.legs[1]).toBeLessThan(0);
     expect(pose.arms[0] * pose.legs[0]).toBeLessThan(0);
-    expect(Math.abs(pose.sway)).toBeGreaterThan(0.01);
-    expect(Math.abs(pose.head)).toBeLessThan(0.05);
+    expect(Math.abs(pose.sway)).toBeGreaterThan(0.04);
+    expect(Math.abs(pose.head)).toBeGreaterThan(0.04);
+    expect(Math.abs(pose.head)).toBeLessThan(0.09);
   }
   expect(poses[0].arms[0] * poses[1].arms[0]).toBeLessThan(0);
   await page.evaluate(() => {

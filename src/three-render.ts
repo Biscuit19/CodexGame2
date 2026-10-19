@@ -10,6 +10,7 @@ import { PawPrints } from "./pawprints";
 import {
   createPlayerCat,
   animatePlayerCat,
+  updatePlayerEquipment,
   type PlayerCatRig,
   type PlayerPose,
 } from "./player-cat";
@@ -919,11 +920,18 @@ export class ThreeRenderer {
     rollDirection = angle,
     rollAim = angle,
     movementDirection = angle,
+    bagTier = bag ? 1 : 0,
   ) {
     rig.root.position.set(x, 0, y);
     rig.root.rotation.y = Math.PI / 2 - angle;
     const time = performance.now() / 1000;
     if (rig.player) {
+      updatePlayerEquipment(
+        rig as PlayerCatRig,
+        helmet,
+        armor,
+        bag ? bagTier : 0,
+      );
       animatePlayerCat(
         rig as PlayerCatRig,
         time,
@@ -1014,6 +1022,7 @@ export class ThreeRenderer {
       Math.atan2(r.p.rollY, r.p.rollX),
       r.p.rollAim,
       r.p.moveAngle,
+      r.save.equipment.bag ? db[r.save.equipment.bag.id].tier : 0,
     );
     this.pawPrints.update(r.footprints);
     const player = this.actors.get("player")!;
