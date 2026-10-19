@@ -260,3 +260,20 @@ for o in list(bpy.context.scene.objects):
     if not o.name.startswith(('interior_floor','floor_seam')):
         o.name='body_ruined_'+o.name
 export('open-ruin')
+
+# A separate original KayKit ruin: retain broken timbers, wall panels, steps and
+# rubble as the blocked rear half; its open front courtyard holds two small boxes.
+for checkout in extra.values():
+    if 'hex' not in checkout.name.lower() and 'Hexagon' not in checkout.name: continue
+    reset();bpy.ops.import_scene.gltf(filepath=str(checkout/'addons/kaykit_medieval_hexagon_pack/Assets/gltf/buildings/neutral/building_destroyed.gltf'))
+    meshes=[o for o in bpy.context.scene.objects if o.type=='MESH']
+    for o in meshes: bake(o)
+    points=[v.co for o in meshes for v in o.data.vertices]
+    lo=Vector(tuple(min(v[i] for v in points) for i in range(3)))
+    hi=Vector(tuple(max(v[i] for v in points) for i in range(3)))
+    center=(lo+hi)/2;size=hi-lo
+    for o in meshes:
+        o.data.transform(Matrix.Translation((0,45,0)) @ Matrix.Diagonal((280/size.x,110/size.y,140/size.z,1)) @ Matrix.Translation((-center.x,-center.y,-lo.z)))
+        o.name='body_original_broken_timber'
+    block('interior_floor',(0,0,-2),(300,200,4),'#b19c79',2)
+    export('stone-ruin')

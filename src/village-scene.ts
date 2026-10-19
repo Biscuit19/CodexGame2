@@ -15,6 +15,7 @@ import {
   villagePoint,
   inBuilding,
 } from "./village";
+import stoneRuin from "./assets/village/stone-ruin.glb?url";
 import hunter from "./assets/village/hunter.glb?url";
 import clinic from "./assets/village/clinic.glb?url";
 import shop from "./assets/village/shop.glb?url";
@@ -62,6 +63,7 @@ import target from "./assets/village/target.glb?url";
 import open_ruin from "./assets/village/open-ruin.glb?url";
 import open_workshop from "./assets/village/open-workshop.glb?url";
 const urls: Record<string, string> = {
+  "stone-ruin": stoneRuin,
   hunter,
   fountain: fountain,
   trashcan: trashcan,
@@ -374,25 +376,69 @@ export function createVillageScene(
   for (const p of villageProps)
     add(p.model, p.x, p.y, p.w, p.d, p.height, -p.rotation);
   stage.userData.decorations = villageDecorations;
+  const plantGroups = new Map<string, typeof villageDecorations>();
   for (const item of villageDecorations) {
     if (
       r.containers.some((c) => Math.hypot(c.x - item.x, c.y - item.y) < 65) ||
       r.exits.some((e) => Math.hypot(e.x - item.x, e.y - item.y) < 100)
     )
       continue;
-    const height =
-      item.size *
-      (item.kind === "grass" ? 0.6 : item.kind === "bush" ? 0.7 : 0.85);
-    add(
-      item.kind,
-      item.x,
-      item.y,
-      item.size,
-      item.size * 0.8,
-      height,
-      item.angle,
-    );
+    const entries = plantGroups.get(item.kind) || [];
+    entries.push(item);
+    plantGroups.set(item.kind, entries);
   }
+  // Repeated flowers and grass share instanced draw batches as meadow coverage grows.
+  stage.userData.decorationBatches = [];
+  for (const [kind, items] of plantGroups)
+    requests.push(
+      template(kind).then((source) => {
+        if (!stage.parent) return;
+        const bounds = new THREE.Box3().setFromObject(source),
+          size = bounds.getSize(new THREE.Vector3()),
+          center = bounds.getCenter(new THREE.Vector3());
+        for (const child of source.children) {
+          if (!(child instanceof THREE.Mesh)) continue;
+          const mesh = new THREE.InstancedMesh(
+            child.geometry.clone(),
+            (child.material as THREE.Material).clone(),
+            items.length,
+          );
+          mesh.name = `meadow-${kind}`;
+          mesh.userData.asset = kind;
+          mesh.castShadow = mesh.receiveShadow = true;
+          items.forEach((item, i) => {
+            const height =
+              item.size *
+              (kind === "grass" ? 0.6 : kind === "bush" ? 0.7 : 0.85);
+            const matrix = new THREE.Matrix4()
+              .compose(
+                new THREE.Vector3(item.x, 0, item.y),
+                new THREE.Quaternion().setFromAxisAngle(
+                  new THREE.Vector3(0, 1, 0),
+                  item.angle,
+                ),
+                new THREE.Vector3(
+                  item.size / size.x,
+                  height / size.y,
+                  (item.size * 0.8) / size.z,
+                ),
+              )
+              .multiply(
+                new THREE.Matrix4().makeTranslation(
+                  -center.x,
+                  -bounds.min.y,
+                  -center.z,
+                ),
+              );
+            mesh.setMatrixAt(i, matrix);
+          });
+          mesh.instanceMatrix.needsUpdate = true;
+          mesh.computeBoundingSphere();
+          stage.add(mesh);
+          stage.userData.decorationBatches.push({ kind, count: items.length });
+        }
+      }),
+    );
   Promise.all(requests)
     .then(() => {
       if (stage.parent) {

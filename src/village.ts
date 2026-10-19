@@ -25,6 +25,7 @@ export type VillageBuilding = {
   minor?: boolean;
   flatRoof?: boolean;
   openStructure?: "ruin" | "workshop";
+  markedSite?: boolean;
 };
 export const VILLAGE_WIDTH = 7000,
   VILLAGE_HEIGHT = 5500;
@@ -211,6 +212,40 @@ for (const [i, [x, y, kind]] of (
     doorOffset: 0,
     doorWidth: kind === "ruin" ? 180 : 240,
     openStructure: kind,
+  });
+}
+// Six sites follow the user's marked atlas rectangles (world coordinates).
+export const markedVillageSites = [
+  { x: 430, y: 1190, kind: "cabin" },
+  { x: 1990, y: 350, kind: "cabin" },
+  { x: 2570, y: 1180, kind: "ruin" },
+  { x: 3600, y: 430, kind: "ruin" },
+  { x: 500, y: 2890, kind: "cabin" },
+  { x: 3440, y: 5180, kind: "workshop" },
+] as const;
+for (const [i, site] of markedVillageSites.entries()) {
+  const cabin = site.kind === "cabin";
+  villageBuildings.push({
+    id: `marked-${i}`,
+    name: "",
+    markedSite: true,
+    x: Math.floor(site.x / 16) * 16 + 8,
+    y: Math.floor(site.y / 16) * 16 + 8,
+    w: cabin ? 160 : 300,
+    h: cabin ? 96 : 200,
+    height: cabin ? (160 / 5) * 6.1 * 0.85 : 140,
+    model: cabin
+      ? "shelter"
+      : site.kind === "ruin"
+        ? "stone-ruin"
+        : "open-workshop",
+    rotation: cabin ? 0 : i === 3 ? -Math.PI / 4 : 0,
+    entryDepth: cabin ? 32 : 0,
+    doorY: cabin ? 80 : 100,
+    doorOffset: 0,
+    doorWidth: cabin ? 51.2 : site.kind === "ruin" ? 180 : 240,
+    minor: cabin,
+    openStructure: cabin ? undefined : site.kind,
   });
 }
 export function buildingLocal(b: VillageBuilding, x: number, y: number) {
@@ -402,13 +437,23 @@ villagePaths.push([
   [hunterCamp.x, hunterCamp.y + 300],
   [sideDoor.x, sideDoor.y],
 ]);
-for (const [i, b] of villageBuildings.filter((b) => b.minor).entries()) {
+for (const [i, b] of villageBuildings
+  .filter((b) => b.minor && !b.markedSite)
+  .entries()) {
   const door = buildingWorld(b, 0, b.doorY + 120),
     road = villagePoint([700, 1010, 1190][i], [1590, 1600, 1600][i]);
   villagePaths.push([
     [road.x, road.y],
     [door.x, road.y],
     [door.x, door.y],
+  ]);
+}
+for (const b of villageBuildings.filter((b) => b.markedSite && b.minor)) {
+  const a = buildingWorld(b, 0, b.doorY + 160),
+    d = buildingWorld(b, 0, b.doorY + 40);
+  villagePaths.push([
+    [a.x, a.y],
+    [d.x, d.y],
   ]);
 }
 export const villageZones = [
@@ -557,6 +602,10 @@ export function buildVillage(r: Raid) {
     const t = 8,
       wing = b.w * 0.2;
     if (b.openStructure) {
+      if (b.model === "stone-ruin") {
+        wall(0, -45, 280, 110);
+        continue;
+      }
       if (b.openStructure === "ruin") {
         wall(0, -b.h / 2, b.w, t);
         wall(-b.w / 2, 0, t, b.h);
@@ -953,7 +1002,7 @@ export function buildVillage(r: Raid) {
       container("outbuilding", "box", 0, 0);
       Object.assign(
         r.containers[r.containers.length - 1],
-        buildingWorld(b, x, -35),
+        buildingWorld(b, x, b.model === "stone-ruin" ? 65 : -35),
       );
     }
   }
@@ -1163,7 +1212,7 @@ const decorationRandom = () => {
   return decorationSeed / 4294967296;
 };
 // Small groups, separated by long open stretches. Never use raid RNG: loot stays identical.
-for (let i = 0; i < 135; i++) {
+for (let i = 0; i < 480; i++) {
   const x = villageX(180 + decorationRandom() * (9000 - 360)),
     y = villageY(180 + decorationRandom() * (6000 - 360));
   if (
@@ -1175,7 +1224,7 @@ for (let i = 0; i < 135; i++) {
   )
     villageTrees.push([x, y]);
 }
-for (let i = 0; i < 65; i++) {
+for (let i = 0; i < 180; i++) {
   const x = villageX(170 + decorationRandom() * (9000 - 340)),
     y = villageY(170 + decorationRandom() * (6000 - 340));
   if (
@@ -1224,6 +1273,33 @@ for (const [r, road] of villageRoads.entries())
           size: 23,
           angle: r,
         });
+    }
+  }
+// Small meadow groups throughout open ground, independent of raid loot randomness.
+for (let row = 0; row < 8; row++)
+  for (let col = 0; col < 11; col++) {
+    const x = ((col + 0.25 + decorationRandom() * 0.5) * VILLAGE_WIDTH) / 11,
+      y = ((row + 0.25 + decorationRandom() * 0.5) * VILLAGE_HEIGHT) / 8;
+    if (
+      !decorationFree(x, y, 80) ||
+      [...villageRoads, ...villagePaths].some((road) =>
+        road.slice(1).some((p, i) => segmentDistance(x, y, road[i], p) < 150),
+      )
+    )
+      continue;
+    for (let n = 0; n < 4; n++) {
+      const px = x + Math.cos(n * 2.4) * 45,
+        py = y + Math.sin(n * 2.4) * 35;
+      if (!decorationFree(px, py, 35)) continue;
+      villageDecorations.push({
+        kind: (["grass", "flower", "flower-white", "bush"] as const)[
+          (n + row + col) % 4
+        ],
+        x: px,
+        y: py,
+        size: 28 + decorationRandom() * 24,
+        angle: decorationRandom() * Math.PI * 2,
+      });
     }
   }
 // A few field bundles, not a dense collection of props.

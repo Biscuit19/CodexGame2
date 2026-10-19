@@ -20,6 +20,7 @@ import {
   villageTrees,
   villageRocks,
   villageBuildings,
+  markedVillageSites,
   buildingWorld,
   inBuilding,
   inside,
@@ -133,7 +134,11 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
     ).toBeGreaterThanOrEqual(4);
     for (const b of villageBuildings) {
       const p = buildingWorld(b, b.doorOffset, b.doorY + 60),
-        goal = buildingWorld(b, b.doorOffset, 0);
+        goal = buildingWorld(
+          b,
+          b.doorOffset,
+          b.model === "stone-ruin" ? 65 : 0,
+        );
       expect(villageTravelClear(r, p.x, p.y, goal.x, goal.y), b.id).toBe(true);
       expect(b.h).toBeLessThanOrEqual(250);
       expect(b.w).toBeLessThanOrEqual(380);
@@ -187,7 +192,7 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
     for (let seed = 0; seed < 200; seed++) {
       const r = start(seed);
       expect(r.containers.length).toBeGreaterThanOrEqual(46);
-      expect(r.containers.length).toBeLessThanOrEqual(64);
+      expect(r.containers.length).toBeLessThanOrEqual(73);
       expect(
         r.containers.filter((c) => ["box", "litter"].includes(c.type)).length,
       ).toBeGreaterThan(
@@ -301,11 +306,11 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
   });
   it("乡村装饰保持稀疏、来源样式齐全且不进入水域和房屋入口", () => {
     expect(villageTrees.length).toBeGreaterThan(45);
-    expect(villageTrees.length).toBeLessThan(130);
+    expect(villageTrees.length).toBeLessThan(220);
     expect(villageRocks.length).toBeGreaterThan(20);
-    expect(villageRocks.length).toBeLessThan(80);
+    expect(villageRocks.length).toBeLessThan(160);
     expect(villageDecorations.length).toBeGreaterThan(100);
-    expect(villageDecorations.length).toBeLessThan(350);
+    expect(villageDecorations.length).toBeLessThan(850);
     expect(new Set(villageDecorations.map((d) => d.kind))).toEqual(
       new Set(["grass", "flower", "flower-white", "bush", "hay"]),
     );
@@ -342,7 +347,7 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
           (c) => c.region === "hunter" && inBuilding(b, c.x, c.y),
         ).length,
       ).toBeGreaterThanOrEqual(2);
-    const shelters = villageBuildings.filter((b) => b.minor);
+    const shelters = villageBuildings.filter((b) => b.minor && !b.markedSite);
     expect(shelters).toHaveLength(3);
     for (const b of shelters) {
       expect(b.name).toBe("");
@@ -350,7 +355,7 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
         1,
       );
     }
-    expect(r.containers.filter((c) => c.region === "shelter")).toHaveLength(3);
+    expect(r.containers.filter((c) => c.region === "shelter")).toHaveLength(6);
     for (const c of r.containers.filter((c) => c.region === "shelter"))
       expect(c.items.every((i) => db[i.id].tier === 1)).toBe(true);
     expect(
@@ -370,13 +375,15 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
     expect(villageY(3000)).toBe(3000);
     for (const b of villageBridges.filter((b) => !b.rotation))
       expect(b.h).toBe(640);
-    const huts = villageBuildings.filter((b) => b.minor);
+    const huts = villageBuildings.filter((b) => b.minor && !b.markedSite);
     for (let i = 0; i < huts.length; i++)
       for (let j = i + 1; j < huts.length; j++)
         expect(
           Math.hypot(huts[i].x - huts[j].x, huts[i].y - huts[j].y),
         ).toBeGreaterThan(650);
-    const sites = villageBuildings.filter((b) => b.openStructure);
+    const sites = villageBuildings.filter(
+      (b) => b.openStructure && !b.markedSite,
+    );
     expect(sites).toHaveLength(4);
     expect(new Set(sites.map((b) => b.openStructure)).size).toBe(2);
     for (const b of sites) {
@@ -412,6 +419,32 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
         villageProps.some((p) => p.model === model),
         model,
       ).toBe(true);
+  });
+  it("六处红框内新增小屋、废屋与工棚，容器可搜索且草地植被覆盖增加", () => {
+    const r = start(),
+      sites = villageBuildings.filter((b) => b.markedSite);
+    expect(sites).toHaveLength(6);
+    for (const [i, b] of sites.entries()) {
+      const target = markedVillageSites[i];
+      expect(Math.hypot(b.x - target.x, b.y - target.y)).toBeLessThan(12);
+      const boxes = r.containers.filter((c) => inBuilding(b, c.x, c.y));
+      expect(boxes).toHaveLength(b.minor ? 1 : 2);
+      for (const x of [-b.w / 2, b.w / 2])
+        for (const y of [-b.h / 2, b.h / 2]) {
+          const p = buildingWorld(b, x, y);
+          expect(villageWaterBlocked(p.x, p.y, 15), b.id).toBe(false);
+        }
+    }
+    expect(new Set(sites.map((b) => b.model)).size).toBe(3);
+    expect(villageTrees.length).toBeGreaterThan(100);
+    expect(villageRocks.length).toBeGreaterThan(60);
+    expect(villageDecorations.length).toBeGreaterThan(250);
+    // Meadow groups occur away from road verges, not just along the existing lanes.
+    expect(
+      villageDecorations.filter(
+        (d) => d.kind === "flower" || d.kind === "flower-white",
+      ).length,
+    ).toBeGreaterThan(60);
   });
   it("Boss护卫保持分组警戒和追击范围，其他地图保留原尺寸与布局", () => {
     const r = start(),

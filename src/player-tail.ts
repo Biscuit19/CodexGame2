@@ -116,11 +116,14 @@ export function animatePlayerTail(
   time: number,
   phase: number,
   pack?: THREE.Group,
+  walk = 0,
 ) {
   const s = states.get(tail)!;
   const root = tailRootMotion(time, phase),
     tip = tailTipDirection(time, phase);
-  const sweep = -Math.sin(root.y);
+  if (walk) root.y += Math.sin(walk) * 0.14;
+  const sweep = -Math.sin(root.y),
+    bounce = walk ? Math.sin(walk * 2) * 1.0 : 0;
   const points = s.curve.points;
   points[0].set(0, 0, 0);
   // The first bend exits below the pack, then rises closer to the rump.
@@ -129,8 +132,16 @@ export function animatePlayerTail(
     -0.8 + root.x * 5,
     -Math.cos(root.y) * 8 + root.x * 3,
   );
-  points[2].set(sweep * 17, 8 + Math.sin(time * 1.2 + phase) * 0.6, -13);
-  points[3].set(sweep * 21 + Math.sin(time * 1.3 + phase) * 0.7, 19, -19);
+  points[2].set(
+    sweep * 17,
+    8 + Math.sin(time * 1.2 + phase) * 0.6 + bounce,
+    -13,
+  );
+  points[3].set(
+    sweep * 21 + Math.sin(time * 1.3 + phase) * 0.7,
+    19 + bounce,
+    -19,
+  );
   points[4].set(
     points[3].x + tip.x * 4,
     23 + Math.sin(time * 0.8 + phase) * 0.6,

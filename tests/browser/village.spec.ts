@@ -28,7 +28,7 @@ test("7000乡野原始素材、猫咪比例房屋与真实门洞几何", async (
       size: [g.raid.width, g.raid.height],
       texture: [g.renderer.ground.width, g.renderer.ground.height],
       buildings: g.renderer3d.villageStage.userData.buildings.map((b: any) => ({
-        openStructure: b.id.startsWith("outbuilding"),
+        openStructure: !b.group.children.some((m: any) => m.name === "roof"),
         extent: b.group.children.reduce(
           (bounds: any, m: any) => {
             m.geometry.computeBoundingBox();
@@ -57,7 +57,7 @@ test("7000乡野原始素材、猫咪比例房屋与真实门洞几何", async (
   });
   expect(models.size).toEqual([7000, 5500]);
   expect(Math.max(...models.texture)).toBeLessThanOrEqual(4096);
-  expect(models.buildings).toHaveLength(14);
+  expect(models.buildings).toHaveLength(20);
   for (const b of models.buildings) {
     expect(b.vertices).toBeGreaterThan(b.openStructure ? 100 : 3000);
     expect(b.textured).toBe(true);
@@ -86,7 +86,7 @@ test("7000乡野原始素材、猫咪比例房屋与真实门洞几何", async (
       for (const side of [-12, 0, 12])
         for (const height of [20, 45]) {
           const a = v.buildingWorld(b, side, b.doorY + 48),
-            end = v.buildingWorld(b, side, 0),
+            end = v.buildingWorld(b, side, b.model === "stone-ruin" ? 65 : 0),
             start = renderer.camera.position.clone().set(a.x, height, a.y),
             direction = renderer.camera.position
               .clone()
@@ -154,8 +154,8 @@ test("7000乡野原始素材、猫咪比例房屋与真实门洞几何", async (
   expect(errors).toEqual([]);
 });
 
-test("乡野三桥、十四栋建筑入口实走、室内搜索和三秒撤离", async ({ page }) => {
-  test.setTimeout(90000);
+test("乡野三桥、二十栋建筑入口实走、室内搜索和三秒撤离", async ({ page }) => {
+  test.setTimeout(120000);
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await enter(page);
@@ -442,4 +442,105 @@ test("玩家顶住实体房屋继续迈步，小墙角可自动让开", async ({
     await page.evaluate(() => (window as any).__game.raid.p.x),
   ).toBeLessThan(b.x - 164);
   await page.screenshot({ path: "test-results/village-corner-assist.png" });
+});
+
+test("六处红框新建筑实走、双栏搜索与草地实例批次", async ({ page }) => {
+  test.setTimeout(90000);
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await enter(page);
+  const data = await page.evaluate(async () => {
+    const g = (window as any).__game,
+      v = await import("/src/village.ts" as string);
+    return {
+      ids: v.villageBuildings
+        .filter((b: any) => b.markedSite)
+        .map((b: any) => b.id),
+      counts: [
+        v.villageTrees.length,
+        v.villageRocks.length,
+        v.villageDecorations.length,
+      ],
+      batches: g.renderer3d.villageStage.userData.decorationBatches,
+    };
+  });
+  expect(data.ids).toHaveLength(6);
+  expect(data.counts[0]).toBeGreaterThan(100);
+  expect(data.batches.length).toBeLessThan(15);
+  expect(
+    data.batches.reduce((n: number, b: any) => n + b.count, 0),
+  ).toBeGreaterThan(250);
+  for (const id of data.ids) {
+    const start = await page.evaluate(async (id) => {
+      const g = (window as any).__game,
+        v = await import("/src/village.ts" as string),
+        b = v.villageBuildings.find((b: any) => b.id === id)!;
+      Object.assign(g.raid.p, v.buildingWorld(b, 0, b.doorY + 65));
+      g.raid.p.stamina = 100;
+      return { rotation: b.rotation, model: b.model };
+    }, id);
+    const keys = start.rotation < -0.4 ? ["KeyA", "KeyW"] : ["KeyW"];
+    for (const key of keys) await page.keyboard.down(key);
+    try {
+      await expect
+        .poll(
+          () =>
+            page.evaluate(async (id) => {
+              const g = (window as any).__game,
+                v = await import("/src/village.ts" as string),
+                b = v.villageBuildings.find((b: any) => b.id === id)!;
+              const p = v.buildingLocal(b, g.raid.p.x, g.raid.p.y);
+              return (
+                Math.abs(p.x) < 50 &&
+                p.y < (b.model === "stone-ruin" ? 72 : b.minor ? 20 : -20)
+              );
+            }, id),
+          { message: `${id} doorway`, timeout: 5000, intervals: [30] },
+        )
+        .toBe(true);
+    } finally {
+      for (const key of keys) await page.keyboard.up(key);
+    }
+    const target = await page.evaluate(async (id) => {
+      const g = (window as any).__game,
+        v = await import("/src/village.ts" as string),
+        b = v.villageBuildings.find((b: any) => b.id === id)!;
+      const boxes = g.raid.containers.filter((c: any) =>
+        v.inBuilding(b, c.x, c.y),
+      );
+      const c = boxes.sort(
+        (a: any, b: any) =>
+          Math.hypot(a.x - g.raid.p.x, a.y - g.raid.p.y) -
+          Math.hypot(b.x - g.raid.p.x, b.y - g.raid.p.y),
+      )[0];
+      const dx = c.x - g.raid.p.x,
+        dy = c.y - g.raid.p.y;
+      return {
+        distance: Math.hypot(dx, dy),
+        key:
+          Math.abs(dx) > Math.abs(dy)
+            ? dx > 0
+              ? "KeyD"
+              : "KeyA"
+            : dy > 0
+              ? "KeyS"
+              : "KeyW",
+      };
+    }, id);
+    if (target.distance > 75) {
+      await page.keyboard.down(target.key);
+      await page.waitForTimeout(65);
+      await page.keyboard.up(target.key);
+    }
+    await page.screenshot({ path: `test-results/marked-${id}-inside.png` });
+    await page.keyboard.press("KeyE");
+    await expect(page.getByRole("region", { name: "右侧容器" })).toBeVisible();
+    await expect(page.getByRole("region", { name: "左侧背包" })).toBeVisible();
+    await page.keyboard.press("KeyE");
+  }
+  await page.keyboard.press("KeyM");
+  await expect(page.locator("#map-dialog")).toBeVisible();
+  await page.screenshot({ path: "test-results/marked-full-map.png" });
+  await page.keyboard.press("KeyM");
+  expect(errors).toEqual([]);
 });

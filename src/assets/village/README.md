@@ -43,3 +43,7 @@ blender --background --threads 4 --python scripts/assets/build-rounded-village.p
 沿用上表固定提交及CC0授权，新增Pretty Park的`fountain`、`trashcan`、`cobble_stones_large`、`bird`；Pleasant Picnic的`cooler`、`radio`；KayKit Hexagon的`sack`、`pallet`、`bucket_water`、`target`，保留原材质和完整细节。
 
 `open-ruin.glb`从Homely House原始房屋拆去屋顶、门厅和部分损坏墙段，保留原窗框、墙面及饰条；复用已挖空的原房屋网格，再拆去独立屋顶与门廊，通过网格平面裁切限制外轮廓，避免在开放面上反复布尔裁切产生异常外伸面。`open-workshop.glb`来自KayKit Hexagon的`buildings/neutral/building_scaffolding.gltf`，保留完整露天木架结构，清出猫咪高度的中央过道。两者占地300×200，地板统一为0，不覆盖完整屋顶。运行时对应残墙或角柱碰撞；地图使用简略残墙/木架图符，不新增主要地名。用同一复现命令生成，无新增下载依赖。
+
+## 红框区域的木梁碎石废屋
+
+新增`stone-ruin.glb`来自上述固定CC0版本KayKit Hexagon的`buildings/neutral/building_destroyed.gltf`。保留原版断梁、木板、灰泥、台阶与碎石材质，主体归一为280×110、高140，移到占地300×200的后半部；前侧补可步行地板，配置两个低级箱子。后半部与瓦砾设碰撞，玩家不会踏入抬高的基座。仍由同一Blender复现脚本导出，无新增来源或授权。

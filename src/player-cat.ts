@@ -536,32 +536,32 @@ export function animatePlayerCat(
   rig.body.position.y =
     31 +
     (walk
-      ? Math.abs(stride) * (sideways ? 1.2 : 1.5)
+      ? Math.abs(stride) * (sideways ? 1.8 : 2.2)
       : Math.sin(time * 2.2) * 0.35);
-  rig.body.rotation.set(forward * 0.065, 0, stride * 0.1 - side * 0.075);
+  rig.body.rotation.set(forward * 0.09, 0, stride * 0.15 - side * 0.1);
   rig.head.rotation.set(
     walk
-      ? Math.sin(walk * 2 + 0.5) * 0.07 * forward
+      ? Math.sin(walk * 2 + 0.5) * 0.105 * forward
       : Math.sin(time * 1.3) * 0.018,
-    Math.sin(time * 0.8) * 0.022 + side * stride * 0.055,
-    -stride * 0.055 + side * 0.04,
+    Math.sin(time * 0.8) * 0.022 + side * stride * 0.085,
+    -stride * 0.085 + side * 0.06,
   );
-  rig.head.position.x = side * Math.sin(walk * 2) * 0.65;
-  rig.head.position.z = 2 + (walk ? Math.sin(walk * 2) * 0.7 * forward : 0);
+  rig.head.position.x = side * Math.sin(walk * 2) * 0.95;
+  rig.head.position.z = 2 + (walk ? Math.sin(walk * 2) * 1.05 * forward : 0);
   rig.legs.forEach((leg, i) => {
     const phase = walk + i * Math.PI;
     const step = walk ? Math.sin(phase) : 0;
     // Lift during recovery; on the planted half-cycle the paw travels opposite locomotion.
     const lift = walk ? Math.max(0, -Math.cos(phase)) : 0;
     leg.rotation.set(
-      step * forward * (backward ? 0.65 : 0.82),
+      step * forward * (backward ? 0.85 : 1.05),
       0,
-      -step * side * 0.58,
+      -step * side * 0.78,
     );
     leg.position.set(
-      (i ? 7.5 : -7.5) - step * side * 2.4,
-      -24 + lift * 2.3,
-      -step * forward * 1.6,
+      (i ? 7.5 : -7.5) - step * side * 3.2,
+      -24 + lift * 3.1,
+      -step * forward * 2.2,
     );
   });
   pose.arms.forEach((arm, i) => {
@@ -569,11 +569,11 @@ export function animatePlayerCat(
     arm.rotation.x = walk
       ? -step *
         forward *
-        (i === 0 && (rig.gun.visible || rig.knife.visible) ? 0.44 : 0.65)
+        (i === 0 && (rig.gun.visible || rig.knife.visible) ? 0.58 : 0.88)
       : Math.sin(time * 1.7 + i) * 0.025;
     arm.rotation.z =
       (i ? -0.06 : 0.06) +
-      (walk ? step * side * 0.34 + Math.cos(walk + i * Math.PI) * 0.05 : 0);
+      (walk ? step * side * 0.48 + Math.cos(walk + i * Math.PI) * 0.075 : 0);
   });
   pose.ears.forEach((ear, i) => {
     const twitch = Math.pow(
@@ -583,7 +583,7 @@ export function animatePlayerCat(
     ear.rotation.z =
       Math.sin(time * 0.85 + i * 2) * 0.06 +
       (i ? 1 : -1) * twitch * 0.27 +
-      stride * 0.05;
+      stride * 0.08;
   });
   pose.face.earL.value = pose.ears[0].rotation.z;
   pose.face.earR.value = pose.ears[1].rotation.z;
@@ -615,5 +615,6 @@ export function animatePlayerCat(
     time,
     pose.phase,
     rig.pack,
+    walk,
   );
 }
