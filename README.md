@@ -47,6 +47,7 @@ Esc 菜单和基地设置菜单使用浏览器原生顶层对话框，避免游�
 - 60/80/120/200/450 格仓库和 1/2/4/6 格安全箱。
 - 两种死亡模式，跨局 Boss 进度、最终密钥门槛、主线结局与九命周目。
 - 三个独立本地存档槽、IndexedDB 与本地备份、导入导出、刷新中断结算。
+- 地图一「猫尾乡野」按乡村、农田、宽河与三座桥重建，六栋完整乡村建筑采用经过 Blender 修改的 KayKit CC0 模型；授权与来源随仓库保留，详见 [地图说明](docs/MAP1_COUNTRYSIDE.md)。
 - 地图一采用 Three.js 正交立体场景，真实几何猫咪、灯光、遮挡与关节动画，行走时身体扭动、双腿交替、尾巴摆动。地图二至四沿用已有画面和关卡内容，本轮未重做。
 - 全中文大字界面、五块基地入口、原创图标与合成配乐/音效；无运行时外部素材依赖。
 - 首次在线加载完成后，Service Worker 缓存允许离线再次游玩。
@@ -81,6 +82,7 @@ npm run preview         # 验证生产构建
 - `src/store.ts`：物品事务、经济、存档与结算。
 - `src/raid.ts`：局内模拟、AI、战斗、搜索、Boss 与撤离。
 - `src/art.ts` / `src/render.ts`：原创图标与原有地图渲染。
+- `src/village.ts` / `src/village-ground.ts` / `src/village-scene.ts`：地图一布局、地形、公开模型加载及遮挡。
 - `src/three-render.ts`：地图一的立体场景、猫咪模型、动画和正交瞄准投影。
 - `src/audio.ts`：Web Audio 合成配乐与效果。
 - `src/main.ts` / `src/app.ts` / `src/app.css`：启动、帧循环、输入与界面。

@@ -663,17 +663,17 @@ export const bosses: BossDef[] = [
 ];
 export const maps = [
   {
-    name: "旧罐头厂",
+    name: "猫尾乡野",
     en: "CANNERY DISTRICT",
-    sub: "生锈的流水线，还留着鱼的味道。",
+    sub: "村落、农田与河流。",
     color: "#dbba7f",
-    ground: "#686e4b",
-    floor: "#98977a",
+    ground: "#80935b",
+    floor: "#b9a277",
     fee: 600,
     bosses: ["iron"],
-    free: ["西侧破洞", "南侧货运门"],
-    paid: "猫粮卡车",
-    zones: ["冷库", "加工车间", "装卸仓", "厂长办公室"],
+    free: ["田间岔路 A", "农庄内院 B"],
+    paid: "乡间运输点",
+    zones: ["猎人小屋", "中央聚落", "农田谷仓", "铁腮农庄"],
     reward: 4000,
   },
   {

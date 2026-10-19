@@ -1,3 +1,4 @@
+import { drawVillageGround } from "./village-ground";
 import { cat, box, tree, ellipse, round, path, text, type Ctx } from "./art";
 import { maps, breeds, colors, rng } from "./data";
 import { type Raid, type Rect, type Enemy } from "./raid";
@@ -34,6 +35,11 @@ export class Renderer {
     const g = c.getContext("2d")!,
       m = maps[r.map],
       random = rng(r.seed);
+    if (r.map === 0) {
+      drawVillageGround(g);
+      this.ground = c;
+      return;
+    }
     g.fillStyle = m.ground;
     g.fillRect(0, 0, c.width, c.height);
     for (let i = 0; i < 9000; i++) {
@@ -534,6 +540,7 @@ export function miniMap(canvas: HTMLCanvasElement, r: Raid, large = false) {
   round(c, 0, 0, w, h, 10, "#243d36");
   c.save();
   c.scale(sx, sy);
+  if (r.map === 0) drawVillageGround(c, large);
   c.fillStyle = "#80917c";
   for (const wall of r.walls)
     c.fillRect(wall.x - wall.w / 2, wall.y - wall.h / 2, wall.w, wall.h);

@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test("33度斜视下墙身与装饰同步淡化，瞄准投影一致，实际受弹不打断搜索", async ({
+test("33度斜视下乡村建筑主体与屋顶淡化，瞄准投影一致，实际受弹不打断搜索", async ({
   page,
 }) => {
   test.setTimeout(60000);
@@ -16,19 +16,25 @@ test("33度斜视下墙身与装饰同步淡化，瞄准投影一致，实际受
   await page.evaluate(() => {
     const g = (window as any).__game;
     g.raid.enemies = [];
-    Object.assign(g.raid.p, { x: 550, y: 730, angle: Math.PI / 2 });
+    Object.assign(g.raid.p, { x: 1300, y: 580, angle: Math.PI / 2 });
     g.raid.paused = true;
   });
+  await page.waitForFunction(
+    () => (window as any).__game.renderer3d.villageStage?.userData.assetsReady,
+  );
   await expect
     .poll(() =>
-      page.evaluate(
-        () =>
-          (window as any).__game.renderer3d.wallMeshes.filter(
-            (w: any) => w.mesh.material.opacity < 1,
-          ).length,
-      ),
+      page.evaluate(() => {
+        const entry = (
+          window as any
+        ).__game.renderer3d.villageStage.userData.buildings.find(
+          (b: any) => b.id === "clinic",
+        );
+        return entry.group.children.find((m: any) => m.name === "roof").material
+          .opacity;
+      }),
     )
-    .toBeGreaterThan(0);
+    .toBeLessThan(0.1);
   const geometry = await page.evaluate(async () => {
     const g = (window as any).__game,
       r = g.renderer3d,
@@ -45,10 +51,10 @@ test("33度斜视下墙身与装饰同步淡化，瞄准投影一致，实际受
           180) /
         Math.PI,
       target,
-      joined: r.wallMeshes.every(
-        (w: any) =>
-          w.mesh.name === "fading-wall-and-trim" &&
-          !!w.mesh.geometry.attributes.color,
+      joined: r.villageStage.userData.buildings.every(
+        (entry: any) =>
+          entry.group.children.length === 2 &&
+          entry.group.children.every((m: any) => !!m.geometry.attributes.color),
       ),
     };
   });
@@ -66,14 +72,17 @@ test("33度斜视下墙身与装饰同步淡化，瞄准投影一致，实际受
   });
   await expect
     .poll(() =>
-      page.evaluate(
-        () =>
-          (window as any).__game.renderer3d.wallMeshes.filter(
-            (w: any) => w.mesh.material.opacity < 1,
-          ).length,
-      ),
+      page.evaluate(() => {
+        const entry = (
+          window as any
+        ).__game.renderer3d.villageStage.userData.buildings.find(
+          (b: any) => b.id === "clinic",
+        );
+        return entry.group.children.find((m: any) => m.name === "roof").material
+          .opacity;
+      }),
     )
-    .toBe(0);
+    .toBe(1);
   await page.evaluate(async () => {
     const g = (window as any).__game,
       r = g.raid,

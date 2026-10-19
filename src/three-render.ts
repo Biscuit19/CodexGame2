@@ -1,3 +1,5 @@
+import { createVillageScene, updateVillageScene } from "./village-scene";
+import { villageBuildings } from "./village";
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
@@ -111,7 +113,7 @@ function release(group: THREE.Object3D) {
   mats.forEach((m) => {
     if (
       m instanceof THREE.MeshBasicMaterial &&
-      m.name === "player-contact-shadow"
+      (m.name === "player-contact-shadow" || m.map instanceof THREE.CanvasTexture)
     )
       m.map?.dispose();
     m.dispose();
@@ -587,6 +589,7 @@ export class ThreeRenderer {
   particlePositions = new Float32Array(1000 * 3);
   particleColors = new Float32Array(1000 * 3);
   exitRings: THREE.Mesh[] = [];
+  villageStage?: THREE.Group;
   constructor() {
     this.canvas = document.createElement("canvas");
     this.canvas.id = "scene3d";
@@ -722,126 +725,9 @@ export class ThreeRenderer {
     });
     ground.receiveShadow = true;
     ground.castShadow = false;
-    for (const w of r.walls) {
-      if (w.type === "wall") {
-        // Keep each wall and its trim together, so a lower camera never leaves an opaque cap.
-        const wallGroup = new THREE.Group();
-        block(wallGroup, "#a9ac8c", w.x, w.z * 0.5, w.y, w.w, w.z, w.h, 2);
-        block(wallGroup, "#cfccad", w.x, w.z + 1, w.y, w.w + 4, 5, w.h + 4, 1);
-        if (w.w > 100)
-          for (let i = 0; i < Math.floor(w.w / 75); i++)
-            block(
-              wallGroup,
-              "#8f9677",
-              w.x - w.w * 0.5 + 30 + i * 75,
-              w.z * 0.5,
-              w.y + w.h * 0.5 + 1,
-              4,
-              w.z - 8,
-              2,
-              1,
-            );
-        const parts = wallGroup.children.map((child) => {
-          const part = child as THREE.Mesh<
-            THREE.BufferGeometry,
-            THREE.MeshStandardMaterial
-          >;
-          part.updateMatrix();
-          const geometry = part.geometry.clone().applyMatrix4(part.matrix);
-          const color = part.material.color;
-          const colors = new Float32Array(
-            geometry.attributes.position.count * 3,
-          );
-          for (let n = 0; n < colors.length; n += 3)
-            colors.set([color.r, color.g, color.b], n);
-          geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
-          return geometry;
-        });
-        const geometry = mergeGeometries(parts, false)!;
-        parts.forEach((g) => g.dispose());
-        const wall = new THREE.Mesh(
-          geometry,
-          new THREE.MeshStandardMaterial({
-            vertexColors: true,
-            roughness: 0.88,
-            metalness: 0.03,
-            transparent: true,
-          }),
-        );
-        wall.name = "fading-wall-and-trim";
-        wall.castShadow = wall.receiveShadow = true;
-        this.world.add(wall);
-        this.wallMeshes.push({ mesh: wall, rect: w });
-      } else if (w.type === "barrel") {
-        for (let k = -1; k <= 1; k++) {
-          cylinder(this.world, "#718771", w.x + k * 23, 20, w.y, 12, 12, 40);
-          cylinder(this.world, "#aab49a", w.x + k * 23, 39, w.y, 12.8, 12.8, 3);
-          cylinder(this.world, "#495d4b", w.x + k * 23, 22, w.y, 12.8, 12.8, 2);
-        }
-      } else {
-        block(this.world, "#a39b74", w.x, w.z / 2, w.y, w.w, w.z, w.h, 2);
-        for (const side of [-1, 1])
-          block(
-            this.world,
-            "#c9ba8a",
-            w.x + side * (w.w * 0.5 - 8),
-            w.z / 2,
-            w.y + w.h * 0.5 + 1,
-            8,
-            w.z,
-            3,
-            1,
-          );
-        block(
-          this.world,
-          "#7a815d",
-          w.x,
-          w.z * 0.5,
-          w.y + w.h * 0.5 + 2,
-          w.w - 10,
-          4,
-          4,
-          1,
-        );
-      }
-    }
-    // Factory dressing shares collision footprints; small details add depth without changing routes.
-    for (const [x, z] of [
-      [650, 560],
-      [1700, 510],
-      [690, 1280],
-      [1720, 1260],
-    ]) {
-      block(this.world, "#6a7d67", x + 50, 8, z - 90, 130, 16, 35, 3);
-      for (let i = 0; i < 3; i++)
-        cylinder(
-          this.world,
-          "#c6c5a2",
-          x + 10 + i * 35,
-          22,
-          z - 90,
-          11,
-          11,
-          16,
-        );
-    }
-    for (let i = 0; i < 34; i++) {
-      const side = i % 4,
-        x = side === 0 ? 90 : side === 1 ? 2300 : 120 + ((i * 113) % 2140),
-        z = side === 2 ? 90 : side === 3 ? 1710 : 100 + ((i * 137) % 1540);
-      cylinder(this.world, "#877b5d", x, 40, z, 8, 11, 80);
-      for (let k = 0; k < 3; k++) {
-        const crown = mesh(
-          this.world,
-          new THREE.ConeGeometry(42 - k * 6, 80, 8),
-          ["#7e936c", "#6b865f", "#617b56"][k],
-          x,
-          85 + k * 30,
-          z,
-        );
-        crown.rotation.y = i * 0.8;
-      }
-    }
+    this.villageStage = createVillageScene(this.world, r, () => {
+      this.webgl.shadowMap.needsUpdate = true;
+    });
     for (const e of r.exits) {
       const ring = new THREE.Mesh(
         new THREE.RingGeometry(57, 63, 48),
@@ -867,6 +753,35 @@ export class ThreeRenderer {
     const group = new THREE.Group(),
       lid = new THREE.Group();
     group.position.set(c.x, 0, c.y);
+    if (["litter", "cabinet", "bed"].includes(c.type)) {
+      if (c.type === "litter") {
+        cylinder(group, "#899287", 0, 17, 0, 18, 16, 32);
+        cylinder(group, "#c7bf95", 0, 32, 0, 19, 19, 5);
+        block(group, "#647565", 0, 18, 17, 13, 13, 2, 2);
+      } else if (c.type === "cabinet") {
+        block(group, "#7e8a78", 0, 24, 0, 35, 48, 27, 2);
+        for (const y of [12, 28, 41]) {
+          block(group, "#9da894", 0, y, 14, 30, 10, 2, 1);
+          block(group, "#d4c59e", 0, y + 1, 16, 10, 2, 3, 1);
+        }
+      } else {
+        ball(group, "#ae7862", 0, 9, 0, 26, 10, 21);
+        ball(group, "#dcc397", 0, 15, 0, 20, 5, 15);
+        const rim = new THREE.Mesh(
+          new THREE.TorusGeometry(21, 5, 8, 24),
+          material("#ae7862"),
+        );
+        rim.rotation.x = Math.PI / 2;
+        rim.scale.y = 0.8;
+        rim.position.y = 16;
+        rim.castShadow = true;
+        group.add(rim);
+      }
+      batchStatic(group);
+      group.add(lid);
+      this.world.add(group);
+      return { group, lid };
+    }
     const color =
       c.type === "safe"
         ? "#6f8479"
@@ -1024,6 +939,7 @@ export class ThreeRenderer {
       r.p.moveAngle,
       r.save.equipment.bag ? db[r.save.equipment.bag.id].tier : 0,
     );
+    if (this.villageStage) updateVillageScene(this.villageStage, r);
     this.pawPrints.update(r.footprints);
     const player = this.actors.get("player")!;
     if (r.weaponItem && r.activeWeapon !== "melee")
@@ -1109,6 +1025,14 @@ export class ThreeRenderer {
     const c = flat.ctx;
     c.clearRect(0, 0, flat.width, flat.height);
     this.drawCombat(r, c);
+    for (const b of villageBuildings) {
+      const p = this.project(b.x, b.y, b.height + 27);
+      round(c, p.x - 83, p.y - 18, 166, 35, 8, "#2e483be6");
+      text(c, b.name, p.x, p.y + 5, 23, "#f4e9c8");
+    }
+    const farmLabel = this.project(2030, 855, 15);
+    round(c, farmLabel.x - 48, farmLabel.y - 18, 96, 35, 8, "#2e483be6");
+    text(c, "农田", farmLabel.x, farmLabel.y + 5, 23, "#f4e9c8");
     for (const e of r.exits) {
       const p = this.project(e.x, e.y, 65);
       text(c, e.name, p.x, p.y, 20, e.active ? "#f4edcf" : "#b5c1aa");
@@ -1155,7 +1079,7 @@ export class ThreeRenderer {
     const near = r.near;
     if (near && !r.search && !r.puzzle) {
       const p = this.project(near.x, near.y, 65);
-      text(c, "E 打开容器", p.x, p.y, 21, "#fff6d6");
+      text(c, `E ${near.name}`, p.x, p.y, 21, "#fff6d6");
     }
     for (const f of r.floating) {
       const p = this.project(f.x, f.y + 75, 95);

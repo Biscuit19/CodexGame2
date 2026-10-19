@@ -864,7 +864,7 @@ describe("真实战区逻辑", () => {
               Math.hypot(p.x - c.x, p.y - c.y) < 90 &&
               r.lineClear(p.x, p.y, c.x, c.y),
           ),
-          `${map}:${c.name}`,
+          `${map}:${c.name} ${c.x},${c.y}`,
         ).toBe(true);
     }
   });

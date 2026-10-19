@@ -294,7 +294,14 @@ try {
   await page.keyboard.press("Digit3");
   // Navigate using the rendered minimap instead of fixed key durations, which
   // can overshoot on a busy software-rendering runner. No development helpers.
-  for (let step = 0; step < 24; step++) {
+  const extractionRoute = [
+    [1460, 1580],
+    [1460, 1250],
+    [1580, 1250],
+    [1580, 940],
+  ];
+  let waypoint = 0;
+  for (let step = 0; step < 130; step++) {
     if (await page.locator("#result-dialog").isVisible()) break;
     const position = await page.locator("#minimap").evaluate((canvas) => {
       const c = canvas.getContext("2d"),
@@ -322,9 +329,13 @@ try {
         y: (y / count / canvas.height) * 1800,
       };
     });
-    const dx = 170 - position.x,
-      dy = 1000 - position.y;
-    if (Math.abs(dx) < 22 && Math.abs(dy) < 22) break;
+    const [targetX, targetY] = extractionRoute[waypoint];
+    const dx = targetX - position.x,
+      dy = targetY - position.y;
+    if (Math.abs(dx) < 22 && Math.abs(dy) < 22) {
+      if (++waypoint === extractionRoute.length) break;
+      continue;
+    }
     const horizontal = Math.abs(dx) > 22;
     const key = horizontal
       ? dx < 0

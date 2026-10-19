@@ -44,6 +44,11 @@ import {
   refillAmmo,
 } from "./store";
 import { Sound } from "./audio";
+import {
+  buildVillage,
+  villageWaterBlocked,
+  villageTravelClear,
+} from "./village";
 export interface Rect {
   x: number;
   y: number;
@@ -55,6 +60,8 @@ export interface Rect {
   type?: string;
 }
 export interface Enemy {
+  squad?: string;
+  leash?: { x: number; y: number; w: number; h: number };
   x: number;
   y: number;
   homeX: number;
@@ -87,6 +94,7 @@ export interface Enemy {
   turret?: boolean;
 }
 export interface Container {
+  region?: string;
   x: number;
   y: number;
   name: string;
@@ -305,6 +313,10 @@ export class Raid {
       .reduce((n, i) => n + i.qty, 0);
   }
   build() {
+    if (this.map === 0) {
+      buildVillage(this);
+      return;
+    }
     const m = this.map;
     const C = ["#6f7b5f", "#8b7e62", "#597b7a", "#8eabb1"][m],
       T = ["#969d7c", "#b0a488", "#83a4a1", "#d2deda"][m];
@@ -666,6 +678,7 @@ export class Raid {
       y < 70 ||
       x > this.width - 40 ||
       y > this.height - 40 ||
+      (this.map === 0 && villageWaterBlocked(x, y, r)) ||
       this.walls.some(
         (w) =>
           Math.abs(x - w.x) < w.w / 2 + r && Math.abs(y - w.y) < w.h / 2 + r,
@@ -692,11 +705,12 @@ export class Raid {
     }
     return true;
   }
-  // Grid navigation runs only when a direct path is obstructed; max 30x23 nodes.
+  // Fine village navigation resolves doorways and bridges; other maps retain the 80-unit grid.
   route(e: Enemy, tx: number, ty: number) {
-    const cell = 80,
-      cols = 30,
-      rows = 23,
+    const cell = this.map === 0 ? 40 : 80,
+      offset = cell / 2,
+      cols = Math.ceil(this.width / cell),
+      rows = Math.ceil(this.height / cell),
       start = [Math.floor(e.x / cell), Math.floor(e.y / cell)],
       goal = [Math.floor(tx / cell), Math.floor(ty / cell)],
       queue = [start],
@@ -704,7 +718,7 @@ export class Raid {
     const k = (x: number, y: number) => `${x},${y}`;
     seen.set(k(...(start as [number, number])), "");
     let found = "";
-    for (let n = 0; n < queue.length && n < 700; n++) {
+    for (let n = 0; n < queue.length && n < cols * rows; n++) {
       const [x, y] = queue[n];
       if (x === goal[0] && y === goal[1]) {
         found = k(x, y);
@@ -725,7 +739,7 @@ export class Raid {
           nx >= cols ||
           ny >= rows ||
           seen.has(key) ||
-          this.blocked(nx * cell + 40, ny * cell + 40, 19)
+          this.blocked(nx * cell + offset, ny * cell + offset, 19)
         )
           continue;
         seen.set(key, k(x, y));
@@ -735,7 +749,7 @@ export class Raid {
     const out: { x: number; y: number }[] = [];
     while (found && seen.get(found)) {
       const [x, y] = found.split(",").map(Number);
-      out.unshift({ x: x * cell + 40, y: y * cell + 40 });
+      out.unshift({ x: x * cell + offset, y: y * cell + offset });
       found = seen.get(found)!;
     }
     e.path = out;
@@ -1151,6 +1165,12 @@ export class Raid {
     if (!initial) return;
     for (const ally of this.enemies) {
       if (ally === e) continue;
+      if (
+        this.map === 0 &&
+        e.squad?.startsWith("boss") &&
+        ally.squad !== e.squad
+      )
+        continue;
       const sameRoom = this.rooms.some(
         ([x, y, w, h]) =>
           Math.abs(e.x - x) < w / 2 &&
@@ -1970,7 +1990,20 @@ export class Raid {
           } else return;
         }
       }
-      if (!this.lineClear(e.x, e.y, tx, ty)) {
+      if (e.leash) {
+        tx = Math.max(
+          e.leash.x - e.leash.w / 2,
+          Math.min(e.leash.x + e.leash.w / 2, tx),
+        );
+        ty = Math.max(
+          e.leash.y - e.leash.h / 2,
+          Math.min(e.leash.y + e.leash.h / 2, ty),
+        );
+      }
+      if (
+        !this.lineClear(e.x, e.y, tx, ty) ||
+        (this.map === 0 && !villageTravelClear(this, e.x, e.y, tx, ty))
+      ) {
         if (e.pathTime <= 0) {
           this.route(e, tx, ty);
           e.pathTime = 1 + this.random() * 0.5;
