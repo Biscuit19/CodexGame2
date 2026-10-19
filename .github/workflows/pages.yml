@@ -1,8 +1,29 @@
-name: Test, publish and verify game
+name: Build, publish and check game
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
   workflow_dispatch:
+    inputs:
+      unit_pattern:
+        description: '相关单元测试名称正则；留空不重复运行'
+        type: string
+        default: ''
+      browser_pattern:
+        description: '相关浏览器测试名称正则；留空不运行'
+        type: string
+        default: ''
+      browser:
+        description: '仅运行所选浏览器的相关用例'
+        type: choice
+        options: [chrome, chromium]
+        default: chrome
+      full_regression:
+        description: '按需运行全部单元测试、两套浏览器和完整线上验证'
+        type: boolean
+        default: false
 permissions:
   contents: write
   pages: write
@@ -19,15 +40,31 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm test
+      - name: Selected unit tests (or explicit full regression)
+        if: inputs.full_regression || inputs.unit_pattern != '' && github.event_name == 'workflow_dispatch'
+        env:
+          FULL: ${{ inputs.full_regression }}
+          PATTERN: ${{ inputs.unit_pattern }}
+        run: |
+          if [ "$FULL" = true ]; then npm test; else npm test -- -t "$PATTERN"; fi
       - run: npx playwright install --with-deps chromium
-      - run: npm run test:e2e
-      - name: Verify all browser interactions in Google Chrome
+        if: inputs.full_regression || inputs.browser_pattern != '' && inputs.browser == 'chromium'
+      - name: Selected Chromium tests (or explicit full regression)
+        if: inputs.full_regression || inputs.browser_pattern != '' && inputs.browser == 'chromium'
+        env:
+          FULL: ${{ inputs.full_regression }}
+          PATTERN: ${{ inputs.browser_pattern }}
+        run: |
+          if [ "$FULL" = true ]; then npm run test:e2e; else npm run test:e2e -- --grep "$PATTERN"; fi
+      - name: Selected Google Chrome tests (or explicit full regression)
+        if: inputs.full_regression || inputs.browser_pattern != '' && inputs.browser == 'chrome'
         env:
           PLAYWRIGHT_CHROMIUM_EXECUTABLE: /usr/bin/google-chrome
+          FULL: ${{ inputs.full_regression }}
+          PATTERN: ${{ inputs.browser_pattern }}
         run: |
           google-chrome --version
-          npm run test:e2e
+          if [ "$FULL" = true ]; then npm run test:e2e; else npm run test:e2e -- --grep "$PATTERN"; fi
       - run: npm run build
       - name: Publish the existing Pages branch
         uses: peaceiris/actions-gh-pages@v4
@@ -41,13 +78,19 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh api --method POST "repos/${GITHUB_REPOSITORY}/pages/builds"
-      - name: Verify the published revision, gameplay and offline reload
+      - name: Check published revision and entry resources (no browser)
+        if: ${{ !inputs.full_regression }}
+        env:
+          EXPECTED_BUILD: ${{ github.sha }}
+        run: node scripts/check-published.mjs https://biscuit19.github.io/CodexGame2/
+      - name: Full published gameplay and offline regression (explicit opt-in)
+        if: inputs.full_regression
         env:
           EXPECTED_BUILD: ${{ github.sha }}
           PLAYWRIGHT_CHROMIUM_EXECUTABLE: /usr/bin/google-chrome
         run: node scripts/verify-production.mjs https://biscuit19.github.io/CodexGame2/
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && (inputs.full_regression || inputs.browser_pattern != '')
         with:
           name: browser-verification
           path: test-results/
