@@ -22,15 +22,23 @@ export type VillageBuilding = {
   doorY: number;
   doorOffset: number;
   doorWidth: number;
+  minor?: boolean;
+  flatRoof?: boolean;
 };
-export const VILLAGE_WIDTH = 9000,
+export const VILLAGE_WIDTH = 7500,
   VILLAGE_HEIGHT = 6000;
 export const villageScale = {
-  x: VILLAGE_WIDTH / 2400,
+  x: 9000 / 2400,
   y: VILLAGE_HEIGHT / 1800,
 };
+/** Remove 1500 units only from the western gap; the central/eastern map is translated intact. */
+export function villageX(oldX: number) {
+  if (oldX <= 1200) return oldX;
+  if (oldX >= 3300) return oldX - 1500;
+  return 1200 + (oldX - 1200) * (600 / 2100);
+}
 export const villagePoint = (x: number, y: number) => ({
-  x: x * villageScale.x,
+  x: villageX(x * villageScale.x),
   y: y * villageScale.y,
 });
 const designBuildings = [
@@ -105,17 +113,20 @@ const rotations = [
 ];
 // Source walls are x=±2.5, y=±1.5, with a central porch extending to y=-2.5.
 // Preserve those proportions instead of stretching a 5×3 house into a giant square.
-const buildingWidths = [220, 240, 240, 200, 300, 280];
+const buildingWidths = [270, 300, 300, 200, 380, 340];
+const buildingDepths = [162, 180, 180, 120, 250, 230];
+const verticalWidths = [220, 240, 240, 200, 250, 280];
 export const villageBuildings: VillageBuilding[] = designBuildings.map(
   (b, i) => {
     const w = buildingWidths[i],
-      h = w * 0.6;
+      h = buildingDepths[i];
     return {
       ...b,
       ...villagePoint(b.x, b.y),
       w,
       h,
-      height: (w / 5) * 6.1 * 0.85,
+      height: (verticalWidths[i] / 5) * (i === 4 ? 4.55 : 6.1) * 0.85,
+      flatRoof: i === 4,
       rotation: rotations[i],
       entryDepth: h / 3,
       doorY: h / 2 + h / 3,
@@ -124,6 +135,45 @@ export const villageBuildings: VillageBuilding[] = designBuildings.map(
     };
   },
 );
+const hunterCamp = villageBuildings[0];
+villageBuildings.push({
+  ...hunterCamp,
+  id: "hunter-side",
+  name: "",
+  model: "hunter-side",
+  x: hunterCamp.x - 470,
+  y: hunterCamp.y + 20,
+  w: 220,
+  h: 132,
+  height: (220 / 5) * 6.1 * 0.85,
+  rotation: -Math.PI / 4,
+  entryDepth: 44,
+  doorY: 110,
+  doorWidth: 70.4,
+  flatRoof: false,
+});
+for (const [i, position] of [
+  [500, 1510],
+  [760, 1510],
+].entries()) {
+  const p = villagePoint(position[0], position[1]);
+  villageBuildings.push({
+    id: `shelter-${i}`,
+    name: "",
+    model: "shelter",
+    x: Math.floor(p.x / 16) * 16 + 8,
+    y: Math.floor(p.y / 16) * 16 + 8,
+    w: 160,
+    h: 96,
+    height: (160 / 5) * 6.1 * 0.85,
+    rotation: i ? Math.PI / 2 : 0,
+    entryDepth: 32,
+    doorY: 80,
+    doorOffset: 0,
+    doorWidth: 51.2,
+    minor: true,
+  });
+}
 export function buildingLocal(b: VillageBuilding, x: number, y: number) {
   const dx = x - b.x,
     dy = y - b.y,
@@ -191,13 +241,19 @@ export const villageRiver = [
   [1300, 1330],
   [1770, 1470],
   [2500, 1590],
-].map(([x, y]) => [x * villageScale.x, y * villageScale.y]);
+].map(([x, y]) => {
+  const p = villagePoint(x, y);
+  return [p.x, p.y];
+});
 export const villageTributary = [
   [-100, 1000],
   [200, 1040],
   [430, 1100],
   [595, 1110],
-].map(([x, y]) => [x * villageScale.x, y * villageScale.y]);
+].map(([x, y]) => {
+  const p = villagePoint(x, y);
+  return [p.x, p.y];
+});
 export const villageWaterWidth = 440;
 export const villageBridges = [
   { id: "hunter-entry", x: 260, y: 1050, w: 130, h: 240, rotation: 0 },
@@ -206,7 +262,7 @@ export const villageBridges = [
 ].map((b) => ({
   ...b,
   ...villagePoint(b.x, b.y),
-  w: b.rotation ? b.w * villageScale.x : b.w * 2,
+  w: b.rotation ? 620 : b.w * 2,
   h: b.rotation ? b.h * 2 : b.id === "main" ? 800 : b.h * villageScale.y,
 }));
 export const villageRoads: number[][][] = [
@@ -229,9 +285,9 @@ export const villageRoads: number[][][] = [
   ],
   [
     [260, 730],
-    [400, 810],
+    [400, 830],
     [630, 830],
-    [850, 820],
+    [920, 820],
     [1090, 820],
     [1570, 900],
     [1730, 920],
@@ -240,7 +296,7 @@ export const villageRoads: number[][][] = [
     [2010, 1020],
   ],
   [
-    [850, 820],
+    [920, 820],
     [950, 500],
     [980, 300],
   ],
@@ -253,7 +309,7 @@ export const villageRoads: number[][][] = [
     [1960, 600],
   ],
   [
-    [850, 820],
+    [920, 820],
     [870, 1040],
     [900, 1130],
     [1060, 1140],
@@ -276,7 +332,12 @@ export const villageRoads: number[][][] = [
     [1830, 1340],
     [2060, 1340],
   ],
-].map((road) => road.map(([x, y]) => [x * villageScale.x, y * villageScale.y]));
+].map((road) =>
+  road.map(([x, y]) => {
+    const p = villagePoint(x, y);
+    return [p.x, p.y];
+  }),
+);
 const approachAnchors = [
   [260, 730],
   [1450, 700],
@@ -285,13 +346,29 @@ const approachAnchors = [
   [2060, 1340],
   [1960, 600],
 ];
-for (const [i, b] of villageBuildings.entries()) {
+for (const [i, b] of villageBuildings.slice(0, 6).entries()) {
   const anchor = villagePoint(...(approachAnchors[i] as [number, number])),
-    approach = buildingWorld(b, b.doorOffset, b.doorY + 100),
+    approach = buildingWorld(b, b.doorOffset, b.doorY + 160),
     door = buildingWorld(b, b.doorOffset, b.doorY + 40);
   villageRoads.push([
     [anchor.x, anchor.y],
     [approach.x, approach.y],
+    [door.x, door.y],
+  ]);
+}
+export const villagePaths: number[][][] = [];
+const sideHut = villageBuildings.find((b) => b.id === "hunter-side")!;
+const sideDoor = buildingWorld(sideHut, 0, sideHut.doorY + 40);
+villagePaths.push([
+  [hunterCamp.x, hunterCamp.y + 300],
+  [sideDoor.x, sideDoor.y],
+]);
+for (const [i, b] of villageBuildings.filter((b) => b.minor).entries()) {
+  const door = buildingWorld(b, 0, b.doorY + 40),
+    road = villagePoint(i ? 760 : 700, 1590);
+  villagePaths.push([
+    [road.x, road.y],
+    [door.x, road.y],
     [door.x, door.y],
   ]);
 }
@@ -323,7 +400,10 @@ export const villageTrees = [
   [2320, 1300],
   [1810, 1620],
   [2200, 1700],
-].map(([x, y]) => [x * villageScale.x, y * villageScale.y]);
+].map(([x, y]) => {
+  const p = villagePoint(x, y);
+  return [p.x, p.y];
+});
 export const villageRocks = [
   [170, 345],
   [430, 850],
@@ -333,7 +413,10 @@ export const villageRocks = [
   [1560, 600],
   [1640, 1020],
   [2320, 1110],
-].map(([x, y]) => [x * villageScale.x, y * villageScale.y]);
+].map(([x, y]) => {
+  const p = villagePoint(x, y);
+  return [p.x, p.y];
+});
 export function inside(
   x: number,
   y: number,
@@ -437,20 +520,21 @@ export function buildVillage(r: Raid) {
     }
     // The original single leaf opens 109 degrees outward, clear of the passage.
     const scale = b.w / 5,
+      sy = b.h / 3,
       angle = 1.9;
     const leaf = buildingWorld(
       b,
       (-0.81 + 0.81 * Math.cos(angle)) * scale,
-      (2.6 + 0.81 * Math.sin(angle)) * scale,
+      (2.6 + 0.81 * Math.sin(angle)) * sy,
     );
     add(
       leaf.x,
       leaf.y,
-      1.62 * scale,
+      1.62 * Math.hypot(Math.cos(angle) * scale, Math.sin(angle) * sy),
       0.12 * scale,
       90,
       "village-door",
-      b.rotation + angle,
+      b.rotation + Math.atan2(Math.sin(angle) * sy, Math.cos(angle) * scale),
     );
   }
 
@@ -481,6 +565,17 @@ export function buildVillage(r: Raid) {
     add(f.x, f.y, f.w, f.h, 48, "village-fence");
   for (const [x, y] of villageTrees) add(x, y, 28, 28, 80, "village-tree");
   for (const [x, y] of villageRocks) add(x, y, 42, 32, 26, "village-rock");
+  for (const p of villageProps)
+    if (p.solid)
+      add(
+        p.x,
+        p.y,
+        p.w,
+        p.d,
+        Math.min(90, p.height),
+        "village-furniture",
+        p.rotation,
+      );
   const covers = [
     [180, 700, 65, 35],
     [780, 960, 65, 40],
@@ -499,6 +594,7 @@ export function buildVillage(r: Raid) {
   const collect = (region: string): Item => {
     const weights: Record<string, number[]> = {
       spawn: [1, 0, 0, 0, 0],
+      shelter: [1, 0, 0, 0, 0],
       wild: [0.65, 0.29, 0.06, 0, 0],
       farm: [0.54, 0.34, 0.115, 0.005, 0],
       home: [0.55, 0.32, 0.12, 0.01, 0],
@@ -521,6 +617,60 @@ export function buildVillage(r: Raid) {
     const pool = collectibles.filter((c) => c.tier === tier);
     return makeItem(pool[Math.floor(r.random() * pool.length)].id);
   };
+  const callIndices: Record<string, number> = {};
+  const roomSlots: Record<string, [string, number, number][]> = {
+    hunter: [
+      ["hunter", -80, -30],
+      ["hunter-side", -55, -25],
+      ["hunter-side", 55, -25],
+      ["hunter", 80, -30],
+      ["hunter-side", 0, 50],
+      ["hunter", 0, 65],
+    ],
+    clinic: [
+      ["clinic", -105, -50],
+      ["clinic", 0, -50],
+      ["clinic", 105, -50],
+      ["clinic", 205, 120],
+      ["clinic", 105, 45],
+      ["clinic", 0, 45],
+    ],
+    shop: [
+      ["shop", -105, -50],
+      ["shop", 105, -50],
+      ["shop", -210, 170],
+      ["shop", 210, 170],
+      ["shop", -210, 65],
+      ["shop", 105, 45],
+      ["shop", -105, 45],
+    ],
+    home: [
+      ["home", -60, -30],
+      ["home", -160, 110],
+      ["home", 60, -30],
+      ["home", 155, 70],
+    ],
+    barn: [
+      ["barn", -130, -80],
+      ["barn", 130, -80],
+      ["barn", -130, 80],
+      ["barn", 0, -80],
+      ["barn", -260, 190],
+      ["barn", 260, 190],
+      ["barn", 130, 80],
+      ["barn", -130, 0],
+    ],
+    boss: [
+      ["boss", -115, -80],
+      ["boss", 115, -80],
+      ["boss", -115, 80],
+      ["boss", 245, 0],
+      ["boss", 115, 80],
+      ["boss", -245, 180],
+      ["boss", 115, 0],
+      ["boss", 220, 230],
+    ],
+  };
   const container = (
     region: string,
     type: string,
@@ -528,6 +678,8 @@ export function buildVillage(r: Raid) {
     y: number,
     chance = 1,
   ) => {
+    const callIndex = callIndices[region] || 0;
+    callIndices[region] = callIndex + 1;
     if (r.random() > chance) return;
     const high = ["safe", "weapon", "bed"].includes(type),
       count = high ? 3 : 2;
@@ -553,7 +705,12 @@ export function buildVillage(r: Raid) {
               ? 1 + Math.floor(r.random() * 3)
               : 1;
         items.push(makeItem(`m${tier}`, 25 + Math.floor(r.random() * 26)));
-      } else if (region !== "spawn" && region !== "clinic" && n > 0.88) {
+      } else if (
+        region !== "spawn" &&
+        region !== "shelter" &&
+        region !== "clinic" &&
+        n > 0.88
+      ) {
         items.push(
           makeItem(`a${region === "boss" ? 3 : region === "barn" ? 2 : 1}`),
         );
@@ -570,7 +727,14 @@ export function buildVillage(r: Raid) {
       bed: "豪华猫窝",
       safe: "保险箱",
     };
-    const location = regionPoint(region, x, y);
+    const slot = roomSlots[region]?.[callIndex];
+    const location = slot
+      ? buildingWorld(
+          villageBuildings.find((b) => b.id === slot[0])!,
+          slot[1],
+          slot[2],
+        )
+      : regionPoint(region, x, y);
     r.containers.push({
       x: location.x,
       y: location.y,
@@ -714,8 +878,103 @@ export function buildVillage(r: Raid) {
       bought: false,
     },
   ];
+  for (const b of villageBuildings.filter((b) => b.minor)) {
+    container("shelter", "box", 0, 0);
+    Object.assign(
+      r.containers[r.containers.length - 1],
+      buildingWorld(b, 0, -18),
+    );
+  }
 }
 
+export type VillageProp = {
+  model: string;
+  x: number;
+  y: number;
+  w: number;
+  d: number;
+  height: number;
+  rotation: number;
+  solid?: boolean;
+  buildingId?: string;
+};
+export const villageProps: VillageProp[] = [];
+function outside(
+  model: string,
+  x: number,
+  y: number,
+  w: number,
+  d: number,
+  height: number,
+  rotation = 0,
+  solid = true,
+) {
+  villageProps.push({
+    model,
+    ...villagePoint(x, y),
+    w,
+    d,
+    height,
+    rotation,
+    solid,
+  });
+}
+function furnishing(
+  id: string,
+  model: string,
+  x: number,
+  y: number,
+  w: number,
+  d: number,
+  height: number,
+  rotation = 0,
+  solid = true,
+) {
+  const b = villageBuildings.find((b) => b.id === id)!;
+  villageProps.push({
+    model,
+    ...buildingWorld(b, x, y),
+    w,
+    d,
+    height,
+    rotation: b.rotation + rotation,
+    solid,
+    buildingId: id,
+  });
+}
+outside("well", 1070, 610, 115, 100, 140);
+outside("bench", 110, 690, 90, 35, 45, Math.PI);
+outside("bench", 1120, 675, 90, 35, 45, Math.PI + 0.15);
+outside("lantern", 1430, 780, 32, 32, 145, 0, false);
+outside("lantern", 1900, 1070, 32, 32, 145, 0, false);
+outside("table", 1280, 1060, 100, 70, 48);
+outside("chair", 1255, 1060, 32, 34, 50, -Math.PI / 2);
+outside("chair", 1305, 1060, 32, 34, 50, Math.PI / 2);
+outside("blanket", 900, 1660, 115, 90, 2, 0, false);
+outside("basket", 914, 1660, 35, 27, 30, 0.3, false);
+outside("blanket", 1980, 1080, 110, 85, 2, 0.2, false);
+outside("basket", 1995, 1080, 35, 27, 30, 0, false);
+outside("cabinet", 2260, 1120, 65, 30, 60, 0.4);
+for (const id of ["hunter", "clinic", "shop", "home"]) {
+  const b = villageBuildings.find((b) => b.id === id)!,
+    p = buildingWorld(b, -b.w / 2 - 50, b.doorY + 10);
+  villageProps.push({
+    model: "mailbox",
+    ...p,
+    w: 28,
+    d: 30,
+    height: 55,
+    rotation: b.rotation,
+    solid: false,
+  });
+}
+furnishing("hunter", "bed", -85, 42, 64, 38, 34);
+furnishing("clinic", "desk", -110, 35, 60, 30, 42);
+furnishing("shop", "fridge", -125, 0, 38, 35, 75);
+furnishing("home", "desk", -65, 28, 48, 26, 38);
+furnishing("barn", "bed", 140, 0, 65, 38, 34, Math.PI / 2);
+furnishing("boss", "desk", -120, 0, 70, 32, 42);
+furnishing("boss", "chair", -77, 0, 28, 28, 45, -Math.PI / 2);
 export type VillageDecoration = {
   kind: "bush" | "grass" | "flower" | "flower-white" | "hay";
   x: number;
@@ -732,6 +991,7 @@ function decorationFree(x: number, y: number, margin = 80) {
     y < VILLAGE_HEIGHT - 100 &&
     !villageWaterBlocked(x, y, margin) &&
     !villageBuildings.some((b) => inBuilding(b, x, y, margin + 100)) &&
+    !villageProps.some((p) => hitsRect(x, y, { ...p, h: p.d }, margin)) &&
     !villageBridges.some((b) => inside(x, y, b, -margin))
   );
 }
@@ -742,11 +1002,11 @@ const decorationRandom = () => {
 };
 // Small groups, separated by long open stretches. Never use raid RNG: loot stays identical.
 for (let i = 0; i < 105; i++) {
-  const x = 180 + decorationRandom() * (VILLAGE_WIDTH - 360),
+  const x = villageX(180 + decorationRandom() * (9000 - 360)),
     y = 180 + decorationRandom() * (VILLAGE_HEIGHT - 360);
   if (
     decorationFree(x, y, 100) &&
-    !villageRoads.some((road) =>
+    ![...villageRoads, ...villagePaths].some((road) =>
       road.slice(1).some((p, n) => segmentDistance(x, y, road[n], p) < 190),
     ) &&
     !villageTrees.some(([tx, ty]) => Math.hypot(tx - x, ty - y) < 200)
@@ -754,11 +1014,11 @@ for (let i = 0; i < 105; i++) {
     villageTrees.push([x, y]);
 }
 for (let i = 0; i < 65; i++) {
-  const x = 170 + decorationRandom() * (VILLAGE_WIDTH - 340),
+  const x = villageX(170 + decorationRandom() * (9000 - 340)),
     y = 170 + decorationRandom() * (VILLAGE_HEIGHT - 340);
   if (
     decorationFree(x, y, 55) &&
-    !villageRoads.some((road) =>
+    ![...villageRoads, ...villagePaths].some((road) =>
       road.slice(1).some((p, n) => segmentDistance(x, y, road[n], p) < 130),
     )
   )

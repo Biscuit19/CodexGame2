@@ -12,7 +12,7 @@ import {
   VILLAGE_HEIGHT,
 } from "./village";
 const W = 1560,
-  H = 1040,
+  H = 1248,
   S = W / VILLAGE_WIDTH;
 let atlas: HTMLCanvasElement | undefined;
 function rounded(
@@ -55,7 +55,7 @@ function label(
   value: string,
   x: number,
   y: number,
-  size = 40,
+  size = 46,
 ) {
   c.font = `bold ${size}px "Noto Sans SC",sans-serif`;
   const width = c.measureText(value).width + 24;
@@ -184,6 +184,16 @@ function createAtlas() {
     "#d8733f",
   ];
   for (const [index, b] of villageBuildings.entries()) {
+    if (b.minor) {
+      c.save();
+      c.translate(b.x * S, b.y * S);
+      c.rotate(b.rotation);
+      rounded(c, -9, -6, 18, 14, 2, "#9f927a", "#74775e");
+      c.fillStyle = "#ba8b62";
+      c.fillRect(-10, -8, 20, 5);
+      c.restore();
+      continue;
+    }
     const w = Math.max(72, Math.min(137, b.w * S)),
       h = Math.max(58, Math.min(102, b.h * S));
     c.save();
@@ -216,7 +226,7 @@ function createAtlas() {
         [0, -h * 0.43],
         [-w * 0.43, h * 0.04],
       ],
-      colors[index],
+      colors[index % colors.length],
     );
     c.strokeStyle = "#fff0cf55";
     c.lineWidth = 1.2;
@@ -255,7 +265,7 @@ function createAtlas() {
       }
     }
     c.restore();
-    label(c, b.name, b.x * S, b.y * S - h * 0.7 - 34, 40);
+    if (b.name) label(c, b.name, b.x * S, b.y * S - h * 0.7 - 34, 46);
   }
   const field = villagePoint(2060, 900);
   label(c, "农田", field.x * S, field.y * S, 40);
@@ -446,25 +456,13 @@ export function drawVillageMap(
   c.lineWidth = 4;
   c.strokeStyle = "#665c39";
   c.stroke();
-  c.beginPath();
-  c.moveTo(
-    p.x + Math.cos(r.p.angle) * (large ? 26 : 15),
-    p.y + Math.sin(r.p.angle) * (large ? 26 : 15),
-  );
-  c.lineTo(
-    p.x + Math.cos(r.p.angle) * (large ? 44 : 27),
-    p.y + Math.sin(r.p.angle) * (large ? 44 : 27),
-  );
-  c.strokeStyle = "#fff6d6";
-  c.lineWidth = 3;
-  c.stroke();
   if (large) {
     c.font = "bold 36px sans-serif";
     c.textAlign = "center";
     c.strokeStyle = "#495b3e";
     c.lineWidth = 5;
-    c.strokeText("玩家", p.x, p.y + 52);
+    c.strokeText("你", p.x, p.y + 52);
     c.fillStyle = "#fff4ce";
-    c.fillText("玩家", p.x, p.y + 52);
+    c.fillText("你", p.x, p.y + 52);
   }
 }

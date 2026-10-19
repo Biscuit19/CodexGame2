@@ -11,7 +11,7 @@ const grids = new WeakMap<
     walk: Uint8Array;
   }
 >();
-/** Cached walkability and A* avoid scanning an entire 9000x6000 map for each enemy. */
+/** Cached walkability and A* avoid scanning an entire 7500x6000 map for each enemy. */
 export function routeVillage(r: Raid, e: Enemy, tx: number, ty: number) {
   let grid = grids.get(r);
   if (

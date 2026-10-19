@@ -10,6 +10,7 @@ import {
   villageRocks,
   villageDecorations,
   villageScale,
+  villageProps,
   inside,
   villagePoint,
   inBuilding,
@@ -34,6 +35,20 @@ import grass from "./assets/village/grass.glb?url";
 import flower from "./assets/village/flower.glb?url";
 import flowerWhite from "./assets/village/flower-white.glb?url";
 import hay from "./assets/village/hay.glb?url";
+import hunterSide from "./assets/village/hunter-side.glb?url";
+import shelter from "./assets/village/shelter.glb?url";
+import bench from "./assets/village/bench.glb?url";
+import mailbox from "./assets/village/mailbox.glb?url";
+import lantern from "./assets/village/lantern.glb?url";
+import blanket from "./assets/village/blanket.glb?url";
+import basket from "./assets/village/basket.glb?url";
+import fridge from "./assets/village/fridge.glb?url";
+import bed from "./assets/village/bed.glb?url";
+import desk from "./assets/village/desk.glb?url";
+import table from "./assets/village/table.glb?url";
+import chair from "./assets/village/chair.glb?url";
+import cabinet from "./assets/village/cabinet.glb?url";
+import well from "./assets/village/well.glb?url";
 const urls: Record<string, string> = {
   hunter,
   clinic,
@@ -55,6 +70,20 @@ const urls: Record<string, string> = {
   flower,
   "flower-white": flowerWhite,
   hay,
+  "hunter-side": hunterSide,
+  shelter: shelter,
+  bench: bench,
+  mailbox: mailbox,
+  lantern: lantern,
+  blanket: blanket,
+  basket: basket,
+  fridge: fridge,
+  bed: bed,
+  desk: desk,
+  table: table,
+  chair: chair,
+  cabinet: cabinet,
+  well: well,
 };
 const loader = new GLTFLoader();
 const cache = new Map<string, Promise<THREE.Group>>();
@@ -235,7 +264,7 @@ export function createVillageScene(
         f.y + (horizontal ? 0 : offset),
         length / count + 2,
         14,
-        f.x >= 1660 * villageScale.x && f.y <= 660 * villageScale.y ? 65 : 45,
+        f.x >= villagePoint(1660, 0).x && f.y <= 660 * villageScale.y ? 65 : 45,
         horizontal ? 0 : Math.PI / 2,
       );
     }
@@ -316,6 +345,9 @@ export function createVillageScene(
   prop("wheelbarrow", 2240, 1040, 85, 60, 50);
   prop("windmill", 2240, 815, 230, 190, 340);
   prop("barrel", 2260, 1230, 110, 110, 180);
+  stage.userData.props = villageProps;
+  for (const p of villageProps)
+    add(p.model, p.x, p.y, p.w, p.d, p.height, -p.rotation);
   stage.userData.decorations = villageDecorations;
   for (const item of villageDecorations) {
     if (

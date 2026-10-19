@@ -10,17 +10,29 @@
 
 新增同系列 [Tiny Treats Pretty Park 1.0](https://github.com/TinyTreats-Game-Assets/Tiny-Treats-Pretty-Park-1.0)，作者Isa Lousberg，固定提交 `050e7ba991da7d4338d5539d35acd97134709386`。CC0，原授权见 [LICENSE-TinyTreats-PrettyPark.txt](LICENSE-TinyTreats-PrettyPark.txt)。采用 `grass_A`、`flower_A`、`flower_B` 和 `bush`，保留原材质与轮廓。
 
+## 本轮新增摆件与家具
+
+| 来源（均为CC0） | 固定提交 | 本项目采用 |
+|---|---|---|
+| [Tiny Treats Pleasant Picnic 1.0](https://github.com/TinyTreats-Game-Assets/Tiny-Treats-Pleasant-Picnic-1.0) | `da50c97a056fe1513413343787f2526ea7f25174` | 野餐毯、篮子 |
+| [Tiny Treats Charming Kitchen 1.0](https://github.com/TinyTreats-Game-Assets/Tiny-Treats-Charming-Kitchen-1.0) | `094b2e12d57e2ae847a749d40f5fcd14d1eef83b` | 杂货铺冰箱 |
+| [KayKit Furniture Bits 1.0](https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0) | `96d5930a8dbdb363409bbc2d3341718b00e17c9c` | 单人床、书桌/木桌、木椅、带摆件杂物柜 |
+
+Tiny Treats Homely House另采用原版长椅和信箱，Pretty Park增加原版路灯；KayKit Medieval Hexagon原系列补充红顶水井。保留各原模型材质、纹理和完整结构，统一尺寸、粗糙度及光照。授权全文随目录保存为对应LICENSE文件。
+
+猎人主屋面积增加约50%，新增同系列副屋；诊所、商店、农庄适度增加平面空间，控制原屋顶高度；谷仓保留原墙体门窗并改为圆角低屋顶及檐边，避免巨大斜屋顶。小棚屋使用同一原模型缩小，清楚保留单扇外开门，仅一个箱子。新增屋内家具沿边摆放，不封住中间通道。
+
 桥梁和带绑带、草卷端面细节的草垛为本项目制作的圆润模型。桥面顶面为0；整体不能再次按外包围盒归一化，否则会导致角色陷入桥面。
 
 复现：使用Blender 4.3及上述固定版本素材：
 
 ```sh
-blender --background --threads 4 --python scripts/assets/build-rounded-village.py -- /path/to/Tiny-Treats-Homely-House-1.0 /path/to/Tiny-Treats-Pretty-Park-1.0
+blender --background --threads 4 --python scripts/assets/build-rounded-village.py -- /path/to/Tiny-Treats-Homely-House-1.0 /path/to/Tiny-Treats-Pretty-Park-1.0 /path/to/Tiny-Treats-Pleasant-Picnic-1.0 /path/to/Tiny-Treats-Charming-Kitchen-1.0 /path/to/KayKit-Furniture-Bits-1.0 /path/to/KayKit-Medieval-Hexagon-Pack-1.0
 ```
 
 ## 保留的小型道具：KayKit
 
-[KayKit Medieval Hexagon Pack 1.0](https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0)，作者Kay Lousberg，固定提交 `84fa4e91af6a88989be7c99e0891cede11f2ca38`，CC0，原授权见 [LICENSE-KayKit.txt](LICENSE-KayKit.txt)。当前仅保留石头、木材、箱桶、风车和手推车；主要建筑、树、桥和木栏已替换。
+[KayKit Medieval Hexagon Pack 1.0](https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0)，作者Kay Lousberg，固定提交 `84fa4e91af6a88989be7c99e0891cede11f2ca38`，CC0，原授权见 [LICENSE-KayKit.txt](LICENSE-KayKit.txt)。当前保留石头、木材、箱桶、风车、手推车，并新增原版水井；主要建筑、树、桥和木栏已替换。
 
 旧版导出脚本 `scripts/assets/build-village.py` 保留用于追溯KayKit道具来源。它会同时导出旧版建筑；如需重建全部素材，应先运行旧脚本，再运行上述Tiny Treats脚本覆盖已替换模型并导出新增花草。
 

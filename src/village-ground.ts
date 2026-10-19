@@ -3,6 +3,7 @@ import {
   villageTributary,
   villageWaterWidth,
   villageRoads,
+  villagePaths,
   villageBuildings,
   villagePoint,
   VILLAGE_WIDTH,
@@ -46,6 +47,10 @@ export function drawVillageGround(c: CanvasRenderingContext2D) {
     stroke(road, "#b2a078", 225);
     stroke(road, "#c6b087", 180);
     stroke(road, "#d4bf952e", 104);
+  }
+  for (const path of villagePaths) {
+    stroke(path, "#b9a783", 66);
+    stroke(path, "#cbb58d", 47);
   }
   const field = villagePoint(1790, 775),
     end = villagePoint(2290, 1020);

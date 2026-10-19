@@ -93,7 +93,9 @@ def export(name):
         export_lights=False,export_apply=True)
     print('EXPORTED',name,flush=True)
 
-def building(name,w):
+def building(name,w,depth=None,vertical=None,flat=False):
+    depth = depth or w*.6
+    vertical = vertical or w
     reset()
     bpy.ops.import_scene.gltf(filepath=str(ROOT/'house.gltf'))
     bpy.context.view_layer.update()
@@ -119,6 +121,19 @@ def building(name,w):
     for o in objects:
         if 'chimney' in o.name: o.name = 'roof_original_chimney'
         if 'heart' in o.name and name != 'home': bpy.data.objects.remove(o,do_unlink=True)
+    if flat:
+        for o in list(bpy.context.scene.objects):
+            if o.name.startswith('roof_') and 'chimney' not in o.name:
+                bpy.data.objects.remove(o,do_unlink=True)
+        chimney = next(o for o in bpy.context.scene.objects if 'chimney' in o.name)
+        chimney.data.transform(Matrix.Translation((0,0,-1.55)))
+        # Low, rounded metal roof with original white fascia; larger floor, modest silhouette.
+        block('roof_hall_fascia',(0,0,3.42),(5.65,3.6,.20),'#e4e3df',.08)
+        block('roof_hall_panel',(0,0,3.57),(5.82,3.78,.19),'#d76836',.08)
+        block('roof_entry_fascia',(0,-2.12,3.40),(3.45,1.35,.18),'#e4e3df',.07)
+        block('roof_entry_panel',(0,-2.12,3.54),(3.62,1.45,.16),'#d76836',.07)
+        for x in [-2.2,-1.1,0,1.1,2.2]:
+            block('roof_panel_seam',(x,0,3.67),(.035,3.5,.025),'#ba542c',.012)
     # A simple wooden floor, no raised platform or oversized porch.
     block('interior_floor',(0,0,.375),(4.68,2.68,.05),'#b18b61',.015)
     block('interior_floor_entry',(0,-1.95,.375),(2.68,1.22,.05),'#b18b61',.015)
@@ -130,21 +145,22 @@ def building(name,w):
         block('body_cross_v',(0,-2.73,4.0),(.17,.05,.60),'#bf5149',.03)
     elif name in ['barn','farmhouse']:
         for x,z,r in [(0,3.92,.18),(-.25,4.2,.09),(0,4.29,.09),(.25,4.2,.09)]:
-            bpy.ops.mesh.primitive_uv_sphere_add(segments=16,ring_count=10,radius=1,location=(x,-2.66,z))
+            position=(x-1.9,-1.57,z-1.92) if flat else (x,-2.66,z)
+            bpy.ops.mesh.primitive_uv_sphere_add(segments=16,ring_count=10,radius=1,location=position)
             o=bpy.context.object;o.name='body_cat_badge';o.scale=(r,.04,r)
             o.data.materials.append(material('#eee9de'))
     # Preserve source proportions and original colors. Only a modest vertical
     # reduction keeps a small one-storey house in the normal combat camera.
     scale = w/5
-    transform = Matrix.Diagonal((scale,scale,scale*.85,1)) @ Matrix.Translation((0,0,-.4))
+    transform = Matrix.Diagonal((scale,depth/3,vertical/5*.85,1)) @ Matrix.Translation((0,0,-.4))
     for o in list(bpy.context.scene.objects):
         if o.type == 'MESH':
             bake(o)
             o.data.transform(transform)
     export(name)
 
-for name,w in [('hunter',220),('clinic',240),('shop',240),('home',200),('barn',300),('farmhouse',280)]:
-    building(name,w)
+for name,w,d,z,flat in [('hunter',270,162,220,False),('hunter-side',220,132,220,False),('shelter',160,96,160,False),('clinic',300,180,240,False),('shop',300,180,240,False),('home',200,120,200,False),('barn',380,250,250,True),('farmhouse',340,230,280,False)]:
+    building(name,w,d,z,flat)
 
 # Existing flat bridge deck: top is exactly the playing plane y=0.
 reset()
@@ -173,3 +189,25 @@ for x in [-.577,.577]:
         bpy.ops.mesh.primitive_torus_add(major_radius=radius,minor_radius=.012,major_segments=24,minor_segments=6,location=(x,0,.58),rotation=(0,math.pi/2,0))
         bpy.context.object.data.materials.append(material('#b39452'))
 export('hay')
+
+# Complete original props from the same Tiny Treats family and compatible KayKit furniture.
+# Additional checkouts are optional; repository assets retain the generated originals.
+extra = {Path(p).name:Path(p) for p in args[2:]}
+for name,source in [('bench','bench_B'),('mailbox','mailbox')]:
+    reset();bpy.ops.import_scene.gltf(filepath=str(ROOT/(source+'.gltf')));export(name)
+if PARK:
+    reset();bpy.ops.import_scene.gltf(filepath=str(PARK/'street_lantern.gltf'));export('lantern')
+for checkout in extra.values():
+    sources=[]
+    if 'picnic' in checkout.name.lower():
+        path=checkout/'addons/tiny_treats_pleasant_picnic_set/Assets/gltf'
+        sources=[('blanket','picnic_blanket_green'),('basket','picnic_basket_round')]
+    elif 'kitchen' in checkout.name.lower():
+        path=checkout/'addons/tiny_treats_charming_kitchen_set/Assets/gltf';sources=[('fridge','fridge')]
+    elif 'Furniture' in checkout.name or 'furniture' in checkout.name:
+        path=checkout/'addons/kaykit_furniture_bits/Assets/gltf'
+        sources=[('bed','bed_single_A'),('desk','table_medium_long'),('table','table_medium'),('chair','chair_A_wood'),('cabinet','cabinet_medium_decorated')]
+    elif 'hex' in checkout.name or 'Hexagon' in checkout.name:
+        path=checkout/'addons/kaykit_medieval_hexagon_pack/Assets/gltf/buildings/red';sources=[('well','building_well_red')]
+    for name,source in sources:
+        reset();bpy.ops.import_scene.gltf(filepath=str(path/(source+'.gltf')));export(name)

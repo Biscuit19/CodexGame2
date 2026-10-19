@@ -1036,6 +1036,7 @@ export class ThreeRenderer {
     c.clearRect(0, 0, flat.width, flat.height);
     this.drawCombat(r, c);
     for (const b of villageBuildings) {
+      if (!b.name) continue;
       const p = this.project(b.x, b.y, b.height + 27);
       round(c, p.x - 83, p.y - 18, 166, 35, 8, "#2e483be6");
       text(c, b.name, p.x, p.y + 5, 23, "#f4e9c8");

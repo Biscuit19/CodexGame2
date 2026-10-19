@@ -14,7 +14,7 @@ async function enter(page: Page, keepBoss = false) {
   }, keepBoss);
 }
 
-test("9000乡野原始素材、猫咪比例房屋与真实门洞几何", async ({ page }) => {
+test("7500乡野原始素材、猫咪比例房屋与真实门洞几何", async ({ page }) => {
   test.setTimeout(120000);
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
@@ -42,9 +42,9 @@ test("9000乡野原始素材、猫咪比例房屋与真实门洞几何", async (
       })),
     };
   });
-  expect(models.size).toEqual([9000, 6000]);
+  expect(models.size).toEqual([7500, 6000]);
   expect(Math.max(...models.texture)).toBeLessThanOrEqual(4096);
-  expect(models.buildings).toHaveLength(6);
+  expect(models.buildings).toHaveLength(9);
   for (const b of models.buildings) {
     expect(b.vertices).toBeGreaterThan(3000);
     expect(b.textured).toBe(true);
@@ -91,7 +91,7 @@ test("9000乡野原始素材、猫咪比例房屋与真实门洞几何", async (
   });
   for (const result of doorwayGeometry)
     expect(result.hits, JSON.stringify(result)).toEqual([]);
-  for (const id of ["clinic", "barn"]) {
+  for (const id of ["hunter", "hunter-side", "clinic", "barn", "shelter-0"]) {
     await page.evaluate(async (id) => {
       const g = (window as any).__game,
         v = await import("/src/village.ts" as string),
@@ -99,7 +99,7 @@ test("9000乡野原始素材、猫咪比例房屋与真实门洞几何", async (
       Object.assign(g.raid.p, v.buildingWorld(b, 0, b.doorY + 65));
     }, id);
     await page.waitForTimeout(60);
-    if (id === "clinic" || id === "barn") {
+    {
       const bounds = await page.evaluate((id) => {
         const g = (window as any).__game,
           r = g.renderer3d,
@@ -126,7 +126,7 @@ test("9000乡野原始素材、猫咪比例房屋与真实门洞几何", async (
         }
         return { width: right - left, height: bottom - top };
       }, id);
-      expect(bounds.width).toBeLessThan(1440 * 0.46);
+      expect(bounds.width).toBeLessThan(1440 * (id === "barn" ? 0.55 : 0.46));
       expect(bounds.height).toBeLessThan(1000 * 0.6);
       await page.screenshot({ path: `test-results/compact-${id}-door.png` });
     }
@@ -134,11 +134,15 @@ test("9000乡野原始素材、猫咪比例房屋与真实门洞几何", async (
   expect(errors).toEqual([]);
 });
 
-test("乡野三桥、六栋建筑入口实走、室内搜索和三秒撤离", async ({ page }) => {
+test("乡野三桥、九栋建筑入口实走、室内搜索和三秒撤离", async ({ page }) => {
   test.setTimeout(90000);
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await enter(page);
+  const roomIds = await page.evaluate(async () => {
+    const v = await import("/src/village.ts" as string);
+    return v.villageBuildings.map((b: any) => b.id);
+  });
   const bridges = await page.evaluate(async () => {
     const v = await import("/src/village.ts" as string);
     return v.villageBridges;
@@ -198,7 +202,7 @@ test("乡野三桥、六栋建筑入口实走、室内搜索和三秒撤离", as
   ).toBe(true);
   await page.screenshot({ path: "test-results/village-bridge-feet.png" });
   // Each source doorway is walked through using the building's real rotated local axis.
-  for (const id of ["hunter", "clinic", "shop", "home", "barn", "boss"]) {
+  for (const id of roomIds) {
     const data = await page.evaluate(async (id) => {
       const g = (window as any).__game,
         v = await import("/src/village.ts" as string),
@@ -242,6 +246,20 @@ test("乡野三桥、六栋建筑入口实走、室内搜索和三秒撤离", as
     for (const part of opacity)
       expect(part.opacity).toBe(part.name === "floor" ? 1 : 0.1);
   }
+  for (const n of [0, 1]) {
+    await page.evaluate((n) => {
+      const r = (window as any).__game.raid,
+        c = r.containers.filter((c: any) => c.region === "shelter")[n];
+      r.p.x = c.x;
+      r.p.y = c.y + 20;
+    }, n);
+    await page.keyboard.press("KeyE");
+    await expect(page.getByRole("region", { name: "右侧容器" })).toBeVisible();
+    await page.keyboard.press("KeyE");
+    await expect(
+      page.getByRole("region", { name: "右侧容器" }),
+    ).not.toBeVisible();
+  }
   await page.evaluate(() => {
     const r = (window as any).__game.raid,
       c = r.containers.find(
@@ -284,6 +302,32 @@ test("Chrome 大地图顶层可见、M与Esc和按钮关闭，局部小地图跟
 }) => {
   test.setTimeout(60000);
   await enter(page, true);
+  const markers = await page.evaluate(async () => {
+    const g = (window as any).__game,
+      m = await import("/src/village-map.ts" as string),
+      r = g.raid;
+    const c = document.createElement("canvas");
+    c.width = 1560;
+    c.height = 1248;
+    const ctx = c.getContext("2d")!,
+      old = ctx.fillText.bind(ctx),
+      texts: string[] = [];
+    ctx.fillText = (...args: any[]) => {
+      texts.push(args[0]);
+      old(args[0], args[1], args[2]);
+    };
+    const angle = r.p.angle;
+    m.drawVillageMap(c, r, true);
+    const first = c.toDataURL();
+    r.p.angle += Math.PI / 2;
+    m.drawVillageMap(c, r, true);
+    const second = c.toDataURL();
+    r.p.angle = angle;
+    return { same: first === second, texts };
+  });
+  expect(markers.same).toBe(true);
+  expect(markers.texts).toContain("你");
+  expect(markers.texts).not.toContain("玩家");
   const mini = page.locator("#minimap");
   const oldView = await mini.getAttribute("data-view-x");
   await page.evaluate(() => {
@@ -309,7 +353,7 @@ test("Chrome 大地图顶层可见、M与Esc和按钮关闭，局部小地图跟
     expect(box!.y + box!.height).toBeLessThanOrEqual(height + 1);
     expect(
       Number(await dialog.locator("canvas").getAttribute("data-view-width")),
-    ).toBe(9000);
+    ).toBe(7500);
     await page.screenshot({
       path: `test-results/chrome-village-map-${width}.png`,
     });
