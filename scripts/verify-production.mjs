@@ -299,7 +299,7 @@ try {
     [1460, 1220],
     [1580, 1220],
     [1580, 940],
-  ].map(([x, y]) => [(x * 13000) / 2400, (y * 10000) / 1800]);
+  ].map(([x, y]) => [(x * 9000) / 2400, (y * 6000) / 1800]);
   let waypoint = 0;
   for (let step = 0; step < 600; step++) {
     if (await page.locator("#result-dialog").isVisible()) break;

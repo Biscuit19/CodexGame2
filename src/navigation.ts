@@ -1,5 +1,5 @@
 import type { Raid, Enemy } from "./raid";
-const CELL = 80;
+const CELL = 16;
 const grids = new WeakMap<
   Raid,
   {
@@ -11,7 +11,7 @@ const grids = new WeakMap<
     walk: Uint8Array;
   }
 >();
-/** Cached walkability and A* avoid scanning an entire 13000x10000 map for each enemy. */
+/** Cached walkability and A* avoid scanning an entire 9000x6000 map for each enemy. */
 export function routeVillage(r: Raid, e: Enemy, tx: number, ty: number) {
   let grid = grids.get(r);
   if (
@@ -60,7 +60,7 @@ export function routeVillage(r: Raid, e: Enemy, tx: number, ty: number) {
         x++
       ) {
         const k = y * cols + x,
-          d = Math.hypot(x * CELL + 40 - tx, y * CELL + 40 - ty);
+          d = Math.hypot(x * CELL + CELL / 2 - tx, y * CELL + CELL / 2 - ty);
         if (walk[k] && d < best) {
           best = d;
           goal = k;
@@ -134,8 +134,8 @@ export function routeVillage(r: Raid, e: Enemy, tx: number, ty: number) {
   if (found)
     for (let n = goal; n !== start && n >= 0; n = parent[n])
       path.push({
-        x: (n % cols) * CELL + 40,
-        y: Math.floor(n / cols) * CELL + 40,
+        x: (n % cols) * CELL + CELL / 2,
+        y: Math.floor(n / cols) * CELL + CELL / 2,
       });
   e.path = path.reverse();
 }

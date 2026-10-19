@@ -827,7 +827,7 @@ describe("真实战区逻辑", () => {
         () => {},
         85,
       );
-      const grid = map === 0 ? 80 : 40;
+      const grid = map === 0 ? 16 : 40;
       const first = {
         x: Math.floor(r.p.x / grid) * grid + grid / 2,
         y: Math.floor(r.p.y / grid) * grid + grid / 2,

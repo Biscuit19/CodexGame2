@@ -10,6 +10,10 @@ import {
   villageRoads,
   villageTravelClear,
   villagePoint,
+  villageScale,
+  villageDecorations,
+  villageTrees,
+  villageRocks,
   villageBuildings,
   buildingWorld,
   inBuilding,
@@ -35,19 +39,22 @@ const start = (seed = 85, map = 0) => {
     seed,
   );
 };
+let floodCache: { key: string; points: { x: number; y: number }[] } | undefined;
 function flood(r: Raid) {
+  const key = JSON.stringify([r.width, r.height, r.walls, r.p.x, r.p.y]);
+  if (floodCache?.key === key) return floodCache.points;
   const first = {
-      x: Math.floor(r.p.x / 80) * 80 + 40,
-      y: Math.floor(r.p.y / 80) * 80 + 40,
+      x: Math.floor(r.p.x / 16) * 16 + 8,
+      y: Math.floor(r.p.y / 16) * 16 + 8,
     },
     q = [first],
     seen = new Set([`${first.x},${first.y}`]);
   for (let n = 0; n < q.length; n++)
     for (const [dx, dy] of [
-      [80, 0],
-      [-80, 0],
-      [0, 80],
-      [0, -80],
+      [16, 0],
+      [-16, 0],
+      [0, 16],
+      [0, -16],
     ]) {
       const p = { x: q[n].x + dx, y: q[n].y + dy },
         key = `${p.x},${p.y}`;
@@ -55,12 +62,13 @@ function flood(r: Raid) {
       seen.add(key);
       q.push(p);
     }
+  floodCache = { key, points: q };
   return q;
 }
 describe("大尺度猫尾乡野布局与风险梯度", () => {
-  it("13000×10000地图拉开区域，两条出生路线经三桥实际连通，河流不可涉水", () => {
+  it("9000×6000地图拉开区域，两条出生路线经三桥实际连通，河流不可涉水", () => {
     const r = start();
-    expect([r.width, r.height]).toEqual([13000, 10000]);
+    expect([r.width, r.height]).toEqual([9000, 6000]);
     expect(r.p).toMatchObject(villagePoint(260, 1530));
     const water = villagePoint(1200, 1310);
     expect(villageWaterBlocked(water.x, water.y)).toBe(true);
@@ -87,7 +95,7 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
         ).toBeGreaterThan(1100);
     const actor = villagePoint(900, 1500);
     for (let n = 0; n < 1000; n++) r.moveActor(actor, 0, -3);
-    expect(actor.y).toBeGreaterThan(7000);
+    expect(actor.y).toBeGreaterThan(villagePoint(900, 1250).y);
   });
   it("可见道路中心线不穿实墙、水域、围栏，旋转建筑的入口确实可走入", () => {
     const r = start(),
@@ -107,11 +115,12 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
       new Set(villageBuildings.map((b) => b.rotation)).size,
     ).toBeGreaterThanOrEqual(4);
     for (const b of villageBuildings) {
-      const p = buildingWorld(b, b.doorOffset, b.h / 2 + 90),
-        goal = buildingWorld(b, b.doorOffset, b.h / 2 - 110);
+      const p = buildingWorld(b, b.doorOffset, b.doorY + 60),
+        goal = buildingWorld(b, b.doorOffset, 0);
       expect(villageTravelClear(r, p.x, p.y, goal.x, goal.y), b.id).toBe(true);
-      expect(b.h).toBeGreaterThanOrEqual(580);
-      expect(b.w).toBeGreaterThanOrEqual(720);
+      expect(b.h).toBeLessThanOrEqual(180);
+      expect(b.w).toBeLessThanOrEqual(300);
+      expect(b.doorWidth).toBeGreaterThanOrEqual(64);
     }
   });
   it("多个种子下容器全部可接近、室内间距足够，敌人不刷进水或墙内，出生无固定敌人", () => {
@@ -137,7 +146,7 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
                 contents[i].y - contents[j].y,
               ),
               `${b.id}:${i},${j}`,
-            ).toBeGreaterThanOrEqual(150);
+            ).toBeGreaterThanOrEqual(55);
       }
       expect(r.enemies.length).toBeGreaterThanOrEqual(20);
       expect(r.enemies.length).toBeLessThanOrEqual(22);
@@ -237,8 +246,8 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
     expect(
       inside(r.exits[1].x, r.exits[1].y, {
         ...villagePoint(1955, 395),
-        w: (590 * 13000) / 2400,
-        h: (530 * 10000) / 1800,
+        w: 590 * villageScale.x,
+        h: 530 * villageScale.y,
       }),
     ).toBe(true);
     expect(r.exits[0]).toMatchObject({ active: true, paid: false });
@@ -266,6 +275,27 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
         createHash("sha256").update(JSON.stringify(data)).digest("hex"),
         seed,
       ).toBe(hash);
+    }
+  });
+  it("乡村装饰保持稀疏、来源样式齐全且不进入水域和房屋入口", () => {
+    expect(villageTrees.length).toBeGreaterThan(45);
+    expect(villageTrees.length).toBeLessThan(130);
+    expect(villageRocks.length).toBeGreaterThan(20);
+    expect(villageRocks.length).toBeLessThan(80);
+    expect(villageDecorations.length).toBeGreaterThan(100);
+    expect(villageDecorations.length).toBeLessThan(350);
+    expect(new Set(villageDecorations.map((d) => d.kind))).toEqual(
+      new Set(["grass", "flower", "flower-white", "bush", "hay"]),
+    );
+    for (const d of villageDecorations) {
+      expect(d.x).toBeGreaterThan(0);
+      expect(d.x).toBeLessThan(9000);
+      expect(d.y).toBeGreaterThan(0);
+      expect(d.y).toBeLessThan(6000);
+      expect(villageWaterBlocked(d.x, d.y, 15)).toBe(false);
+      expect(villageBuildings.some((b) => inBuilding(b, d.x, d.y, 35))).toBe(
+        false,
+      );
     }
   });
   it("Boss护卫保持分组警戒和追击范围，其他地图保留原尺寸与布局", () => {

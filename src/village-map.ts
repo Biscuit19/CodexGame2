@@ -4,6 +4,7 @@ import {
   villageBuildings,
   villageTrees,
   villageRocks,
+  villageDecorations,
   villageFenceRects,
   villageBridges,
   villagePoint,
@@ -11,7 +12,7 @@ import {
   VILLAGE_HEIGHT,
 } from "./village";
 const W = 1560,
-  H = 1200,
+  H = 1040,
   S = W / VILLAGE_WIDTH;
 let atlas: HTMLCanvasElement | undefined;
 function rounded(
@@ -54,11 +55,21 @@ function label(
   value: string,
   x: number,
   y: number,
-  size = 28,
+  size = 40,
 ) {
   c.font = `bold ${size}px "Noto Sans SC",sans-serif`;
   const width = c.measureText(value).width + 24;
-  rounded(c, x - width / 2, y - 22, width, 40, 9, "#eee3c4", "#7f7959");
+  x = Math.max(width / 2 + 12, Math.min(W - width / 2 - 12, x));
+  rounded(
+    c,
+    x - width / 2,
+    y - size * 0.7,
+    width,
+    size * 1.3,
+    9,
+    "#eee3c4",
+    "#7f7959",
+  );
   c.fillStyle = "#364a36";
   c.textAlign = "center";
   c.textBaseline = "middle";
@@ -165,12 +176,12 @@ function createAtlas() {
     c.restore();
   }
   const colors = [
-    "#8e7962",
-    "#798f9b",
-    "#ad865e",
-    "#82917b",
-    "#ac6b5d",
-    "#8f725c",
+    "#d8733f",
+    "#d8733f",
+    "#d8733f",
+    "#d8733f",
+    "#d8733f",
+    "#d8733f",
   ];
   for (const [index, b] of villageBuildings.entries()) {
     const w = Math.max(72, Math.min(137, b.w * S)),
@@ -186,7 +197,7 @@ function createAtlas() {
       w * 0.86,
       h * 0.62,
       4,
-      index === 4 ? "#bd806b" : "#d8c8a5",
+      "#b4b3c3",
       "#786b50",
     );
     for (const x of [-w * 0.31, w * 0.31]) {
@@ -244,10 +255,10 @@ function createAtlas() {
       }
     }
     c.restore();
-    label(c, b.name, b.x * S, b.y * S - h * 0.7 - 24, 29);
+    label(c, b.name, b.x * S, b.y * S - h * 0.7 - 34, 40);
   }
   const field = villagePoint(2060, 900);
-  label(c, "农田", field.x * S, field.y * S, 32);
+  label(c, "农田", field.x * S, field.y * S, 40);
   // The farm landmark uses the same timber/roof palette as the physical windmill.
   const wind = villagePoint(2240, 815);
   c.save();
@@ -295,8 +306,15 @@ function createAtlas() {
     c.stroke();
     c.restore();
   }
+  for (const item of villageDecorations) {
+    if (item.kind === "hay") continue;
+    c.fillStyle = item.kind.startsWith("flower") ? "#e5d6aa" : "#67814e";
+    c.beginPath();
+    c.ellipse(item.x * S, item.y * S, 3, 2, 0, 0, Math.PI * 2);
+    c.fill();
+  }
   const spawn = villagePoint(260, 1530);
-  label(c, "出生地", spawn.x * S, spawn.y * S + 38, 29);
+  label(c, "出生地", spawn.x * S, spawn.y * S + 38, 40);
   // A simple compass and a restrained paper frame make the map read as a field chart.
   c.fillStyle = "#f0e7cb";
   c.strokeStyle = "#617652";
@@ -333,7 +351,7 @@ export function drawVillageMap(
   const c = canvas.getContext("2d")!,
     w = canvas.width,
     h = canvas.height;
-  const viewW = large ? VILLAGE_WIDTH : 2600,
+  const viewW = large ? VILLAGE_WIDTH : 1800,
     viewH = large ? VILLAGE_HEIGHT : (viewW * h) / w;
   const x = large
       ? 0
@@ -369,59 +387,84 @@ export function drawVillageMap(
     c.textBaseline = "middle";
     c.fillText(symbol, p.x, p.y + 1);
   };
-  for (const [i, e] of r.exits.entries()) {
-    pin(
-      e.x,
-      e.y,
-      !e.active ? "#7c8476" : e.paid ? "#b58e43" : "#497e54",
-      e.paid ? "¥" : i === 0 ? "甲" : "乙",
-    );
-    if (large) {
-      const p = point(e.x, e.y);
-      label(
-        c,
-        `${e.name}${!e.active ? "（关闭）" : ""}`,
-        p.x + (e.paid ? 0 : 30),
-        p.y + (e.paid ? 40 : -50),
-        25,
-      );
-    }
+  for (const e of r.exits) {
+    const p = point(e.x, e.y),
+      radius = large ? 25 : 12;
+    if (p.x < -40 || p.x > w + 40 || p.y < -40 || p.y > h + 40) continue;
+    c.save();
+    c.globalAlpha = e.active ? 1 : 0.65;
+    c.fillStyle = "#83e59b30";
+    c.strokeStyle = "#78ed93";
+    c.lineWidth = large ? 6 : 3;
+    if (!e.active) c.setLineDash([6, 4]);
+    c.beginPath();
+    c.arc(p.x, p.y, radius, 0, Math.PI * 2);
+    c.fill();
+    c.stroke();
+    c.restore();
+    // Two direct labels replace the removed color legend; clamp to the paper edge.
+    const type = `${e.paid ? "付费撤离" : "免费撤离"}${e.active ? "" : "（关闭）"}`;
+    const size = large ? 34 : 21;
+    c.font = `bold ${size}px sans-serif`;
+    const width =
+      Math.max(c.measureText(type).width, c.measureText(e.name).width) + 20;
+    const x = Math.max(width / 2 + 8, Math.min(w - width / 2 - 8, p.x));
+    const bottom = p.y + radius + 12,
+      height = size * 2.55;
+    const y =
+      large && !e.paid && e.name.includes(" A")
+        ? p.y - radius - height - 12
+        : Math.min(h - height - 8, bottom);
+    rounded(c, x - width / 2, y, width, height, 8, "#e9e5cbeF", "#71966a");
+    c.textAlign = "center";
+    c.textBaseline = "middle";
+    c.fillStyle = "#285a37";
+    c.fillText(type, x, y + size * 0.72);
+    c.font = `bold ${size + 2}px sans-serif`;
+    c.fillStyle = "#2f4533";
+    c.fillText(e.name, x, y + size * 1.85);
   }
   for (const e of r.enemies)
     if (e.boss) {
       pin(e.x, e.y, "#aa5745", "首");
       if (large) {
         const p = point(e.x, e.y);
-        c.font = "bold 24px sans-serif";
+        c.font = "bold 36px sans-serif";
         c.lineWidth = 5;
         c.strokeStyle = "#f1e7cd";
         c.fillStyle = "#8e4437";
         c.textAlign = "center";
-        c.strokeText(e.boss.name, p.x, p.y - 29);
-        c.fillText(e.boss.name, p.x, p.y - 29);
+        c.strokeText(e.boss.name, p.x, p.y + 48);
+        c.fillText(e.boss.name, p.x, p.y + 48);
       }
     }
   const p = point(r.p.x, r.p.y);
   c.beginPath();
-  c.arc(p.x, p.y, large ? 10 : 7, 0, Math.PI * 2);
+  c.arc(p.x, p.y, large ? 22 : 11, 0, Math.PI * 2);
   c.fillStyle = "#f5da94";
   c.fill();
-  c.lineWidth = 2;
+  c.lineWidth = 4;
   c.strokeStyle = "#665c39";
   c.stroke();
   c.beginPath();
-  c.moveTo(p.x + Math.cos(r.p.angle) * 11, p.y + Math.sin(r.p.angle) * 11);
-  c.lineTo(p.x + Math.cos(r.p.angle) * 23, p.y + Math.sin(r.p.angle) * 23);
+  c.moveTo(
+    p.x + Math.cos(r.p.angle) * (large ? 26 : 15),
+    p.y + Math.sin(r.p.angle) * (large ? 26 : 15),
+  );
+  c.lineTo(
+    p.x + Math.cos(r.p.angle) * (large ? 44 : 27),
+    p.y + Math.sin(r.p.angle) * (large ? 44 : 27),
+  );
   c.strokeStyle = "#fff6d6";
   c.lineWidth = 3;
   c.stroke();
   if (large) {
-    c.font = "bold 24px sans-serif";
+    c.font = "bold 36px sans-serif";
     c.textAlign = "center";
     c.strokeStyle = "#495b3e";
     c.lineWidth = 5;
-    c.strokeText("你", p.x, p.y - 21);
+    c.strokeText("玩家", p.x, p.y + 52);
     c.fillStyle = "#fff4ce";
-    c.fillText("你", p.x, p.y - 21);
+    c.fillText("玩家", p.x, p.y + 52);
   }
 }

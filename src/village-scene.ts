@@ -8,6 +8,8 @@ import {
   villageFenceRects,
   villageTrees,
   villageRocks,
+  villageDecorations,
+  villageScale,
   inside,
   villagePoint,
   inBuilding,
@@ -27,6 +29,11 @@ import crate from "./assets/village/crate.glb?url";
 import barrel from "./assets/village/barrel.glb?url";
 import windmill from "./assets/village/windmill.glb?url";
 import wheelbarrow from "./assets/village/wheelbarrow.glb?url";
+import bush from "./assets/village/bush.glb?url";
+import grass from "./assets/village/grass.glb?url";
+import flower from "./assets/village/flower.glb?url";
+import flowerWhite from "./assets/village/flower-white.glb?url";
+import hay from "./assets/village/hay.glb?url";
 const urls: Record<string, string> = {
   hunter,
   clinic,
@@ -43,6 +50,11 @@ const urls: Record<string, string> = {
   barrel,
   windmill,
   wheelbarrow,
+  bush,
+  grass,
+  flower,
+  "flower-white": flowerWhite,
+  hay,
 };
 const loader = new GLTFLoader();
 const cache = new Map<string, Promise<THREE.Group>>();
@@ -223,7 +235,7 @@ export function createVillageScene(
         f.y + (horizontal ? 0 : offset),
         length / count + 2,
         14,
-        f.x >= (1660 * 13000) / 2400 && f.y <= (660 * 10000) / 1800 ? 65 : 45,
+        f.x >= 1660 * villageScale.x && f.y <= 660 * villageScale.y ? 65 : 45,
         horizontal ? 0 : Math.PI / 2,
       );
     }
@@ -279,8 +291,14 @@ export function createVillageScene(
     });
     stage.add(sign);
   }
-  for (const [x, y] of villageTrees) add("tree", x, y, 125, 120, 185);
-  for (const [x, y] of villageRocks) add("rock", x, y, 49, 38, 29);
+  for (const [i, [x, y]] of villageTrees.entries()) {
+    const scale = 0.8 + (i % 5) * 0.1;
+    add("tree", x, y, 110 * scale, 105 * scale, 165 * scale);
+  }
+  for (const [i, [x, y]] of villageRocks.entries()) {
+    const scale = 0.65 + (i % 4) * 0.18;
+    add("rock", x, y, 49 * scale, 38 * scale, 29 * scale, i * 1.77);
+  }
   for (const w of r.walls.filter((w) => w.type === "village-cover"))
     add("crate", w.x, w.y, w.w, w.h, w.z);
   const prop = (
@@ -298,20 +316,25 @@ export function createVillageScene(
   prop("wheelbarrow", 2240, 1040, 85, 60, 50);
   prop("windmill", 2240, 815, 230, 190, 340);
   prop("barrel", 2260, 1230, 110, 110, 180);
-  for (const [x, y] of [
-    [1850, 815],
-    [2200, 1030],
-    [2210, 1280],
-  ]) {
-    const hay = new THREE.Mesh(
-      new THREE.CylinderGeometry(24, 24, 48, 18),
-      new THREE.MeshStandardMaterial({ color: "#c6aa57", roughness: 1 }),
+  stage.userData.decorations = villageDecorations;
+  for (const item of villageDecorations) {
+    if (
+      r.containers.some((c) => Math.hypot(c.x - item.x, c.y - item.y) < 65) ||
+      r.exits.some((e) => Math.hypot(e.x - item.x, e.y - item.y) < 100)
+    )
+      continue;
+    const height =
+      item.size *
+      (item.kind === "grass" ? 0.6 : item.kind === "bush" ? 0.7 : 0.85);
+    add(
+      item.kind,
+      item.x,
+      item.y,
+      item.size,
+      item.size * 0.8,
+      height,
+      item.angle,
     );
-    hay.rotation.z = Math.PI / 2;
-    const p = villagePoint(x, y);
-    hay.position.set(p.x, 24, p.y);
-    hay.castShadow = hay.receiveShadow = true;
-    stage.add(hay);
   }
   Promise.all(requests)
     .then(() => {
@@ -330,7 +353,12 @@ export function updateVillageScene(stage: THREE.Group, r: Raid) {
   for (const entry of stage.userData.buildings || []) {
     const b = villageBuildings.find((b) => b.id === entry.id)!;
     const entered = inBuilding(b, r.p.x, r.p.y, 15);
-    const occludes = Math.abs(r.p.x-b.x)<Math.max(b.w,b.h)*.7+45 && r.p.y<b.y && b.y-r.p.y<Math.max(b.w,b.h)*.7+(b.height+30)/Math.tan(33*Math.PI/180);
+    const occludes =
+      Math.abs(r.p.x - b.x) < Math.max(b.w, b.h) * 0.7 + 45 &&
+      r.p.y < b.y &&
+      b.y - r.p.y <
+        Math.max(b.w, b.h) * 0.7 +
+          (b.height + 30) / Math.tan((33 * Math.PI) / 180);
     entry.group.traverse((o: THREE.Object3D) => {
       if (!(o instanceof THREE.Mesh)) return;
       const m = o.material as THREE.MeshStandardMaterial;
@@ -339,10 +367,10 @@ export function updateVillageScene(stage: THREE.Group, r: Raid) {
           ? 1
           : entered
             ? o.name === "roof"
-              ? 0.008
-              : 0.01
+              ? 0.1
+              : 0.1
             : occludes
-              ? 0.04
+              ? 0.12
               : 1;
       m.depthWrite = m.opacity > 0.5;
     });

@@ -87,9 +87,15 @@ export function drawVillageGround(c: CanvasRenderingContext2D) {
     c.translate(b.x, b.y);
     c.rotate(b.rotation);
     c.fillStyle = "#b2a486";
-    c.fillRect(-b.w / 2 - 55, -b.h / 2 - 45, b.w + 110, b.h + 100);
+    c.fillRect(
+      -b.w / 2 - 55,
+      -b.h / 2 - 45,
+      b.w + 110,
+      b.h + b.entryDepth + 100,
+    );
     c.fillStyle = "#bda789";
     c.fillRect(-b.w / 2, -b.h / 2, b.w, b.h);
+    c.fillRect(-b.w * 0.3, b.h / 2, b.w * 0.6, b.entryDepth);
     c.restore();
   }
   // Restrained texture marks retain open ground instead of creating extra colliders.

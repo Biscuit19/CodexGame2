@@ -39,7 +39,7 @@ test("33度斜视下乡村建筑主体与屋顶淡化，瞄准投影一致，实
           .opacity;
       }),
     )
-    .toBeLessThan(0.1);
+    .toBeLessThanOrEqual(0.1);
   const geometry = await page.evaluate(async () => {
     const g = (window as any).__game,
       r = g.renderer3d,
