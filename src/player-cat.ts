@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { MarchingCubes } from "three/addons/objects/MarchingCubes.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+import { movementFrame, rollAxis } from "./locomotion";
 
 type Uniform = { value: number };
 export type PlayerPose = {
@@ -472,29 +473,57 @@ export function animatePlayerCat(
   roll: number,
   rollDirection: number,
   rollAim: number,
+  movementDirection = angle,
 ) {
   const pose = rig.player,
-    stride = walk ? Math.sin(walk) : 0;
+    stride = walk ? Math.sin(walk) : 0,
+    movement = movementFrame(angle, movementDirection),
+    forward = walk ? movement.forward : 0,
+    side = walk ? movement.side : 0,
+    backward = movement.kind === "backward",
+    sideways = movement.kind === "left" || movement.kind === "right";
+  rig.root.rotation.y = Math.PI / 2 - angle;
   rig.body.position.y =
-    31 + (walk ? Math.abs(stride) * 1.1 : Math.sin(time * 2.2) * 0.35);
-  rig.body.rotation.set(0, 0, stride * 0.065);
+    31 +
+    (walk
+      ? Math.abs(stride) * (sideways ? 0.8 : 1.1)
+      : Math.sin(time * 2.2) * 0.35);
+  rig.body.rotation.set(forward * 0.045, 0, stride * 0.065 - side * 0.055);
   rig.head.rotation.set(
-    walk ? Math.sin(walk * 2 + 0.5) * 0.045 : Math.sin(time * 1.3) * 0.018,
-    Math.sin(time * 0.8) * 0.022,
-    -stride * 0.035,
+    walk
+      ? Math.sin(walk * 2 + 0.5) * 0.045 * forward
+      : Math.sin(time * 1.3) * 0.018,
+    Math.sin(time * 0.8) * 0.022 + side * stride * 0.035,
+    -stride * 0.035 + side * 0.025,
   );
-  rig.head.position.z = 2 + (walk ? Math.sin(walk * 2) * 0.45 : 0);
+  rig.head.position.x = side * Math.sin(walk * 2) * 0.4;
+  rig.head.position.z = 2 + (walk ? Math.sin(walk * 2) * 0.45 * forward : 0);
   rig.legs.forEach((leg, i) => {
-    leg.rotation.x = walk ? Math.sin(walk + i * Math.PI) * 0.62 : 0;
-    leg.rotation.z = walk ? stride * 0.025 : 0;
+    const phase = walk + i * Math.PI;
+    const step = walk ? Math.sin(phase) : 0;
+    // Lift during recovery; on the planted half-cycle the paw travels opposite locomotion.
+    const lift = walk ? Math.max(0, -Math.cos(phase)) : 0;
+    leg.rotation.set(
+      step * forward * (backward ? 0.48 : 0.62),
+      0,
+      -step * side * 0.42,
+    );
+    leg.position.set(
+      (i ? 7.5 : -7.5) - step * side * 1.8,
+      -24 + lift * 1.8,
+      -step * forward * 1.2,
+    );
   });
   pose.arms.forEach((arm, i) => {
+    const step = Math.sin(walk + i * Math.PI);
     arm.rotation.x = walk
-      ? -Math.sin(walk + i * Math.PI) *
+      ? -step *
+        forward *
         (i === 0 && (rig.gun.visible || rig.knife.visible) ? 0.32 : 0.48)
       : Math.sin(time * 1.7 + i) * 0.025;
     arm.rotation.z =
-      (i ? -0.06 : 0.06) + (walk ? Math.cos(walk + i * Math.PI) * 0.035 : 0);
+      (i ? -0.06 : 0.06) +
+      (walk ? step * side * 0.24 + Math.cos(walk + i * Math.PI) * 0.035 : 0);
   });
   // Usually a broad left/right sweep, with brief softer intervals and delayed tip follow-through.
   const quiet = Math.pow((1 + Math.sin(time * 0.28 + pose.phase)) / 2, 12);
@@ -522,16 +551,20 @@ export function animatePlayerCat(
   rig.eyes.forEach((eye) => (eye.scale.y = blink));
   rig.helmet.visible = rig.vest.visible = rig.pack.visible = false;
   if (roll > 0) {
-    const progress = Math.min(1, (0.35 - roll) / 0.35),
-      forward = Math.cos(rollDirection - rollAim) >= -1e-6;
-    rig.root.rotation.y = Math.PI / 2 - rollDirection - (forward ? 0 : Math.PI);
+    const progress = Math.min(1, (0.35 - roll) / 0.35);
+    const axis = rollAxis(rollAim, rollDirection);
+    rig.root.rotation.y = Math.PI / 2 - rollAim;
     rig.body.quaternion.setFromAxisAngle(
-      new THREE.Vector3(1, 0, 0),
-      (forward ? 1 : -1) * progress * Math.PI * 2,
+      new THREE.Vector3(axis.x, axis.y, axis.z),
+      progress * Math.PI * 2,
     );
     rig.body.position.y = 29 + Math.sin(progress * Math.PI) * 9;
     rig.head.rotation.x = -0.18;
-    rig.legs.forEach((leg) => (leg.rotation.x = -0.75));
-    pose.arms.forEach((arm) => (arm.rotation.x = -0.65));
+    rig.head.position.set(0, 11, 2);
+    rig.legs.forEach((leg, i) => {
+      leg.position.set(i ? 7.5 : -7.5, -24, 0);
+      leg.rotation.set(-0.75, 0, 0);
+    });
+    pose.arms.forEach((arm, i) => arm.rotation.set(-0.65, 0, i ? -0.15 : 0.15));
   }
 }

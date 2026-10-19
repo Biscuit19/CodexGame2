@@ -918,6 +918,7 @@ export class ThreeRenderer {
     bag = true,
     rollDirection = angle,
     rollAim = angle,
+    movementDirection = angle,
   ) {
     rig.root.position.set(x, 0, y);
     rig.root.rotation.y = Math.PI / 2 - angle;
@@ -931,6 +932,7 @@ export class ThreeRenderer {
         roll,
         rollDirection,
         rollAim,
+        movementDirection,
       );
       return;
     }
@@ -1011,6 +1013,7 @@ export class ThreeRenderer {
       !!r.save.equipment.bag,
       Math.atan2(r.p.rollY, r.p.rollX),
       r.p.rollAim,
+      r.p.moveAngle,
     );
     this.pawPrints.update(r.footprints);
     const player = this.actors.get("player")!;

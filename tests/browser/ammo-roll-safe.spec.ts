@@ -108,7 +108,7 @@ test("实际拖拽弹药补满120发，拖到主副武器装填并卸回旧弹�
     path: "test-results/chrome-drag-ammo-equipped-guns.png",
   });
 });
-test("八方向闪避均为前后滚翻，横向与斜向没有绕自身竖轴转圈", async ({
+test("相对瞄准的八方向前后侧翻，保持朝向且沿实际移动方向翻滚", async ({
   page,
 }) => {
   test.setTimeout(60000);
@@ -154,10 +154,11 @@ test("八方向闪避均为前后滚翻，横向与斜向没有绕自身竖轴�
         angle: Math.PI / 2 - rig.root.rotation.y,
       };
     }, direction);
-    expect(Math.abs(pose.x)).toBeGreaterThan(0.5);
+    const sin = Math.sin(((0.35 - 0.25) / 0.35) * Math.PI);
+    expect(pose.x).toBeCloseTo(Math.cos(direction) * sin, 5);
     expect(Math.abs(pose.y)).toBeLessThan(0.001);
-    expect(Math.abs(pose.z)).toBeLessThan(0.001);
-    expect(Math.abs(Math.cos(pose.angle - direction))).toBeCloseTo(1, 5);
+    expect(pose.z).toBeCloseTo(Math.sin(direction) * sin, 5);
+    expect(pose.angle).toBeCloseTo(0, 5);
     await page.screenshot({
       path: `test-results/chrome-somersault-direction-${n}.png`,
     });

@@ -160,6 +160,7 @@ export class Raid {
     stamina: MOVEMENT.maxStamina,
     angle: 0,
     walk: 0,
+    moveAngle: 0,
     roll: 0,
     rollCooldown: 0,
     rollX: 0,
@@ -1628,8 +1629,12 @@ export class Raid {
         dx * this.movementSpeed * dt,
         dy * this.movementSpeed * dt,
       );
+      const moved = Math.hypot(p.x - oldX, p.y - oldY);
+      if (moved > 1e-6) {
+        p.moveAngle = Math.atan2(p.y - oldY, p.x - oldX);
+        p.walk += dt * (sprint ? 15 : 10);
+      } else p.walk = 0;
       if (this.map === 0) {
-        const moved = Math.hypot(p.x - oldX, p.y - oldY);
         this.footstepDistance += moved;
         if (moved > 0 && this.footstepDistance >= 52) {
           this.footstepDistance %= 52;
@@ -1643,7 +1648,6 @@ export class Raid {
           this.footstepSide *= -1;
         }
       }
-      p.walk += dt * (sprint ? 15 : 10);
     } else {
       p.walk = 0;
       this.footstepDistance = 0;
