@@ -28,9 +28,16 @@ test("尾根前后轻摆、尾尖平滑随机朝向360度，静止移动及翻�
     const { animatePlayerCat } = await import("/src/player-cat.ts");
     const surface = rig.tail.getObjectByName("continuous-tail-surface");
     const vertices = surface.geometry.attributes.position;
+    const indices = surface.geometry.index.array;
+    const normals = surface.geometry.attributes.normal;
+    const a = rig.tail.position.clone(),
+      b = a.clone(),
+      c = a.clone(),
+      n = a.clone();
     const vertex = rig.tail.position.clone();
     const time = performance.now() / 1000;
-    let clearance = Infinity,
+    let facing = Infinity,
+      clearance = Infinity,
       rootMin = Infinity,
       rootMax = -Infinity,
       foreMin = Infinity,
@@ -51,6 +58,11 @@ test("尾根前后轻摆、尾尖平滑随机朝向360度，静止移动及翻�
         i * 0.15,
       );
       rig.root.updateMatrixWorld(true);
+      a.fromBufferAttribute(vertices, indices[0]);
+      b.fromBufferAttribute(vertices, indices[1]).sub(a);
+      c.fromBufferAttribute(vertices, indices[2]).sub(a);
+      n.fromBufferAttribute(normals, indices[0]);
+      facing = Math.min(facing, b.cross(c).normalize().dot(n));
       const centers = [0, 1, 4, 5].map((index) =>
         rig.body.worldToLocal(
           rig.tailJoints[index].getWorldPosition(
@@ -82,6 +94,7 @@ test("尾根前后轻摆、尾尖平滑随机朝向360度，静止移动及翻�
     rig.player.blinkAt = 0;
     return {
       clearance,
+      facing,
       rootMin,
       rootMax,
       foreMin,
@@ -94,6 +107,7 @@ test("尾根前后轻摆、尾尖平滑随机朝向360度，静止移动及翻�
   expect(data.rootMax).toBeGreaterThan(7);
   expect(data.foreMax - data.foreMin).toBeGreaterThan(0.7);
   expect(data.clearance).toBeGreaterThan(1.01);
+  expect(data.facing).toBeGreaterThan(0.8);
   await page.waitForTimeout(120);
   await page.screenshot({ path: "test-results/tail-random-back.png" });
   await page.evaluate(() => {

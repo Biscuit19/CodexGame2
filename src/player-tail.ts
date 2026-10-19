@@ -175,7 +175,7 @@ export function animatePlayerTail(
       const angle = (j / SIDES) * Math.PI * 2;
       s.point
         .copy(s.normal)
-        .multiplyScalar(Math.cos(angle))
+        .multiplyScalar(-Math.cos(angle))
         .addScaledVector(s.binormal, Math.sin(angle));
       const index = i * (SIDES + 1) + j;
       normals.setXYZ(index, s.point.x, s.point.y, s.point.z);
