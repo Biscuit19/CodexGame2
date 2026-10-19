@@ -14,7 +14,7 @@ async function enter(page: Page, keepBoss = false) {
   }, keepBoss);
 }
 
-test("7500乡野原始素材、猫咪比例房屋与真实门洞几何", async ({ page }) => {
+test("7000乡野原始素材、猫咪比例房屋与真实门洞几何", async ({ page }) => {
   test.setTimeout(120000);
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
@@ -28,6 +28,19 @@ test("7500乡野原始素材、猫咪比例房屋与真实门洞几何", async (
       size: [g.raid.width, g.raid.height],
       texture: [g.renderer.ground.width, g.renderer.ground.height],
       buildings: g.renderer3d.villageStage.userData.buildings.map((b: any) => ({
+        openStructure: b.id.startsWith("outbuilding"),
+        extent: b.group.children.reduce(
+          (bounds: any, m: any) => {
+            m.geometry.computeBoundingBox();
+            const box = m.geometry.boundingBox;
+            return {
+              x: Math.max(bounds.x, Math.abs(box.min.x), Math.abs(box.max.x)),
+              y: Math.max(bounds.y, box.max.y),
+              z: Math.max(bounds.z, Math.abs(box.min.z), Math.abs(box.max.z)),
+            };
+          },
+          { x: 0, y: 0, z: 0 },
+        ),
         vertices: b.group.children.reduce(
           (n: number, m: any) => n + m.geometry.attributes.position.count,
           0,
@@ -42,13 +55,20 @@ test("7500乡野原始素材、猫咪比例房屋与真实门洞几何", async (
       })),
     };
   });
-  expect(models.size).toEqual([7500, 6000]);
+  expect(models.size).toEqual([7000, 5500]);
   expect(Math.max(...models.texture)).toBeLessThanOrEqual(4096);
-  expect(models.buildings).toHaveLength(9);
+  expect(models.buildings).toHaveLength(14);
   for (const b of models.buildings) {
-    expect(b.vertices).toBeGreaterThan(3000);
+    expect(b.vertices).toBeGreaterThan(b.openStructure ? 100 : 3000);
     expect(b.textured).toBe(true);
-    expect(b.parts).toEqual(["body", "floor", "roof"]);
+    if (b.openStructure) {
+      expect(b.extent.x).toBeLessThanOrEqual(165);
+      expect(b.extent.z).toBeLessThanOrEqual(115);
+      expect(b.extent.y).toBeLessThanOrEqual(145);
+    }
+    expect(b.parts).toEqual(
+      b.openStructure ? ["body", "floor"] : ["body", "floor", "roof"],
+    );
   }
   const doorwayGeometry = await page.evaluate(async () => {
     const g = (window as any).__game,
@@ -134,7 +154,7 @@ test("7500乡野原始素材、猫咪比例房屋与真实门洞几何", async (
   expect(errors).toEqual([]);
 });
 
-test("乡野三桥、九栋建筑入口实走、室内搜索和三秒撤离", async ({ page }) => {
+test("乡野三桥、十四栋建筑入口实走、室内搜索和三秒撤离", async ({ page }) => {
   test.setTimeout(90000);
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
@@ -232,21 +252,34 @@ test("乡野三桥、九栋建筑入口实走、室内搜索和三秒撤离", as
     } finally {
       for (const key of keys) await page.keyboard.up(key);
     }
-    const opacity = await page.evaluate((id) => {
-      const b = (
-        window as any
-      ).__game.renderer3d.villageStage.userData.buildings.find(
-        (b: any) => b.id === id,
-      );
-      return b.group.children.map((m: any) => ({
-        name: m.name,
-        opacity: m.material.opacity,
-      }));
+    const position = await page.evaluate(async (id) => {
+      const g = (window as any).__game,
+        v = await import("/src/village.ts" as string),
+        b = v.villageBuildings.find((b: any) => b.id === id)!;
+      return {
+        local: v.buildingLocal(b, g.raid.p.x, g.raid.p.y),
+        inside: v.inBuilding(b, g.raid.p.x, g.raid.p.y, 15),
+      };
     }, id);
-    for (const part of opacity)
-      expect(part.opacity).toBe(part.name === "floor" ? 1 : 0.1);
+    expect(position.inside, `${id}: ${JSON.stringify(position)}`).toBe(true);
+    await expect
+      .poll(
+        () =>
+          page.evaluate((id) => {
+            const b = (
+              window as any
+            ).__game.renderer3d.villageStage.userData.buildings.find(
+              (b: any) => b.id === id,
+            );
+            return b.group.children.every(
+              (m: any) => m.material.opacity === (m.name === "floor" ? 1 : 0.1),
+            );
+          }, id),
+        { message: `${id} interior outline`, timeout: 1500 },
+      )
+      .toBe(true);
   }
-  for (const n of [0, 1]) {
+  for (const n of [0, 1, 2]) {
     await page.evaluate((n) => {
       const r = (window as any).__game.raid,
         c = r.containers.filter((c: any) => c.region === "shelter")[n];
@@ -308,7 +341,7 @@ test("Chrome 大地图顶层可见、M与Esc和按钮关闭，局部小地图跟
       r = g.raid;
     const c = document.createElement("canvas");
     c.width = 1560;
-    c.height = 1248;
+    c.height = 1226;
     const ctx = c.getContext("2d")!,
       old = ctx.fillText.bind(ctx),
       texts: string[] = [];
@@ -353,7 +386,7 @@ test("Chrome 大地图顶层可见、M与Esc和按钮关闭，局部小地图跟
     expect(box!.y + box!.height).toBeLessThanOrEqual(height + 1);
     expect(
       Number(await dialog.locator("canvas").getAttribute("data-view-width")),
-    ).toBe(7500);
+    ).toBe(7000);
     await page.screenshot({
       path: `test-results/chrome-village-map-${width}.png`,
     });
@@ -366,4 +399,47 @@ test("Chrome 大地图顶层可见、M与Esc和按钮关闭，局部小地图跟
     await dialog.getByRole("button", { name: "关闭地图（M / Esc）" }).click();
     await expect(dialog).not.toBeVisible();
   }
+});
+
+test("玩家顶住实体房屋继续迈步，小墙角可自动让开", async ({ page }) => {
+  await enter(page);
+  const b = await page.evaluate(async () => {
+    const v = await import("/src/village.ts" as string),
+      b = v.villageBuildings.find((b: any) => b.id === "shop")!;
+    const r = (window as any).__game.raid;
+    Object.assign(r.p, { x: b.x - 120, y: b.y + b.h / 2 + 45, walk: 0 });
+    return { x: b.x, y: b.y, h: b.h };
+  });
+  await page.keyboard.down("KeyW");
+  await page.waitForTimeout(700);
+  const pushing = await page.evaluate(() => {
+    const r = (window as any).__game.raid;
+    return { x: r.p.x, y: r.p.y, walk: r.p.walk, prints: r.footprints.length };
+  });
+  expect(pushing.y).toBeGreaterThan(b.y + b.h / 2);
+  expect(pushing.y).toBeLessThan(b.y + b.h / 2 + 25);
+  expect(pushing.walk).toBeGreaterThan(0);
+  await page.screenshot({ path: "test-results/village-pushing-wall.png" });
+  await page.keyboard.up("KeyW");
+  await page.waitForTimeout(80);
+  expect(await page.evaluate(() => (window as any).__game.raid.p.walk)).toBe(0);
+  await page.evaluate((b) => {
+    const r = (window as any).__game.raid;
+    Object.assign(r.p, { x: b.x - 160, y: b.y + b.h / 2 + 45 });
+  }, b);
+  await page.keyboard.down("KeyW");
+  try {
+    await expect
+      .poll(() => page.evaluate(() => (window as any).__game.raid.p.y), {
+        timeout: 4000,
+        intervals: [60],
+      })
+      .toBeLessThan(b.y);
+  } finally {
+    await page.keyboard.up("KeyW");
+  }
+  expect(
+    await page.evaluate(() => (window as any).__game.raid.p.x),
+  ).toBeLessThan(b.x - 164);
+  await page.screenshot({ path: "test-results/village-corner-assist.png" });
 });

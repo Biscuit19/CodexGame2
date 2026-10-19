@@ -686,8 +686,64 @@ export class Raid {
     );
   }
   moveActor(actor: { x: number; y: number }, dx: number, dy: number) {
-    if (!this.blocked(actor.x + dx, actor.y)) actor.x += dx;
-    if (!this.blocked(actor.x, actor.y + dy)) actor.y += dy;
+    // Sweep short, validated steps: low frame rates must not tunnel through walls.
+    const distance = Math.hypot(dx, dy),
+      steps = Math.ceil(distance / 4);
+    if (!steps) return;
+    const sx = dx / steps,
+      sy = dy / steps;
+    for (let n = 0; n < steps; n++) {
+      const ox = actor.x,
+        oy = actor.y;
+      if (!this.blocked(ox + sx, oy + sy)) {
+        actor.x += sx;
+        actor.y += sy;
+        continue;
+      }
+      if (!this.blocked(actor.x + sx, actor.y)) actor.x += sx;
+      if (!this.blocked(actor.x, actor.y + sy)) actor.y += sy;
+      const progress =
+        ((actor.x - ox) * sx + (actor.y - oy) * sy) / (sx * sx + sy * sy);
+      // Only the walking player gets a small corner assist. No automatic wall
+      // following, crossing water, skipping collisions or assistance during rolls.
+      if (actor !== this.p || this.p.roll > 0 || progress > 0.25) continue;
+      const length = distance / steps,
+        ux = dx / distance,
+        uy = dy / distance;
+      const clear = (ax: number, ay: number, bx: number, by: number) => {
+        const count = Math.ceil(Math.hypot(bx - ax, by - ay) / 3);
+        for (let i = 1; i <= count; i++)
+          if (
+            this.blocked(
+              ax + ((bx - ax) * i) / count,
+              ay + ((by - ay) * i) / count,
+            )
+          )
+            return false;
+        return true;
+      };
+      let chosen = 0;
+      for (let offset = 4; offset <= 32 && !chosen; offset += 4)
+        for (const side of [-1, 1]) {
+          const tx = actor.x - uy * offset * side,
+            ty = actor.y + ux * offset * side;
+          if (
+            clear(actor.x, actor.y, tx, ty) &&
+            clear(tx, ty, tx + ux * 42, ty + uy * 42)
+          ) {
+            chosen = side;
+            break;
+          }
+        }
+      if (chosen) {
+        const tx = actor.x - uy * length * chosen,
+          ty = actor.y + ux * length * chosen;
+        if (clear(actor.x, actor.y, tx, ty)) {
+          actor.x = tx;
+          actor.y = ty;
+        }
+      }
+    }
   }
   lineClear(ax: number, ay: number, bx: number, by: number) {
     const d = Math.hypot(bx - ax, by - ay),
@@ -1646,10 +1702,9 @@ export class Raid {
         dy * this.movementSpeed * dt,
       );
       const moved = Math.hypot(p.x - oldX, p.y - oldY);
-      if (moved > 1e-6) {
-        p.moveAngle = Math.atan2(p.y - oldY, p.x - oldX);
-        p.walk += dt * (sprint ? 15 : 10);
-      } else p.walk = 0;
+      p.moveAngle =
+        moved > 1e-6 ? Math.atan2(p.y - oldY, p.x - oldX) : Math.atan2(dy, dx);
+      p.walk += dt * (sprint ? 15 : 10);
       if (this.map === 0) {
         this.footstepDistance += moved;
         if (moved > 0 && this.footstepDistance >= 52) {

@@ -24,22 +24,35 @@ export type VillageBuilding = {
   doorWidth: number;
   minor?: boolean;
   flatRoof?: boolean;
+  openStructure?: "ruin" | "workshop";
 };
-export const VILLAGE_WIDTH = 7500,
-  VILLAGE_HEIGHT = 6000;
+export const VILLAGE_WIDTH = 7000,
+  VILLAGE_HEIGHT = 5500;
 export const villageScale = {
   x: 9000 / 2400,
-  y: VILLAGE_HEIGHT / 1800,
+  y: 6000 / 1800,
 };
-/** Remove 1500 units only from the western gap; the central/eastern map is translated intact. */
+/** Crop only the western gap, retaining the original central/eastern spacing. */
 export function villageX(oldX: number) {
-  if (oldX <= 1200) return oldX;
-  if (oldX >= 3300) return oldX - 1500;
-  return 1200 + (oldX - 1200) * (600 / 2100);
+  const x =
+    oldX <= 1200
+      ? oldX
+      : oldX >= 3300
+        ? oldX - 1500
+        : 1200 + (oldX - 1200) * (600 / 2100);
+  if (x <= 1550) return x;
+  if (x >= 2800) return x - 500;
+  return 1550 + (x - 1550) * 0.6;
+}
+/** Shorten the southern spawn strip, not the village/farm/Boss regions. */
+export function villageY(oldY: number) {
+  if (oldY <= 4200) return oldY;
+  if (oldY >= 5400) return oldY - 500;
+  return 4200 + (oldY - 4200) * (700 / 1200);
 }
 export const villagePoint = (x: number, y: number) => ({
   x: villageX(x * villageScale.x),
-  y: y * villageScale.y,
+  y: villageY(y * villageScale.y),
 });
 const designBuildings = [
   {
@@ -153,8 +166,9 @@ villageBuildings.push({
   flatRoof: false,
 });
 for (const [i, position] of [
-  [500, 1510],
-  [760, 1510],
+  [550, 1490],
+  [1010, 1685],
+  [1300, 1485],
 ].entries()) {
   const p = villagePoint(position[0], position[1]);
   villageBuildings.push({
@@ -172,6 +186,31 @@ for (const [i, position] of [
     doorOffset: 0,
     doorWidth: 51.2,
     minor: true,
+  });
+}
+// Unroofed search sites in previously empty fields, deliberately below major POI scale.
+for (const [i, [x, y, kind]] of (
+  [
+    [1510, 350, "ruin"],
+    [1260, 1000, "workshop"],
+    [1710, 1180, "ruin"],
+    [1800, 1690, "workshop"],
+  ] as const
+).entries()) {
+  villageBuildings.push({
+    id: `outbuilding-${i}`,
+    name: "",
+    model: `open-${kind}`,
+    ...villagePoint(x, y),
+    w: 300,
+    h: 200,
+    height: 140,
+    rotation: [0, -Math.PI / 4, Math.PI / 4, 0][i],
+    entryDepth: 0,
+    doorY: 100,
+    doorOffset: 0,
+    doorWidth: kind === "ruin" ? 180 : 240,
+    openStructure: kind,
   });
 }
 export function buildingLocal(b: VillageBuilding, x: number, y: number) {
@@ -258,12 +297,12 @@ export const villageWaterWidth = 440;
 export const villageBridges = [
   { id: "hunter-entry", x: 260, y: 1050, w: 130, h: 240, rotation: 0 },
   { id: "hunter-link", x: 630, y: 830, w: 240, h: 130, rotation: Math.PI / 2 },
-  { id: "main", x: 1460, y: 1360, w: 160, h: 330, rotation: 0 },
+  { id: "main", x: 1460, y: 1376, w: 160, h: 330, rotation: 0 },
 ].map((b) => ({
   ...b,
   ...villagePoint(b.x, b.y),
   w: b.rotation ? 620 : b.w * 2,
-  h: b.rotation ? b.h * 2 : b.id === "main" ? 800 : b.h * villageScale.y,
+  h: b.rotation ? b.h * 2 : 640,
 }));
 export const villageRoads: number[][][] = [
   [
@@ -277,7 +316,7 @@ export const villageRoads: number[][][] = [
     [260, 1530],
     [700, 1590],
     [1190, 1600],
-    [1460, 1540],
+    [1460, 1580],
     [1460, 1220],
     [1540, 1220],
     [1580, 1100],
@@ -287,7 +326,7 @@ export const villageRoads: number[][][] = [
     [260, 730],
     [400, 830],
     [630, 830],
-    [920, 820],
+    [980, 820],
     [1090, 820],
     [1570, 900],
     [1730, 920],
@@ -296,7 +335,7 @@ export const villageRoads: number[][][] = [
     [2010, 1020],
   ],
   [
-    [920, 820],
+    [980, 820],
     [950, 500],
     [980, 300],
   ],
@@ -309,9 +348,9 @@ export const villageRoads: number[][][] = [
     [1960, 600],
   ],
   [
-    [920, 820],
-    [870, 1040],
-    [900, 1130],
+    [980, 820],
+    [950, 1040],
+    [1000, 1130],
     [1060, 1140],
     [1190, 1200],
     [1240, 1220],
@@ -364,8 +403,8 @@ villagePaths.push([
   [sideDoor.x, sideDoor.y],
 ]);
 for (const [i, b] of villageBuildings.filter((b) => b.minor).entries()) {
-  const door = buildingWorld(b, 0, b.doorY + 40),
-    road = villagePoint(i ? 760 : 700, 1590);
+  const door = buildingWorld(b, 0, b.doorY + 120),
+    road = villagePoint([700, 1010, 1190][i], [1590, 1600, 1600][i]);
   villagePaths.push([
     [road.x, road.y],
     [door.x, road.y],
@@ -417,6 +456,15 @@ export const villageRocks = [
   const p = villagePoint(x, y);
   return [p.x, p.y];
 });
+// New sites may occupy former tree/rock locations; never leave an old trunk in a doorway.
+for (const points of [villageTrees, villageRocks])
+  for (let i = points.length - 1; i >= 0; i--)
+    if (
+      villageBuildings.some((b) =>
+        inBuilding(b, points[i][0], points[i][1], 100),
+      )
+    )
+      points.splice(i, 1);
 export function inside(
   x: number,
   y: number,
@@ -508,6 +556,19 @@ export function buildVillage(r: Raid) {
     };
     const t = 8,
       wing = b.w * 0.2;
+    if (b.openStructure) {
+      if (b.openStructure === "ruin") {
+        wall(0, -b.h / 2, b.w, t);
+        wall(-b.w / 2, 0, t, b.h);
+        wall(b.w / 2, 0, t, b.h);
+        for (const side of [-1, 1])
+          wall(side * b.w * 0.4, b.h / 2, b.w * 0.2, t);
+      } else {
+        for (const x of [-b.w / 2 + 10, b.w / 2 - 10])
+          for (const y of [-b.h / 2 + 10, b.h / 2 - 10]) wall(x, y, 16, 16);
+      }
+      continue;
+    }
     wall(0, -b.h / 2, b.w, t);
     wall(-b.w / 2, 0, t, b.h);
     wall(b.w / 2, 0, t, b.h);
@@ -595,6 +656,7 @@ export function buildVillage(r: Raid) {
     const weights: Record<string, number[]> = {
       spawn: [1, 0, 0, 0, 0],
       shelter: [1, 0, 0, 0, 0],
+      outbuilding: [0.72, 0.25, 0.03, 0, 0],
       wild: [0.65, 0.29, 0.06, 0, 0],
       farm: [0.54, 0.34, 0.115, 0.005, 0],
       home: [0.55, 0.32, 0.12, 0.01, 0],
@@ -708,6 +770,7 @@ export function buildVillage(r: Raid) {
       } else if (
         region !== "spawn" &&
         region !== "shelter" &&
+        region !== "outbuilding" &&
         region !== "clinic" &&
         n > 0.88
       ) {
@@ -885,6 +948,15 @@ export function buildVillage(r: Raid) {
       buildingWorld(b, 0, -18),
     );
   }
+  for (const b of villageBuildings.filter((b) => b.openStructure)) {
+    for (const x of [-70, 70]) {
+      container("outbuilding", "box", 0, 0);
+      Object.assign(
+        r.containers[r.containers.length - 1],
+        buildingWorld(b, x, -35),
+      );
+    }
+  }
 }
 
 export type VillageProp = {
@@ -975,6 +1047,96 @@ furnishing("home", "desk", -65, 28, 48, 26, 38);
 furnishing("barn", "bed", 140, 0, 65, 38, 34, Math.PI / 2);
 furnishing("boss", "desk", -120, 0, 70, 32, 42);
 furnishing("boss", "chair", -77, 0, 28, 28, 45, -Math.PI / 2);
+// New source-model vignettes: grouped by purpose, with broad gaps for sightlines.
+const fieldProps: [
+  string,
+  number,
+  number,
+  number,
+  number,
+  number,
+  number?,
+  boolean?,
+][] = [
+  ["fountain", 1210, 480, 95, 95, 68],
+  ["trashcan", 1130, 650, 28, 28, 46],
+  ["cobblestones", 1090, 640, 90, 65, 3, 0, false],
+  ["bird", 1110, 620, 16, 22, 19, 1, false],
+  ["cooler", 905, 1660, 42, 32, 32],
+  ["radio", 885, 1660, 27, 16, 24, 0, false],
+  ["sacks", 1870, 1130, 65, 50, 48],
+  ["pallet", 1930, 1130, 90, 70, 13],
+  ["water-bucket", 1990, 1100, 30, 30, 30, 0, false],
+  ["target", 160, 560, 60, 35, 85],
+  ["sacks", 1480, 390, 65, 50, 48],
+  ["pallet", 1545, 440, 85, 65, 13],
+  ["water-bucket", 1480, 485, 30, 30, 30, 0, false],
+  ["pallet", 1070, 1150, 85, 65, 13],
+  ["sacks", 1090, 1100, 65, 50, 48],
+  ["trashcan", 1140, 1215, 28, 28, 46],
+  ["pallet", 1745, 1120, 85, 65, 13],
+  ["water-bucket", 1660, 1220, 30, 30, 30, 0, false],
+  ["sacks", 1770, 1740, 65, 50, 48],
+  ["cooler", 1840, 1740, 42, 32, 32],
+  ["bird", 1450, 210, 16, 22, 19, 2, false],
+  ["bird", 2180, 1410, 16, 22, 19, -1, false],
+  ["cobblestones", 2020, 1530, 90, 65, 3, 1, false],
+  ["trashcan", 1330, 1510, 28, 28, 46],
+  ["water-bucket", 510, 1440, 30, 30, 30, 0, false],
+  ["pallet", 660, 1590, 85, 65, 13],
+  ["sacks", 790, 1690, 65, 50, 48],
+  ["bird", 820, 1480, 16, 22, 19, 2, false],
+  ["trashcan", 2100, 1650, 28, 28, 46],
+];
+for (const [
+  model,
+  x,
+  y,
+  w,
+  d,
+  height,
+  rotation = 0,
+  solid = true,
+] of fieldProps) {
+  const origin = villagePoint(x, y);
+  let placed = false;
+  for (const radius of [0, 100, 180, 260]) {
+    for (let n = 0; n < (radius ? 8 : 1); n++) {
+      const px = origin.x + Math.cos((n * Math.PI) / 4) * radius,
+        py = origin.y + Math.sin((n * Math.PI) / 4) * radius,
+        margin = Math.max(w, d) / 2 + 20;
+      if (
+        px < 80 ||
+        px > VILLAGE_WIDTH - 80 ||
+        py < 80 ||
+        py > VILLAGE_HEIGHT - 80 ||
+        villageWaterBlocked(px, py, margin) ||
+        villageBuildings.some((b) => {
+          const local = buildingLocal(b, px, py);
+          return (
+            inBuilding(b, px, py, margin) ||
+            (Math.abs(local.x) < 70 + margin &&
+              local.y > b.h / 2 &&
+              local.y < b.doorY + 180)
+          );
+        }) ||
+        villageProps.some((p) => hitsRect(px, py, { ...p, h: p.d }, margin)) ||
+        villageBridges.some((b) => inside(px, py, b, -margin)) ||
+        (solid &&
+          [...villageRoads, ...villagePaths].some((road) =>
+            road
+              .slice(1)
+              .some((q, i) => segmentDistance(px, py, road[i], q) < 135),
+          ))
+      )
+        continue;
+      villageProps.push({ model, x: px, y: py, w, d, height, rotation, solid });
+      placed = true;
+      break;
+    }
+    if (placed) break;
+  }
+}
 export type VillageDecoration = {
   kind: "bush" | "grass" | "flower" | "flower-white" | "hay";
   x: number;
@@ -1001,9 +1163,9 @@ const decorationRandom = () => {
   return decorationSeed / 4294967296;
 };
 // Small groups, separated by long open stretches. Never use raid RNG: loot stays identical.
-for (let i = 0; i < 105; i++) {
+for (let i = 0; i < 135; i++) {
   const x = villageX(180 + decorationRandom() * (9000 - 360)),
-    y = 180 + decorationRandom() * (VILLAGE_HEIGHT - 360);
+    y = villageY(180 + decorationRandom() * (6000 - 360));
   if (
     decorationFree(x, y, 100) &&
     ![...villageRoads, ...villagePaths].some((road) =>
@@ -1015,7 +1177,7 @@ for (let i = 0; i < 105; i++) {
 }
 for (let i = 0; i < 65; i++) {
   const x = villageX(170 + decorationRandom() * (9000 - 340)),
-    y = 170 + decorationRandom() * (VILLAGE_HEIGHT - 340);
+    y = villageY(170 + decorationRandom() * (6000 - 340));
   if (
     decorationFree(x, y, 55) &&
     ![...villageRoads, ...villagePaths].some((road) =>
@@ -1054,13 +1216,14 @@ for (const [r, road] of villageRoads.entries())
         size: 32 + (n % 3) * 9,
         angle: r + n,
       });
-      villageDecorations.push({
-        kind: "grass",
-        x: x + side * 37,
-        y: y + 27,
-        size: 23,
-        angle: r,
-      });
+      if (decorationFree(x + side * 37, y + 27, 35))
+        villageDecorations.push({
+          kind: "grass",
+          x: x + side * 37,
+          y: y + 27,
+          size: 23,
+          angle: r,
+        });
     }
   }
 // A few field bundles, not a dense collection of props.

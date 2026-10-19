@@ -13,6 +13,7 @@ import {
   villageScale,
   villagePaths,
   villageX,
+  villageY,
   hitsRect,
   villageProps,
   villageDecorations,
@@ -70,9 +71,9 @@ function flood(r: Raid) {
   return q;
 }
 describe("大尺度猫尾乡野布局与风险梯度", () => {
-  it("7500×6000地图拉开区域，两条出生路线经三桥实际连通，河流不可涉水", () => {
+  it("7000×5500地图拉开区域，两条出生路线经三桥实际连通，河流不可涉水", () => {
     const r = start();
-    expect([r.width, r.height]).toEqual([7500, 6000]);
+    expect([r.width, r.height]).toEqual([7000, 5500]);
     expect(r.p).toMatchObject(villagePoint(260, 1530));
     const water = villagePoint(1200, 1310);
     expect(villageWaterBlocked(water.x, water.y)).toBe(true);
@@ -174,7 +175,7 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
       ]);
       for (const e of r.enemies) {
         expect(r.blocked(e.x, e.y)).toBe(false);
-        expect(Math.hypot(e.x - r.p.x, e.y - r.p.y)).toBeGreaterThan(2000);
+        expect(Math.hypot(e.x - r.p.x, e.y - r.p.y)).toBeGreaterThan(1500);
       }
     }
   });
@@ -186,7 +187,7 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
     for (let seed = 0; seed < 200; seed++) {
       const r = start(seed);
       expect(r.containers.length).toBeGreaterThanOrEqual(46);
-      expect(r.containers.length).toBeLessThanOrEqual(55);
+      expect(r.containers.length).toBeLessThanOrEqual(64);
       expect(
         r.containers.filter((c) => ["box", "litter"].includes(c.type)).length,
       ).toBeGreaterThan(
@@ -277,7 +278,7 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
       const r = start(Number(seed)),
         data = {
           containers: r.containers
-            .filter((c) => c.region !== "shelter")
+            .filter((c) => !["shelter", "outbuilding"].includes(c.region!))
             .map((c) => ({
               region: c.region,
               type: c.type,
@@ -310,9 +311,9 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
     );
     for (const d of villageDecorations) {
       expect(d.x).toBeGreaterThan(0);
-      expect(d.x).toBeLessThan(7500);
+      expect(d.x).toBeLessThan(7000);
       expect(d.y).toBeGreaterThan(0);
-      expect(d.y).toBeLessThan(6000);
+      expect(d.y).toBeLessThan(5500);
       expect(villageWaterBlocked(d.x, d.y, 15), JSON.stringify(d)).toBe(false);
       expect(villageBuildings.some((b) => inBuilding(b, d.x, d.y, 35))).toBe(
         false,
@@ -321,15 +322,15 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
   });
   it("仅压缩西侧宽度，猎人双屋均摊原物资，新增小屋各一个低级箱子与家具", () => {
     expect(villagePoint(1300, 580)).toEqual({
-      x: 1300 * 3.75 - 1500,
+      x: 1300 * 3.75 - 2000,
       y: 580 * (6000 / 1800),
     });
     expect(villagePoint(2060, 1180)).toEqual({
-      x: 2060 * 3.75 - 1500,
+      x: 2060 * 3.75 - 2000,
       y: 1180 * (6000 / 1800),
     });
     expect(villagePoint(260, 600).x).toBe(975);
-    expect(villageX(9000)).toBe(7500);
+    expect(villageX(9000)).toBe(7000);
     const r = start(),
       main = villageBuildings[0],
       side = villageBuildings.find((b) => b.id === "hunter-side")!;
@@ -342,14 +343,14 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
         ).length,
       ).toBeGreaterThanOrEqual(2);
     const shelters = villageBuildings.filter((b) => b.minor);
-    expect(shelters).toHaveLength(2);
+    expect(shelters).toHaveLength(3);
     for (const b of shelters) {
       expect(b.name).toBe("");
       expect(r.containers.filter((c) => inBuilding(b, c.x, c.y))).toHaveLength(
         1,
       );
     }
-    expect(r.containers.filter((c) => c.region === "shelter")).toHaveLength(2);
+    expect(r.containers.filter((c) => c.region === "shelter")).toHaveLength(3);
     for (const c of r.containers.filter((c) => c.region === "shelter"))
       expect(c.items.every((i) => db[i.id].tier === 1)).toBe(true);
     expect(
@@ -362,6 +363,55 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
       true,
     );
     expect(villageBuildings.find((b) => b.id === "barn")!.flatRoof).toBe(true);
+  });
+  it("南侧压缩且三座桥缩短，三间小屋分散，四处无顶搜索点各有两个低级容器", () => {
+    const r = start();
+    expect(villageY(6000)).toBe(5500);
+    expect(villageY(3000)).toBe(3000);
+    for (const b of villageBridges.filter((b) => !b.rotation))
+      expect(b.h).toBe(640);
+    const huts = villageBuildings.filter((b) => b.minor);
+    for (let i = 0; i < huts.length; i++)
+      for (let j = i + 1; j < huts.length; j++)
+        expect(
+          Math.hypot(huts[i].x - huts[j].x, huts[i].y - huts[j].y),
+        ).toBeGreaterThan(650);
+    const sites = villageBuildings.filter((b) => b.openStructure);
+    expect(sites).toHaveLength(4);
+    expect(new Set(sites.map((b) => b.openStructure)).size).toBe(2);
+    for (const b of sites) {
+      for (const x of [-b.w / 2, 0, b.w / 2])
+        for (const y of [-b.h / 2, 0, b.h / 2]) {
+          const p = buildingWorld(b, x, y);
+          expect(villageWaterBlocked(p.x, p.y, 25), `${b.id} footprint`).toBe(
+            false,
+          );
+        }
+      const boxes = r.containers.filter(
+        (c) => c.region === "outbuilding" && inBuilding(b, c.x, c.y),
+      );
+      expect(boxes).toHaveLength(2);
+      expect(
+        boxes.every(
+          (c) => c.type === "box" && c.items.every((i) => db[i.id].tier <= 3),
+        ),
+      ).toBe(true);
+    }
+    for (const model of [
+      "fountain",
+      "trashcan",
+      "cobblestones",
+      "bird",
+      "cooler",
+      "radio",
+      "sacks",
+      "pallet",
+      "water-bucket",
+    ])
+      expect(
+        villageProps.some((p) => p.model === model),
+        model,
+      ).toBe(true);
   });
   it("Boss护卫保持分组警戒和追击范围，其他地图保留原尺寸与布局", () => {
     const r = start(),

@@ -78,6 +78,56 @@ describe("真实战区逻辑", () => {
     advance(r, 1.01);
     expect(r.footprints).toHaveLength(0);
   });
+  it("玩家持续按键绕开小凸角，完整墙面不自动走开且仍播放行走", () => {
+    const { r } = start(1);
+    Object.assign(r.p, { x: 500, y: 500 });
+    r.walls = [{ x: 540, y: 500, w: 20, h: 20, z: 30, color: "#444" }];
+    advance(r, 1.5, new Set(["KeyD"]));
+    expect(r.p.x).toBeGreaterThan(600);
+    expect(Math.abs(r.p.y - 500)).toBeGreaterThan(20);
+    expect(r.blocked(r.p.x, r.p.y)).toBe(false);
+    Object.assign(r.p, { x: 500, y: 500, walk: 0 });
+    r.walls = [{ x: 540, y: 500, w: 20, h: 400, z: 30, color: "#444" }];
+    advance(r, 1, new Set(["KeyD"]));
+    expect(r.p.x).toBeLessThanOrEqual(515);
+    expect(r.p.y).toBe(500);
+    expect(r.p.walk).toBeGreaterThan(0);
+    expect(r.p.moveAngle).toBe(0);
+    advance(r, 0.1);
+    expect(r.p.walk).toBe(0);
+  });
+  it("小角辅助适用左右上下与斜向，薄墙及翻滚不会穿透", () => {
+    for (const angle of [0, Math.PI / 2, Math.PI, -Math.PI / 2, Math.PI / 4]) {
+      const { r } = start(1),
+        ux = Math.cos(angle),
+        uy = Math.sin(angle);
+      Object.assign(r.p, { x: 500, y: 500 });
+      r.walls = [
+        {
+          x: 500 + ux * 40,
+          y: 500 + uy * 40,
+          w: 20,
+          h: 20,
+          z: 30,
+          color: "#444",
+          rotation: angle,
+        },
+      ];
+      for (let n = 0; n < 120; n++) r.moveActor(r.p, ux * 3, uy * 3);
+      expect((r.p.x - 500) * ux + (r.p.y - 500) * uy).toBeGreaterThan(200);
+      expect(r.blocked(r.p.x, r.p.y)).toBe(false);
+    }
+    const { r } = start(1);
+    Object.assign(r.p, { x: 500, y: 500 });
+    r.walls = [{ x: 540, y: 500, w: 4, h: 400, z: 30, color: "#444" }];
+    r.moveActor(r.p, 200, 0);
+    expect(r.p.x).toBeLessThan(525);
+    Object.assign(r.p, { x: 500, y: 500, roll: 0.3 });
+    r.walls = [{ x: 540, y: 500, w: 20, h: 20, z: 30, color: "#444" }];
+    r.moveActor(r.p, 200, 0);
+    expect(r.p.x).toBeLessThanOrEqual(515);
+    expect(r.p.y).toBe(500);
+  });
   it("原地顶墙及整个翻滚过程中都不产生脚印", () => {
     const { r } = start();
     r.walls = [

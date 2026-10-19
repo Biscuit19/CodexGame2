@@ -37,3 +37,9 @@ blender --background --threads 4 --python scripts/assets/build-rounded-village.p
 旧版导出脚本 `scripts/assets/build-village.py` 保留用于追溯KayKit道具来源。它会同时导出旧版建筑；如需重建全部素材，应先运行旧脚本，再运行上述Tiny Treats脚本覆盖已替换模型并导出新增花草。
 
 运行时保留贴图与法线，按材质和屋顶/主体/地板可见性合并批次。模型及其纹理随GLB打包，不依赖远程素材服务。
+
+## 开放式搜索点与补充装饰
+
+沿用上表固定提交及CC0授权，新增Pretty Park的`fountain`、`trashcan`、`cobble_stones_large`、`bird`；Pleasant Picnic的`cooler`、`radio`；KayKit Hexagon的`sack`、`pallet`、`bucket_water`、`target`，保留原材质和完整细节。
+
+`open-ruin.glb`从Homely House原始房屋拆去屋顶、门厅和部分损坏墙段，保留原窗框、墙面及饰条；复用已挖空的原房屋网格，再拆去独立屋顶与门廊，通过网格平面裁切限制外轮廓，避免在开放面上反复布尔裁切产生异常外伸面。`open-workshop.glb`来自KayKit Hexagon的`buildings/neutral/building_scaffolding.gltf`，保留完整露天木架结构，清出猫咪高度的中央过道。两者占地300×200，地板统一为0，不覆盖完整屋顶。运行时对应残墙或角柱碰撞；地图使用简略残墙/木架图符，不新增主要地名。用同一复现命令生成，无新增下载依赖。

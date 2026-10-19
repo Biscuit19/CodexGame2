@@ -301,14 +301,26 @@ try {
     [1580, 940],
   ].map(([x, y]) => {
     const old = (x * 9000) / 2400;
-    return [
+    const previousX =
       old <= 1200
         ? old
         : old >= 3300
           ? old - 1500
-          : 1200 + ((old - 1200) * 600) / 2100,
-      (y * 6000) / 1800,
-    ];
+          : 1200 + ((old - 1200) * 600) / 2100;
+    const worldX =
+      previousX <= 1550
+        ? previousX
+        : previousX >= 2800
+          ? previousX - 500
+          : 1550 + (previousX - 1550) * 0.6;
+    const oldY = (y * 6000) / 1800;
+    const worldY =
+      oldY <= 4200
+        ? oldY
+        : oldY >= 5400
+          ? oldY - 500
+          : 4200 + ((oldY - 4200) * 700) / 1200;
+    return [worldX, worldY];
   });
   let waypoint = 0;
   for (let step = 0; step < 600; step++) {

@@ -90,7 +90,7 @@ function syncMapDialog() {
   if (mapDialog.open) return;
   setDialog(
     mapDialog,
-    `<section class="large-map panel" style="--map-aspect:${raid.map === 0 ? 1.25 : 1.3}">${heading(maps[raid.map].name)}<canvas id="full-map" width="1560" height="${raid.map === 0 ? 1248 : 1200}" aria-label="完整战区地图"></canvas>${btn("关闭地图（M / Esc）", "toggle-map", "", "secondary full")}</section>`,
+    `<section class="large-map panel" style="--map-aspect:${raid.map === 0 ? 7000 / 5500 : 1.3}">${heading(maps[raid.map].name)}<canvas id="full-map" width="1560" height="${raid.map === 0 ? 1226 : 1200}" aria-label="完整战区地图"></canvas>${btn("关闭地图（M / Esc）", "toggle-map", "", "secondary full")}</section>`,
   );
 }
 const baseMenu = document.createElement("dialog");

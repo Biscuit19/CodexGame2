@@ -49,8 +49,33 @@ import table from "./assets/village/table.glb?url";
 import chair from "./assets/village/chair.glb?url";
 import cabinet from "./assets/village/cabinet.glb?url";
 import well from "./assets/village/well.glb?url";
+import fountain from "./assets/village/fountain.glb?url";
+import trashcan from "./assets/village/trashcan.glb?url";
+import cobblestones from "./assets/village/cobblestones.glb?url";
+import bird from "./assets/village/bird.glb?url";
+import cooler from "./assets/village/cooler.glb?url";
+import radio from "./assets/village/radio.glb?url";
+import sacks from "./assets/village/sacks.glb?url";
+import pallet from "./assets/village/pallet.glb?url";
+import water_bucket from "./assets/village/water-bucket.glb?url";
+import target from "./assets/village/target.glb?url";
+import open_ruin from "./assets/village/open-ruin.glb?url";
+import open_workshop from "./assets/village/open-workshop.glb?url";
 const urls: Record<string, string> = {
   hunter,
+  fountain: fountain,
+  trashcan: trashcan,
+  cobblestones: cobblestones,
+  bird: bird,
+  cooler: cooler,
+  radio: radio,
+  sacks: sacks,
+  pallet: pallet,
+  "water-bucket": water_bucket,
+  target: target,
+  "open-ruin": open_ruin,
+  "open-workshop": open_workshop,
+
   clinic,
   shop,
   home,

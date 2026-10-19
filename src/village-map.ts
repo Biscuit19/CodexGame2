@@ -12,7 +12,7 @@ import {
   VILLAGE_HEIGHT,
 } from "./village";
 const W = 1560,
-  H = 1248,
+  H = Math.round((W * VILLAGE_HEIGHT) / VILLAGE_WIDTH),
   S = W / VILLAGE_WIDTH;
 let atlas: HTMLCanvasElement | undefined;
 function rounded(
@@ -184,6 +184,31 @@ function createAtlas() {
     "#d8733f",
   ];
   for (const [index, b] of villageBuildings.entries()) {
+    if (b.openStructure) {
+      c.save();
+      c.translate(b.x * S, b.y * S);
+      c.rotate(b.rotation);
+      rounded(c, -17, -12, 34, 25, 2, "#a69a7a", "#796d52");
+      c.strokeStyle = b.openStructure === "ruin" ? "#c1b8a6" : "#785b3f";
+      c.lineWidth = 4;
+      c.beginPath();
+      c.moveTo(-16, 4);
+      c.lineTo(-16, -12);
+      c.lineTo(16, -12);
+      c.lineTo(16, 4);
+      c.stroke();
+      if (b.openStructure === "workshop") {
+        c.lineWidth = 2;
+        for (const x of [-12, 0, 12]) {
+          c.beginPath();
+          c.moveTo(x, -12);
+          c.lineTo(x, 12);
+          c.stroke();
+        }
+      }
+      c.restore();
+      continue;
+    }
     if (b.minor) {
       c.save();
       c.translate(b.x * S, b.y * S);

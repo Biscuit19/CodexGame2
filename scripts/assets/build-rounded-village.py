@@ -211,3 +211,52 @@ for checkout in extra.values():
         path=checkout/'addons/kaykit_medieval_hexagon_pack/Assets/gltf/buildings/red';sources=[('well','building_well_red')]
     for name,source in sources:
         reset();bpy.ops.import_scene.gltf(filepath=str(path/(source+'.gltf')));export(name)
+
+# New complete source decorations, same pinned CC0 packs, no recoloring.
+if PARK:
+    for name,source in [('fountain','fountain'),('trashcan','trashcan'),('cobblestones','cobble_stones_large'),('bird','bird')]:
+        reset();bpy.ops.import_scene.gltf(filepath=str(PARK/(source+'.gltf')));export(name)
+for checkout in extra.values():
+    if 'picnic' in checkout.name.lower():
+        path=checkout/'addons/tiny_treats_pleasant_picnic_set/Assets/gltf'
+        for name,source in [('cooler','cooler'),('radio','radio')]:
+            reset();bpy.ops.import_scene.gltf(filepath=str(path/(source+'.gltf')));export(name)
+    if 'hex' in checkout.name or 'Hexagon' in checkout.name:
+        path=checkout/'addons/kaykit_medieval_hexagon_pack/Assets/gltf'
+        for name,source in [('sacks','sack'),('pallet','pallet'),('water-bucket','bucket_water'),('target','target')]:
+            reset();bpy.ops.import_scene.gltf(filepath=str(path/'decoration/props'/(source+'.gltf')));export(name)
+        # Preserve the complete original timber joinery. Clear the central aisle
+        # and front at cat height, so the visible open frame is genuinely enterable.
+        reset();bpy.ops.import_scene.gltf(filepath=str(path/'buildings/neutral/building_scaffolding.gltf'))
+        meshes=[o for o in bpy.context.scene.objects if o.type=='MESH']
+        for o in meshes: bake(o)
+        points=[v.co for o in meshes for v in o.data.vertices]
+        lo=Vector(tuple(min(v[i] for v in points) for i in range(3)))
+        hi=Vector(tuple(max(v[i] for v in points) for i in range(3)))
+        center=(lo+hi)/2;size=hi-lo
+        for o in meshes:
+            o.data.transform(Matrix.Diagonal((300/size.x,200/size.y,140/size.z,1)) @ Matrix.Translation((-center.x,-center.y,-lo.z)))
+            cut(o,(0,0,35),(260,240,72))
+        block('interior_floor',(0,0,-2),(300,200,4),'#aa9b7c',2)
+        export('open-workshop')
+
+# Ruin derivative of the already hollowed original Tiny Treats house. Strip the
+# independently exported roof and doorway; clip the former porch with mesh planes.
+# Reusing this clean playable mesh avoids Boolean operations on open source faces.
+reset();bpy.ops.import_scene.gltf(filepath=str(OUT/'hunter-side.glb'))
+for o in list(bpy.context.scene.objects):
+    if o.type!='MESH': continue
+    if o.name.startswith('roof_') or any(part in o.name for part in ['open_original_door','floor_entry','chimney','heart']):
+        bpy.data.objects.remove(o,do_unlink=True);continue
+    bake(o)
+    o.data.transform(Matrix.Diagonal((300/220,200/132,1,1)))
+    bm=bmesh.new();bm.from_mesh(o.data)
+    for co,normal in [((150,0,0),(1,0,0)),((-150,0,0),(-1,0,0)),
+                      ((0,100,0),(0,1,0)),((0,-100,0),(0,-1,0)),
+                      ((0,0,130),(0,0,1))]:
+        bmesh.ops.bisect_plane(bm,geom=list(bm.verts)+list(bm.edges)+list(bm.faces),
+            plane_co=co,plane_no=normal,dist=.0001,clear_outer=True,clear_inner=False)
+    bm.to_mesh(o.data);bm.free();o.data.update()
+    if not o.name.startswith(('interior_floor','floor_seam')):
+        o.name='body_ruined_'+o.name
+export('open-ruin')
