@@ -608,5 +608,12 @@ export function animatePlayerCat(
     });
     pose.arms.forEach((arm, i) => arm.rotation.set(-0.65, 0, i ? -0.15 : 0.15));
   }
-  animatePlayerTail(rig.tail, rig.tailJoints, rig.head, time, pose.phase);
+  animatePlayerTail(
+    rig.tail,
+    rig.tailJoints,
+    rig.head,
+    time,
+    pose.phase,
+    rig.pack,
+  );
 }

@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test("尾根前后轻摆、尾尖平滑随机朝向360度，静止移动及翻滚均不穿头", async ({
+test("尾巴贴近身体并从各级背包下方伸出，随机摆动及翻滚不穿头包", async ({
   page,
 }) => {
   test.setTimeout(60000);
@@ -25,7 +25,8 @@ test("尾根前后轻摆、尾尖平滑随机朝向360度，静止移动及翻�
   const data = await page.evaluate(async () => {
     const g = (window as any).__game,
       rig = g.renderer3d.actors.get("player");
-    const { animatePlayerCat } = await import("/src/player-cat.ts");
+    const { animatePlayerCat, updatePlayerEquipment } =
+      await import("/src/player-cat.ts");
     const surface = rig.tail.getObjectByName("continuous-tail-surface");
     const vertices = surface.geometry.attributes.position;
     const indices = surface.geometry.index.array;
@@ -34,10 +35,25 @@ test("尾根前后轻摆、尾尖平滑随机朝向360度，静止移动及翻�
       b = a.clone(),
       c = a.clone(),
       n = a.clone();
-    const vertex = rig.tail.position.clone();
+    const vertex = rig.tail.position.clone(),
+      world = vertex.clone();
+    const firstGeometry = rig.pack.children[0].geometry;
+    if (!firstGeometry.boundingBox) firstGeometry.computeBoundingBox();
+    const packBounds = firstGeometry.boundingBox.clone();
+    packBounds.makeEmpty();
+    for (const child of rig.pack.children) {
+      child.updateMatrix();
+      if (!child.geometry.boundingBox) child.geometry.computeBoundingBox();
+      packBounds.union(
+        child.geometry.boundingBox.clone().applyMatrix4(child.matrix),
+      );
+    }
     const time = performance.now() / 1000;
     let facing = Infinity,
       clearance = Infinity,
+      packClearance = Infinity,
+      rootBelowPack = Infinity,
+      farthestBack = 0,
       rootMin = Infinity,
       rootMax = -Infinity,
       foreMin = Infinity,
@@ -45,6 +61,8 @@ test("尾根前后轻摆、尾尖平滑随机朝向360度，静止移动及翻�
     const directions = new Set<number>();
     // Inspect the actual tail vertices in head-local space, including both flanks and the sole side.
     for (let i = 0; i < 600; i++) {
+      const bagTier = Math.floor(i / 100);
+      updatePlayerEquipment(rig, 1, 1, bagTier);
       const walk = i % 3 === 0 ? 0 : i * 0.23 + 0.7;
       const roll = i % 4 === 0 ? 0.25 : 0;
       animatePlayerCat(
@@ -80,13 +98,30 @@ test("尾根前后轻摆、尾尖平滑随机朝向360度，静止移动及翻�
       );
       directions.add(Math.floor((heading + Math.PI) / (Math.PI / 4)) % 8);
       for (let j = 0; j < vertices.count; j++) {
-        vertex
+        world
           .fromBufferAttribute(vertices, j)
           .applyMatrix4(surface.matrixWorld);
+        vertex.copy(world);
         rig.head.worldToLocal(vertex);
         const distance =
           (vertex.x / 26) ** 2 + (vertex.y / 18) ** 2 + (vertex.z / 18) ** 2;
         clearance = Math.min(clearance, distance);
+        vertex.copy(world);
+        rig.body.worldToLocal(vertex);
+        farthestBack = Math.max(farthestBack, -vertex.z);
+        if (rig.pack.visible) {
+          vertex.copy(world);
+          rig.pack.worldToLocal(vertex);
+          packClearance = Math.min(
+            packClearance,
+            packBounds.distanceToPoint(vertex),
+          );
+          if (j < 13)
+            rootBelowPack = Math.min(
+              rootBelowPack,
+              packBounds.min.y - vertex.y,
+            );
+        }
       }
     }
     rig.player.blinkLast = 0;
@@ -94,6 +129,9 @@ test("尾根前后轻摆、尾尖平滑随机朝向360度，静止移动及翻�
     rig.player.blinkAt = 0;
     return {
       clearance,
+      packClearance,
+      rootBelowPack,
+      farthestBack,
       facing,
       rootMin,
       rootMax,
@@ -108,6 +146,9 @@ test("尾根前后轻摆、尾尖平滑随机朝向360度，静止移动及翻�
   expect(data.foreMax - data.foreMin).toBeGreaterThan(0.7);
   expect(data.clearance).toBeGreaterThan(1.01);
   expect(data.facing).toBeGreaterThan(0.8);
+  expect(data.packClearance).toBeGreaterThan(0.1);
+  expect(data.rootBelowPack).toBeGreaterThan(0.05);
+  expect(data.farthestBack).toBeLessThan(36);
   await page.waitForTimeout(120);
   await page.screenshot({ path: "test-results/tail-random-back.png" });
   await page.evaluate(() => {

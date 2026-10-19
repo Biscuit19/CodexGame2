@@ -38,13 +38,17 @@ type TailState = {
   point: THREE.Vector3;
   toHead: THREE.Matrix4;
   fromHead: THREE.Matrix4;
+  toPack: THREE.Matrix4;
+  fromPack: THREE.Matrix4;
+  packBounds: THREE.Box3;
+  closest: THREE.Vector3;
 };
 const states = new WeakMap<THREE.Group, TailState>();
 
 export function createPlayerTail(parent: THREE.Group) {
   const tail = new THREE.Group();
   tail.name = "continuous-responsive-tail";
-  tail.position.set(0, 11, -12.5);
+  tail.position.set(0, 5, -6);
   parent.add(tail);
   const curve = new THREE.CatmullRomCurve3([
     new THREE.Vector3(),
@@ -96,6 +100,10 @@ export function createPlayerTail(parent: THREE.Group) {
     point: new THREE.Vector3(),
     toHead: new THREE.Matrix4(),
     fromHead: new THREE.Matrix4(),
+    toPack: new THREE.Matrix4(),
+    fromPack: new THREE.Matrix4(),
+    packBounds: new THREE.Box3(),
+    closest: new THREE.Vector3(),
   });
   return { tail, bones };
 }
@@ -107,6 +115,7 @@ export function animatePlayerTail(
   head: THREE.Group,
   time: number,
   phase: number,
+  pack?: THREE.Group,
 ) {
   const s = states.get(tail)!;
   const root = tailRootMotion(time, phase),
@@ -114,24 +123,45 @@ export function animatePlayerTail(
   const sweep = -Math.sin(root.y);
   const points = s.curve.points;
   points[0].set(0, 0, 0);
-  points[1].set(sweep * 9, 2 + root.x * 5, -Math.cos(root.y) * 9 + root.x * 3);
-  points[2].set(sweep * 17, 10 + Math.sin(time * 1.2 + phase) * 0.6, -17);
-  points[3].set(sweep * 21 + Math.sin(time * 1.3 + phase) * 0.7, 20, -24);
+  // The first bend exits below the pack, then rises closer to the rump.
+  points[1].set(
+    sweep * 9,
+    -0.8 + root.x * 5,
+    -Math.cos(root.y) * 8 + root.x * 3,
+  );
+  points[2].set(sweep * 17, 8 + Math.sin(time * 1.2 + phase) * 0.6, -13);
+  points[3].set(sweep * 21 + Math.sin(time * 1.3 + phase) * 0.7, 19, -19);
   points[4].set(
     points[3].x + tip.x * 4,
-    25 + Math.sin(time * 0.8 + phase) * 0.6,
-    -24 + tip.z * 4,
+    23 + Math.sin(time * 0.8 + phase) * 0.6,
+    -19 + tip.z * 4,
   );
   points[5].set(
-    points[3].x + tip.x * 9,
-    26 + Math.sin(time * 0.8 + phase) * 0.6,
-    -24 + tip.z * 9,
+    points[3].x + tip.x * 8,
+    24 + Math.sin(time * 0.8 + phase) * 0.6,
+    -19 + tip.z * 8,
   );
   s.curve.updateArcLengths();
   head.updateMatrix();
   tail.updateMatrix();
   s.toHead.copy(head.matrix).invert().multiply(tail.matrix);
   s.fromHead.copy(s.toHead).invert();
+  if (pack?.visible) {
+    pack.updateMatrix();
+    s.toPack.copy(pack.matrix).invert().multiply(tail.matrix);
+    s.fromPack.copy(s.toPack).invert();
+    if (s.packBounds.isEmpty()) {
+      // Pack mesh bounds are static in pack-local space; scale/pose are applied separately.
+      for (const child of pack.children)
+        if (child instanceof THREE.Mesh) {
+          child.updateMatrix();
+          if (!child.geometry.boundingBox) child.geometry.computeBoundingBox();
+          s.packBounds.union(
+            child.geometry.boundingBox!.clone().applyMatrix4(child.matrix),
+          );
+        }
+    }
+  }
   for (let i = 0; i <= RINGS; i++) {
     const t = i / RINGS,
       p = s.centers[i],
@@ -150,6 +180,49 @@ export function animatePlayerTail(
       if (s.point.z > rear) {
         s.point.z = rear;
         p.copy(s.point).applyMatrix4(s.fromHead);
+      }
+    }
+    if (pack?.visible) {
+      s.point.copy(p).applyMatrix4(s.toPack);
+      s.packBounds.clampPoint(s.point, s.closest);
+      const distance = s.closest.distanceTo(s.point);
+      const padding = (radius + 0.65) / pack.scale.x;
+      if (distance < padding) {
+        if (distance > 1e-6) {
+          s.closest
+            .sub(s.point)
+            .multiplyScalar((padding - distance) / distance);
+          s.point.sub(s.closest);
+        } else {
+          // If inside, leave through the bottom, rear or nearest side, never the top/front.
+          const exits = [
+            {
+              axis: "y" as const,
+              value: s.packBounds.min.y - padding,
+              distance: s.point.y - s.packBounds.min.y,
+            },
+            {
+              axis: "z" as const,
+              value: s.packBounds.min.z - padding,
+              distance: s.point.z - s.packBounds.min.z,
+            },
+            {
+              axis: "x" as const,
+              value: s.packBounds.min.x - padding,
+              distance: s.point.x - s.packBounds.min.x,
+            },
+            {
+              axis: "x" as const,
+              value: s.packBounds.max.x + padding,
+              distance: s.packBounds.max.x - s.point.x,
+            },
+          ];
+          const exit = exits.reduce((a, b) =>
+            a.distance < b.distance ? a : b,
+          );
+          s.point[exit.axis] = exit.value;
+        }
+        p.copy(s.point).applyMatrix4(s.fromPack);
       }
     }
   }
