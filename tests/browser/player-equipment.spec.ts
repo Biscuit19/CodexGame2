@@ -52,7 +52,10 @@ test("矮身三花的五级猫耳头盔护甲背包同步穿脱，耳壳随动�
       torso.geometry.computeBoundingBox();
       const bounds = torso.geometry.boundingBox,
         hb = head.geometry.boundingBox;
-      const shell = rig.helmet.children[0];
+      const active =
+        rig.helmet.children.find((m: any) => m.visible) ||
+        rig.helmet.children[0];
+      const shell = active.getObjectByName("helmet-shell");
       const shader = {
         uniforms: {},
         vertexShader: "#include <begin_vertex>",
@@ -71,6 +74,9 @@ test("矮身三花的五级猫耳头盔护甲背包同步穿脱，耳壳随动�
         ],
         scale: rig.pack.scale.x,
         color: shell.material.color.getHexString(),
+        activeId: active.name,
+        activeCount: rig.helmet.children.filter((m: any) => m.visible).length,
+        parts: active.children.map((m: any) => m.name),
         bodyWidth: bounds.max.x - bounds.min.x,
         bodyHeight: bounds.max.y - bounds.min.y,
         belly,
@@ -95,28 +101,42 @@ test("矮身三花的五级猫耳头盔护甲背包同步穿脱，耳壳随动�
     expect(state.belly).toBeLessThan(9.5);
     expect(state.headWidth).toBeLessThan(51);
     expect(state.handSize).toBeGreaterThan(1);
-    expect(state.weaponSize).toBeGreaterThan(0.9);
+    expect(state.weaponSize).toBeCloseTo(0.98 * 0.85, 5);
     expect(state.synchronized).toBe(true);
-    expect(state.cut).toBeCloseTo(10.4, 3);
+    expect(state.cut).toBeGreaterThan(9);
+    expect(state.cut).toBeLessThan(11);
+    expect(state.activeCount).toBe(tier ? 1 : 0);
+    if (tier) {
+      expect(state.activeId).toBe(`player-helmet-h${tier}`);
+      const detail = [
+        "chin-strap",
+        "tactical-mount",
+        "curved-goggle-lens",
+        "respirator-vent",
+        "black-t-visor",
+      ][tier - 1];
+      expect(state.parts).toContain(detail);
+      expect(state.color).toBe(
+        ["aab2b8", "708746", "447abe", "7062a4", "fff0c8"][tier - 1],
+      );
+    }
     if (tier) {
       scales.push(state.scale);
       colors.push(state.color);
     }
-    if ([0, 1, 5].includes(tier)) {
-      await page.screenshot({
-        path: `test-results/player-fitted-gear-${tier}-front.png`,
-      });
-      await page.evaluate(() => {
-        (window as any).__game.raid.p.angle = -Math.PI / 2;
-      });
-      await page.waitForTimeout(120);
-      await page.screenshot({
-        path: `test-results/player-fitted-gear-${tier}-back.png`,
-      });
-      await page.evaluate(() => {
-        (window as any).__game.raid.p.angle = Math.PI / 2;
-      });
-    }
+    await page.screenshot({
+      path: `test-results/player-fitted-gear-${tier}-front.png`,
+    });
+    await page.evaluate(() => {
+      (window as any).__game.raid.p.angle = -Math.PI / 2;
+    });
+    await page.waitForTimeout(120);
+    await page.screenshot({
+      path: `test-results/player-fitted-gear-${tier}-back.png`,
+    });
+    await page.evaluate(() => {
+      (window as any).__game.raid.p.angle = Math.PI / 2;
+    });
   }
   expect(new Set(colors).size).toBe(5);
   for (let i = 1; i < scales.length; i++)
@@ -127,9 +147,21 @@ test("矮身三花的五级猫耳头盔护甲背包同步穿脱，耳壳随动�
       rig = g.renderer3d.actors.get("player");
     const { animatePlayerCat } = await import("/src/player-cat.ts");
     const time = performance.now() / 1000;
-    return Array.from({ length: 30 }, (_, i) => {
+    return Array.from({ length: 60 }, (_, i) => {
       animatePlayerCat(rig, time + i * 0.2, 0, Math.PI / 2, 0, 0, 0);
+      rig.root.updateMatrixWorld(true);
+      const points = [1, 3, 4, 5].map((index) =>
+        rig.body.worldToLocal(
+          rig.tailJoints[index].getWorldPosition(
+            rig.tailJoints[index].position.clone(),
+          ),
+        ),
+      );
       return {
+        rootX: points[0].x,
+        middleX: points[1].x,
+        tipX: points[3].x,
+        tipDirectionX: points[3].x - points[2].x,
         root: rig.tailJoints[0].rotation.y,
         tip: rig.tailJoints[5].rotation.y,
       };
@@ -139,6 +171,15 @@ test("矮身三花的五级猫耳头盔护甲背包同步穿脱，耳壳随动�
     Math.max(...tail.map((p) => p.tip)) - Math.min(...tail.map((p) => p.tip)),
   ).toBeGreaterThan(0.35);
   expect(tail.some((p) => p.root * p.tip < -0.02)).toBe(true);
+  for (const [key, extent] of [
+    ["rootX", 7],
+    ["middleX", 14],
+    ["tipX", 12],
+    ["tipDirectionX", 2],
+  ] as const) {
+    expect(Math.min(...tail.map((p) => p[key]))).toBeLessThan(-extent);
+    expect(Math.max(...tail.map((p) => p[key]))).toBeGreaterThan(extent);
+  }
   // Restore the real clock after synthetic sampling to leave the live animation healthy.
   await page.evaluate(() => {
     const rig = (window as any).__game.renderer3d.actors.get("player");

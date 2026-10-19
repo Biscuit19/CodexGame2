@@ -37,6 +37,8 @@ describe("尾根与尾尖独立而连续地摆动", () => {
       expect(Math.min(...tips.map((p) => p[axis]))).toBeLessThan(-0.05);
       expect(Math.max(...tips.map((p) => p[axis]))).toBeGreaterThan(0.05);
     }
+    expect(Math.min(...roots.map((p) => p.y))).toBeLessThan(-1.2);
+    expect(Math.max(...roots.map((p) => p.y))).toBeGreaterThan(1.2);
     expect(tips.some((p, i) => p.y * roots[i].y < -0.02)).toBe(true);
     expect(tailMotion(2, 0.3, 5)).not.toEqual(tailMotion(2, 1.7, 5));
   });
@@ -46,8 +48,8 @@ describe("尾根与尾尖独立而连续地摆动", () => {
         const previous = tailMotion((i - 1) / 60, 1.1, joint);
         const next = tailMotion(i / 60, 1.1, joint);
         for (const axis of ["x", "y", "z"] as const) {
-          expect(Math.abs(next[axis])).toBeLessThan(0.9);
-          expect(Math.abs(next[axis] - previous[axis])).toBeLessThan(0.04);
+          expect(Math.abs(next[axis])).toBeLessThan(1.5);
+          expect(Math.abs(next[axis] - previous[axis])).toBeLessThan(0.045);
         }
       }
     }

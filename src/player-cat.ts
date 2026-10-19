@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { MarchingCubes } from "three/addons/objects/MarchingCubes.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { movementFrame, rollAxis } from "./locomotion";
+import { createPlayerHelmets } from "./player-helmets";
 
 type Uniform = { value: number };
 export type PlayerPose = {
@@ -243,14 +244,14 @@ function limb(
 }
 function continuousTail(parent: THREE.Group) {
   const tail = new THREE.Group();
-  tail.position.set(0, 15, -12);
+  tail.position.set(0, 11, -12.5);
   parent.add(tail);
   const curve = new THREE.CatmullRomCurve3([
     new THREE.Vector3(0, 0, 0),
-    new THREE.Vector3(-4, 1, -8),
-    new THREE.Vector3(-11, 9, -14),
-    new THREE.Vector3(-10, 20, -16),
-    new THREE.Vector3(-4, 25, -15),
+    new THREE.Vector3(0, 2, -9),
+    new THREE.Vector3(0, 11, -19),
+    new THREE.Vector3(0, 23, -22),
+    new THREE.Vector3(0, 29, -16),
   ]);
   const rings = 60,
     boneCount = 6,
@@ -365,32 +366,15 @@ function surfaceAbove(source: THREE.BufferGeometry, height: number) {
 }
 
 function createEquipment(headGeometry: THREE.BufferGeometry, pose: PlayerPose) {
-  const helmet = new THREE.Group(),
-    vest = new THREE.Group(),
+  const helmet = createPlayerHelmets(
+    (height) => surfaceAbove(headGeometry, height),
+    pose.face,
+    earDeformation,
+  );
+  const vest = new THREE.Group(),
     pack = new THREE.Group();
-  helmet.name = "fitted-cat-ear-helmet";
   vest.name = "cropped-player-vest";
   pack.name = "compact-player-backpack";
-  const shell = new THREE.MeshStandardMaterial({
-    color: "#728b79",
-    roughness: 0.72,
-    metalness: 0.12,
-    side: THREE.DoubleSide,
-  });
-  shell.name = "player-helmet-shell";
-  shell.customProgramCacheKey = () => "fitted-animated-ear-helmet-v1";
-  shell.onBeforeCompile = (shader) => {
-    shader.uniforms.catEarL = pose.face.earL;
-    shader.uniforms.catEarR = pose.face.earR;
-    shader.vertexShader =
-      "uniform float catEarL, catEarR;\n" + shader.vertexShader;
-    shader.vertexShader = shader.vertexShader.replace(
-      "#include <begin_vertex>",
-      `#include <begin_vertex>\ntransformed *= 1.025;\n${earDeformation}`,
-    );
-  };
-  // Cut along existing smooth triangle rings, above the eyes. No bulky replacement ears.
-  helmet.add(new THREE.Mesh(surfaceAbove(headGeometry, 10.4), shell));
   const vestMaterial = new THREE.MeshStandardMaterial({
     color: "#728b79",
     roughness: 0.9,
@@ -451,9 +435,12 @@ export function updatePlayerEquipment(
   armor: number,
   bag: number,
 ) {
+  rig.helmet.visible = helmet > 0;
+  rig.helmet.userData.tier = helmet;
+  for (const model of rig.helmet.children)
+    model.visible = model.userData.helmetTier === helmet;
   const colors = ["#7c8c72", "#548570", "#5c8fac", "#9c7daa", "#c4a35c"];
   for (const [group, tier] of [
-    [rig.helmet, helmet],
     [rig.vest, armor],
     [rig.pack, bag],
   ] as const) {
@@ -472,18 +459,20 @@ export function updatePlayerEquipment(
   rig.pack.scale.setScalar(0.7 + Math.max(0, Math.min(4, bag - 1)) * 0.075);
 }
 
-/** Incommensurate waves give each cat smooth, irregular swishes with independent tip curls. */
+/** Symmetric bind curve plus lagged lateral bends: both position and tip direction cross the midline. */
 export function tailMotion(time: number, phase: number, joint: number) {
   const t = joint / 5;
-  const quiet = Math.pow((1 + Math.sin(time * 0.28 + phase)) / 2, 12);
+  const wave = time * 1.65 + phase;
+  const curl = Math.max(0, (joint - 1) / 4);
   return {
     y:
       joint === 0
-        ? (0.85 - quiet * 0.63) * Math.sin(time * 1.9 + phase)
-        : Math.sin(time * 2.7 - joint * 0.62 + phase) * (0.12 + t * 0.17) +
-          Math.sin(time * 1.13 + joint * 0.51 + phase * 2) * 0.12 * t,
-    x: Math.sin(time * 1.7 - joint * 0.46 + phase) * (0.055 + t * 0.12),
-    z: Math.sin(time * 2.1 - joint * 0.73 + phase * 1.4) * t * 0.075,
+        ? (1.3 + 0.12 * Math.sin(time * 0.31 + phase)) * Math.sin(wave)
+        : Math.sin(wave - joint * 0.38) * (0.1 + 0.1 * t),
+    x: Math.sin(time * 1.1 - joint * 0.42 + phase) * (0.045 + t * 0.12),
+    z:
+      Math.sin(wave - joint * 0.42 + 0.8) * curl * 0.58 +
+      Math.sin(time * 0.73 + phase * 1.7) * curl * 0.07,
   };
 }
 export function createPlayerCat(): PlayerCatRig {
@@ -549,7 +538,7 @@ export function createPlayerCat(): PlayerCatRig {
   const gun = new THREE.Group(),
     knife = new THREE.Group();
   gun.position.set(0, -7.5, 9);
-  gun.scale.setScalar(0.98);
+  gun.scale.setScalar(0.98 * 0.85);
   knife.position.copy(gun.position);
   knife.scale.copy(gun.scale);
   arms[0].add(gun, knife);
