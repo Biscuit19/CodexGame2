@@ -827,15 +827,20 @@ describe("真实战区逻辑", () => {
         () => {},
         85,
       );
-      const queue = [{ x: 260, y: 1460 }],
-        visited = new Set(["260,1460"]);
+      const grid = map === 0 ? 80 : 40;
+      const first = {
+        x: Math.floor(r.p.x / grid) * grid + grid / 2,
+        y: Math.floor(r.p.y / grid) * grid + grid / 2,
+      };
+      const queue = [first],
+        visited = new Set([`${first.x},${first.y}`]);
       for (let i = 0; i < queue.length; i++) {
         const p = queue[i];
         for (const [dx, dy] of [
-          [40, 0],
-          [-40, 0],
-          [0, 40],
-          [0, -40],
+          [grid, 0],
+          [-grid, 0],
+          [0, grid],
+          [0, -grid],
         ]) {
           const x = p.x + dx,
             y = p.y + dy,

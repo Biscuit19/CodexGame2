@@ -296,12 +296,12 @@ try {
   // can overshoot on a busy software-rendering runner. No development helpers.
   const extractionRoute = [
     [1460, 1580],
-    [1460, 1250],
-    [1580, 1250],
+    [1460, 1220],
+    [1580, 1220],
     [1580, 940],
-  ];
+  ].map(([x, y]) => [(x * 13000) / 2400, (y * 10000) / 1800]);
   let waypoint = 0;
-  for (let step = 0; step < 130; step++) {
+  for (let step = 0; step < 600; step++) {
     if (await page.locator("#result-dialog").isVisible()) break;
     const position = await page.locator("#minimap").evaluate((canvas) => {
       const c = canvas.getContext("2d"),
@@ -325,8 +325,12 @@ try {
       if (!count)
         throw Error("Player marker missing from the rendered minimap");
       return {
-        x: (x / count / canvas.width) * 2400,
-        y: (y / count / canvas.height) * 1800,
+        x:
+          Number(canvas.dataset.viewX) +
+          (x / count / canvas.width) * Number(canvas.dataset.viewWidth),
+        y:
+          Number(canvas.dataset.viewY) +
+          (y / count / canvas.height) * Number(canvas.dataset.viewHeight),
       };
     });
     const [targetX, targetY] = extractionRoute[waypoint];

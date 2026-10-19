@@ -1,5 +1,5 @@
 import { createVillageScene, updateVillageScene } from "./village-scene";
-import { villageBuildings } from "./village";
+import { villageBuildings, villagePoint } from "./village";
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
@@ -113,7 +113,8 @@ function release(group: THREE.Object3D) {
   mats.forEach((m) => {
     if (
       m instanceof THREE.MeshBasicMaterial &&
-      (m.name === "player-contact-shadow" || m.map instanceof THREE.CanvasTexture)
+      (m.name === "player-contact-shadow" ||
+        m.map instanceof THREE.CanvasTexture)
     )
       m.map?.dispose();
     m.dispose();
@@ -590,6 +591,8 @@ export class ThreeRenderer {
   particleColors = new Float32Array(1000 * 3);
   exitRings: THREE.Mesh[] = [];
   villageStage?: THREE.Group;
+  sun!: THREE.DirectionalLight;
+  shadowAnchor = { x: -99999, y: -99999 };
   constructor() {
     this.canvas = document.createElement("canvas");
     this.canvas.id = "scene3d";
@@ -614,10 +617,10 @@ export class ThreeRenderer {
     this.webgl.shadowMap.autoUpdate = false;
     this.webgl.outputColorSpace = THREE.SRGBColorSpace;
     this.webgl.toneMapping = THREE.ACESFilmicToneMapping;
-    this.webgl.toneMappingExposure = 1.25;
+    this.webgl.toneMappingExposure = 1.05;
     this.scene.background = new THREE.Color("#9eac87");
-    this.scene.add(new THREE.HemisphereLight("#fbf5da", "#6f856d", 2.1));
-    const sun = new THREE.DirectionalLight("#fff2cb", 2.6);
+    this.scene.add(new THREE.HemisphereLight("#faf6ed", "#7b8874", 1.7));
+    const sun = (this.sun = new THREE.DirectionalLight("#fff2df", 2.2));
     sun.position.set(450, 1200, 100);
     sun.castShadow = true;
     sun.shadow.mapSize.set(2048, 2048);
@@ -714,9 +717,9 @@ export class ThreeRenderer {
       this.world,
       new THREE.PlaneGeometry(r.width, r.height),
       "#ffffff",
-      1200,
+      r.width / 2,
       -0.5,
-      900,
+      r.height / 2,
     );
     ground.rotation.x = -Math.PI / 2;
     ground.material = new THREE.MeshStandardMaterial({
@@ -916,14 +919,21 @@ export class ThreeRenderer {
     this.resize();
     this.prepare(r, flat);
     this.show(true);
-    const px = Math.max(490, Math.min(1920, r.p.x)),
-      pz = Math.max(260, Math.min(1520, r.p.y));
+    const px = Math.max(490, Math.min(r.width - 490, r.p.x)),
+      pz = Math.max(260, Math.min(r.height - 280, r.p.y));
     this.camera.position.set(px, 1100 * Math.tan(CAMERA_ELEVATION), pz + 1000);
     this.camera.lookAt(px, 0, pz - 100);
     const shake = r.shake * r.save.settings.shake;
     this.camera.position.x += Math.sin(r.elapsed * 140) * shake;
     this.camera.position.z += Math.cos(r.elapsed * 180) * shake;
     this.camera.updateMatrixWorld();
+    if (Math.hypot(px - this.shadowAnchor.x, pz - this.shadowAnchor.y) > 180) {
+      this.sun.position.set(px - 750, 1200, pz - 800);
+      this.sun.target.position.set(px, 0, pz);
+      this.shadowAnchor = { x: px, y: pz };
+      this.sun.target.updateMatrixWorld();
+      this.webgl.shadowMap.needsUpdate = true;
+    }
     this.updateRig(
       this.actors.get("player")!,
       r.p.x,
@@ -1030,7 +1040,8 @@ export class ThreeRenderer {
       round(c, p.x - 83, p.y - 18, 166, 35, 8, "#2e483be6");
       text(c, b.name, p.x, p.y + 5, 23, "#f4e9c8");
     }
-    const farmLabel = this.project(2030, 855, 15);
+    const fieldPoint = villagePoint(2030, 855);
+    const farmLabel = this.project(fieldPoint.x, fieldPoint.y, 15);
     round(c, farmLabel.x - 48, farmLabel.y - 18, 96, 35, 8, "#2e483be6");
     text(c, "农田", farmLabel.x, farmLabel.y + 5, 23, "#f4e9c8");
     for (const e of r.exits) {

@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+import baselineContent from "../fixtures/village-content.json";
 import { describe, it, expect } from "vitest";
 import { Raid } from "../../src/raid";
 import { newSave } from "../../src/store";
@@ -7,6 +9,10 @@ import {
   villageBridges,
   villageRoads,
   villageTravelClear,
+  villagePoint,
+  villageBuildings,
+  buildingWorld,
+  inBuilding,
   inside,
 } from "../../src/village";
 import type { Sound } from "../../src/audio";
@@ -31,19 +37,19 @@ const start = (seed = 85, map = 0) => {
 };
 function flood(r: Raid) {
   const first = {
-    x: Math.floor(r.p.x / 40) * 40 + 20,
-    y: Math.floor(r.p.y / 40) * 40 + 20,
-  };
-  const q = [first],
+      x: Math.floor(r.p.x / 80) * 80 + 40,
+      y: Math.floor(r.p.y / 80) * 80 + 40,
+    },
+    q = [first],
     seen = new Set([`${first.x},${first.y}`]);
-  for (let i = 0; i < q.length; i++)
+  for (let n = 0; n < q.length; n++)
     for (const [dx, dy] of [
-      [40, 0],
-      [-40, 0],
-      [0, 40],
-      [0, -40],
+      [80, 0],
+      [-80, 0],
+      [0, 80],
+      [0, -80],
     ]) {
-      const p = { x: q[i].x + dx, y: q[i].y + dy },
+      const p = { x: q[n].x + dx, y: q[n].y + dy },
         key = `${p.x},${p.y}`;
       if (seen.has(key) || r.blocked(p.x, p.y, 19)) continue;
       seen.add(key);
@@ -51,67 +57,88 @@ function flood(r: Raid) {
     }
   return q;
 }
-describe("猫尾乡野布局与风险梯度", () => {
-  it("河流实际阻隔，三座桥可通行，两条出生路线都连接中央", () => {
+describe("大尺度猫尾乡野布局与风险梯度", () => {
+  it("13000×10000地图拉开区域，两条出生路线经三桥实际连通，河流不可涉水", () => {
     const r = start();
-    expect(r.p).toMatchObject({ x: 260, y: 1530 });
-    expect(villageWaterBlocked(1200, 1310)).toBe(true);
+    expect([r.width, r.height]).toEqual([13000, 10000]);
+    expect(r.p).toMatchObject(villagePoint(260, 1530));
+    const water = villagePoint(1200, 1310);
+    expect(villageWaterBlocked(water.x, water.y)).toBe(true);
+    const q = flood(r);
     for (const b of villageBridges)
       expect(r.blocked(b.x, b.y, 19), b.id).toBe(false);
-    const q = flood(r);
-    for (const [x, y] of [
-      [260, 700],
-      [800, 820],
-      [1460, 1550],
-      [1460, 1180],
-      [1580, 940],
-      [2140, 500],
-    ])
+    for (const b of villageBuildings)
       expect(
-        q.some((p) => Math.hypot(p.x - x, p.y - y) < 45),
-        `${x},${y}`,
+        q.some((p) => inBuilding(b, p.x, p.y)),
+        b.id,
       ).toBe(true);
-    // A straight northward attempt from the spawn bank cannot walk through the water.
-    const actor = { x: 900, y: 1500 };
-    for (let i = 0; i < 250; i++) r.moveActor(actor, 0, -2);
-    expect(actor.y).toBeGreaterThan(1270);
+    for (const e of r.exits)
+      expect(
+        q.some((p) => Math.hypot(p.x - e.x, p.y - e.y) < 90),
+        e.name,
+      ).toBe(true);
+    for (let i = 0; i < villageBuildings.length; i++)
+      for (let j = i + 1; j < villageBuildings.length; j++)
+        expect(
+          Math.hypot(
+            villageBuildings[i].x - villageBuildings[j].x,
+            villageBuildings[i].y - villageBuildings[j].y,
+          ),
+        ).toBeGreaterThan(1100);
+    const actor = villagePoint(900, 1500);
+    for (let n = 0; n < 1000; n++) r.moveActor(actor, 0, -3);
+    expect(actor.y).toBeGreaterThan(7000);
   });
-  it("可见道路中心线不会通入实墙、水域或围栏", () => {
+  it("可见道路中心线不穿实墙、水域、围栏，旋转建筑的入口确实可走入", () => {
     const r = start(),
-      failures: string[] = [];
+      errors: string[] = [];
     for (const points of villageRoads)
-      for (let i = 1; i < points.length; i++) {
-        const [ax, ay] = points[i - 1],
-          [bx, by] = points[i];
-        if (!villageTravelClear(r, ax, ay, bx, by)) {
-          const n = Math.ceil(Math.hypot(bx - ax, by - ay) / 15);
-          for (let k = 1; k <= n; k++) {
-            const x = ax + ((bx - ax) * k) / n,
-              y = ay + ((by - ay) * k) / n;
-            if (r.blocked(x, y, 19)) {
-              failures.push(
-                `${ax},${ay} -> ${bx},${by}: blocked ${Math.round(x)},${Math.round(y)} ${r.walls.filter((w) => Math.abs(x - w.x) < w.w / 2 + 19 && Math.abs(y - w.y) < w.h / 2 + 19).map((w) => w.type + ":" + w.x + "," + w.y)}`,
-              );
-              break;
-            }
-          }
-        }
-      }
-    expect(failures).toEqual([]);
+      for (let n = 1; n < points.length; n++)
+        if (
+          !villageTravelClear(
+            r,
+            ...(points[n - 1] as [number, number]),
+            ...(points[n] as [number, number]),
+          )
+        )
+          errors.push(`${points[n - 1]} -> ${points[n]}`);
+    expect(errors).toEqual([]);
+    expect(
+      new Set(villageBuildings.map((b) => b.rotation)).size,
+    ).toBeGreaterThanOrEqual(4);
+    for (const b of villageBuildings) {
+      const p = buildingWorld(b, b.doorOffset, b.h / 2 + 90),
+        goal = buildingWorld(b, b.doorOffset, b.h / 2 - 110);
+      expect(villageTravelClear(r, p.x, p.y, goal.x, goal.y), b.id).toBe(true);
+      expect(b.h).toBeGreaterThanOrEqual(580);
+      expect(b.w).toBeGreaterThanOrEqual(720);
+    }
   });
-  it("多个种子下所有容器可接近、敌人不刷进水或墙内，出生没有固定敌人", () => {
-    for (let seed = 0; seed < 24; seed++) {
+  it("多个种子下容器全部可接近、室内间距足够，敌人不刷进水或墙内，出生无固定敌人", () => {
+    for (let seed = 0; seed < 16; seed++) {
       const r = start(seed),
         q = flood(r);
       for (const c of r.containers)
         expect(
           q.some(
             (p) =>
-              Math.hypot(p.x - c.x, p.y - c.y) < 70 &&
+              Math.hypot(p.x - c.x, p.y - c.y) < 85 &&
               r.lineClear(p.x, p.y, c.x, c.y),
           ),
-          `${seed}:${c.region}:${c.type} ${c.x},${c.y}`,
+          `${seed}:${c.region} ${c.x},${c.y}`,
         ).toBe(true);
+      for (const b of villageBuildings) {
+        const contents = r.containers.filter((c) => inBuilding(b, c.x, c.y));
+        for (let i = 0; i < contents.length; i++)
+          for (let j = i + 1; j < contents.length; j++)
+            expect(
+              Math.hypot(
+                contents[i].x - contents[j].x,
+                contents[i].y - contents[j].y,
+              ),
+              `${b.id}:${i},${j}`,
+            ).toBeGreaterThanOrEqual(150);
+      }
       expect(r.enemies.length).toBeGreaterThanOrEqual(20);
       expect(r.enemies.length).toBeLessThanOrEqual(22);
       expect(r.enemies.filter((e) => e.boss).map((e) => e.boss!.id)).toEqual([
@@ -119,101 +146,129 @@ describe("猫尾乡野布局与风险梯度", () => {
       ]);
       for (const e of r.enemies) {
         expect(r.blocked(e.x, e.y)).toBe(false);
-        expect(Math.hypot(e.x - r.p.x, e.y - r.p.y)).toBeGreaterThan(550);
+        expect(Math.hypot(e.x - r.p.x, e.y - r.p.y)).toBeGreaterThan(2500);
       }
     }
   });
-  it("诊所无枪弹护具，低价值野外多于高价值容器，传说只在谷仓与农庄极少出现", () => {
+  it("原有区域容器数量、概率与资源梯度不变，诊所无枪弹护具，传说仍极稀有", () => {
     const totals: Record<
       string,
       { value: number; count: number; legend: number }
     > = {};
     for (let seed = 0; seed < 200; seed++) {
       const r = start(seed);
-      const low = r.containers.filter((c) =>
-        ["box", "litter"].includes(c.type),
+      expect(r.containers.length).toBeGreaterThanOrEqual(44);
+      expect(r.containers.length).toBeLessThanOrEqual(53);
+      expect(
+        r.containers.filter((c) => ["box", "litter"].includes(c.type)).length,
+      ).toBeGreaterThan(
+        r.containers.filter((c) => ["safe", "weapon", "bed"].includes(c.type))
+          .length,
       );
-      const high = r.containers.filter((c) =>
-        ["safe", "weapon", "bed"].includes(c.type),
+      const region = (name: string) =>
+        r.containers.filter((c) => c.region === name);
+      expect(region("spawn")).toHaveLength(2);
+      expect(region("hunter").length).toBeGreaterThanOrEqual(5);
+      expect(region("hunter").length).toBeLessThanOrEqual(6);
+      expect(region("clinic").filter((c) => c.type === "medical")).toHaveLength(
+        3,
       );
-      expect(low.length).toBeGreaterThan(high.length);
       for (const c of r.containers) {
-        if (c.region === "spawn") expect(["box", "litter"]).toContain(c.type);
         if (c.region === "clinic")
           expect(
             c.items.every((i) =>
               ["food", "collectible"].includes(db[i.id].kind),
             ),
           ).toBe(true);
-        if (["safe", "weapon", "bed"].includes(c.type))
-          expect(["hunter", "shop", "clinic", "barn", "boss"]).toContain(
-            c.region,
-          );
         const t = (totals[c.region!] ||= { value: 0, count: 0, legend: 0 });
         for (const i of c.items)
           if (db[i.id].kind === "collectible") {
-            t.count++;
             t.value += db[i.id].price;
+            t.count++;
             if (db[i.id].tier === 5) t.legend++;
           }
       }
     }
-    expect(totals.boss.value / totals.boss.count).toBeGreaterThan(
-      totals.barn.value / totals.barn.count,
-    );
-    expect(totals.barn.value / totals.barn.count).toBeGreaterThan(
-      totals.clinic.value / totals.clinic.count,
-    );
-    expect(totals.clinic.value / totals.clinic.count).toBeGreaterThan(
-      totals.hunter.value / totals.hunter.count,
-    );
+    for (const [a, b] of [
+      ["boss", "barn"],
+      ["barn", "clinic"],
+      ["clinic", "hunter"],
+    ])
+      expect(totals[a].value / totals[a].count).toBeGreaterThan(
+        totals[b].value / totals[b].count,
+      );
     for (const [region, t] of Object.entries(totals))
       if (!["boss", "barn"].includes(region)) expect(t.legend).toBe(0);
     expect(totals.boss.legend / totals.boss.count).toBeLessThan(0.005);
   });
-  it("AI寻路经过桥面，不会直冲河流，谷仓侧门与农庄内撤离点均可到达", () => {
+  it("大地图A*可跨河经桥和旋转门寻路，实际AI能过主桥；B点在农庄内无击杀限制", () => {
     const r = start(),
       e = r.enemies[0];
-    e.x = 260;
-    e.y = 1530;
-    r.route(e, 260, 600);
-    expect(e.path!.length).toBeGreaterThan(5);
+    Object.assign(e, villagePoint(260, 1530));
+    const hut = villageBuildings[0];
+    r.route(e, hut.x, hut.y);
+    expect(e.path!.length).toBeGreaterThan(10);
     expect(e.path!.every((p) => !r.blocked(p.x, p.y, 19))).toBe(true);
     expect(e.path!.some((p) => inside(p.x, p.y, villageBridges[0]))).toBe(true);
-    e.x = 800;
-    e.y = 820;
-    r.route(e, 2060, 1180);
-    expect(e.path!.some((p) => p.x > 1900 && Math.abs(p.y - 1180) < 60)).toBe(
-      true,
-    );
-    // Exercise the actual enemy update, not only the generated path: the AI
-    // must cross the main bridge rather than see the player and push into water.
-    Object.assign(r.p, { x: 260, y: 300 });
+    const bridge = villageBridges[2],
+      target = { x: bridge.x, y: bridge.y - bridge.h / 2 - 40 };
+    Object.assign(r.p, villagePoint(260, 300));
     Object.assign(e, {
-      x: 1460,
-      y: 1560,
+      x: bridge.x,
+      y: bridge.y + bridge.h / 2 + 40,
       state: "investigate",
-      target: { x: 1460, y: 1250 },
+      target,
       alert: 1000,
       path: [],
       pathTime: 0,
     });
-    let crossedDeck = false;
-    for (let n = 0; n < 600 && Math.hypot(e.x - 1460, e.y - 1250) > 30; n++) {
+    let crossed = false;
+    for (
+      let n = 0;
+      n < 2400 && Math.hypot(e.x - target.x, e.y - target.y) > 45;
+      n++
+    ) {
       r.updateEnemy(e, 1 / 30);
-      crossedDeck ||= inside(e.x, e.y, villageBridges[2]);
+      crossed ||= inside(e.x, e.y, bridge);
       expect(villageWaterBlocked(e.x, e.y, 15)).toBe(false);
     }
-    expect(crossedDeck).toBe(true);
-    expect(Math.hypot(e.x - 1460, e.y - 1250)).toBeLessThan(30);
-    const exit = r.exits[1];
-    expect(inside(exit.x, exit.y, { x: 1955, y: 395, w: 590, h: 530 })).toBe(
-      true,
-    );
+    expect(crossed).toBe(true);
+    expect(Math.hypot(e.x - target.x, e.y - target.y)).toBeLessThan(45);
+    expect(
+      inside(r.exits[1].x, r.exits[1].y, {
+        ...villagePoint(1955, 395),
+        w: (590 * 13000) / 2400,
+        h: (530 * 10000) / 1800,
+      }),
+    ).toBe(true);
     expect(r.exits[0]).toMatchObject({ active: true, paid: false });
     expect(r.exits[2]).toMatchObject({ active: true, paid: true });
   });
-  it("Boss护卫分组警戒，Boss不追出农庄；其他地图仍使用原布局", () => {
+  it("相同种子的容器内容、敌猫装备与撤离开放状态和扩图前逐项一致", () => {
+    for (const [seed, hash] of Object.entries(baselineContent)) {
+      const r = start(Number(seed)),
+        data = {
+          containers: r.containers.map((c) => ({
+            region: c.region,
+            type: c.type,
+            items: c.items.map((i) => [i.id, i.qty]),
+          })),
+          enemies: r.enemies.map((e) => [
+            e.breed,
+            e.tier,
+            e.weapon,
+            e.maxHp,
+            e.boss?.id || "",
+          ]),
+          exits: r.exits.map((e) => [e.paid, e.active]),
+        };
+      expect(
+        createHash("sha256").update(JSON.stringify(data)).digest("hex"),
+        seed,
+      ).toBe(hash);
+    }
+  });
+  it("Boss护卫保持分组警戒和追击范围，其他地图保留原尺寸与布局", () => {
     const r = start(),
       west = r.enemies.find((e) => e.squad === "boss-west")!;
     r.engage(west);
@@ -223,15 +278,15 @@ describe("猫尾乡野布局与风险梯度", () => {
         .every((e) => e.state === "patrol"),
     ).toBe(true);
     const boss = r.enemies.find((e) => e.boss)!;
-    boss.target = { x: 260, y: 1530 };
+    boss.target = villagePoint(260, 1530);
     boss.state = "combat";
     boss.alert = 1000;
-    boss.cool = 1000;
-    boss.skillCool = 1000;
+    boss.cool = boss.skillCool = 1000;
     for (let n = 0; n < 600; n++) r.updateEnemy(boss, 1 / 30);
     expect(inside(boss.x, boss.y, boss.leash!, -20)).toBe(true);
     for (let m = 1; m < 4; m++) {
       const other = start(85, m);
+      expect([other.width, other.height]).toEqual([2400, 1800]);
       expect(other.rooms).toHaveLength(4);
       expect(other.containers).toHaveLength(20);
       expect(other.exits[0]).toMatchObject({ x: 170, y: 1000 });

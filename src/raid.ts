@@ -48,8 +48,11 @@ import {
   buildVillage,
   villageWaterBlocked,
   villageTravelClear,
+  hitsRect,
 } from "./village";
+import { routeVillage } from "./navigation";
 export interface Rect {
+  rotation?: number;
   x: number;
   y: number;
   w: number;
@@ -620,7 +623,7 @@ export class Raid {
           py = y + Math.sin(a) * r;
         if (!this.blocked(px, py, 24)) return { x: px, y: py };
       }
-    return { x: 1100, y: 1600 };
+    return this.map === 0 ? { x: this.p.x, y: this.p.y } : { x: 1100, y: 1600 };
   }
   spawn(x: number, y: number, breed: number, tier: number, boss?: BossDef) {
     ({ x, y } = this.freePoint(x, y));
@@ -679,10 +682,7 @@ export class Raid {
       x > this.width - 40 ||
       y > this.height - 40 ||
       (this.map === 0 && villageWaterBlocked(x, y, r)) ||
-      this.walls.some(
-        (w) =>
-          Math.abs(x - w.x) < w.w / 2 + r && Math.abs(y - w.y) < w.h / 2 + r,
-      )
+      this.walls.some((w) => hitsRect(x, y, w, r))
     );
   }
   moveActor(actor: { x: number; y: number }, dx: number, dy: number) {
@@ -695,18 +695,16 @@ export class Raid {
     for (let i = 1; i < n; i++) {
       const x = ax + ((bx - ax) * i) / n,
         y = ay + ((by - ay) * i) / n;
-      if (
-        this.walls.some(
-          (w) =>
-            Math.abs(x - w.x) < w.w / 2 + 2 && Math.abs(y - w.y) < w.h / 2 + 2,
-        )
-      )
-        return false;
+      if (this.walls.some((w) => hitsRect(x, y, w, 2))) return false;
     }
     return true;
   }
   // Fine village navigation resolves doorways and bridges; other maps retain the 80-unit grid.
   route(e: Enemy, tx: number, ty: number) {
+    if (this.map === 0) {
+      routeVillage(this, e, tx, ty);
+      return;
+    }
     const cell = this.map === 0 ? 40 : 80,
       offset = cell / 2,
       cols = Math.ceil(this.width / cell),
@@ -1172,11 +1170,9 @@ export class Raid {
       )
         continue;
       const sameRoom = this.rooms.some(
-        ([x, y, w, h]) =>
-          Math.abs(e.x - x) < w / 2 &&
-          Math.abs(e.y - y) < h / 2 &&
-          Math.abs(ally.x - x) < w / 2 &&
-          Math.abs(ally.y - y) < h / 2,
+        ([x, y, w, h, rotation]) =>
+          hitsRect(e.x, e.y, { x, y, w, h, rotation }) &&
+          hitsRect(ally.x, ally.y, { x, y, w, h, rotation }),
       );
       if (
         sameRoom ||
@@ -1773,13 +1769,7 @@ export class Raid {
         b.y += dy;
         b.travel += Math.hypot(dx, dy);
         b.life -= dt / steps;
-        if (
-          this.walls.some(
-            (w) =>
-              Math.abs(b.x - w.x) < w.w / 2 + 2 &&
-              Math.abs(b.y + 20 - w.y) < w.h / 2 + 2,
-          )
-        ) {
+        if (this.walls.some((w) => hitsRect(b.x, b.y + 20, w, 2))) {
           b.life = 0;
           this.emit(b.x, b.y, 3, "#afbc99");
           this.combatFX.push({

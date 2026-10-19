@@ -1,3 +1,4 @@
+import { drawVillageMap } from "./village-map";
 import { drawVillageGround } from "./village-ground";
 import { cat, box, tree, ellipse, round, path, text, type Ctx } from "./art";
 import { maps, breeds, colors, rng } from "./data";
@@ -30,12 +31,13 @@ export class Renderer {
     if (this.groundSeed === r.seed && this.ground) return;
     this.groundSeed = r.seed;
     const c = document.createElement("canvas");
-    c.width = r.width;
-    c.height = r.height;
+    c.width = r.map === 0 ? 4096 : r.width;
+    c.height = r.map === 0 ? Math.round((4096 * r.height) / r.width) : r.height;
     const g = c.getContext("2d")!,
       m = maps[r.map],
       random = rng(r.seed);
     if (r.map === 0) {
+      g.scale(c.width / r.width, c.height / r.height);
       drawVillageGround(g);
       this.ground = c;
       return;
@@ -531,6 +533,10 @@ import {
 } from "./data";
 const importTier = (i: Item) => itemDb[i.id].tier;
 export function miniMap(canvas: HTMLCanvasElement, r: Raid, large = false) {
+  if (r.map === 0) {
+    drawVillageMap(canvas, r, large);
+    return;
+  }
   const c = canvas.getContext("2d")!,
     w = canvas.width,
     h = canvas.height,
@@ -540,7 +546,7 @@ export function miniMap(canvas: HTMLCanvasElement, r: Raid, large = false) {
   round(c, 0, 0, w, h, 10, "#243d36");
   c.save();
   c.scale(sx, sy);
-  if (r.map === 0) drawVillageGround(c, large);
+
   c.fillStyle = "#80917c";
   for (const wall of r.walls)
     c.fillRect(wall.x - wall.w / 2, wall.y - wall.h / 2, wall.w, wall.h);

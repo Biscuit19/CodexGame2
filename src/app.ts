@@ -70,6 +70,29 @@ const root = document.querySelector<HTMLDivElement>("#ui")!,
 const gameMenu = document.createElement("dialog");
 gameMenu.id = "game-menu";
 document.body.append(gameMenu);
+const mapDialog = document.createElement("dialog");
+mapDialog.id = "map-dialog";
+mapDialog.setAttribute("aria-label", "战区地图");
+document.body.append(mapDialog);
+mapDialog.addEventListener("cancel", (event) => {
+  event.preventDefault();
+  if (raid) {
+    raid.mapOpen = false;
+    keys.clear();
+    overlay();
+  }
+});
+function syncMapDialog() {
+  if (!raid || raid.done || raid.paused || !raid.mapOpen) {
+    setDialog(mapDialog, "");
+    return;
+  }
+  if (mapDialog.open) return;
+  setDialog(
+    mapDialog,
+    `<section class="large-map panel">${heading(maps[raid.map].name)}<canvas id="full-map" width="1560" height="1200" aria-label="完整战区地图"></canvas><div class="map-legend"><span>绿：免费撤离</span><span>金：付费撤离</span><span>红：首领</span><span>米黄：你</span></div>${btn("关闭地图（M / Esc）", "toggle-map", "", "secondary full")}</section>`,
+  );
+}
 const baseMenu = document.createElement("dialog");
 baseMenu.id = "base-menu";
 document.body.append(baseMenu);
@@ -712,6 +735,7 @@ function render() {
     return;
   }
   syncGameMenu();
+  syncMapDialog();
   scene3d?.show(false);
   canvas.classList.add("hidden");
   document.body.classList.remove("in-raid");
@@ -765,7 +789,7 @@ function renderRaid() {
   canvas.classList.remove("hidden");
   document.body.classList.add("in-raid");
   if (r.map !== 0) scene3d?.show(false);
-  root.innerHTML = `<div class="raid-hud"><div class="raid-top"><strong>${maps[r.map].name}</strong><div id="boss-hud"></div>${btn('<b id="raid-time">15:00</b><span>菜单</span>', "pause", "", "raid-timer")}</div><canvas id="minimap" width="200" height="150" data-action="toggle-map" aria-label="打开战区地图"></canvas><div class="raid-bottom"><section class="vitals"><div><strong id="hp-number">100</strong><span>生命</span></div><div class="meter"><i id="hp-fill"></i></div><div class="stamina-row"><span>体力</span><strong id="st-number">${MOVEMENT.maxStamina}</strong><span id="sprint-state">疾跑</span></div><div class="meter stamina"><i id="st-fill"></i></div><span id="armor-readout"></span><span id="regen-readout"></span></section><section class="food-hud" aria-label="当前食物"><div id="food-art"></div><strong id="food-name"></strong><span id="food-quantity"></span><small>F 食用</small></section><div class="raid-shortcuts"><span>空格 翻滚</span><span>E 搜索</span><span>Tab 背包</span><span>M 地图</span></div><section class="weapon-hud"><div class="hud-weapon-column"><strong id="weapon-name"></strong><div id="weapon-art" class="hud-weapon-art" aria-hidden="true"></div><span id="weapon-condition"></span></div><div class="hud-ammo-column"><div class="hud-rounds"><b id="mag-count"></b><span id="reserve-count"></span></div><div class="hud-ammo-details"><span id="ammo-art" class="hud-ammo-art" aria-hidden="true"></span><span id="ammo-name"></span></div></div></section></div><div id="action-progress" class="action-progress hidden"></div><div id="crosshair"></div></div><div id="raid-overlay">${raidOverlay()}</div>`;
+  root.innerHTML = `<div class="raid-hud"><div class="raid-top"><strong>${maps[r.map].name}</strong><div id="boss-hud"></div>${btn('<b id="raid-time">15:00</b><span>菜单</span>', "pause", "", "raid-timer")}</div><canvas id="minimap" width="260" height="200" data-action="toggle-map" aria-label="打开战区地图"></canvas><div class="raid-bottom"><section class="vitals"><div><strong id="hp-number">100</strong><span>生命</span></div><div class="meter"><i id="hp-fill"></i></div><div class="stamina-row"><span>体力</span><strong id="st-number">${MOVEMENT.maxStamina}</strong><span id="sprint-state">疾跑</span></div><div class="meter stamina"><i id="st-fill"></i></div><span id="armor-readout"></span><span id="regen-readout"></span></section><section class="food-hud" aria-label="当前食物"><div id="food-art"></div><strong id="food-name"></strong><span id="food-quantity"></span><small>F 食用</small></section><div class="raid-shortcuts"><span>空格 翻滚</span><span>E 搜索</span><span>Tab 背包</span><span>M 地图</span></div><section class="weapon-hud"><div class="hud-weapon-column"><strong id="weapon-name"></strong><div id="weapon-art" class="hud-weapon-art" aria-hidden="true"></div><span id="weapon-condition"></span></div><div class="hud-ammo-column"><div class="hud-rounds"><b id="mag-count"></b><span id="reserve-count"></span></div><div class="hud-ammo-details"><span id="ammo-art" class="hud-ammo-art" aria-hidden="true"></span><span id="ammo-name"></span></div></div></section></div><div id="action-progress" class="action-progress hidden"></div><div id="crosshair"></div></div><div id="raid-overlay">${raidOverlay()}</div>`;
   overlay();
   updateHUD();
 }
@@ -774,8 +798,7 @@ function raidOverlay() {
   const r = raid;
   if (r.paused)
     return `<section class="modal pause-modal panel">${pausePage === "settings" ? `${settingsContent(true)}${btn("返回暂停菜单", "pause-menu", "", "secondary full")}` : pausePage === "help" ? `${guide()}${btn("返回暂停菜单", "pause-menu", "", "secondary full")}` : `<h1>游戏菜单</h1>${btn("继续游戏", "pause", "", "primary full")}${btn("设置", "pause-settings", "", "secondary full")}${btn("操作指南", "pause-help", "", "secondary full")}${btn("退出本局", "abort", "", "secondary full")}<p>恢复出击前状态，不带出本局物品。</p>`}</section>`;
-  if (r.mapOpen)
-    return `<div class="modal-backdrop"><section class="modal large-map panel">${heading(maps[r.map].name, "绿色：撤离点　橙色：首领")}<canvas id="full-map" width="960" height="720"></canvas>${btn("关闭地图", "toggle-map", "", "secondary full")}</section></div>`;
+  if (r.mapOpen) return "";
   const bag = r.inventory || r.search || r.puzzle ? inventoryPanel() : "";
   let right = "";
   if (r.puzzle)
@@ -788,6 +811,7 @@ function raidOverlay() {
 }
 function overlay() {
   syncGameMenu();
+  syncMapDialog();
   if (raid && !raid.done && !document.querySelector("#raid-overlay"))
     renderRaid();
   const el = document.querySelector("#raid-overlay");
@@ -1220,6 +1244,8 @@ async function action(el: HTMLElement) {
   } else if (a === "toggle-map") {
     if (raid) {
       raid.mapOpen = !raid.mapOpen;
+      keys.clear();
+      mouse.down = false;
       raid.interrupt();
       overlay();
     }
@@ -1599,6 +1625,8 @@ window.addEventListener(
     }
     if (e.code === "KeyM") {
       r.mapOpen = !r.mapOpen;
+      keys.clear();
+      mouse.down = false;
       r.interrupt();
       overlay();
     }

@@ -9,6 +9,8 @@ import {
   villageTrees,
   villageRocks,
   inside,
+  villagePoint,
+  inBuilding,
 } from "./village";
 import hunter from "./assets/village/hunter.glb?url";
 import clinic from "./assets/village/clinic.glb?url";
@@ -49,68 +51,57 @@ function template(id: string) {
     cache.set(
       id,
       loader.loadAsync(urls[id]).then((gltf) => {
-        const parts = new Map<string, THREE.BufferGeometry[]>();
+        // Preserve UVs, normal smoothing and original gradient textures. Merge
+        // only meshes sharing both material and roof/body visibility behavior.
+        const parts = new Map<
+          string,
+          {
+            name: string;
+            material: THREE.Material;
+            geometries: THREE.BufferGeometry[];
+          }
+        >();
         gltf.scene.updateMatrixWorld(true);
         gltf.scene.traverse((object) => {
           if (!(object instanceof THREE.Mesh)) return;
-          let ancestor: THREE.Object3D | null = object,
+          let node: THREE.Object3D | null = object,
             roof = false;
-          while (ancestor) {
-            if (ancestor.name.startsWith("roof_")) roof = true;
-            ancestor = ancestor.parent;
+          while (node) {
+            if (node.name.startsWith("roof_")) roof = true;
+            node = node.parent;
           }
-          const key = roof ? "roof" : "body";
+          const mat = object.material as THREE.MeshStandardMaterial;
+          const name = /^(interior_floor|floor_seam)/.test(object.name)
+              ? "floor"
+              : roof
+                ? "roof"
+                : "body",
+            key = name + mat.uuid;
           const geometry = object.geometry
             .clone()
             .applyMatrix4(object.matrixWorld);
-          const g = geometry.index ? geometry.toNonIndexed() : geometry;
-          if (g !== geometry) geometry.dispose();
-          const color = g.getAttribute("color"),
-            mat = object.material as THREE.MeshStandardMaterial;
-          const values = new Float32Array(g.attributes.position.count * 3);
-          for (let i = 0; i < g.attributes.position.count; i++)
-            values.set(
-              [
-                color ? color.getX(i) : mat.color.r,
-                color ? color.getY(i) : mat.color.g,
-                color ? color.getZ(i) : mat.color.b,
-              ],
-              i * 3,
-            );
-          for (const name of Object.keys(g.attributes))
-            if (name !== "position" && name !== "normal")
-              g.deleteAttribute(name);
-          g.setAttribute("color", new THREE.BufferAttribute(values, 3));
-          if (!g.attributes.normal) g.computeVertexNormals();
-          const list = parts.get(key) || [];
-          list.push(g);
-          parts.set(key, list);
+          const existing = parts.get(key) || {
+            name,
+            material: mat,
+            geometries: [],
+          };
+          existing.geometries.push(geometry);
+          parts.set(key, existing);
         });
         const group = new THREE.Group();
-        group.name = `kaykit-${id}`;
-        for (const [name, geometries] of parts) {
-          const merged = mergeGeometries(geometries, false)!;
-          geometries.forEach((g) => g.dispose());
-          const m = new THREE.Mesh(
-            merged,
-            new THREE.MeshStandardMaterial({
-              vertexColors: true,
-              roughness: 0.92,
-            }),
-          );
-          m.name = name;
-          m.castShadow = m.receiveShadow = true;
-          group.add(m);
+        group.name = `countryside-${id}`;
+        for (const entry of parts.values()) {
+          const geometry = mergeGeometries(entry.geometries, false)!;
+          entry.geometries.forEach((g) => g.dispose());
+          const mat = entry.material.clone() as THREE.MeshStandardMaterial;
+          mat.roughness = 0.86;
+          const mesh = new THREE.Mesh(geometry, mat);
+          mesh.name = entry.name;
+          mesh.castShadow = mesh.receiveShadow = true;
+          group.add(mesh);
         }
-        // The packed source objects are no longer needed after merging by roof/body.
         gltf.scene.traverse((o) => {
-          if (o instanceof THREE.Mesh) {
-            o.geometry.dispose();
-            for (const m of Array.isArray(o.material)
-              ? o.material
-              : [o.material])
-              m.dispose();
-          }
+          if (o instanceof THREE.Mesh) o.geometry.dispose();
         });
         return group;
       }),
@@ -190,6 +181,7 @@ export function createVillageScene(
         if (!stage.parent) return;
         const g = copy(t);
         g.position.set(b.x, 0, b.y);
+        g.rotation.y = -b.rotation;
         g.name = `village-building-${b.id}`;
         g.traverse((o) => {
           if (o instanceof THREE.Mesh) {
@@ -202,19 +194,23 @@ export function createVillageScene(
         buildings.push({ group: g, id: b.id });
       }),
     );
-  for (const b of villageBridges) {
-    // Normalize to deck dimensions before rotating the horizontal hunter link.
-    add(
-      "bridge",
-      b.x,
-      b.y,
-      b.rotation ? b.h : b.w,
-      b.rotation ? b.w : b.h,
-      30,
-      b.rotation,
-      -6,
+  for (const b of villageBridges)
+    requests.push(
+      template("bridge").then((t) => {
+        if (!stage.parent) return;
+        const g = copy(t);
+        g.name = `village-bridge-${b.id}`;
+        g.position.set(b.x, 0, b.y);
+        g.rotation.y = b.rotation;
+        g.scale.set(
+          (b.rotation ? b.h : b.w) / 400,
+          1,
+          (b.rotation ? b.w : b.h) / 1600,
+        );
+        g.userData.deckHeight = 0;
+        stage.add(g);
+      }),
     );
-  }
   for (const f of villageFenceRects) {
     const horizontal = f.w > f.h,
       length = horizontal ? f.w : f.h,
@@ -227,7 +223,7 @@ export function createVillageScene(
         f.y + (horizontal ? 0 : offset),
         length / count + 2,
         14,
-        f.x >= 1660 && f.y <= 660 ? 53 : 33,
+        f.x >= (1660 * 13000) / 2400 && f.y <= (660 * 10000) / 1800 ? 65 : 45,
         horizontal ? 0 : Math.PI / 2,
       );
     }
@@ -283,14 +279,25 @@ export function createVillageScene(
     });
     stage.add(sign);
   }
-  for (const [x, y] of villageTrees) add("tree", x, y, 70, 68, 115);
+  for (const [x, y] of villageTrees) add("tree", x, y, 125, 120, 185);
   for (const [x, y] of villageRocks) add("rock", x, y, 49, 38, 29);
   for (const w of r.walls.filter((w) => w.type === "village-cover"))
     add("crate", w.x, w.y, w.w, w.h, w.z);
-  add("logs", 155, 685, 85, 45, 28);
-  add("wheelbarrow", 2240, 1040, 60, 45, 38);
-  add("windmill", 2240, 815, 115, 95, 185);
-  add("barrel", 2260, 1230, 72, 72, 120);
+  const prop = (
+    id: string,
+    x: number,
+    y: number,
+    w: number,
+    d: number,
+    h: number,
+  ) => {
+    const p = villagePoint(x, y);
+    return add(id, p.x, p.y, w, d, h);
+  };
+  prop("logs", 155, 685, 140, 65, 40);
+  prop("wheelbarrow", 2240, 1040, 85, 60, 50);
+  prop("windmill", 2240, 815, 230, 190, 340);
+  prop("barrel", 2260, 1230, 110, 110, 180);
   for (const [x, y] of [
     [1850, 815],
     [2200, 1030],
@@ -301,7 +308,8 @@ export function createVillageScene(
       new THREE.MeshStandardMaterial({ color: "#c6aa57", roughness: 1 }),
     );
     hay.rotation.z = Math.PI / 2;
-    hay.position.set(x, 24, y);
+    const p = villagePoint(x, y);
+    hay.position.set(p.x, 24, p.y);
     hay.castShadow = hay.receiveShadow = true;
     stage.add(hay);
   }
@@ -321,21 +329,21 @@ export function createVillageScene(
 export function updateVillageScene(stage: THREE.Group, r: Raid) {
   for (const entry of stage.userData.buildings || []) {
     const b = villageBuildings.find((b) => b.id === entry.id)!;
-    const entered = inside(r.p.x, r.p.y, b, -12);
-    const occludes =
-      Math.abs(r.p.x - b.x) < b.w / 2 + 55 &&
-      r.p.y < b.y + b.h / 2 &&
-      b.y - b.h / 2 - r.p.y < (b.height + 30) / Math.tan((33 * Math.PI) / 180);
+    const entered = inBuilding(b, r.p.x, r.p.y, 15);
+    const occludes = Math.abs(r.p.x-b.x)<Math.max(b.w,b.h)*.7+45 && r.p.y<b.y && b.y-r.p.y<Math.max(b.w,b.h)*.7+(b.height+30)/Math.tan(33*Math.PI/180);
     entry.group.traverse((o: THREE.Object3D) => {
       if (!(o instanceof THREE.Mesh)) return;
       const m = o.material as THREE.MeshStandardMaterial;
-      m.opacity = entered
-        ? o.name === "roof"
-          ? 0.045
-          : 0.2
-        : occludes
-          ? 0.16
-          : 1;
+      m.opacity =
+        o.name === "floor"
+          ? 1
+          : entered
+            ? o.name === "roof"
+              ? 0.008
+              : 0.01
+            : occludes
+              ? 0.04
+              : 1;
       m.depthWrite = m.opacity > 0.5;
     });
   }

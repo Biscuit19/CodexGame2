@@ -13,10 +13,15 @@ test("33度斜视下乡村建筑主体与屋顶淡化，瞄准投影一致，实
   await page.getByRole("button", { name: "临时测试入口", exact: true }).click();
   await page.getByRole("button", { name: "进入地图一", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
-  await page.evaluate(() => {
+  await page.evaluate(async () => {
     const g = (window as any).__game;
+    const { villageBuildings } = await import("/src/village.ts" as string);
     g.raid.enemies = [];
-    Object.assign(g.raid.p, { x: 1300, y: 580, angle: Math.PI / 2 });
+    Object.assign(g.raid.p, {
+      x: villageBuildings[1].x,
+      y: villageBuildings[1].y,
+      angle: Math.PI / 2,
+    });
     g.raid.paused = true;
   });
   await page.waitForFunction(
@@ -53,8 +58,13 @@ test("33度斜视下乡村建筑主体与屋顶淡化，瞄准投影一致，实
       target,
       joined: r.villageStage.userData.buildings.every(
         (entry: any) =>
-          entry.group.children.length === 2 &&
-          entry.group.children.every((m: any) => !!m.geometry.attributes.color),
+          entry.group.children.some((m: any) => m.name === "floor") &&
+          entry.group.children.some(
+            (m: any) =>
+              !!m.material.map &&
+              !!m.geometry.attributes.uv &&
+              !!m.geometry.attributes.normal,
+          ),
       ),
     };
   });
