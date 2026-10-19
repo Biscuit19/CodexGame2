@@ -3,6 +3,7 @@ import { MarchingCubes } from "three/addons/objects/MarchingCubes.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { movementFrame, rollAxis } from "./locomotion";
 import { createPlayerHelmets } from "./player-helmets";
+import { createPlayerTail, animatePlayerTail } from "./player-tail";
 
 type Uniform = { value: number };
 export type PlayerPose = {
@@ -242,91 +243,6 @@ function limb(
   group.add(shape);
   return group;
 }
-function continuousTail(parent: THREE.Group) {
-  const tail = new THREE.Group();
-  tail.position.set(0, 11, -12.5);
-  parent.add(tail);
-  const curve = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(0, 0, 0),
-    new THREE.Vector3(0, 2, -9),
-    new THREE.Vector3(0, 11, -19),
-    new THREE.Vector3(0, 23, -22),
-    new THREE.Vector3(0, 29, -16),
-  ]);
-  const rings = 60,
-    boneCount = 6,
-    geometry = new THREE.TubeGeometry(curve, rings, 4.1, 12, false);
-  const positions = geometry.getAttribute("position"),
-    colors = [],
-    indices = [],
-    weights = [];
-  const cream = new THREE.Color("#f5dfba"),
-    orange = new THREE.Color("#e89642"),
-    brown = new THREE.Color("#563a29");
-  for (let i = 0; i < positions.count; i++) {
-    const ring = Math.floor(i / 13),
-      t = ring / rings,
-      c = curve.getPointAt(t),
-      v = new THREE.Vector3().fromBufferAttribute(positions, i);
-    v.sub(c)
-      .multiplyScalar(1 - t * 0.52)
-      .add(c);
-    positions.setXYZ(i, v.x, v.y, v.z);
-    const b = t * (boneCount - 1),
-      low = Math.min(boneCount - 2, Math.floor(b)),
-      f = b - low;
-    indices.push(low, low + 1, 0, 0);
-    weights.push(1 - f, f, 0, 0);
-    const color = t > 0.77 ? cream : t > 0.44 ? brown : orange;
-    colors.push(color.r, color.g, color.b);
-  }
-  geometry.computeVertexNormals();
-  geometry.setAttribute(
-    "skinIndex",
-    new THREE.Uint16BufferAttribute(indices, 4),
-  );
-  geometry.setAttribute(
-    "skinWeight",
-    new THREE.Float32BufferAttribute(weights, 4),
-  );
-  geometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
-  const material = new THREE.MeshStandardMaterial({
-    vertexColors: true,
-    roughness: 0.95,
-  });
-  const mesh = new THREE.SkinnedMesh(geometry, material),
-    bones: THREE.Bone[] = [];
-  for (let i = 0; i < boneCount; i++) {
-    const bone = new THREE.Bone(),
-      position = curve.getPointAt(i / (boneCount - 1));
-    if (i) {
-      bone.position
-        .copy(position)
-        .sub(curve.getPointAt((i - 1) / (boneCount - 1)));
-      bones[i - 1].add(bone);
-    } else {
-      bone.position.copy(position);
-      mesh.add(bone);
-    }
-    bones.push(bone);
-  }
-  mesh.bind(new THREE.Skeleton(bones));
-  mesh.frustumCulled = false;
-  tail.add(mesh);
-  // Rounded end cap is skinned with the final joint, never a visible string of separate spheres.
-  ellipsoid(
-    bones[boneCount - 1],
-    new THREE.MeshStandardMaterial({ color: "#f5dfba", roughness: 0.95 }),
-    0,
-    0,
-    0,
-    2.1,
-    2.1,
-    2.1,
-  );
-  return { tail, bones };
-}
-
 /** Clip triangles to an exact horizontal hem, avoiding a sawtooth edge at the cut. */
 function surfaceAbove(source: THREE.BufferGeometry, height: number) {
   const positions = source.getAttribute("position"),
@@ -459,22 +375,6 @@ export function updatePlayerEquipment(
   rig.pack.scale.setScalar(0.7 + Math.max(0, Math.min(4, bag - 1)) * 0.075);
 }
 
-/** Symmetric bind curve plus lagged lateral bends: both position and tip direction cross the midline. */
-export function tailMotion(time: number, phase: number, joint: number) {
-  const t = joint / 5;
-  const wave = time * 1.65 + phase;
-  const curl = Math.max(0, (joint - 1) / 4);
-  return {
-    y:
-      joint === 0
-        ? (1.3 + 0.12 * Math.sin(time * 0.31 + phase)) * Math.sin(wave)
-        : Math.sin(wave - joint * 0.38) * (0.1 + 0.1 * t),
-    x: Math.sin(time * 1.1 - joint * 0.42 + phase) * (0.045 + t * 0.12),
-    z:
-      Math.sin(wave - joint * 0.42 + 0.8) * curl * 0.58 +
-      Math.sin(time * 0.73 + phase * 1.7) * curl * 0.07,
-  };
-}
 export function createPlayerCat(): PlayerCatRig {
   const root = new THREE.Group(),
     body = new THREE.Group(),
@@ -534,7 +434,7 @@ export function createPlayerCat(): PlayerCatRig {
   );
   flap.position.set(0, 2, 2);
   pouch.add(flap);
-  const { tail, bones } = continuousTail(body);
+  const { tail, bones } = createPlayerTail(body);
   const gun = new THREE.Group(),
     knife = new THREE.Group();
   gun.position.set(0, -7.5, 9);
@@ -675,11 +575,6 @@ export function animatePlayerCat(
       (i ? -0.06 : 0.06) +
       (walk ? step * side * 0.34 + Math.cos(walk + i * Math.PI) * 0.05 : 0);
   });
-  // Usually a broad left/right sweep, with brief softer intervals and delayed tip follow-through.
-  rig.tailJoints.forEach((joint, i) => {
-    const motion = tailMotion(time, pose.phase, i);
-    joint.rotation.set(motion.x, motion.y, motion.z);
-  });
   pose.ears.forEach((ear, i) => {
     const twitch = Math.pow(
       Math.max(0, Math.sin(time * 1.4 + i * 2.3 + pose.phase)),
@@ -713,4 +608,5 @@ export function animatePlayerCat(
     });
     pose.arms.forEach((arm, i) => arm.rotation.set(-0.65, 0, i ? -0.15 : 0.15));
   }
+  animatePlayerTail(rig.tail, rig.tailJoints, rig.head, time, pose.phase);
 }

@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { updateBlink, tailMotion } from "../../src/player-cat";
+import { updateBlink } from "../../src/player-cat";
+import { tailRootMotion, tailTipDirection } from "../../src/player-tail";
 
 describe("眨眼不跳过闭眼画面", () => {
   it("不规则长帧跨过闭眼时刻仍保留完整闭眼关键帧", () => {
@@ -25,33 +26,45 @@ describe("眨眼不跳过闭眼画面", () => {
   }
 });
 
-describe("尾根与尾尖独立而连续地摆动", () => {
-  it("尾尖三轴有明显正反摆动，且不会只是复制尾根朝向", () => {
-    const roots = [],
-      tips = [];
-    for (let i = 0; i < 720; i++) {
-      roots.push(tailMotion(i / 60, 0.8, 0));
-      tips.push(tailMotion(i / 60, 0.8, 5));
+describe("尾根前后摆动与尾尖随机方向", () => {
+  it("尾根保留左右大幅扫动，同时有轻微连续的前后摆动", () => {
+    const samples = Array.from({ length: 720 }, (_, i) =>
+      tailRootMotion(i / 60, 0.8),
+    );
+    expect(Math.min(...samples.map((p) => p.x))).toBeLessThan(-0.1);
+    expect(Math.max(...samples.map((p) => p.x))).toBeGreaterThan(0.1);
+    expect(Math.min(...samples.map((p) => p.y))).toBeLessThan(-1.2);
+    expect(Math.max(...samples.map((p) => p.y))).toBeGreaterThan(1.2);
+    for (let i = 1; i < samples.length; i++) {
+      expect(Math.abs(samples[i].x - samples[i - 1].x)).toBeLessThan(0.003);
+      expect(Math.abs(samples[i].y - samples[i - 1].y)).toBeLessThan(0.045);
     }
-    for (const axis of ["x", "y", "z"] as const) {
-      expect(Math.min(...tips.map((p) => p[axis]))).toBeLessThan(-0.05);
-      expect(Math.max(...tips.map((p) => p[axis]))).toBeGreaterThan(0.05);
-    }
-    expect(Math.min(...roots.map((p) => p.y))).toBeLessThan(-1.2);
-    expect(Math.max(...roots.map((p) => p.y))).toBeGreaterThan(1.2);
-    expect(tips.some((p, i) => p.y * roots[i].y < -0.02)).toBe(true);
-    expect(tailMotion(2, 0.3, 5)).not.toEqual(tailMotion(2, 1.7, 5));
   });
-  it("每段骨骼连续变化，没有逐帧随机抽搐或过度扭转", () => {
-    for (let joint = 0; joint < 6; joint++) {
-      for (let i = 1; i < 600; i++) {
-        const previous = tailMotion((i - 1) / 60, 1.1, joint);
-        const next = tailMotion(i / 60, 1.1, joint);
-        for (const axis of ["x", "y", "z"] as const) {
-          expect(Math.abs(next[axis])).toBeLessThan(1.5);
-          expect(Math.abs(next[axis] - previous[axis])).toBeLessThan(0.045);
-        }
-      }
+  it("随机目标覆盖完整360度，每只猫独立且重新采样可复现", () => {
+    const bins = new Set<number>();
+    for (let i = 0; i < 200; i++) {
+      const target = tailTipDirection(i * 2.6, 0.4);
+      expect(Math.hypot(target.x, target.z)).toBeCloseTo(1);
+      bins.add(
+        Math.floor((Math.atan2(target.z, target.x) + Math.PI) / (Math.PI / 4)) %
+          8,
+      );
+      expect(target).toEqual(tailTipDirection(i * 2.6, 0.4));
+    }
+    expect(bins.size).toBe(8);
+    expect(tailTipDirection(5, 0.3)).not.toEqual(tailTipDirection(5, 2.1));
+  });
+  it("目标切换与跨过零度时平滑过渡，没有瞬间跳向或角度绕远路", () => {
+    for (let i = 1; i < 60 * 60; i++) {
+      const a = tailTipDirection((i - 1) / 60, 1.1),
+        b = tailTipDirection(i / 60, 1.1);
+      expect(Math.hypot(a.x - b.x, a.z - b.z)).toBeLessThan(0.04);
+    }
+    for (let i = 1; i < 40; i++) {
+      const t = i * 2.6 - 1.1 * 0.73;
+      const a = tailTipDirection(t - 1e-5, 1.1),
+        b = tailTipDirection(t + 1e-5, 1.1);
+      expect(Math.hypot(a.x - b.x, a.z - b.z)).toBeLessThan(1e-6);
     }
   });
 });

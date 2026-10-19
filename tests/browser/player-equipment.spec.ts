@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test("矮身三花的五级猫耳头盔护甲背包同步穿脱，耳壳随动且尾尖独立摆动", async ({
+test("矮身三花的五级猫耳头盔护甲背包同步穿脱并保持耳壳随动", async ({
   page,
 }) => {
   test.setTimeout(60000);
@@ -142,50 +142,5 @@ test("矮身三花的五级猫耳头盔护甲背包同步穿脱，耳壳随动�
   for (let i = 1; i < scales.length; i++)
     expect(scales[i]).toBeGreaterThan(scales[i - 1]);
   expect(scales[4]).toBeLessThanOrEqual(1);
-  const tail = await page.evaluate(async () => {
-    const g = (window as any).__game,
-      rig = g.renderer3d.actors.get("player");
-    const { animatePlayerCat } = await import("/src/player-cat.ts");
-    const time = performance.now() / 1000;
-    return Array.from({ length: 60 }, (_, i) => {
-      animatePlayerCat(rig, time + i * 0.2, 0, Math.PI / 2, 0, 0, 0);
-      rig.root.updateMatrixWorld(true);
-      const points = [1, 3, 4, 5].map((index) =>
-        rig.body.worldToLocal(
-          rig.tailJoints[index].getWorldPosition(
-            rig.tailJoints[index].position.clone(),
-          ),
-        ),
-      );
-      return {
-        rootX: points[0].x,
-        middleX: points[1].x,
-        tipX: points[3].x,
-        tipDirectionX: points[3].x - points[2].x,
-        root: rig.tailJoints[0].rotation.y,
-        tip: rig.tailJoints[5].rotation.y,
-      };
-    });
-  });
-  expect(
-    Math.max(...tail.map((p) => p.tip)) - Math.min(...tail.map((p) => p.tip)),
-  ).toBeGreaterThan(0.35);
-  expect(tail.some((p) => p.root * p.tip < -0.02)).toBe(true);
-  for (const [key, extent] of [
-    ["rootX", 7],
-    ["middleX", 14],
-    ["tipX", 12],
-    ["tipDirectionX", 2],
-  ] as const) {
-    expect(Math.min(...tail.map((p) => p[key]))).toBeLessThan(-extent);
-    expect(Math.max(...tail.map((p) => p[key]))).toBeGreaterThan(extent);
-  }
-  // Restore the real clock after synthetic sampling to leave the live animation healthy.
-  await page.evaluate(() => {
-    const rig = (window as any).__game.renderer3d.actors.get("player");
-    rig.player.blinkLast = 0;
-    rig.player.blinkElapsed = -1;
-    rig.player.blinkAt = 0;
-  });
   expect(errors).toEqual([]);
 });
