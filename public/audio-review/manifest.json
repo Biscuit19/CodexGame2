@@ -1,0 +1,1108 @@
+{
+  "sampleRate": 44100,
+  "previewOnly": true,
+  "sets": [
+    {
+      "id": "A",
+      "name": "圆润街机",
+      "origin": "Kenney 官方 FPS Starter Kit＋Interface",
+      "description": "短促、圆润，保留一点街机枪械的弹性；低频收住，不做真实枪炮的爆裂尾音。",
+      "kind": "素材方案"
+    },
+    {
+      "id": "B",
+      "name": "轻机械卡通",
+      "origin": "Kenney Impact＋Interface",
+      "description": "偏木质、轻金属与扣合感，电子感较少；动作声音更柔，接近日常小物件的精简触感。",
+      "kind": "素材方案"
+    },
+    {
+      "id": "C",
+      "name": "柔和电子",
+      "origin": "Kenney Sci-Fi Sounds＋Interface",
+      "description": "更干净的轻电子质感，柔化高频和长混响；保留四种枪不同的起音与重量。",
+      "kind": "素材方案"
+    },
+    {
+      "id": "D",
+      "name": "暖色原创",
+      "origin": "本次从零制作，无外部枪声采样",
+      "description": "沿原版方向重做：暖而短的低频、轻敲击与少量平滑气流，减少白噪声，四种枪分别设计。",
+      "kind": "原创方案"
+    }
+  ],
+  "categories": [
+    {
+      "id": "shot-smg",
+      "name": "冲锋枪射击",
+      "group": "shot"
+    },
+    {
+      "id": "shot-rifle",
+      "name": "步枪射击",
+      "group": "shot"
+    },
+    {
+      "id": "shot-sniper",
+      "name": "狙击枪射击",
+      "group": "shot"
+    },
+    {
+      "id": "shot-shotgun",
+      "name": "霰弹枪射击",
+      "group": "shot"
+    },
+    {
+      "id": "reload-smg",
+      "name": "冲锋枪换弹",
+      "group": "reload"
+    },
+    {
+      "id": "reload-rifle",
+      "name": "步枪换弹",
+      "group": "reload"
+    },
+    {
+      "id": "reload-sniper",
+      "name": "狙击枪换弹",
+      "group": "reload"
+    },
+    {
+      "id": "reload-shotgun",
+      "name": "霰弹枪换弹",
+      "group": "reload"
+    },
+    {
+      "id": "equip-weapon",
+      "name": "从容器装备武器",
+      "group": "action"
+    },
+    {
+      "id": "equip-gear",
+      "name": "从容器装备护具",
+      "group": "action"
+    },
+    {
+      "id": "roll",
+      "name": "翻滚",
+      "group": "action"
+    },
+    {
+      "id": "melee",
+      "name": "挥刀",
+      "group": "action"
+    }
+  ],
+  "sources": {
+    "fps-blaster": {
+      "repo": "KenneyNL/Starter-Kit-FPS",
+      "sha": "185fd2326d74a5cf858cffc616f87cf9696f9cc0",
+      "path": "sounds/blaster.ogg",
+      "url": "https://raw.githubusercontent.com/KenneyNL/Starter-Kit-FPS/185fd2326d74a5cf858cffc616f87cf9696f9cc0/sounds/blaster.ogg",
+      "sha256": "9ddb14d878e6af60941f7e7f7c97563c16b1c6cb1471658bb5211fcde1897783"
+    },
+    "fps-blaster_repeater": {
+      "repo": "KenneyNL/Starter-Kit-FPS",
+      "sha": "185fd2326d74a5cf858cffc616f87cf9696f9cc0",
+      "path": "sounds/blaster_repeater.ogg",
+      "url": "https://raw.githubusercontent.com/KenneyNL/Starter-Kit-FPS/185fd2326d74a5cf858cffc616f87cf9696f9cc0/sounds/blaster_repeater.ogg",
+      "sha256": "cba57117005b2ebe355dc67c2c72f92ba390a24a89ef28facf23814779d0cb0d"
+    },
+    "fps-enemy_attack": {
+      "repo": "KenneyNL/Starter-Kit-FPS",
+      "sha": "185fd2326d74a5cf858cffc616f87cf9696f9cc0",
+      "path": "sounds/enemy_attack.ogg",
+      "url": "https://raw.githubusercontent.com/KenneyNL/Starter-Kit-FPS/185fd2326d74a5cf858cffc616f87cf9696f9cc0/sounds/enemy_attack.ogg",
+      "sha256": "fdbd0e559acd5c01122f47cac2fda1ed24460a2bc130aeec91734ab67acb0411"
+    },
+    "fps-weapon_change": {
+      "repo": "KenneyNL/Starter-Kit-FPS",
+      "sha": "185fd2326d74a5cf858cffc616f87cf9696f9cc0",
+      "path": "sounds/weapon_change.ogg",
+      "url": "https://raw.githubusercontent.com/KenneyNL/Starter-Kit-FPS/185fd2326d74a5cf858cffc616f87cf9696f9cc0/sounds/weapon_change.ogg",
+      "sha256": "0b39e0f0d733cae3c44a838d67ab8c8510cf3b245016e398a7eb9ab13cda1449"
+    },
+    "fps-jump_c": {
+      "repo": "KenneyNL/Starter-Kit-FPS",
+      "sha": "185fd2326d74a5cf858cffc616f87cf9696f9cc0",
+      "path": "sounds/jump_c.ogg",
+      "url": "https://raw.githubusercontent.com/KenneyNL/Starter-Kit-FPS/185fd2326d74a5cf858cffc616f87cf9696f9cc0/sounds/jump_c.ogg",
+      "sha256": "3e854bd28b41b4e8e21a1e3e84ac2325a893971969a2e3b63edf26b44d3b1e2f"
+    },
+    "fps-land": {
+      "repo": "KenneyNL/Starter-Kit-FPS",
+      "sha": "185fd2326d74a5cf858cffc616f87cf9696f9cc0",
+      "path": "sounds/land.ogg",
+      "url": "https://raw.githubusercontent.com/KenneyNL/Starter-Kit-FPS/185fd2326d74a5cf858cffc616f87cf9696f9cc0/sounds/land.ogg",
+      "sha256": "145a1c17125dc4d344ac135bc5073e35ea12e19700ca30ee6e1e477010b4dca0"
+    },
+    "sf-laser_small_000": {
+      "repo": "Boyquotes/kenney-sci-fi-sounds-for-godot",
+      "sha": "c094967fe930c57ddb376f67c75f8aa0296690b7",
+      "path": "addons/kenney sci-fi sounds/laser_small_000.ogg",
+      "url": "https://raw.githubusercontent.com/Boyquotes/kenney-sci-fi-sounds-for-godot/c094967fe930c57ddb376f67c75f8aa0296690b7/addons/kenney%20sci-fi%20sounds/laser_small_000.ogg",
+      "sha256": "72b589eadd41781257ac859e4f4d030222e623390e4a1a83f6d05329a6e026f1"
+    },
+    "sf-laser_small_002": {
+      "repo": "Boyquotes/kenney-sci-fi-sounds-for-godot",
+      "sha": "c094967fe930c57ddb376f67c75f8aa0296690b7",
+      "path": "addons/kenney sci-fi sounds/laser_small_002.ogg",
+      "url": "https://raw.githubusercontent.com/Boyquotes/kenney-sci-fi-sounds-for-godot/c094967fe930c57ddb376f67c75f8aa0296690b7/addons/kenney%20sci-fi%20sounds/laser_small_002.ogg",
+      "sha256": "e70139466c3e801358c9041ee17db7ff82c0e9a9cdf44647ad0ea6b9f8458f63"
+    },
+    "sf-laser_large_000": {
+      "repo": "Boyquotes/kenney-sci-fi-sounds-for-godot",
+      "sha": "c094967fe930c57ddb376f67c75f8aa0296690b7",
+      "path": "addons/kenney sci-fi sounds/laser_large_000.ogg",
+      "url": "https://raw.githubusercontent.com/Boyquotes/kenney-sci-fi-sounds-for-godot/c094967fe930c57ddb376f67c75f8aa0296690b7/addons/kenney%20sci-fi%20sounds/laser_large_000.ogg",
+      "sha256": "a56d95794cd732d6c2d66ce488c14cf557fe526c282897c9a77675c2bd9b77e6"
+    },
+    "sf-laser_large_003": {
+      "repo": "Boyquotes/kenney-sci-fi-sounds-for-godot",
+      "sha": "c094967fe930c57ddb376f67c75f8aa0296690b7",
+      "path": "addons/kenney sci-fi sounds/laser_large_003.ogg",
+      "url": "https://raw.githubusercontent.com/Boyquotes/kenney-sci-fi-sounds-for-godot/c094967fe930c57ddb376f67c75f8aa0296690b7/addons/kenney%20sci-fi%20sounds/laser_large_003.ogg",
+      "sha256": "3c7b3c9d856ee31fa1b92d29322f6ee472446627381595baeaba2af35c07135f"
+    },
+    "sf-door_close_001": {
+      "repo": "Boyquotes/kenney-sci-fi-sounds-for-godot",
+      "sha": "c094967fe930c57ddb376f67c75f8aa0296690b7",
+      "path": "addons/kenney sci-fi sounds/door_close_001.ogg",
+      "url": "https://raw.githubusercontent.com/Boyquotes/kenney-sci-fi-sounds-for-godot/c094967fe930c57ddb376f67c75f8aa0296690b7/addons/kenney%20sci-fi%20sounds/door_close_001.ogg",
+      "sha256": "2153e83ff9880c78f9539aa5dcce80fc9e3b39c6fa0f8dec9325ec6d7ea2c9d5"
+    },
+    "sf-door_open_000": {
+      "repo": "Boyquotes/kenney-sci-fi-sounds-for-godot",
+      "sha": "c094967fe930c57ddb376f67c75f8aa0296690b7",
+      "path": "addons/kenney sci-fi sounds/door_open_000.ogg",
+      "url": "https://raw.githubusercontent.com/Boyquotes/kenney-sci-fi-sounds-for-godot/c094967fe930c57ddb376f67c75f8aa0296690b7/addons/kenney%20sci-fi%20sounds/door_open_000.ogg",
+      "sha256": "5b7e07eccd4413ad9ef3720c2d14f9cc699f4c50111e9b2f48bd60e6f1a164c3"
+    },
+    "sf-impact_metal_001": {
+      "repo": "Boyquotes/kenney-sci-fi-sounds-for-godot",
+      "sha": "c094967fe930c57ddb376f67c75f8aa0296690b7",
+      "path": "addons/kenney sci-fi sounds/impact_metal_001.ogg",
+      "url": "https://raw.githubusercontent.com/Boyquotes/kenney-sci-fi-sounds-for-godot/c094967fe930c57ddb376f67c75f8aa0296690b7/addons/kenney%20sci-fi%20sounds/impact_metal_001.ogg",
+      "sha256": "4a2b76f20052819c6ace57cc5ba55ec58deffcf74e3ed30694d619c582cc8e8e"
+    },
+    "ui-click_001": {
+      "repo": "Calinou/kenney-interface-sounds",
+      "sha": "4596a49eaf5a533948d49a47467f606bcdea70ff",
+      "path": "addons/kenney_interface_sounds/click_001.wav",
+      "url": "https://raw.githubusercontent.com/Calinou/kenney-interface-sounds/4596a49eaf5a533948d49a47467f606bcdea70ff/addons/kenney_interface_sounds/click_001.wav",
+      "sha256": "ea67c9d78750e5a356bf53ef8c2063b52cc3ccdae6ae8afeec87f97f79ae692d"
+    },
+    "ui-drop_002": {
+      "repo": "Calinou/kenney-interface-sounds",
+      "sha": "4596a49eaf5a533948d49a47467f606bcdea70ff",
+      "path": "addons/kenney_interface_sounds/drop_002.wav",
+      "url": "https://raw.githubusercontent.com/Calinou/kenney-interface-sounds/4596a49eaf5a533948d49a47467f606bcdea70ff/addons/kenney_interface_sounds/drop_002.wav",
+      "sha256": "72973e674ac557ebf29a843c6cc39bc9c7682bd684a737ba46812eea32cac21e"
+    },
+    "ui-switch_001": {
+      "repo": "Calinou/kenney-interface-sounds",
+      "sha": "4596a49eaf5a533948d49a47467f606bcdea70ff",
+      "path": "addons/kenney_interface_sounds/switch_001.wav",
+      "url": "https://raw.githubusercontent.com/Calinou/kenney-interface-sounds/4596a49eaf5a533948d49a47467f606bcdea70ff/addons/kenney_interface_sounds/switch_001.wav",
+      "sha256": "56a1dd5278d06b4c47c69d7664482bcb3feeac3027fdd8cb6d0883fda7738eb2"
+    },
+    "ui-switch_003": {
+      "repo": "Calinou/kenney-interface-sounds",
+      "sha": "4596a49eaf5a533948d49a47467f606bcdea70ff",
+      "path": "addons/kenney_interface_sounds/switch_003.wav",
+      "url": "https://raw.githubusercontent.com/Calinou/kenney-interface-sounds/4596a49eaf5a533948d49a47467f606bcdea70ff/addons/kenney_interface_sounds/switch_003.wav",
+      "sha256": "f57fcbc345d84d0b8d1bb22c10505b336a131700fe7a9c26da5ae2f39b27683a"
+    },
+    "ui-select_002": {
+      "repo": "Calinou/kenney-interface-sounds",
+      "sha": "4596a49eaf5a533948d49a47467f606bcdea70ff",
+      "path": "addons/kenney_interface_sounds/select_002.wav",
+      "url": "https://raw.githubusercontent.com/Calinou/kenney-interface-sounds/4596a49eaf5a533948d49a47467f606bcdea70ff/addons/kenney_interface_sounds/select_002.wav",
+      "sha256": "9f15b5f93716a3ff8842cff73ef932e81beac2d19972066f690154c1f9322f2b"
+    },
+    "ui-open_001": {
+      "repo": "Calinou/kenney-interface-sounds",
+      "sha": "4596a49eaf5a533948d49a47467f606bcdea70ff",
+      "path": "addons/kenney_interface_sounds/open_001.wav",
+      "url": "https://raw.githubusercontent.com/Calinou/kenney-interface-sounds/4596a49eaf5a533948d49a47467f606bcdea70ff/addons/kenney_interface_sounds/open_001.wav",
+      "sha256": "c69aab75d09d98363934c68cda0e9d050973eb5c3ab9987ce8fd5d336a8f7fbd"
+    },
+    "imp-impact_wood_medium_000": {
+      "repo": "Boyquotes/kenney-impact-sounds-for-godot",
+      "sha": "999dd1684873f8b020a3aa5b26e713da21688924",
+      "path": "addons/kenney impact sounds/impact_wood_medium_000.ogg",
+      "url": "https://raw.githubusercontent.com/Boyquotes/kenney-impact-sounds-for-godot/999dd1684873f8b020a3aa5b26e713da21688924/addons/kenney%20impact%20sounds/impact_wood_medium_000.ogg",
+      "sha256": "1723a9fd25103ed41af06054814e84e65f4a772bac86ab2dc927da93d9592ff5"
+    },
+    "imp-impact_wood_light_000": {
+      "repo": "Boyquotes/kenney-impact-sounds-for-godot",
+      "sha": "999dd1684873f8b020a3aa5b26e713da21688924",
+      "path": "addons/kenney impact sounds/impact_wood_light_000.ogg",
+      "url": "https://raw.githubusercontent.com/Boyquotes/kenney-impact-sounds-for-godot/999dd1684873f8b020a3aa5b26e713da21688924/addons/kenney%20impact%20sounds/impact_wood_light_000.ogg",
+      "sha256": "eb45e35b4bed784d3f120de4afec4b0d6ac09d9e143cce8cfcb7d739e1b1f3c3"
+    },
+    "imp-impact_metal_light_001": {
+      "repo": "Boyquotes/kenney-impact-sounds-for-godot",
+      "sha": "999dd1684873f8b020a3aa5b26e713da21688924",
+      "path": "addons/kenney impact sounds/impact_metal_light_001.ogg",
+      "url": "https://raw.githubusercontent.com/Boyquotes/kenney-impact-sounds-for-godot/999dd1684873f8b020a3aa5b26e713da21688924/addons/kenney%20impact%20sounds/impact_metal_light_001.ogg",
+      "sha256": "fba69c467ddd85da7b1d82e259f936b876d9ba6a3d6f1b24bdd10468e46bfe08"
+    },
+    "imp-impact_soft_medium_001": {
+      "repo": "Boyquotes/kenney-impact-sounds-for-godot",
+      "sha": "999dd1684873f8b020a3aa5b26e713da21688924",
+      "path": "addons/kenney impact sounds/impact_soft_medium_001.ogg",
+      "url": "https://raw.githubusercontent.com/Boyquotes/kenney-impact-sounds-for-godot/999dd1684873f8b020a3aa5b26e713da21688924/addons/kenney%20impact%20sounds/impact_soft_medium_001.ogg",
+      "sha256": "7642a4fd43e547afe4f7adfadb3dabb681c0ff512f52c1674bae30a726841faf"
+    },
+    "imp-footstep_carpet_000": {
+      "repo": "Boyquotes/kenney-impact-sounds-for-godot",
+      "sha": "999dd1684873f8b020a3aa5b26e713da21688924",
+      "path": "addons/kenney impact sounds/footstep_carpet_000.ogg",
+      "url": "https://raw.githubusercontent.com/Boyquotes/kenney-impact-sounds-for-godot/999dd1684873f8b020a3aa5b26e713da21688924/addons/kenney%20impact%20sounds/footstep_carpet_000.ogg",
+      "sha256": "b9524658b52a99a20590f8feefc103088637fd13ea8ec35811aee785e1f2f330"
+    }
+  },
+  "tracks": [
+    {
+      "set": "A",
+      "id": "shot-smg",
+      "url": "audio/A-shot-smg.mp3",
+      "duration": 0.15,
+      "sources": [
+        "fps-blaster_repeater"
+      ],
+      "peak": 0.05304352983034011,
+      "activeRms": 0.012349954806268215,
+      "sha256": "b24e0a320d466fbb718a060b236ce5a465311546e53bec26f686354663139075",
+      "decodedPeak": 0.050389569252729416
+    },
+    {
+      "set": "A",
+      "id": "shot-rifle",
+      "url": "audio/A-shot-rifle.mp3",
+      "duration": 0.22,
+      "sources": [
+        "fps-blaster"
+      ],
+      "peak": 0.05758892823416829,
+      "activeRms": 0.012349571101367474,
+      "sha256": "6d8fd9d11257a95671d3eb4ddd64034a2aaa9a3dfa4ab1e097aaa1fdfd5ef65c",
+      "decodedPeak": 0.05471499636769295
+    },
+    {
+      "set": "A",
+      "id": "shot-sniper",
+      "url": "audio/A-shot-sniper.mp3",
+      "duration": 0.36,
+      "sources": [
+        "fps-enemy_attack"
+      ],
+      "peak": 0.075,
+      "activeRms": 0.00838920846581459,
+      "sha256": "3e81113436392de1afbc8dde2a1f6f7480de54762197e003b7bdbf57f83ccdf6",
+      "decodedPeak": 0.07126330584287643
+    },
+    {
+      "set": "A",
+      "id": "shot-shotgun",
+      "url": "audio/A-shot-shotgun.mp3",
+      "duration": 0.3,
+      "sources": [
+        "fps-blaster"
+      ],
+      "peak": 0.062192196456459584,
+      "activeRms": 0.01234989333897829,
+      "sha256": "d84521b04b3e576e9869eab9a52fe4ab44a7166677bd1b10abb3d3c34e6834d7",
+      "decodedPeak": 0.0590888150036335
+    },
+    {
+      "set": "A",
+      "id": "reload-smg",
+      "url": "audio/A-reload-smg.mp3",
+      "duration": 1.7,
+      "sources": [
+        "fps-weapon_change",
+        "ui-switch_003"
+      ],
+      "peak": 0.029615795177830313,
+      "activeRms": 0.004274984356015921,
+      "sha256": "f72a916745e49a99ed9dc6c49a1fcfac829786ac855372c2a8bf1339cff83fe6",
+      "decodedPeak": 0.02813546545803547
+    },
+    {
+      "set": "A",
+      "id": "reload-rifle",
+      "url": "audio/A-reload-rifle.mp3",
+      "duration": 2.1,
+      "sources": [
+        "fps-weapon_change",
+        "ui-switch_003"
+      ],
+      "peak": 0.02887325318697635,
+      "activeRms": 0.004274817183613777,
+      "sha256": "f80f44b84163e251f47eb76215a494860db0b32ffd2d1fd10a1ee757274ada1b",
+      "decodedPeak": 0.02742769382894039
+    },
+    {
+      "set": "A",
+      "id": "reload-sniper",
+      "url": "audio/A-reload-sniper.mp3",
+      "duration": 2.8,
+      "sources": [
+        "fps-weapon_change",
+        "ui-switch_003"
+      ],
+      "peak": 0.026948698153518583,
+      "activeRms": 0.004274797160178423,
+      "sha256": "c128dd5757b887d46a9540a225ce29381f395a4b7fa858be6972c62af08fe490",
+      "decodedPeak": 0.025598077103495598
+    },
+    {
+      "set": "A",
+      "id": "reload-shotgun",
+      "url": "audio/A-reload-shotgun.mp3",
+      "duration": 2.8,
+      "sources": [
+        "fps-weapon_change",
+        "ui-switch_003"
+      ],
+      "peak": 0.024198392156718037,
+      "activeRms": 0.004275052808225155,
+      "sha256": "45f791e90bfa9e1ac49e794e6bae7cf3af3a78abcb1fb4e714f77b243748feec",
+      "decodedPeak": 0.02298886887729168
+    },
+    {
+      "set": "A",
+      "id": "equip-weapon",
+      "url": "audio/A-equip-weapon.mp3",
+      "duration": 0.22,
+      "sources": [
+        "fps-weapon_change"
+      ],
+      "peak": 0.035,
+      "activeRms": 0.0021885589230805635,
+      "sha256": "2c86ac873757033ebaa5b05ed99de4eef3d26374d524772ea70d2f9ebe816ff3",
+      "decodedPeak": 0.033245865255594254
+    },
+    {
+      "set": "A",
+      "id": "equip-gear",
+      "url": "audio/A-equip-gear.mp3",
+      "duration": 0.1246938775510204,
+      "sources": [
+        "ui-drop_002"
+      ],
+      "peak": 0.018304178290767675,
+      "activeRms": 0.005076623987406492,
+      "sha256": "472d9d11d91968f764ca7494beffc46fa01395c688a464e4259f2a1e76cfadbd",
+      "decodedPeak": 0.01738976500928402
+    },
+    {
+      "set": "A",
+      "id": "roll",
+      "url": "audio/A-roll.mp3",
+      "duration": 0.35,
+      "sources": [
+        "fps-jump_c",
+        "fps-land"
+      ],
+      "peak": 0.03288345628700555,
+      "activeRms": 0.00522485701367259,
+      "sha256": "6cddbc2bf436898e3391f6c8c067aaccfd454ea4ab7c8b946d0ba7af83e6e724",
+      "decodedPeak": 0.03123847395181656
+    },
+    {
+      "set": "A",
+      "id": "melee",
+      "url": "audio/A-melee.mp3",
+      "duration": 0.22,
+      "sources": [
+        "fps-jump_c"
+      ],
+      "peak": 0.029513508229722932,
+      "activeRms": 0.005224911961704493,
+      "sha256": "8009a68d4020c881875592be93d7874cb162b14b95cd46edff8d973bc4b92a68",
+      "decodedPeak": 0.02804074063897133
+    },
+    {
+      "set": "A",
+      "id": "burst-smg",
+      "url": "audio/A-burst-smg.mp3",
+      "duration": 1.1,
+      "sources": [],
+      "peak": 0.05378212836379279,
+      "activeRms": 0.012349766679108143,
+      "sha256": "da7af563915fca36f7d47f3578e36a7c1556904b3a783e6fad8ef6e6697945e4",
+      "decodedPeak": 0.05109601095318794
+    },
+    {
+      "set": "A",
+      "id": "burst-rifle",
+      "url": "audio/A-burst-rifle.mp3",
+      "duration": 1.1,
+      "sources": [],
+      "peak": 0.053104607286557,
+      "activeRms": 0.012349940836429596,
+      "sha256": "788fdfab43b73df6aa86d67748111a496575618653c2c3b6a8b8d6ffce569453",
+      "decodedPeak": 0.05045728385448456
+    },
+    {
+      "set": "A",
+      "id": "burst-sniper",
+      "url": "audio/A-burst-sniper.mp3",
+      "duration": 1.5,
+      "sources": [],
+      "peak": 0.075,
+      "activeRms": 0.00852096825838089,
+      "sha256": "6c6a66849e9d3e8d100452f4ed1072dc99e9ecb64d40e9e68b12ce0aa12cb6ac",
+      "decodedPeak": 0.07126074284315109
+    },
+    {
+      "set": "A",
+      "id": "burst-shotgun",
+      "url": "audio/A-burst-shotgun.mp3",
+      "duration": 1.5,
+      "sources": [],
+      "peak": 0.06216882628756332,
+      "activeRms": 0.012350061908364296,
+      "sha256": "8d5132c51f2528e77c2355db825261138f33febdeab0cba85bdd1e935874aaec",
+      "decodedPeak": 0.059066008776426315
+    },
+    {
+      "set": "B",
+      "id": "shot-smg",
+      "url": "audio/B-shot-smg.mp3",
+      "duration": 0.15,
+      "sources": [
+        "imp-impact_wood_light_000",
+        "ui-click_001"
+      ],
+      "peak": 0.05713985096530934,
+      "activeRms": 0.011456920765340328,
+      "sha256": "4b885519b9b7b16b4b26ecfa0324d89d163fd3ca1c83fc38d657cb8afa9505fe",
+      "decodedPeak": 0.054291415959596634
+    },
+    {
+      "set": "B",
+      "id": "shot-rifle",
+      "url": "audio/B-shot-rifle.mp3",
+      "duration": 0.22,
+      "sources": [
+        "imp-impact_wood_medium_000",
+        "ui-click_001"
+      ],
+      "peak": 0.06003086907844748,
+      "activeRms": 0.012014455161988735,
+      "sha256": "653f4063ef44ca06c5b0bdf79b949b8c7e3e6c9841923ca90cd077dced725eb7",
+      "decodedPeak": 0.05702263116836548
+    },
+    {
+      "set": "B",
+      "id": "shot-sniper",
+      "url": "audio/B-shot-sniper.mp3",
+      "duration": 0.36,
+      "sources": [
+        "imp-impact_wood_medium_000",
+        "ui-click_001"
+      ],
+      "peak": 0.056960612658628326,
+      "activeRms": 0.01092782523483038,
+      "sha256": "d0e1ab9a22b5b713124eb4def330dd211df6df298b421fd1f035e6c8fe9cca1b",
+      "decodedPeak": 0.05409489944577217
+    },
+    {
+      "set": "B",
+      "id": "shot-shotgun",
+      "url": "audio/B-shot-shotgun.mp3",
+      "duration": 0.3,
+      "sources": [
+        "imp-impact_wood_medium_000",
+        "ui-click_001"
+      ],
+      "peak": 0.059638439574348896,
+      "activeRms": 0.011909475550055504,
+      "sha256": "2e607a79f6fe9cab02a8813e42bd23533bc43fda8c4efec368e137ccae454f83",
+      "decodedPeak": 0.056652214378118515
+    },
+    {
+      "set": "B",
+      "id": "reload-smg",
+      "url": "audio/B-reload-smg.mp3",
+      "duration": 1.7,
+      "sources": [
+        "imp-impact_metal_light_001",
+        "ui-switch_001"
+      ],
+      "peak": 0.02369881714379821,
+      "activeRms": 0.004274771548807621,
+      "sha256": "96656802710f99bbcaf76636df7f521c63de4a62229a30ecb17cca5129c3a4c7",
+      "decodedPeak": 0.022513212636113167
+    },
+    {
+      "set": "B",
+      "id": "reload-rifle",
+      "url": "audio/B-reload-rifle.mp3",
+      "duration": 2.1,
+      "sources": [
+        "imp-impact_metal_light_001",
+        "ui-switch_001"
+      ],
+      "peak": 0.024656917289173446,
+      "activeRms": 0.004275177139788866,
+      "sha256": "edf0e091f8f7b55a01088bf60f1dcc5f75256ccff4df542ea1040a8107ec1732",
+      "decodedPeak": 0.02342463843524456
+    },
+    {
+      "set": "B",
+      "id": "reload-sniper",
+      "url": "audio/B-reload-sniper.mp3",
+      "duration": 2.8,
+      "sources": [
+        "imp-impact_metal_light_001",
+        "ui-switch_001"
+      ],
+      "peak": 0.02313253104844703,
+      "activeRms": 0.004274940583854914,
+      "sha256": "55dfe7971518efcd68f2563cb864b3a2d6a5d0b634c4343382f71d43524717a2",
+      "decodedPeak": 0.021975409239530563
+    },
+    {
+      "set": "B",
+      "id": "reload-shotgun",
+      "url": "audio/B-reload-shotgun.mp3",
+      "duration": 2.8,
+      "sources": [
+        "imp-impact_metal_light_001",
+        "ui-switch_001"
+      ],
+      "peak": 0.021741875201227126,
+      "activeRms": 0.004274910781532526,
+      "sha256": "73b090d51a9ad633edf397cf7aa2bcc85ca3ef428e9e4feba0a2e7da58e4f281",
+      "decodedPeak": 0.020653923973441124
+    },
+    {
+      "set": "B",
+      "id": "equip-weapon",
+      "url": "audio/B-equip-weapon.mp3",
+      "duration": 0.22,
+      "sources": [
+        "ui-switch_003"
+      ],
+      "peak": 0.03136000701674195,
+      "activeRms": 0.005205489229410887,
+      "sha256": "04368540c75f0a7dc7f0520c682312cf0d4dc3ed70faf9fda2477406ee1e2d62",
+      "decodedPeak": 0.029790878295898438
+    },
+    {
+      "set": "B",
+      "id": "equip-gear",
+      "url": "audio/B-equip-gear.mp3",
+      "duration": 0.18038548752834468,
+      "sources": [
+        "imp-impact_soft_medium_001"
+      ],
+      "peak": 0.01884857228671633,
+      "activeRms": 0.005165465176105499,
+      "sha256": "a6a5afc28a120520c11a731557eb9e2e67ac9b94759e5c2d9b6612e37e48f715",
+      "decodedPeak": 0.017906028777360916
+    },
+    {
+      "set": "B",
+      "id": "roll",
+      "url": "audio/B-roll.mp3",
+      "duration": 0.35,
+      "sources": [
+        "imp-footstep_carpet_000",
+        "imp-impact_soft_medium_001"
+      ],
+      "peak": 0.0316736950879878,
+      "activeRms": 0.004686095751821995,
+      "sha256": "0858c3d33fd3ebbac0478ea53e4a54f8815067854ec23940624466355bb77e1f",
+      "decodedPeak": 0.030100449919700623
+    },
+    {
+      "set": "B",
+      "id": "melee",
+      "url": "audio/B-melee.mp3",
+      "duration": 0.12873015873015872,
+      "sources": [
+        "ui-open_001"
+      ],
+      "peak": 0.025026836920892467,
+      "activeRms": 0.0052250223234295845,
+      "sha256": "5384be9d9513b42a15b54b029392d3443643b30430208bb65c64639a6cf1e834",
+      "decodedPeak": 0.023776719346642494
+    },
+    {
+      "set": "B",
+      "id": "burst-smg",
+      "url": "audio/B-burst-smg.mp3",
+      "duration": 1.1,
+      "sources": [],
+      "peak": 0.06622164914263341,
+      "activeRms": 0.012310356833040714,
+      "sha256": "800052473a2ee6f4af2f0517bb3ced93fb118e0d102b9facf443ce3277aeaf1c",
+      "decodedPeak": 0.06291691958904266
+    },
+    {
+      "set": "B",
+      "id": "burst-rifle",
+      "url": "audio/B-burst-rifle.mp3",
+      "duration": 1.1,
+      "sources": [],
+      "peak": 0.0636500434424776,
+      "activeRms": 0.012340566143393517,
+      "sha256": "3df08d649b85bb84f7afade631d7c91ebca87b0bde98541bcd374fb35b118fd2",
+      "decodedPeak": 0.06052505970001221
+    },
+    {
+      "set": "B",
+      "id": "burst-sniper",
+      "url": "audio/B-burst-sniper.mp3",
+      "duration": 1.5,
+      "sources": [],
+      "peak": 0.06614271407725873,
+      "activeRms": 0.012280977331101894,
+      "sha256": "a519f6d6be7adc480eee5889960f6b2dfd944c40f170ba8203716fceb861a1ad",
+      "decodedPeak": 0.06283837556838989
+    },
+    {
+      "set": "B",
+      "id": "burst-shotgun",
+      "url": "audio/B-burst-shotgun.mp3",
+      "duration": 1.5,
+      "sources": [],
+      "peak": 0.06605455618166958,
+      "activeRms": 0.012262824922800064,
+      "sha256": "040154dbece77c15df74fb12f1467be3cfa6060196abcc3726729ff7e6a829ba",
+      "decodedPeak": 0.06277520209550858
+    },
+    {
+      "set": "C",
+      "id": "shot-smg",
+      "url": "audio/C-shot-smg.mp3",
+      "duration": 0.15,
+      "sources": [
+        "sf-laser_small_000"
+      ],
+      "peak": 0.03852837449004973,
+      "activeRms": 0.012299309484660625,
+      "sha256": "5f6caa6ad332da3f35b749fc5a664f3131169f6f7d75d3b4f544bec402dbce7d",
+      "decodedPeak": 0.03659842535853386
+    },
+    {
+      "set": "C",
+      "id": "shot-rifle",
+      "url": "audio/C-shot-rifle.mp3",
+      "duration": 0.22,
+      "sources": [
+        "sf-laser_small_002"
+      ],
+      "peak": 0.04286147610431722,
+      "activeRms": 0.012281645089387894,
+      "sha256": "e87740d6e0fd6dda385f64f119af67d18d1255b1c7442c100d791ab0df93f724",
+      "decodedPeak": 0.04072830080986023
+    },
+    {
+      "set": "C",
+      "id": "shot-sniper",
+      "url": "audio/C-shot-sniper.mp3",
+      "duration": 0.36,
+      "sources": [
+        "sf-laser_large_003"
+      ],
+      "peak": 0.0484950441108157,
+      "activeRms": 0.012275821529328823,
+      "sha256": "5d6d26a38015ef06208a743bf0092a9bdfe0faa8acd151073292ddc11e292df8",
+      "decodedPeak": 0.04607108235359192
+    },
+    {
+      "set": "C",
+      "id": "shot-shotgun",
+      "url": "audio/C-shot-shotgun.mp3",
+      "duration": 0.3,
+      "sources": [
+        "sf-laser_large_000"
+      ],
+      "peak": 0.05114553943594524,
+      "activeRms": 0.012304590083658695,
+      "sha256": "b368c0567cb26c4237209b981e9a43d616272e7ae1100ee4d1d1b975ae01e1d4",
+      "decodedPeak": 0.04857783019542694
+    },
+    {
+      "set": "C",
+      "id": "reload-smg",
+      "url": "audio/C-reload-smg.mp3",
+      "duration": 1.7,
+      "sources": [
+        "sf-door_close_001",
+        "sf-door_open_000"
+      ],
+      "peak": 0.020096757297481727,
+      "activeRms": 0.004274940583854914,
+      "sha256": "fd741c3dba9c3c8bf3d0f944787229200c8670de0ac856457631d0ef7e90a64e",
+      "decodedPeak": 0.019090892747044563
+    },
+    {
+      "set": "C",
+      "id": "reload-rifle",
+      "url": "audio/C-reload-rifle.mp3",
+      "duration": 2.1,
+      "sources": [
+        "sf-door_close_001",
+        "sf-door_open_000"
+      ],
+      "peak": 0.021025999411846456,
+      "activeRms": 0.004275066778063774,
+      "sha256": "25511656b4602381eaa309397534ca066712bc585bd49c41577324becdae9a8c",
+      "decodedPeak": 0.019967151805758476
+    },
+    {
+      "set": "C",
+      "id": "reload-sniper",
+      "url": "audio/C-reload-sniper.mp3",
+      "duration": 2.8,
+      "sources": [
+        "sf-door_close_001",
+        "sf-door_open_000"
+      ],
+      "peak": 0.021184821457833146,
+      "activeRms": 0.004274895414710045,
+      "sha256": "f237829d3d8577d064e8f35061388e815215a26e2604ee44d4b66f68151afb58",
+      "decodedPeak": 0.020129837095737457
+    },
+    {
+      "set": "C",
+      "id": "reload-shotgun",
+      "url": "audio/C-reload-shotgun.mp3",
+      "duration": 2.8,
+      "sources": [
+        "sf-door_close_001",
+        "sf-door_open_000"
+      ],
+      "peak": 0.032286134443757046,
+      "activeRms": 0.004275018349289894,
+      "sha256": "7d9e67e2e7c5c0e11a3732872f1b620da1ec15def3b5af48fce89cc20f8fa0a5",
+      "decodedPeak": 0.030715104192495346
+    },
+    {
+      "set": "C",
+      "id": "equip-weapon",
+      "url": "audio/C-equip-weapon.mp3",
+      "duration": 0.22,
+      "sources": [
+        "sf-impact_metal_001"
+      ],
+      "peak": 0.03197352945027083,
+      "activeRms": 0.005106723867356777,
+      "sha256": "32dbb6f2aa254c9b25fedbf8a4859438940de91ac93d93e5b9325376689ac41f",
+      "decodedPeak": 0.030372891575098038
+    },
+    {
+      "set": "C",
+      "id": "equip-gear",
+      "url": "audio/C-equip-gear.mp3",
+      "duration": 0.14802721088435375,
+      "sources": [
+        "ui-open_001"
+      ],
+      "peak": 0.023238122945845336,
+      "activeRms": 0.005224951077252626,
+      "sha256": "1cb0c0e503abc2b8d2e851981b0403353279e0dbf2236f2cb80c52d758d51864",
+      "decodedPeak": 0.022075878456234932
+    },
+    {
+      "set": "C",
+      "id": "roll",
+      "url": "audio/C-roll.mp3",
+      "duration": 0.35,
+      "sources": [
+        "imp-impact_soft_medium_001",
+        "sf-door_open_000"
+      ],
+      "peak": 0.029149178442772327,
+      "activeRms": 0.005220902152359486,
+      "sha256": "733119683833702c5b49cec6feffce40a5e8eb2480ebfa564fe3f0e418880be4",
+      "decodedPeak": 0.027693701907992363
+    },
+    {
+      "set": "C",
+      "id": "melee",
+      "url": "audio/C-melee.mp3",
+      "duration": 0.22,
+      "sources": [
+        "sf-door_close_001"
+      ],
+      "peak": 0.017422208768237225,
+      "activeRms": 0.005224157124757767,
+      "sha256": "09f1308ef91529cb18a10a955f3ecfdaad2c0961c6507f2c1860276dd2457277",
+      "decodedPeak": 0.016551226377487183
+    },
+    {
+      "set": "C",
+      "id": "burst-smg",
+      "url": "audio/C-burst-smg.mp3",
+      "duration": 1.1,
+      "sources": [],
+      "peak": 0.04456604472355259,
+      "activeRms": 0.012348209507763386,
+      "sha256": "68949a966cc7a6c06354f9766f4b4037617eee3ba581ff23d5391a03067b80ba",
+      "decodedPeak": 0.04233894497156143
+    },
+    {
+      "set": "C",
+      "id": "burst-rifle",
+      "url": "audio/C-burst-rifle.mp3",
+      "duration": 1.1,
+      "sources": [],
+      "peak": 0.05016700523612773,
+      "activeRms": 0.012346768751740456,
+      "sha256": "735eb4774bd6189263e19c33354db3225b905502d08417cd380105056db2211a",
+      "decodedPeak": 0.04768170788884163
+    },
+    {
+      "set": "C",
+      "id": "burst-sniper",
+      "url": "audio/C-burst-sniper.mp3",
+      "duration": 1.5,
+      "sources": [],
+      "peak": 0.048498866069106215,
+      "activeRms": 0.012327657081186771,
+      "sha256": "10a77b0bc380995c3d8c3ccf24ecc2007612d3b825c2083011ca881444496f3d",
+      "decodedPeak": 0.046072810888290405
+    },
+    {
+      "set": "C",
+      "id": "burst-shotgun",
+      "url": "audio/C-burst-shotgun.mp3",
+      "duration": 1.5,
+      "sources": [],
+      "peak": 0.05437291945964645,
+      "activeRms": 0.012333748862147331,
+      "sha256": "b5934b33d4224fcf0252c373bbbdeee9b4f7bfdac6033e2f13e91c94261b60bc",
+      "decodedPeak": 0.05165410786867142
+    },
+    {
+      "set": "D",
+      "id": "shot-smg",
+      "url": "audio/D-shot-smg.mp3",
+      "duration": 0.15,
+      "sources": [
+        "original:modal-bass-and-filtered-air"
+      ],
+      "peak": 0.03914324205256414,
+      "activeRms": 0.011676645837724209,
+      "sha256": "5cc0fe35c0ec56c7e28248dc81cbf7e2592e3f9aa7566ea62c308f2e61b5ec78",
+      "decodedPeak": 0.03720567002892494
+    },
+    {
+      "set": "D",
+      "id": "shot-rifle",
+      "url": "audio/D-shot-rifle.mp3",
+      "duration": 0.22,
+      "sources": [
+        "original:modal-bass-and-filtered-air"
+      ],
+      "peak": 0.04448719064939209,
+      "activeRms": 0.011887500993907452,
+      "sha256": "ae441c9e65e9e17bafd42d1d7ae1285b8e1aad6333895cf6f6a45cc216894287",
+      "decodedPeak": 0.04225599020719528
+    },
+    {
+      "set": "D",
+      "id": "shot-sniper",
+      "url": "audio/D-shot-sniper.mp3",
+      "duration": 0.36,
+      "sources": [
+        "original:modal-bass-and-filtered-air"
+      ],
+      "peak": 0.04532770027000951,
+      "activeRms": 0.012022636830806732,
+      "sha256": "e49b248ab087c848a579da08c5f798519fc819fd76c0799da519717e83604890",
+      "decodedPeak": 0.04302709177136421
+    },
+    {
+      "set": "D",
+      "id": "shot-shotgun",
+      "url": "audio/D-shot-shotgun.mp3",
+      "duration": 0.3,
+      "sources": [
+        "original:modal-bass-and-filtered-air"
+      ],
+      "peak": 0.045455275901949074,
+      "activeRms": 0.011909554712474346,
+      "sha256": "82237a571707bce441254d4cb7671f0eee5a222a97abeeb94c4191c5a2e5c319",
+      "decodedPeak": 0.0432436540722847
+    },
+    {
+      "set": "D",
+      "id": "reload-smg",
+      "url": "audio/D-reload-smg.mp3",
+      "duration": 1.7,
+      "sources": [
+        "original:sine-modal-click"
+      ],
+      "peak": 0.0163798702359017,
+      "activeRms": 0.004274955950677395,
+      "sha256": "17778c71e0c3ce5ee56d187b034a60977fb515f15cf666ccb6ff2bfccafa012e",
+      "decodedPeak": 0.015560859814286232
+    },
+    {
+      "set": "D",
+      "id": "reload-rifle",
+      "url": "audio/D-reload-rifle.mp3",
+      "duration": 2.1,
+      "sources": [
+        "original:sine-modal-click"
+      ],
+      "peak": 0.01612255587483279,
+      "activeRms": 0.004275216720998287,
+      "sha256": "12239b7fcaf2e1a3c20963888afa17921cc27e4b744ab6f5bf438ef25ab062da",
+      "decodedPeak": 0.015316943638026714
+    },
+    {
+      "set": "D",
+      "id": "reload-sniper",
+      "url": "audio/D-reload-sniper.mp3",
+      "duration": 2.8,
+      "sources": [
+        "original:sine-modal-click"
+      ],
+      "peak": 0.016241840125034865,
+      "activeRms": 0.004275098908692598,
+      "sha256": "afd73c8a65150a80be4f835e42591f5173f8e0475180eada866f06aa39774404",
+      "decodedPeak": 0.015428653918206692
+    },
+    {
+      "set": "D",
+      "id": "reload-shotgun",
+      "url": "audio/D-reload-shotgun.mp3",
+      "duration": 2.8,
+      "sources": [
+        "original:sine-modal-click"
+      ],
+      "peak": 0.016292310066925466,
+      "activeRms": 0.004274867009371519,
+      "sha256": "6bfd492ed5ad4be0b89b3e7318f90af527027bd38144928b49d35d4016614d1c",
+      "decodedPeak": 0.015478533692657948
+    },
+    {
+      "set": "D",
+      "id": "equip-weapon",
+      "url": "audio/D-equip-weapon.mp3",
+      "duration": 0.16,
+      "sources": [
+        "original:sine-modal-click"
+      ],
+      "peak": 0.019768475529562724,
+      "activeRms": 0.004895304795354605,
+      "sha256": "a449634475b2293a0ce908ed77cec515a5d0c7da2bac44741fa819a1d7d21e05",
+      "decodedPeak": 0.018779277801513672
+    },
+    {
+      "set": "D",
+      "id": "equip-gear",
+      "url": "audio/D-equip-gear.mp3",
+      "duration": 0.25,
+      "sources": [
+        "original:filtered-cloth-air",
+        "original:sine-modal-click"
+      ],
+      "peak": 0.02457846187747164,
+      "activeRms": 0.0052251084707677364,
+      "sha256": "9ae25081be29789b40994d3572fa9cf2c66769c38e8999acc272e0cac2a61ca0",
+      "decodedPeak": 0.023348655551671982
+    },
+    {
+      "set": "D",
+      "id": "roll",
+      "url": "audio/D-roll.mp3",
+      "duration": 0.35,
+      "sources": [
+        "original:filtered-cloth-air",
+        "original:sine-modal-click"
+      ],
+      "peak": 0.03238896141092807,
+      "activeRms": 0.005225097760558128,
+      "sha256": "c97f09879a62e5581c3d7625f443ae2355320e01afc40cca0a7f12a322470cf3",
+      "decodedPeak": 0.03077038750052452
+    },
+    {
+      "set": "D",
+      "id": "melee",
+      "url": "audio/D-melee.mp3",
+      "duration": 0.22,
+      "sources": [
+        "original:filtered-cloth-air"
+      ],
+      "peak": 0.026073069870758782,
+      "activeRms": 0.005224942229688168,
+      "sha256": "4e148c70f7e2931b6aac6c24c584ae65689dd171666b226bd207385528e1b9c1",
+      "decodedPeak": 0.02476811781525612
+    },
+    {
+      "set": "D",
+      "id": "burst-smg",
+      "url": "audio/D-burst-smg.mp3",
+      "duration": 1.1,
+      "sources": [],
+      "peak": 0.04379215453830556,
+      "activeRms": 0.012332993559539318,
+      "sha256": "5da2ce2bc2b56b2b8723eab9fbf8e797b2fbd79b35afabf4ef9b162b0d27d8bc",
+      "decodedPeak": 0.041603315621614456
+    },
+    {
+      "set": "D",
+      "id": "burst-rifle",
+      "url": "audio/D-burst-rifle.mp3",
+      "duration": 1.1,
+      "sources": [],
+      "peak": 0.04292526550248358,
+      "activeRms": 0.012337159365415573,
+      "sha256": "c428fcbd5885d25ef59e5671c3948a6be37c4d0b99ce6ec7acf9dbf5895de970",
+      "decodedPeak": 0.04079607129096985
+    },
+    {
+      "set": "D",
+      "id": "burst-sniper",
+      "url": "audio/D-burst-sniper.mp3",
+      "duration": 1.5,
+      "sources": [],
+      "peak": 0.04538923137769869,
+      "activeRms": 0.012305473908782005,
+      "sha256": "fdfd0a12e89ed7ae31a4deb1f96b86cdc30829c7b0ed8df2c265082141a2b75b",
+      "decodedPeak": 0.04316094517707825
+    },
+    {
+      "set": "D",
+      "id": "burst-shotgun",
+      "url": "audio/D-burst-shotgun.mp3",
+      "duration": 1.5,
+      "sources": [],
+      "peak": 0.047670613696165105,
+      "activeRms": 0.012278794310986996,
+      "sha256": "c6109fd19906fe4fa06bf09d7393b53fc077421954d86e4c4affea33937be40b",
+      "decodedPeak": 0.0452776737511158
+    }
+  ],
+  "normalization": "同类声音使用统一活动区间RMS目标及峰值上限；无失真压缩。只用于独立试听，不修改游戏音效。",
+  "references": [
+    {
+      "name": "原版合成枪声",
+      "url": "audio/original-shot.mp3"
+    },
+    {
+      "name": "原版翻滚声",
+      "url": "audio/original-roll.mp3"
+    },
+    {
+      "name": "原版轻提示",
+      "url": "audio/original-equip.mp3"
+    },
+    {
+      "name": "切枪：安静参考",
+      "url": "audio/original-switch.mp3"
+    }
+  ]
+}

@@ -1,0 +1,146 @@
+{
+  "fps-blaster": {
+    "repo": "KenneyNL/Starter-Kit-FPS",
+    "sha": "185fd2326d74a5cf858cffc616f87cf9696f9cc0",
+    "path": "sounds/blaster.ogg",
+    "url": "https://raw.githubusercontent.com/KenneyNL/Starter-Kit-FPS/185fd2326d74a5cf858cffc616f87cf9696f9cc0/sounds/blaster.ogg"
+  },
+  "fps-blaster_repeater": {
+    "repo": "KenneyNL/Starter-Kit-FPS",
+    "sha": "185fd2326d74a5cf858cffc616f87cf9696f9cc0",
+    "path": "sounds/blaster_repeater.ogg",
+    "url": "https://raw.githubusercontent.com/KenneyNL/Starter-Kit-FPS/185fd2326d74a5cf858cffc616f87cf9696f9cc0/sounds/blaster_repeater.ogg"
+  },
+  "fps-enemy_attack": {
+    "repo": "KenneyNL/Starter-Kit-FPS",
+    "sha": "185fd2326d74a5cf858cffc616f87cf9696f9cc0",
+    "path": "sounds/enemy_attack.ogg",
+    "url": "https://raw.githubusercontent.com/KenneyNL/Starter-Kit-FPS/185fd2326d74a5cf858cffc616f87cf9696f9cc0/sounds/enemy_attack.ogg"
+  },
+  "fps-weapon_change": {
+    "repo": "KenneyNL/Starter-Kit-FPS",
+    "sha": "185fd2326d74a5cf858cffc616f87cf9696f9cc0",
+    "path": "sounds/weapon_change.ogg",
+    "url": "https://raw.githubusercontent.com/KenneyNL/Starter-Kit-FPS/185fd2326d74a5cf858cffc616f87cf9696f9cc0/sounds/weapon_change.ogg"
+  },
+  "fps-jump_c": {
+    "repo": "KenneyNL/Starter-Kit-FPS",
+    "sha": "185fd2326d74a5cf858cffc616f87cf9696f9cc0",
+    "path": "sounds/jump_c.ogg",
+    "url": "https://raw.githubusercontent.com/KenneyNL/Starter-Kit-FPS/185fd2326d74a5cf858cffc616f87cf9696f9cc0/sounds/jump_c.ogg"
+  },
+  "fps-land": {
+    "repo": "KenneyNL/Starter-Kit-FPS",
+    "sha": "185fd2326d74a5cf858cffc616f87cf9696f9cc0",
+    "path": "sounds/land.ogg",
+    "url": "https://raw.githubusercontent.com/KenneyNL/Starter-Kit-FPS/185fd2326d74a5cf858cffc616f87cf9696f9cc0/sounds/land.ogg"
+  },
+  "sf-laser_small_000": {
+    "repo": "Boyquotes/kenney-sci-fi-sounds-for-godot",
+    "sha": "c094967fe930c57ddb376f67c75f8aa0296690b7",
+    "path": "addons/kenney sci-fi sounds/laser_small_000.ogg",
+    "url": "https://raw.githubusercontent.com/Boyquotes/kenney-sci-fi-sounds-for-godot/c094967fe930c57ddb376f67c75f8aa0296690b7/addons/kenney%20sci-fi%20sounds/laser_small_000.ogg"
+  },
+  "sf-laser_small_002": {
+    "repo": "Boyquotes/kenney-sci-fi-sounds-for-godot",
+    "sha": "c094967fe930c57ddb376f67c75f8aa0296690b7",
+    "path": "addons/kenney sci-fi sounds/laser_small_002.ogg",
+    "url": "https://raw.githubusercontent.com/Boyquotes/kenney-sci-fi-sounds-for-godot/c094967fe930c57ddb376f67c75f8aa0296690b7/addons/kenney%20sci-fi%20sounds/laser_small_002.ogg"
+  },
+  "sf-laser_large_000": {
+    "repo": "Boyquotes/kenney-sci-fi-sounds-for-godot",
+    "sha": "c094967fe930c57ddb376f67c75f8aa0296690b7",
+    "path": "addons/kenney sci-fi sounds/laser_large_000.ogg",
+    "url": "https://raw.githubusercontent.com/Boyquotes/kenney-sci-fi-sounds-for-godot/c094967fe930c57ddb376f67c75f8aa0296690b7/addons/kenney%20sci-fi%20sounds/laser_large_000.ogg"
+  },
+  "sf-laser_large_003": {
+    "repo": "Boyquotes/kenney-sci-fi-sounds-for-godot",
+    "sha": "c094967fe930c57ddb376f67c75f8aa0296690b7",
+    "path": "addons/kenney sci-fi sounds/laser_large_003.ogg",
+    "url": "https://raw.githubusercontent.com/Boyquotes/kenney-sci-fi-sounds-for-godot/c094967fe930c57ddb376f67c75f8aa0296690b7/addons/kenney%20sci-fi%20sounds/laser_large_003.ogg"
+  },
+  "sf-door_close_001": {
+    "repo": "Boyquotes/kenney-sci-fi-sounds-for-godot",
+    "sha": "c094967fe930c57ddb376f67c75f8aa0296690b7",
+    "path": "addons/kenney sci-fi sounds/door_close_001.ogg",
+    "url": "https://raw.githubusercontent.com/Boyquotes/kenney-sci-fi-sounds-for-godot/c094967fe930c57ddb376f67c75f8aa0296690b7/addons/kenney%20sci-fi%20sounds/door_close_001.ogg"
+  },
+  "sf-door_open_000": {
+    "repo": "Boyquotes/kenney-sci-fi-sounds-for-godot",
+    "sha": "c094967fe930c57ddb376f67c75f8aa0296690b7",
+    "path": "addons/kenney sci-fi sounds/door_open_000.ogg",
+    "url": "https://raw.githubusercontent.com/Boyquotes/kenney-sci-fi-sounds-for-godot/c094967fe930c57ddb376f67c75f8aa0296690b7/addons/kenney%20sci-fi%20sounds/door_open_000.ogg"
+  },
+  "sf-impact_metal_001": {
+    "repo": "Boyquotes/kenney-sci-fi-sounds-for-godot",
+    "sha": "c094967fe930c57ddb376f67c75f8aa0296690b7",
+    "path": "addons/kenney sci-fi sounds/impact_metal_001.ogg",
+    "url": "https://raw.githubusercontent.com/Boyquotes/kenney-sci-fi-sounds-for-godot/c094967fe930c57ddb376f67c75f8aa0296690b7/addons/kenney%20sci-fi%20sounds/impact_metal_001.ogg"
+  },
+  "ui-click_001": {
+    "repo": "Calinou/kenney-interface-sounds",
+    "sha": "4596a49eaf5a533948d49a47467f606bcdea70ff",
+    "path": "addons/kenney_interface_sounds/click_001.wav",
+    "url": "https://raw.githubusercontent.com/Calinou/kenney-interface-sounds/4596a49eaf5a533948d49a47467f606bcdea70ff/addons/kenney_interface_sounds/click_001.wav"
+  },
+  "ui-drop_002": {
+    "repo": "Calinou/kenney-interface-sounds",
+    "sha": "4596a49eaf5a533948d49a47467f606bcdea70ff",
+    "path": "addons/kenney_interface_sounds/drop_002.wav",
+    "url": "https://raw.githubusercontent.com/Calinou/kenney-interface-sounds/4596a49eaf5a533948d49a47467f606bcdea70ff/addons/kenney_interface_sounds/drop_002.wav"
+  },
+  "ui-switch_001": {
+    "repo": "Calinou/kenney-interface-sounds",
+    "sha": "4596a49eaf5a533948d49a47467f606bcdea70ff",
+    "path": "addons/kenney_interface_sounds/switch_001.wav",
+    "url": "https://raw.githubusercontent.com/Calinou/kenney-interface-sounds/4596a49eaf5a533948d49a47467f606bcdea70ff/addons/kenney_interface_sounds/switch_001.wav"
+  },
+  "ui-switch_003": {
+    "repo": "Calinou/kenney-interface-sounds",
+    "sha": "4596a49eaf5a533948d49a47467f606bcdea70ff",
+    "path": "addons/kenney_interface_sounds/switch_003.wav",
+    "url": "https://raw.githubusercontent.com/Calinou/kenney-interface-sounds/4596a49eaf5a533948d49a47467f606bcdea70ff/addons/kenney_interface_sounds/switch_003.wav"
+  },
+  "ui-select_002": {
+    "repo": "Calinou/kenney-interface-sounds",
+    "sha": "4596a49eaf5a533948d49a47467f606bcdea70ff",
+    "path": "addons/kenney_interface_sounds/select_002.wav",
+    "url": "https://raw.githubusercontent.com/Calinou/kenney-interface-sounds/4596a49eaf5a533948d49a47467f606bcdea70ff/addons/kenney_interface_sounds/select_002.wav"
+  },
+  "ui-open_001": {
+    "repo": "Calinou/kenney-interface-sounds",
+    "sha": "4596a49eaf5a533948d49a47467f606bcdea70ff",
+    "path": "addons/kenney_interface_sounds/open_001.wav",
+    "url": "https://raw.githubusercontent.com/Calinou/kenney-interface-sounds/4596a49eaf5a533948d49a47467f606bcdea70ff/addons/kenney_interface_sounds/open_001.wav"
+  },
+  "imp-impact_wood_medium_000": {
+    "repo": "Boyquotes/kenney-impact-sounds-for-godot",
+    "sha": "999dd1684873f8b020a3aa5b26e713da21688924",
+    "path": "addons/kenney impact sounds/impact_wood_medium_000.ogg",
+    "url": "https://raw.githubusercontent.com/Boyquotes/kenney-impact-sounds-for-godot/999dd1684873f8b020a3aa5b26e713da21688924/addons/kenney%20impact%20sounds/impact_wood_medium_000.ogg"
+  },
+  "imp-impact_wood_light_000": {
+    "repo": "Boyquotes/kenney-impact-sounds-for-godot",
+    "sha": "999dd1684873f8b020a3aa5b26e713da21688924",
+    "path": "addons/kenney impact sounds/impact_wood_light_000.ogg",
+    "url": "https://raw.githubusercontent.com/Boyquotes/kenney-impact-sounds-for-godot/999dd1684873f8b020a3aa5b26e713da21688924/addons/kenney%20impact%20sounds/impact_wood_light_000.ogg"
+  },
+  "imp-impact_metal_light_001": {
+    "repo": "Boyquotes/kenney-impact-sounds-for-godot",
+    "sha": "999dd1684873f8b020a3aa5b26e713da21688924",
+    "path": "addons/kenney impact sounds/impact_metal_light_001.ogg",
+    "url": "https://raw.githubusercontent.com/Boyquotes/kenney-impact-sounds-for-godot/999dd1684873f8b020a3aa5b26e713da21688924/addons/kenney%20impact%20sounds/impact_metal_light_001.ogg"
+  },
+  "imp-impact_soft_medium_001": {
+    "repo": "Boyquotes/kenney-impact-sounds-for-godot",
+    "sha": "999dd1684873f8b020a3aa5b26e713da21688924",
+    "path": "addons/kenney impact sounds/impact_soft_medium_001.ogg",
+    "url": "https://raw.githubusercontent.com/Boyquotes/kenney-impact-sounds-for-godot/999dd1684873f8b020a3aa5b26e713da21688924/addons/kenney%20impact%20sounds/impact_soft_medium_001.ogg"
+  },
+  "imp-footstep_carpet_000": {
+    "repo": "Boyquotes/kenney-impact-sounds-for-godot",
+    "sha": "999dd1684873f8b020a3aa5b26e713da21688924",
+    "path": "addons/kenney impact sounds/footstep_carpet_000.ogg",
+    "url": "https://raw.githubusercontent.com/Boyquotes/kenney-impact-sounds-for-godot/999dd1684873f8b020a3aa5b26e713da21688924/addons/kenney%20impact%20sounds/footstep_carpet_000.ogg"
+  }
+}

@@ -842,6 +842,9 @@ function resultModal(r: Result) {
 }
 function renderRaid() {
   if (!raid) return;
+  // Base dialogs live outside #ui and must be closed explicitly on the raid transition.
+  setDialog(baseMenu, "");
+  setDialog(collectionDialog, "");
   const r = raid;
   canvas.classList.remove("hidden");
   document.body.classList.add("in-raid");

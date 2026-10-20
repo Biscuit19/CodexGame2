@@ -348,3 +348,12 @@ GitHub Actions 的 `Build, publish and check game`：
 - 相关`knife-motion.test.ts`两项，确认共用近战冷却后交替动作仍连续。
 - `tests/browser/class-audio.spec.ts`两项Chrome：枪械角度与近战详情截图；12个OGG真实解码为非静音AudioBuffer，四类射击选择和敌人增益，四类及快慢武器换弹实际播放时长、切枪取消、并发声部上限。
 - 类型检查与生产构建（含12个音效的离线缓存）。发布后核对提交和本地音效文件OggS头及可访问性；不重复其他全量流程。
+
+## 四套独立音效试听与出战弹窗
+
+- `preflight-transition.spec.ts`两项：缺食物／空装确认后基地dialog真正关闭且内容清空；战斗菜单可点击、背包可打开关闭，截图核对。原测试只断言HUD存在，不能识别被遗留顶层窗口覆盖的问题。
+- `audio-review.spec.ts`两项：64项候选＋4项参考真实解码、各项播放、对比顺序、互斥、音量、停止、连射、整包下载，无存档写入；桌面和390像素手机布局截图。
+- `sw-navigation.test.ts`两项：目录与index.html归一化，但独立试听页与游戏首页保持不同缓存键，查询参数不混淆。
+- 游戏声音没有替换；仅生产构建、这些相关检查和公开版本/试听资源校验，不执行完整游戏回归。
+
+- `tests/production/audio-review.spec.ts`：用当前生产构建验证访问试听后离线游戏首页仍为游戏，试听目录和MP3也能离线读取。按需执行`npm run build`后运行`npx playwright test --config=playwright.preview.config.ts`，这是一项独立页面缓存检查，不是全量游戏验证。
