@@ -138,7 +138,7 @@ for (const viewport of [
         [null, 0],
       ] as const) {
         await page.evaluate(() => ((window as any).__game.raid.p.hp = 1));
-        await page.keyboard.press("KeyF");
+        await page.keyboard.press("KeyQ");
         await expect
           .poll(() =>
             page.evaluate(() => {

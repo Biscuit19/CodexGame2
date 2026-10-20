@@ -233,18 +233,15 @@ describe("真实战区逻辑", () => {
     );
     expect(next.extractedLootValue()).toBe(0);
   });
-  it("带入物丢弃重捡不计收益；新补给与弹药混堆、食用和丢弃后只计实际带回部分", () => {
+  it("带入物丢弃后直接消失；新补给与弹药混堆、食用和丢弃后只计实际带回部分", () => {
     const { s, r } = start(0, (s) => {
       s.pack = [makeItem("f1", 4), makeItem("m2", 80), makeItem("c4_0")];
     });
     const original = s.pack.find((i) => i.id === "c4_0")!;
     r.dropItem(original.uid);
-    const dropped = r.containers.find((c) =>
-      c.items.some((i) => i.uid === original.uid),
-    )!;
-    r.startSearch(dropped);
-    dropped.revealed = dropped.items.length;
-    r.take(dropped.items.findIndex((i) => i.uid === original.uid));
+    expect(
+      r.containers.some((c) => c.items.some((i) => i.uid === original.uid)),
+    ).toBe(false);
     expect(r.extractedLootValue()).toBe(0);
     r.unequipToPack("food");
     const c = r.containers[0];

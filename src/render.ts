@@ -1,3 +1,4 @@
+import { drawContainerSprite } from "./container-sprites";
 import { drawVillageMap } from "./village-map";
 import { drawVillageGround } from "./village-ground";
 import { cat, box, tree, ellipse, round, path, text, type Ctx } from "./art";
@@ -206,10 +207,10 @@ export class Renderer {
     for (const w of r.walls)
       sorted.push({ y: w.y + w.h / 2, draw: () => this.prop(c, w, r) });
     for (const con of r.containers) {
-      if (!con.items.length) continue;
       sorted.push({
         y: con.y + 12,
         draw: () => {
+          if (drawContainerSprite(c, con, r)) return;
           if (con.type === "corpse") {
             ellipse(c, con.x, con.y, 21, 10, "#263e3350");
             round(c, con.x - 17, con.y - 22, 34, 23, 6, "#6e7456");

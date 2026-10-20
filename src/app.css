@@ -2343,3 +2343,7 @@ body:has(.discovery-card) #toasts {
 #minimap { width: 208px; height: 160px; border: 2px solid #b2ad8c; border-radius: 10px; box-shadow: 0 3px 12px #18251c55; }
 
 #map-dialog button { background: #405e48; color: #fff2d5; border: 1px solid #667c57; }
+
+/* Gameplay stats share one readable accent, separate from flavor descriptions. */
+.item-function,.item-menu .item-function,.item-tooltip .item-function,.shop-grid .item-slot small { color: #75e8ef; font-weight: 650; }
+.item-kind { color: #e5ddc4; font-size: 18px; font-weight: 600; }

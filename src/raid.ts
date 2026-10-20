@@ -98,6 +98,7 @@ export interface Enemy {
 }
 export interface Container {
   region?: string;
+  bossLoot?: boolean;
   x: number;
   y: number;
   name: string;
@@ -1196,17 +1197,6 @@ export class Raid {
     const i = this.save.pack.find((i) => i.uid === uid);
     if (!i) return false;
     this.save.pack = this.save.pack.filter((v) => v !== i);
-    this.containers.push({
-      x: this.p.x + 28,
-      y: this.p.y,
-      name: "丢下的物品",
-      type: "corpse",
-      items: [i],
-      revealed: 1,
-      locked: false,
-      open: true,
-      cooldown: 0,
-    });
     persist(this.save);
     this.onChange();
     return true;
@@ -1295,8 +1285,7 @@ export class Raid {
       .filter(
         (c) =>
           Math.hypot(c.x - this.p.x, c.y - this.p.y) < 90 &&
-          this.lineClear(this.p.x, this.p.y, c.x, c.y) &&
-          c.items.length,
+          this.lineClear(this.p.x, this.p.y, c.x, c.y),
       )
       .sort(
         (a, b) =>
@@ -1555,6 +1544,7 @@ export class Raid {
       y: e.y,
       name: `${e.boss?.name ?? breeds[e.breed].name}的战利品`,
       type: "corpse",
+      bossLoot: !!e.boss,
       items,
       revealed: 0,
       open: false,
@@ -1799,9 +1789,16 @@ export class Raid {
         }
       }
     }
-    this.near = this.containers.find(
-      (c) => c.items.length && Math.hypot(c.x - p.x, c.y - p.y) < 85,
-    );
+    this.near = this.containers
+      .filter(
+        (c) =>
+          Math.hypot(c.x - p.x, c.y - p.y) < 85 &&
+          this.lineClear(p.x, p.y, c.x, c.y),
+      )
+      .sort(
+        (a, b) =>
+          Math.hypot(a.x - p.x, a.y - p.y) - Math.hypot(b.x - p.x, b.y - p.y),
+      )[0];
     this.exit = this.exits.find(
       (e) => e.active && Math.hypot(e.x - p.x, e.y - p.y) < 65,
     );

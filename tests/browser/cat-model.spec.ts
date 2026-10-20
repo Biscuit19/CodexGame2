@@ -61,7 +61,7 @@ test("B方案圆团三花玩家的连续轮廓、独立四肢和待机动作在C
   expect(before.helmet && before.vest && before.pack).toBe(true);
   expect(before.gearMeshes).toBeGreaterThan(5);
   expect(before.wornHelmet).toBe("h3");
-  expect(before.enemyPlayerRig).toBe(false);
+  expect(before.enemyPlayerRig).toBe(true);
   expect(before.faceMeshes).toEqual(["continuous-head-and-ears"]);
   expect(before.pouch).toBe(true);
   expect(before.tail).toHaveLength(6);
@@ -113,8 +113,9 @@ test("B方案圆团三花玩家的连续轮廓、独立四肢和待机动作在C
     expect(pose.legs[0] * pose.legs[1]).toBeLessThan(0);
     expect(pose.arms[0] * pose.legs[0]).toBeLessThan(0);
     expect(Math.abs(pose.sway)).toBeGreaterThan(0.04);
-    expect(Math.abs(pose.head)).toBeGreaterThan(0.04);
-    expect(Math.abs(pose.head)).toBeLessThan(0.09);
+    // Current agreed larger gait: head nod stays around six degrees, not the old four-degree limit.
+    expect(Math.abs(pose.head)).toBeGreaterThan(0.09);
+    expect(Math.abs(pose.head)).toBeLessThan(0.12);
   }
   expect(poses[0].arms[0] * poses[1].arms[0]).toBeLessThan(0);
   await page.evaluate(() => {
@@ -136,7 +137,24 @@ test("B方案圆团三花玩家的连续轮廓、独立四肢和待机动作在C
   await page.evaluate(() => {
     const g = (window as any).__game;
     g.raid.enemies = [];
-    g.raid.paused = false;
+    // The old fixed running coordinates now meet the expanded village river.
+    // Select an actually walkable 400-unit corridor; do not disable collisions.
+    const r = g.raid;
+    let clear = false;
+    for (let y = r.height - 300; y > r.height - 1400 && !clear; y -= 80)
+      for (let x = 400; x < r.width - 600 && !clear; x += 100)
+        if (
+          Array.from(
+            { length: 21 },
+            (_, n) => !r.blocked(x + n * 20, y, 20),
+          ).every(Boolean)
+        ) {
+          r.p.x = x;
+          r.p.y = y;
+          clear = true;
+        }
+    if (!clear) throw Error("没有可用于步行动作检查的空旷通道");
+    r.paused = false;
   });
   await page.mouse.move(1100, 880);
   const startX = await page.evaluate(() => (window as any).__game.raid.p.x);

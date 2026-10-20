@@ -386,13 +386,12 @@ test("一次 E 同时开两栏、容器直接进食、拖出背包丢弃、近�
   expect(
     await page.evaluate(
       (uid) =>
-        (window as any).__game.raid.containers.some(
-          (c: any) =>
-            c.name === "丢下的物品" && c.items.some((i: any) => i.uid === uid),
+        (window as any).__game.raid.containers.some((c: any) =>
+          c.items.some((i: any) => i.uid === uid),
         ),
       uid,
     ),
-  ).toBe(true);
+  ).toBe(false);
   await page.keyboard.press("Escape");
   await page.keyboard.press("Digit3");
   expect(

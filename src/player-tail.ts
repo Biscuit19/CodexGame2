@@ -45,7 +45,10 @@ type TailState = {
 };
 const states = new WeakMap<THREE.Group, TailState>();
 
-export function createPlayerTail(parent: THREE.Group) {
+export function createPlayerTail(
+  parent: THREE.Group,
+  coat?: { fur: string; patch: string },
+) {
   const tail = new THREE.Group();
   tail.name = "continuous-responsive-tail";
   tail.position.set(0, 5, -6);
@@ -70,6 +73,13 @@ export function createPlayerTail(parent: THREE.Group) {
       color.set([c.r, c.g, c.b], offset);
     }
   }
+  if (coat) {
+    for (let i = 0; i <= RINGS; i++) {
+      const c = new THREE.Color(i / RINGS > 0.86 ? coat.fur : coat.patch);
+      for (let j = 0; j <= SIDES; j++)
+        c.toArray(color, (i * (SIDES + 1) + j) * 3);
+    }
+  }
   geometry.setAttribute("color", new THREE.BufferAttribute(color, 3));
   const mesh = new THREE.Mesh(
     geometry,
@@ -80,7 +90,10 @@ export function createPlayerTail(parent: THREE.Group) {
   tail.add(mesh);
   const cap = new THREE.Mesh(
     new THREE.SphereGeometry(2, 20, 14),
-    new THREE.MeshStandardMaterial({ color: "#f5dfba", roughness: 0.95 }),
+    new THREE.MeshStandardMaterial({
+      color: coat?.fur || "#f5dfba",
+      roughness: 0.95,
+    }),
   );
   tail.add(cap);
   const bones = Array.from({ length: 6 }, (_, i) => {

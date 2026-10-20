@@ -1,3 +1,8 @@
+import {
+  createContainerModel,
+  updateContainerModel,
+  type ContainerModel,
+} from "./container-models";
 import { createVillageScene, updateVillageScene } from "./village-scene";
 import { villageBuildings, villagePoint } from "./village";
 import * as THREE from "three";
@@ -372,200 +377,50 @@ function weaponModel(g: THREE.Group, id: string) {
   });
   g.userData.weaponId = id;
 }
-function makeCat(breed = -2, boss = false): Rig {
-  if (breed === -2) return createPlayerCat();
-  const b =
-    breed === -2
-      ? { fur: "#e8cb9e", patch: "#b67f4b", eye: "#81a671" }
-      : breed === -1
-        ? { fur: "#e1b3a7", patch: "#c28d84", eye: "#98bec1" }
-        : breeds[breed];
-  const root = new THREE.Group(),
-    body = new THREE.Group(),
-    head = new THREE.Group(),
-    tail = new THREE.Group(),
-    gun = new THREE.Group(),
-    helmet = new THREE.Group(),
+function makeCat(breed = -1, boss = false): Rig {
+  if (breed === -1) return createPlayerCat();
+  const b = breeds[breed] || breeds[0],
+    rig = createPlayerCat({ ...b, breed });
+  rig.root.name = "smooth-enemy-cat";
+  rig.root.userData.enemy = true;
+  rig.root.userData.breed = breed;
+  rig.root.userData.boss = boss;
+  rig.root.scale.setScalar(0.86 * (boss ? (breed === 14 ? 1.3 : 1.15) : 1));
+  rig.head.position.y = 13;
+  rig.head.scale.set(0.92, 0.95, 1);
+  const torso = rig.body.getObjectByName("rounded-calico-body")!;
+  torso.scale.set(1.15, 1.8, 1.1);
+  torso.position.y += 5;
+  rig.legs.forEach((leg) => leg.children[0].scale.setScalar(1.2));
+  rig.arms.forEach((arm) => (arm.position.y += 11.5));
+  rig.head.remove(rig.helmet);
+  rig.body.remove(rig.vest, rig.pack);
+  release(rig.helmet);
+  release(rig.vest);
+  release(rig.pack);
+  const helmet = new THREE.Group(),
+    vest = new THREE.Group(),
     pack = new THREE.Group();
-  root.add(body);
-  body.position.y = 5;
-  root.scale.setScalar(0.78);
-  const eyes: THREE.Group[] = [],
-    tailJoints: THREE.Group[] = [];
-  root.userData.blinkPhase = Math.random() * 5;
-  ball(body, b.fur, 0, 21, 0, 21, 18, 16);
-  ball(body, "#f2e2c6", 0, 20, 13, 13, 13, 5);
-  const vest = new THREE.Group();
-  body.add(vest);
+  ball(helmet, "#526c4b", 0, 18, -1, 10, 7, 15);
+  block(helmet, "#849366", 0, 16, 14, 19, 3, 8, 2);
+  block(helmet, "#d7c18b", 0, 20, 14, 5, 5, 2, 1);
   block(vest, "#536c4e", 0, 25, 14, 25, 17, 7, 5);
   for (const side of [-1, 1]) {
     block(vest, "#879368", side * 7, 23, 19, 8, 8, 4, 2);
     block(vest, "#536c4e", side * 14, 31, 3, 4, 5, 23, 2);
   }
   block(vest, "#d7c18b", 0, 30, 19, 4, 4, 2, 1);
-  body.add(pack);
   block(pack, "#717958", 0, 27, -16, 25, 29, 13, 5);
   block(pack, "#a3a77b", 0, 27, -24, 18, 12, 4, 2);
   block(pack, "#3b5140", 0, 39, -20, 13, 3, 5, 1);
-  const legs = [new THREE.Group(), new THREE.Group()];
-  legs.forEach((leg, i) => {
-    leg.position.set(i ? 11 : -11, 10, 0);
-    body.add(leg);
-    ball(leg, b.fur, 0, -3, 0, 8, 8, 8);
-    ball(leg, b.fur, 0, -7, 5, 9, 5, 11);
-  });
-  head.position.set(0, 45, 2);
-  body.add(head);
-  ball(head, b.fur, 0, 0, 0, 26, 21, 21);
-  if (breed === -2) {
-    ball(head, "#776452", -12, 5, -1, 12, 15, 13);
-    ball(head, b.patch, 11, 8, 2, 10, 12, 16);
-  }
-  if ([1, 3, 7].includes(breed)) {
-    for (let i = -1; i <= 1; i++) {
-      const stripe = block(head, b.patch, i * 7, 17, 5, 3, 2, 18, 1);
-      stripe.rotation.x = 0.3;
-    }
-  }
-  if (breed === 4) {
-    ball(head, b.patch, 0, -1, 12, 18, 14, 9);
-  }
-  const longFur = [10, 13, 14].includes(breed);
-  if (longFur) {
-    for (let i = 0; i < 8; i++) {
-      const a = (i * Math.PI) / 4;
-      ball(head, b.fur, Math.sin(a) * 19, Math.cos(a) * 14, -2, 8, 9, 12);
-    }
-    ball(body, b.fur, 0, 42, 5, 21, 11, 17);
-  }
-  const earHeight = breed === 5 ? 25 : breed === 4 ? 21 : 18;
-  [-1, 1].forEach((side) => {
-    const ear = mesh(
-      head,
-      new THREE.ConeGeometry(10, earHeight, 3),
-      b.fur,
-      side * 19,
-      19,
-      0,
-    );
-    ear.rotation.y = Math.PI / 2;
-    ear.rotation.z = -side * 0.16;
-    const inner = mesh(
-      head,
-      new THREE.ConeGeometry(6, earHeight * 0.7, 3),
-      "#ce9e98",
-      side * 19,
-      20,
-      4,
-    );
-    inner.rotation.y = Math.PI / 2;
-    inner.rotation.z = -side * 0.16;
-    if (breed === 14) {
-      const tuft = mesh(
-        head,
-        new THREE.ConeGeometry(3, 11, 3),
-        b.patch,
-        side * 17,
-        31,
-        0,
-      );
-      tuft.rotation.z = -side * 0.2;
-    }
-    ball(head, "#f2e2c6", side * 7, -7, 16, 10, 7, 6);
-    const eye = new THREE.Group();
-    eye.position.set(side * 10, 1, 20);
-    head.add(eye);
-    eyes.push(eye);
-    ball(eye, "#fff5df", 0, 0, 0, 6.3, 6.8, 2);
-    ball(eye, b.eye, side * 0.7, -0.2, 1.4, 4.3, 5.4, 1.5);
-    ball(eye, "#23352e", side * 0.7, -0.4, 2.4, 2.4, 4.1, 0.8);
-    ball(eye, "#ffffff", -1, 2, 3, 1.5, 1.7, 0.6);
-    ball(head, "#e6a4a0", side * 18, -6, 17, 4, 2, 1.2);
-    const whisker = new THREE.LineBasicMaterial({ color: "#625f4b" });
-    for (let i = 0; i < 2; i++) {
-      const geo = new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(side * 11, -7 - i * 3, 19),
-        new THREE.Vector3(side * 29, -5 - i * 7, 17),
-      ]);
-      head.add(new THREE.Line(geo, whisker));
-    }
-  });
-  ball(head, "#a66e6d", 0, -5, 21, 3.1, 2.2, 1.8);
-  ball(head, "#6c6854", 0, -10, 21, 1, 2, 0.6);
-  head.add(helmet);
-  // A narrow cap sits between the ears; no solid shell intersects their roots.
-  ball(helmet, "#526c4b", 0, 18, -1, 10, 7, 15);
-  block(helmet, "#849366", 0, 16, 14, 19, 3, 8, 2);
-  block(helmet, "#d7c18b", 0, 20, 14, 5, 5, 2, 1);
-  helmet.visible = breed !== -1;
-  tail.position.set(0, 17, -12);
-  body.add(tail);
-  let jointParent = tail;
-  for (let i = 0; i < 6; i++) {
-    const joint = new THREE.Group();
-    joint.position.set(0, i ? 2 : 0, i ? -6 : 0);
-    jointParent.add(joint);
-    ball(
-      joint,
-      i === 5 ? b.fur : b.patch,
-      0,
-      1,
-      -3,
-      4.2 - i * 0.3,
-      4.2 - i * 0.3,
-      5,
-    );
-    tailJoints.push(joint);
-    jointParent = joint;
-  }
-  gun.position.set(-19, 26, 14);
-  gun.scale.setScalar(0.78);
-  body.add(gun);
-  block(gun, "#334941", 0, 0, 9, 8, 8, 30, 2);
-  block(gun, "#929475", 0, 1, 3, 9, 7, 15, 2);
-  block(gun, "#3c4c42", 0, -7, 3, 5, 9, 8, 1);
-  const barrel = cylinder(gun, "#2e3f3a", 0, 0, 30, 2.1, 2.1, 19);
-  barrel.rotation.x = Math.PI / 2;
-  block(gun, "#b6a480", 0, 5, 10, 4, 2, 7, 1);
-  ball(body, b.fur, -20, 29, 15, 5.5, 6, 6);
-  ball(body, b.fur, -8, 30, 23, 5, 5, 5);
-  if (boss) root.scale.multiplyScalar(breed === 14 ? 1.3 : 1.15);
-  [head, helmet, pack, gun].forEach(batchStatic);
-  root.traverse((o) => {
-    if (o instanceof THREE.Mesh) o.castShadow = false;
-  });
-  const shadow = new THREE.Mesh(new THREE.PlaneGeometry(64, 50), contactShadow);
-  shadow.rotation.x = -Math.PI / 2;
-  shadow.position.y = 1;
-  root.add(shadow);
-  const knife = new THREE.Group();
-  knife.position.copy(gun.position);
-  knife.scale.setScalar(0.78);
-  body.add(knife);
-  block(knife, "#b8563c", 0, 0, 5, 5, 5, 16, 1);
-  block(knife, "#f3dea3", 0, 0, 23, 3, 7, 24, 1);
-  ball(knife, "#ee9bad", 0, 4, 6, 5, 2, 5);
-  for (const x of [-4, 0, 4]) ball(knife, "#f3b3c3", x, 4, 11, 2, 2, 2);
-  knife.visible = false;
-  // Put the rotation pivot inside the belly for a compact somersault.
-  body.children.forEach((child) => (child.position.y -= 29));
-  return {
-    root,
-    body,
-    head,
-    legs,
-    tail,
-    gun,
-    helmet,
-    vest,
-    pack,
-    knife,
-    eyes,
-    tailJoints,
-  };
+  vest.position.y = pack.position.y = -29;
+  rig.head.add(helmet);
+  rig.body.add(vest, pack);
+  Object.assign(rig, { helmet, vest, pack });
+  rig.gun.scale.setScalar(0.78);
+  return rig;
 }
 
-/** Map one uses real geometry, orthographic projection, light and articulated models. */
 export class ThreeRenderer {
   canvas: HTMLCanvasElement;
   webgl: THREE.WebGLRenderer;
@@ -574,7 +429,7 @@ export class ThreeRenderer {
   world = new THREE.Group();
   pawPrints = new PawPrints();
   actors = new Map<string, Rig>();
-  containers = new Map<Container, { group: THREE.Group; lid: THREE.Group }>();
+  containers = new Map<Container, ContainerModel>();
   wallMeshes: { mesh: THREE.Mesh; rect: Raid["walls"][number] }[] = [];
   seed = 0;
   width = 0;
@@ -753,77 +608,9 @@ export class ThreeRenderer {
     this.world.add(player.root);
   }
   container(c: Container) {
-    const group = new THREE.Group(),
-      lid = new THREE.Group();
-    group.position.set(c.x, 0, c.y);
-    if (["litter", "cabinet", "bed"].includes(c.type)) {
-      if (c.type === "litter") {
-        cylinder(group, "#899287", 0, 17, 0, 18, 16, 32);
-        cylinder(group, "#c7bf95", 0, 32, 0, 19, 19, 5);
-        block(group, "#647565", 0, 18, 17, 13, 13, 2, 2);
-      } else if (c.type === "cabinet") {
-        block(group, "#7e8a78", 0, 24, 0, 35, 48, 27, 2);
-        for (const y of [12, 28, 41]) {
-          block(group, "#9da894", 0, y, 14, 30, 10, 2, 1);
-          block(group, "#d4c59e", 0, y + 1, 16, 10, 2, 3, 1);
-        }
-      } else {
-        ball(group, "#ae7862", 0, 9, 0, 26, 10, 21);
-        ball(group, "#dcc397", 0, 15, 0, 20, 5, 15);
-        const rim = new THREE.Mesh(
-          new THREE.TorusGeometry(21, 5, 8, 24),
-          material("#ae7862"),
-        );
-        rim.rotation.x = Math.PI / 2;
-        rim.scale.y = 0.8;
-        rim.position.y = 16;
-        rim.castShadow = true;
-        group.add(rim);
-      }
-      batchStatic(group);
-      group.add(lid);
-      this.world.add(group);
-      return { group, lid };
-    }
-    const color =
-      c.type === "safe"
-        ? "#6f8479"
-        : c.type === "medical"
-          ? "#d2d6b8"
-          : c.type === "weapon"
-            ? "#5d7554"
-            : c.type === "corpse"
-              ? "#7e815d"
-              : "#b29f71";
-    const w = c.type === "weapon" ? 60 : c.type === "safe" ? 42 : 44,
-      h = c.type === "safe" ? 42 : c.type === "corpse" ? 20 : 27;
-    block(group, color, 0, h / 2, 0, w, h, 30, 3);
-    lid.position.set(0, h, -15);
-    group.add(lid);
-    block(
-      lid,
-      c.type === "safe" ? "#8c9e8a" : color,
-      0,
-      1,
-      15,
-      w + 2,
-      5,
-      32,
-      2,
-    );
-    if (c.type === "safe") {
-      const wheel = cylinder(group, "#dbc18b", 0, 20, 17, 7, 7, 3);
-      wheel.rotation.x = Math.PI / 2;
-      block(group, "#e5cf98", 0, 20, 20, 3, 12, 2, 1);
-    } else if (c.type === "medical") {
-      block(group, "#80976c", 0, 13, 16, 17, 5, 2, 1);
-      block(group, "#80976c", 0, 13, 17, 5, 15, 2, 1);
-    } else {
-      for (const x of [-w * 0.3, w * 0.3])
-        block(group, "#d0c194", x, h * 0.5, 16, 4, h + 2, 3, 1);
-    }
-    this.world.add(group);
-    return { group, lid };
+    const model = createContainerModel(c);
+    this.world.add(model.group);
+    return model;
   }
   updateRig(
     rig: Rig,
@@ -844,12 +631,13 @@ export class ThreeRenderer {
     rig.root.rotation.y = Math.PI / 2 - angle;
     const time = performance.now() / 1000;
     if (rig.player) {
-      updatePlayerEquipment(
-        rig as PlayerCatRig,
-        helmet,
-        armor,
-        bag ? bagTier : 0,
-      );
+      if (!rig.root.userData.enemy)
+        updatePlayerEquipment(
+          rig as PlayerCatRig,
+          helmet,
+          armor,
+          bag ? bagTier : 0,
+        );
       animatePlayerCat(
         rig as PlayerCatRig,
         time,
@@ -860,6 +648,25 @@ export class ThreeRenderer {
         rollAim,
         movementDirection,
       );
+      if (rig.root.userData.enemy) {
+        rig.body.position.y += 3;
+        rig.helmet.visible = helmet > 0;
+        rig.vest.visible = armor > 0;
+        rig.pack.visible = bag;
+        const palette = ["#7f8d69", "#5c9877", "#648fad", "#ac8bb9", "#ccaa5f"];
+        for (const [gear, tier] of [
+          [rig.helmet, helmet],
+          [rig.vest, armor],
+        ] as const) {
+          if (gear.userData.tier !== tier) {
+            gear.traverse((o) => {
+              if (o instanceof THREE.Mesh)
+                o.material = material(palette[Math.max(0, tier - 1)]);
+            });
+            gear.userData.tier = tier;
+          }
+        }
+      }
       return;
     }
     rig.body.position.y =
@@ -995,8 +802,7 @@ export class ThreeRenderer {
         m = this.container(c);
         this.containers.set(c, m);
       }
-      m.group.visible = c.items.length > 0;
-      m.lid.rotation.x = c.open ? -0.65 : 0;
+      updateContainerModel(m, c, r);
     }
     for (const w of this.wallMeshes) {
       const hide =

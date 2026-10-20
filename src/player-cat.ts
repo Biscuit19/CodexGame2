@@ -5,8 +5,15 @@ import { movementFrame, rollAxis } from "./locomotion";
 import { createPlayerHelmets } from "./player-helmets";
 import { createPlayerTail, animatePlayerTail } from "./player-tail";
 
+export type CatAppearance = {
+  fur: string;
+  patch: string;
+  eye: string;
+  breed: number;
+};
 type Uniform = { value: number };
 export type PlayerPose = {
+  appearance?: CatAppearance;
   arms: THREE.Group[];
   ears: THREE.Group[];
   face: { blink: Uniform; gaze: Uniform; earL: Uniform; earR: Uniform };
@@ -35,8 +42,10 @@ const smoothMin = (a: number, b: number, k: number) => {
   const h = Math.max(0, Math.min(1, 0.5 + (b - a) / (2 * k)));
   return b * (1 - h) + a * h - k * h * (1 - h);
 };
+let sculptCache: THREE.BufferGeometry | undefined;
 /** A single continuous head/ear surface, with gradient normals rather than polygon face normals. */
 function sculptHead(mat: THREE.Material) {
+  if (sculptCache) return sculptCache.clone();
   const resolution = 64,
     bound = 36;
   const surface = new MarchingCubes(resolution, mat, false, false, 40000);
@@ -82,6 +91,7 @@ function sculptHead(mat: THREE.Material) {
   geometry.computeBoundingSphere();
   geometry.boundingSphere!.radius += 4; // animated ears can extend beyond the resting surface
   surface.geometry.dispose();
+  sculptCache = geometry.clone();
   return geometry;
 }
 const shaderMath = /* glsl */ `
@@ -116,15 +126,20 @@ function skin(
     metalness: 0,
   });
   mat.name = `player-calico-${kind}`;
-  mat.customProgramCacheKey = () => `calico-b-${kind}-v4`;
+  mat.customProgramCacheKey = () =>
+    `smooth-cat-${pose.appearance ? "enemy" : "calico"}-${kind}-v5`;
   mat.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, {
+      catFur: { value: new THREE.Color(pose.appearance?.fur || "#fff1d9") },
+      catPatch: { value: new THREE.Color(pose.appearance?.patch || "#c57e46") },
+      catEye: { value: new THREE.Color(pose.appearance?.eye || "#6ea075") },
+      catPattern: { value: pose.appearance?.breed || 0 },
       catBlink: pose.face.blink,
       catGaze: pose.face.gaze,
       catEarL: pose.face.earL,
       catEarR: pose.face.earR,
     });
-    const common = `varying vec3 catLocal; uniform float catBlink,catGaze,catEarL,catEarR;`;
+    const common = `varying vec3 catLocal; uniform float catBlink,catGaze,catEarL,catEarR,catPattern;uniform vec3 catFur,catPatch,catEye;`;
     shader.vertexShader = common + "\n" + shader.vertexShader;
     shader.fragmentShader = common + shaderMath + shader.fragmentShader;
     const earDeform = kind === "head" ? earDeformation : "";
@@ -161,6 +176,28 @@ function skin(
       }
       pigment=mix(pigment,vec3(.12,.08,.06),max(mouth*front,whiskers*smoothstep(3.,8.,p.z))*.95);
     `;
+    const enemyHeadPaint =
+      /* glsl */ `
+      pigment=catFur;
+      float front=smoothstep(10.,14.,p.z);
+      float crown=smoothstep(8.,19.,p.y);
+      float coatMask=crown*.28;
+      if(catPattern==1.||catPattern==3.||catPattern==7.)
+        coatMask=max(coatMask,step(.35,sin(p.x*.75+p.y*.25))*smoothstep(6.,12.,p.y)*.85);
+      if(catPattern==4.)coatMask=max(coatMask,(1.-smoothstep(.8,1.,length((p.xy-vec2(0.,1.))/vec2(18.,18.))))*front);
+      pigment=mix(pigment,catPatch,coatMask);
+      float innerEar=oval(vec2(abs(p.x)-15.2,p.y-21.3),vec2(5.5,6.4))*smoothstep(.5,2.2,p.z);
+      pigment=mix(pigment,vec3(.52,.24,.22),innerEar);
+      vec2 eyeLeft=p.xy-vec2(-8.0+catGaze,2.3),eyeRight=p.xy-vec2(8.0+catGaze,2.3);
+      float outer=max(oval(eyeLeft,vec2(3.5,max(.2,4.1*catBlink))),oval(eyeRight,vec2(3.5,max(.2,4.1*catBlink))));
+      pigment=mix(pigment,vec3(.82,.81,.68),outer*front);
+      float iris=max(oval(eyeLeft,vec2(2.7,max(.2,3.4*catBlink))),oval(eyeRight,vec2(2.7,max(.2,3.4*catBlink))));
+      pigment=mix(pigment,catEye,iris*front);
+      float pupil=max(oval(eyeLeft,vec2(.9,max(.2,3.1*catBlink))),oval(eyeRight,vec2(.9,max(.2,3.1*catBlink))));
+      pigment=mix(pigment,vec3(.018,.016,.012),pupil*front);
+      float brow=stroke(vec2(abs(p.x),p.y),vec2(4.3,6.),vec2(11.5,8.0),.55);
+      pigment=mix(pigment,vec3(.06,.045,.03),brow*front);
+    ` + headPaint.slice(headPaint.indexOf("      float nose="));
     const bodyPaint = /* glsl */ `
       float orange=1.-smoothstep(.85,1.0,length((p-vec3(13.,8.,-7.))/vec3(11.,13.,11.)));
       float brown=1.-smoothstep(.85,1.0,length((p-vec3(-14.,-6.,-3.))/vec3(10.,10.,12.)));
@@ -192,7 +229,7 @@ function skin(
     `;
     shader.fragmentShader = shader.fragmentShader.replace(
       "#include <color_fragment>",
-      `#include <color_fragment>\nvec3 p=catLocal; vec3 pigment=vec3(.97,.88,.73);\n${kind === "head" ? headPaint : kind === "body" ? bodyPaint : limbPaint}\ndiffuseColor.rgb=pigment;`,
+      `#include <color_fragment>\nvec3 p=catLocal; vec3 pigment=vec3(.97,.88,.73);\n${kind === "head" ? (pose.appearance ? enemyHeadPaint : headPaint) : pose.appearance ? (kind === "body" ? "pigment=mix(catFur,vec3(.88,.80,.67),smoothstep(5.,10.,p.z)*.55);" : limbPaint.replace("pigment=vec3(.98,.97,.93);", "pigment=catFur;")) : kind === "body" ? bodyPaint : limbPaint}\ndiffuseColor.rgb=pigment;`,
     );
   };
   return mat;
@@ -375,7 +412,7 @@ export function updatePlayerEquipment(
   rig.pack.scale.setScalar(0.7 + Math.max(0, Math.min(4, bag - 1)) * 0.075);
 }
 
-export function createPlayerCat(): PlayerCatRig {
+export function createPlayerCat(appearance?: CatAppearance): PlayerCatRig {
   const root = new THREE.Group(),
     body = new THREE.Group(),
     head = new THREE.Group();
@@ -385,6 +422,7 @@ export function createPlayerCat(): PlayerCatRig {
   const eyes = [new THREE.Group(), new THREE.Group()],
     ears = [new THREE.Group(), new THREE.Group()];
   const pose: PlayerPose = {
+    appearance,
     arms: [],
     ears,
     face: {
@@ -434,7 +472,7 @@ export function createPlayerCat(): PlayerCatRig {
   );
   flap.position.set(0, 2, 2);
   pouch.add(flap);
-  const { tail, bones } = createPlayerTail(body);
+  const { tail, bones } = createPlayerTail(body, appearance);
   const gun = new THREE.Group(),
     knife = new THREE.Group();
   gun.position.set(0, -7.5, 9);
@@ -449,7 +487,13 @@ export function createPlayerCat(): PlayerCatRig {
   blade.position.z = 14;
   knife.add(blade);
   knife.visible = false;
-  const { helmet, vest, pack } = createEquipment(headMesh.geometry, pose);
+  const { helmet, vest, pack } = appearance
+    ? {
+        helmet: new THREE.Group(),
+        vest: new THREE.Group(),
+        pack: new THREE.Group(),
+      }
+    : createEquipment(headMesh.geometry, pose);
   head.add(helmet);
   body.add(vest, pack);
   body.children.forEach((child) => (child.position.y -= 29));

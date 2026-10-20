@@ -47,3 +47,31 @@ blender --background --threads 4 --python scripts/assets/build-rounded-village.p
 ## 红框区域的木梁碎石废屋
 
 新增`stone-ruin.glb`来自上述固定CC0版本KayKit Hexagon的`buildings/neutral/building_destroyed.gltf`。保留原版断梁、木板、灰泥、台阶与碎石材质，主体归一为280×110、高140，移到占地300×200的后半部；前侧补可步行地板，配置两个低级箱子。后半部与瓦砾设碰撞，玩家不会踏入抬高的基座。仍由同一Blender复现脚本导出，无新增来源或授权。
+
+## 可搜索容器与战利品盒
+
+`container-kit.glb` 含9类容器的18个独立开合状态，使用上面已固定版本的CC0素材，授权全文均随本目录提供。地图中的模型与平面地图的精灵图使用同一套源模型：
+
+| 游戏容器 | 完整素材基础 | 为玩法所做修改 |
+|---|---|---|
+| 纸箱 | Homely House `package` | 原纸箱贴图、包裹封口；搜索后打开纸板折翼 |
+| 猫砂桶 | KayKit Hexagon `bucket_empty` | 木桶箍圈；新增可掀起木盖与提手 |
+| 工具柜 | Furniture Bits `cabinet_medium` | 保留柜框和抽屉，分离原柜门、开启后可见层板 |
+| 医疗箱 | Pleasant Picnic `cooler` | 浅色箱体、红十字，原箱盖/提手翻开 |
+| 武器箱 | Pleasant Picnic `cooler` | 拉长硬箱、橄榄绿主体、金属扣、内衬，原箱盖翻开 |
+| 豪华猫窝 | Pleasant Picnic `picnic_basket_round` + `pillow_small_red` | 保留编织篮沿，红软垫搜索后翻起，增加小金牌 |
+| 保险箱 | Charming Kitchen `fridge` | 复用圆润柜体/原门结构，金属改色、厚门、转盘、铰链，搜索后侧开 |
+| 普通敌人战利品 | KayKit Hexagon `crate_long_empty` | 小型独立木盒、灰绿铰链盖、绑带、锁扣，搜索后掀盖 |
+| 首领战利品 | 同上 | 藏蓝箱体、金色包角和绑带、盖顶猫爪徽章，区别普通敌猫 |
+
+所有活动部分先烘焙原对象变换，再绕真实铰链旋转；避免重复位移造成杆件外伸。容器清空保留搜索后状态。临近时使用法线扩张的背面外壳描边：保险箱、武器箱、豪华猫窝、首领盒为金色，其余白色，远离或隔墙不显示。模型与贴图全部打包，不依赖运行时远程下载。
+
+复现容器（Blender 4.3；依次传上述五个固定版本素材根目录）：
+
+```sh
+blender -b -t 2 --python scripts/assets/build-search-containers.py -- /path/to/Tiny-Treats-Homely-House-1.0 /path/to/Tiny-Treats-Pleasant-Picnic-1.0 /path/to/Tiny-Treats-Charming-Kitchen-1.0 /path/to/KayKit-Furniture-Bits-1.0 /path/to/KayKit-Medieval-Hexagon-Pack-1.0
+blender -b -t 2 --python scripts/assets/render-container-sprites.py
+python scripts/assets/pack-container-sprites.py
+```
+
+后两步使用同一GLB渲染并打包18帧透明PNG，供其余平面视角地图显示相同容器外形；打包脚本依赖Pillow。

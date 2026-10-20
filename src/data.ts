@@ -390,7 +390,7 @@ export const kindNames: Record<Kind, string> = {
   helmet: "头盔",
   bag: "背包",
   ammo: "子弹",
-  food: "补给",
+  food: "补给品",
   collectible: "收集品",
 };
 export const makeItem = (id: string, qty = 1): Item => {
@@ -427,8 +427,7 @@ export const sale = (i: Item) =>
   );
 export const stackLimit = (id: string) =>
   db[id].kind === "ammo" ? AMMO_STACK : db[id].kind === "food" ? FOOD_STACK : 1;
-export const itemNameColor = (id: string) =>
-  db[id].kind === "collectible" ? collectibleColors[db[id].tier] : "";
+export const itemNameColor = (id: string) => collectibleColors[db[id].tier];
 export const searchTime = (i: Item) => {
   const d = db[i.id];
   if (d.name === "星洲猫心") return 7;

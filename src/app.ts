@@ -37,6 +37,8 @@ import {
   saveIssue,
   unlocked,
   packCapacity,
+  packGrid,
+  movePackSlot,
   move,
   equip,
   buy,
@@ -320,7 +322,7 @@ function card(i: Item, from: string, shop = false) {
   const d = db[i.id],
     chosen = selected?.uid === i.uid,
     locked = shop && unlocked(s) < (d.unlock ?? 0);
-  return `<button class="item-slot ${chosen ? "selected" : ""}" style="--rarity:${colors[d.tier]}" data-action="${shop ? "buy" : from === "loot" ? "loot-select" : "select"}" data-id="${shop ? i.id : i.uid}" data-from="${from}" data-item="${i.id}" ${shop ? "" : 'draggable="true"'} ${locked ? "disabled" : ""}><span class="quality">${rarity[d.tier]}</span>${itemIcon(i, 52)}<strong style="color:${itemNameColor(i.id) || "inherit"}">${name(i.id)}</strong><span class="${["food", "ammo"].includes(d.kind) ? "stack-quantity" : ""}">${shop ? (locked ? "尚未解锁" : `◈ ${money(d.price)}`) : d.kind === "ammo" ? `${i.qty} 发` : d.kind === "food" ? `${i.qty} 份` : i.durability !== undefined ? `${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}` : d.kind === "collectible" ? `◈ ${money(sale(i))}` : kindNames[d.kind]}</span>${shop ? `<small>${d.damage ? `伤害 ${d.damage}${d.pellets! > 1 ? `×${d.pellets}` : ""} · 弹匣 ${d.mag}` : d.capacity ? `${d.capacity} 格` : d.kind === "food" ? foodEffect(d) : d.kind === "ammo" ? "每组 120 发" : `${d.tier} 级防护`}</small>` : ""}</button>`;
+  return `<button class="item-slot ${chosen ? "selected" : ""}" style="--rarity:${itemNameColor(i.id)}" data-action="${shop ? "buy" : from === "loot" ? "loot-select" : "select"}" data-id="${shop ? i.id : i.uid}" data-from="${from}" data-item="${i.id}" ${shop ? "" : 'draggable="true"'} ${locked ? "disabled" : ""}><span class="quality">${rarity[d.tier]}</span>${itemIcon(i, 52)}<strong style="color:${itemNameColor(i.id) || "inherit"}">${name(i.id)}</strong>${d.kind === "food" && shop ? '<span class="item-kind">补给品</span>' : ""}<span class="${["food", "ammo"].includes(d.kind) ? "stack-quantity" : ""}">${shop ? (locked ? "尚未解锁" : `◈ ${money(d.price)}`) : d.kind === "ammo" ? `${i.qty} 发` : d.kind === "food" ? `补给品 ×${i.qty}` : i.durability !== undefined ? `${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}` : d.kind === "collectible" ? `◈ ${money(sale(i))}` : kindNames[d.kind]}</span>${shop ? `<small>${d.damage ? `伤害 ${d.damage}${d.pellets! > 1 ? `×${d.pellets}` : ""} · 弹匣 ${d.mag}` : d.capacity ? `${d.capacity} 格` : d.kind === "food" ? foodEffect(d) : d.kind === "ammo" ? "每组 120 发" : `${d.tier} 级防护`}</small>` : ""}</button>`;
 }
 function remember() {
   if (s.temporary) return;
@@ -356,7 +358,8 @@ function guide() {
     ["鼠标左键", "瞄准与射击"],
     ["R", "换弹"],
     ["E", "开关容器与背包"],
-    ["F", "食物回血"],
+    ["Q", "食用补给品"],
+    ["F", "拾取鼠标指向的容器物品"],
     ["Tab", "打开背包"],
     ["M", "打开地图"],
     ["1 / 2 / 3", "主武器／副武器／近战"],
@@ -424,12 +427,18 @@ function equipped() {
   )
     .map(([slot, label, ic]) => {
       const i = s.equipment[slot];
-      return `<div class="equipped-slot" data-drop="equipment" data-slot="${slot}" aria-label="${label}装备位"><span class="equipment-title">${label}</span><button class="equipped-item" data-action="select" data-from="equipment" data-item="${i?.id || ""}" data-id="${i?.uid || ""}" ${i ? 'draggable="true"' : "disabled"}>${i ? itemIcon(i, 32) : icon(ic, "#7c917b", 32)}<strong>${i ? name(i.id) : "未装备"}</strong>${slot === "food" && i ? `<span>${i.qty} 份</span>` : ""}${slot === "ammo" ? `<span>${i?.qty ?? 0} 发备弹</span><span>弹匣 ${raid?.mag ?? s.equipment.primary?.loaded?.count ?? 0} 发</span>` : ""}${i?.durability !== undefined ? `<span>耐久 ${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}</span>` : ""}</button></div>`;
+      return `<div class="equipped-slot" data-drop="equipment" data-slot="${slot}" aria-label="${label}装备位"><span class="equipment-title">${label}</span><button class="equipped-item" data-action="select" data-from="equipment" data-item="${i?.id || ""}" data-id="${i?.uid || ""}" ${i ? 'draggable="true"' : "disabled"}>${i ? itemIcon(i, 32) : icon(ic, "#7c917b", 32)}<strong style="color:${i ? itemNameColor(i.id) : "inherit"}">${i ? name(i.id) : "未装备"}</strong>${slot === "food" && i ? `<span>${i.qty} 份</span>` : ""}${slot === "ammo" ? `<span>${i?.qty ?? 0} 发备弹</span><span>弹匣 ${raid?.mag ?? s.equipment.primary?.loaded?.count ?? 0} 发</span>` : ""}${i?.durability !== undefined ? `<span>耐久 ${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}</span>` : ""}</button></div>`;
     })
     .join("")}</div>`;
 }
 function inventoryPanel() {
-  return `<section class="panel inventory-panel" aria-label="左侧背包"><div class="equipment-fixed">${heading("当前装备")}${equipped()}</div><div class="pack-heading">${heading("背包", `${s.pack.length}/${packCapacity(s)} 格`)}${!raid ? btn("全部放回", "stash-all", s.pack.length ? "" : "disabled", "secondary") : ""}</div><div class="inventory-scroll" data-drop="pack"><div class="slot-grid pack-grid" data-grid="pack">${s.pack.map((i) => card(i, "pack")).join("")}${emptySlots(packCapacity(s) - s.pack.length)}</div></div><div class="safe-fixed" data-drop="secure"><div class="safe-label"><strong>${safeNames[s.safe]}（安全箱）</strong><span>${s.secure.length}/${safeCap[s.safe]} 格</span>${!raid ? btn("升级", "safe-menu", "", "secondary") : ""}</div><div class="slot-grid safe-grid" data-grid="secure" style="--safe-slots:${safeCap[s.safe]}">${s.secure.map((i) => card(i, "secure")).join("")}${emptySlots(safeCap[s.safe] - s.secure.length)}</div></div></section>`;
+  return `<section class="panel inventory-panel" aria-label="左侧背包"><div class="equipment-fixed">${heading("当前装备")}${equipped()}</div><div class="pack-heading">${heading("背包", `${s.pack.length}/${packCapacity(s)} 格`)}${!raid ? btn("全部放回", "stash-all", s.pack.length ? "" : "disabled", "secondary") : ""}</div><div class="inventory-scroll" data-drop="pack"><div class="slot-grid pack-grid" data-grid="pack">${packGrid(
+    s,
+  )
+    .map((i) => (i ? card(i, "pack") : emptySlots(1)))
+    .join(
+      "",
+    )}</div></div><div class="safe-fixed" data-drop="secure"><div class="safe-label"><strong>${safeNames[s.safe]}（安全箱）</strong><span>${s.secure.length}/${safeCap[s.safe]} 格</span>${!raid ? btn("升级", "safe-menu", "", "secondary") : ""}</div><div class="slot-grid safe-grid" data-grid="secure" style="--safe-slots:${safeCap[s.safe]}">${s.secure.map((i) => card(i, "secure")).join("")}${emptySlots(safeCap[s.safe] - s.secure.length)}</div></div></section>`;
 }
 function selectedActions() {
   const i = selectedItem();
@@ -513,7 +522,7 @@ function selectedActions() {
           : d.kind === "ammo"
             ? `${d.tier} 级弹药 · 每组最多 120 发`
             : "";
-  return `<h3 style="color:${itemNameColor(i.id) || "inherit"}">${esc(name(i.id))}</h3><span style="color:${colors[d.tier]}">${rarity[d.tier]} · ${kindNames[d.kind]}</span><p class="item-description">${esc(d.desc)}</p><p class="item-sale-value">出售价值 ◈ ${money(sale(i))} 金币</p>${d.kind === "weapon" ? `<p>耐久 ${Math.ceil(i.durability ?? d.durability!)}/${Math.ceil(i.maxDurability ?? d.durability!)} · 威力 ${Math.round(weaponDamageScale(i.durability ?? d.durability!) * 100)}%</p>` : ""}${spec ? `<p>${spec}</p>` : ""}${d.kind === "armor" || d.kind === "helmet" ? `<p>防护评分 ${Math.round(protection(i))}（等级×剩余耐久）</p>` : ""}<div class="item-options">${options}</div>`;
+  return `<h3 style="color:${itemNameColor(i.id) || "inherit"}">${esc(name(i.id))}</h3><span style="color:${itemNameColor(i.id)}">${rarity[d.tier]} · ${kindNames[d.kind]}</span><p class="item-description">${esc(d.desc)}</p><p class="item-sale-value">出售价值 ◈ ${money(sale(i))} 金币</p>${d.kind === "weapon" ? `<p class="item-function">耐久 ${Math.ceil(i.durability ?? d.durability!)}/${Math.ceil(i.maxDurability ?? d.durability!)} · 威力 ${Math.round(weaponDamageScale(i.durability ?? d.durability!) * 100)}%</p>` : ""}${spec ? `<p class="item-function">${spec}</p>` : ""}${d.kind === "armor" || d.kind === "helmet" ? `<p class="item-function">防护评分 ${Math.round(protection(i))}（等级×剩余耐久）</p>` : ""}<div class="item-options">${options}</div>`;
 }
 function closeItemMenu() {
   document.querySelector("#item-menu")?.remove();
@@ -789,7 +798,7 @@ function renderRaid() {
   canvas.classList.remove("hidden");
   document.body.classList.add("in-raid");
   if (r.map !== 0) scene3d?.show(false);
-  root.innerHTML = `<div class="raid-hud"><div class="raid-top"><strong>${maps[r.map].name}</strong><div id="boss-hud"></div>${btn('<b id="raid-time">15:00</b><span>菜单</span>', "pause", "", "raid-timer")}</div><canvas id="minimap" width="260" height="200" data-action="toggle-map" aria-label="打开战区地图"></canvas><div class="raid-bottom"><section class="vitals"><div><strong id="hp-number">100</strong><span>生命</span></div><div class="meter"><i id="hp-fill"></i></div><div class="stamina-row"><span>体力</span><strong id="st-number">${MOVEMENT.maxStamina}</strong><span id="sprint-state">疾跑</span></div><div class="meter stamina"><i id="st-fill"></i></div><span id="armor-readout"></span><span id="regen-readout"></span></section><section class="food-hud" aria-label="当前食物"><div id="food-art"></div><strong id="food-name"></strong><span id="food-quantity"></span><small>F 食用</small></section><div class="raid-shortcuts"><span>空格 翻滚</span><span>E 搜索</span><span>Tab 背包</span><span>M 地图</span></div><section class="weapon-hud"><div class="hud-weapon-column"><strong id="weapon-name"></strong><div id="weapon-art" class="hud-weapon-art" aria-hidden="true"></div><span id="weapon-condition"></span></div><div class="hud-ammo-column"><div class="hud-rounds"><b id="mag-count"></b><span id="reserve-count"></span></div><div class="hud-ammo-details"><span id="ammo-art" class="hud-ammo-art" aria-hidden="true"></span><span id="ammo-name"></span></div></div></section></div><div id="action-progress" class="action-progress hidden"></div><div id="crosshair"></div></div><div id="raid-overlay">${raidOverlay()}</div>`;
+  root.innerHTML = `<div class="raid-hud"><div class="raid-top"><strong>${maps[r.map].name}</strong><div id="boss-hud"></div>${btn('<b id="raid-time">15:00</b><span>菜单</span>', "pause", "", "raid-timer")}</div><canvas id="minimap" width="260" height="200" data-action="toggle-map" aria-label="打开战区地图"></canvas><div class="raid-bottom"><section class="vitals"><div><strong id="hp-number">100</strong><span>生命</span></div><div class="meter"><i id="hp-fill"></i></div><div class="stamina-row"><span>体力</span><strong id="st-number">${MOVEMENT.maxStamina}</strong><span id="sprint-state">疾跑</span></div><div class="meter stamina"><i id="st-fill"></i></div><span id="armor-readout"></span><span id="regen-readout"></span></section><section class="food-hud" aria-label="当前食物"><div id="food-art"></div><strong id="food-name"></strong><span id="food-quantity"></span><small>Q 食用</small></section><div class="raid-shortcuts"><span>空格 翻滚</span><span>E 搜索</span><span>Tab 背包</span><span>M 地图</span></div><section class="weapon-hud"><div class="hud-weapon-column"><strong id="weapon-name"></strong><div id="weapon-art" class="hud-weapon-art" aria-hidden="true"></div><span id="weapon-condition"></span></div><div class="hud-ammo-column"><div class="hud-rounds"><b id="mag-count"></b><span id="reserve-count"></span></div><div class="hud-ammo-details"><span id="ammo-art" class="hud-ammo-art" aria-hidden="true"></span><span id="ammo-name"></span></div></div></section></div><div id="action-progress" class="action-progress hidden"></div><div id="crosshair"></div></div><div id="raid-overlay">${raidOverlay()}</div>`;
   overlay();
   updateHUD();
 }
@@ -804,7 +813,7 @@ function raidOverlay() {
   if (r.puzzle)
     right = `<section class="panel puzzle-panel">${btn("×", "close-search", 'aria-label="关闭容器"', "close")}${heading("保险箱")}<div class="math-expression">${r.puzzle.text}</div><div class="math-choices">${r.puzzle.choices.map((v, i) => btn(`<small>${i + 1}</small><strong>${v}</strong>`, "answer", `data-id="${v}"`)).join("")}</div><p>答错会锁定三秒并触发警报。</p></section>`;
   if (r.search)
-    right = `<section class="panel loot-panel" aria-label="右侧容器">${btn("×", "close-search", 'aria-label="关闭容器"', "close")}${heading(r.search.name)}<div class="slot-grid loot-grid">${r.search.items.map((i, n) => (n < r.search!.revealed ? `<div class="loot-slot">${card(i, "loot")}</div>` : `<div class="unrevealed" data-search-index="${n}"><span class="search-ring ${n === r.search!.revealed ? "spinning" : ""}"></span><strong>${n === r.search!.revealed ? "搜索中" : "未搜索"}</strong></div>`)).join("")}${r.search.items.length ? "" : '<div class="empty-container">容器已清空</div>'}</div><div class="container-actions"><span>双击物品放入背包</span>${btn("拾取已搜索物品", "take-all", "", "secondary full")}</div></section>`;
+    right = `<section class="panel loot-panel" aria-label="右侧容器">${btn("×", "close-search", 'aria-label="关闭容器"', "close")}${heading(r.search.name)}<div class="slot-grid loot-grid">${r.search.items.map((i, n) => (n < r.search!.revealed ? `<div class="loot-slot">${card(i, "loot")}</div>` : `<div class="unrevealed" data-search-index="${n}"><span class="search-ring ${n === r.search!.revealed ? "spinning" : ""}"></span><strong>${n === r.search!.revealed ? "搜索中" : "未搜索"}</strong></div>`)).join("")}${r.search.items.length ? "" : '<div class="empty-container">容器已清空</div>'}</div><div class="container-actions"><span>双击或悬停按 F 拾取物品</span>${btn("拾取已搜索物品", "take-all", "", "secondary full")}</div></section>`;
   return bag || right
     ? `<div class="raid-inventory-layout">${bag}${right}</div>`
     : "";
@@ -861,6 +870,14 @@ function updateHUD() {
   }
   const currentFood = s.equipment.food;
   set("food-name", currentFood ? name(currentFood.id) : "没有食物");
+  for (const [id, item] of [
+    ["food-name", currentFood],
+    ["weapon-name", r.weaponItem],
+    ["ammo-name", s.equipment.ammo],
+  ] as const) {
+    const el = document.getElementById(id);
+    if (el) el.style.color = item ? itemNameColor(item.id) : "";
+  }
   set("food-quantity", currentFood ? `${currentFood.qty} 份` : "背包无补给");
   const foodArt = document.getElementById("food-art");
   if (foodArt && foodArt.dataset.artId !== (currentFood?.id ?? "empty")) {
@@ -1300,12 +1317,9 @@ document.addEventListener("click", (e) => {
     });
   }
 });
-root.addEventListener("dblclick", (e) => {
-  const el = (e.target as HTMLElement).closest<HTMLElement>(".item-slot");
-  if (!el || el.dataset.from === "shop") return;
-  const from = el.dataset.from as Source,
-    uid = el.dataset.id!;
-  if (el.dataset.from === "loot") {
+let hoveredLootUid: string | undefined;
+function quickItem(from: ItemSource, uid: string) {
+  if (from === "loot") {
     const n = raid?.search?.items.findIndex((i) => i.uid === uid) ?? -1;
     if (n >= 0) raid?.take(n, false, true);
     closeItemMenu();
@@ -1326,6 +1340,11 @@ root.addEventListener("dblclick", (e) => {
     else selectedMove("pack");
   } else if (from === "secure") selectedMove("pack");
   else if (from === "pack" && !raid) selectedMove("stash");
+}
+root.addEventListener("dblclick", (e) => {
+  const el = (e.target as HTMLElement).closest<HTMLElement>(".item-slot");
+  if (el && el.dataset.from !== "shop")
+    quickItem(el.dataset.from as Source, el.dataset.id!);
 });
 document.addEventListener("input", (e) => {
   const input = e.target as HTMLInputElement,
@@ -1369,6 +1388,18 @@ document.addEventListener("change", async (e) => {
 });
 
 root.addEventListener("pointerover", (e) => {
+  const el = (e.target as HTMLElement).closest<HTMLElement>(
+    ".item-slot[data-from=loot]",
+  );
+  hoveredLootUid = el?.dataset.id;
+});
+root.addEventListener("pointerout", (e) => {
+  if (
+    !(e.relatedTarget as HTMLElement)?.closest?.(".item-slot[data-from=loot]")
+  )
+    hoveredLootUid = undefined;
+});
+root.addEventListener("pointerover", (e) => {
   const el = (e.target as HTMLElement).closest<HTMLElement>("[data-item]");
   if (
     !el ||
@@ -1384,7 +1415,7 @@ root.addEventListener("pointerover", (e) => {
     const tip = document.createElement("div");
     tip.id = "item-tooltip";
     tip.className = "panel item-tooltip";
-    tip.innerHTML = `<strong style="color:${itemNameColor(d.id) || "inherit"}">${esc(name(d.id))}</strong><p>${esc(d.desc)}</p>${d.kind === "food" ? `<p>${foodEffect(d)}</p>` : ""}`;
+    tip.innerHTML = `<strong style="color:${itemNameColor(d.id) || "inherit"}">${esc(name(d.id))}</strong><span class="item-kind">${kindNames[d.kind]}</span><p>${esc(d.desc)}</p>${d.kind === "food" ? `<p class="item-function">${foodEffect(d)}</p>` : ""}`;
     root.append(tip);
     const r = el.getBoundingClientRect(),
       b = tip.getBoundingClientRect();
@@ -1472,6 +1503,20 @@ root.addEventListener("drop", (e) => {
     )
       return;
     selected = data;
+    if (data.from === "pack" && target.dataset.drop === "pack") {
+      const cell = (e.target as HTMLElement).closest<HTMLElement>(
+        ".pack-grid > .item-slot,.pack-grid > .empty-slot",
+      );
+      if (cell) {
+        const index = Array.from(cell.parentElement!.children).indexOf(cell);
+        if (movePackSlot(s, data.uid, index)) {
+          closeItemMenu();
+          if (raid) overlay();
+          else render();
+        }
+      }
+      return;
+    }
     if (target.dataset.drop === "equipment") {
       equipSelected(target.dataset.slot as keyof Equipment);
       return;
@@ -1615,7 +1660,18 @@ window.addEventListener(
       overlay();
     }
     if (e.code === "KeyR") r.loadMagazine();
-    if (e.code === "KeyF") r.useFood();
+    if (e.code === "KeyQ") r.useFood();
+    if (e.code === "KeyF" && r.search) {
+      e.preventDefault();
+      const pointed = document
+        .elementFromPoint(pointer.x, pointer.y)
+        ?.closest<HTMLElement>(".item-slot[data-from=loot]");
+      const uid =
+        pointed?.dataset.id ||
+        (selected?.from === "loot" ? selected.uid : undefined) ||
+        hoveredLootUid;
+      if (uid) quickItem("loot", uid);
+    }
     if (e.code === "Tab") {
       r.inventory = !r.inventory;
       if (!r.inventory) r.interrupt();

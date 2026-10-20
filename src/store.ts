@@ -43,6 +43,7 @@ export interface Save {
   safe: number;
   stash: Item[];
   pack: Item[];
+  packLayout?: string[];
   secure: Item[];
   equipment: Equipment;
   defeated: string[];
@@ -198,6 +199,13 @@ export function validateSave(data: unknown): Save {
     (typeof s.raidBackup !== "string" || s.raidBackup.length > 2000000)
   )
     throw Error("出击备份无效");
+  if (
+    s.packLayout !== undefined &&
+    (!Array.isArray(s.packLayout) ||
+      s.packLayout.length > 450 ||
+      s.packLayout.some((uid) => typeof uid !== "string" || uid.length > 100))
+  )
+    throw Error("背包格位无效");
   const all: Item[] = [];
   if (
     !Number.isInteger(s.ng) ||
@@ -444,6 +452,38 @@ export const unlocked = (s: Save) =>
       );
 export const packCapacity = (s: Save) =>
   s.equipment.bag ? db[s.equipment.bag.id].capacity! : BASE_PACK;
+/** Stable UID slots keep visual gaps without placing placeholder items in the inventory. */
+export function packGrid(s: Save): (Item | undefined)[] {
+  const capacity = packCapacity(s),
+    byId = new Map(s.pack.map((i) => [i.uid, i]));
+  const slots: (Item | undefined)[] = Array.from({ length: capacity });
+  const used = new Set<string>();
+  for (const [n, uid] of (s.packLayout || []).slice(0, capacity).entries())
+    if (byId.has(uid) && !used.has(uid)) {
+      slots[n] = byId.get(uid);
+      used.add(uid);
+    }
+  for (const item of s.pack)
+    if (!used.has(item.uid)) {
+      const n = slots.findIndex((i) => !i);
+      if (n >= 0) {
+        slots[n] = item;
+        used.add(item.uid);
+      }
+    }
+  s.packLayout = slots.map((i) => i?.uid || "");
+  return slots;
+}
+export function movePackSlot(s: Save, uid: string, to: number) {
+  const slots = packGrid(s),
+    from = slots.findIndex((i) => i?.uid === uid);
+  if (from < 0 || !Number.isInteger(to) || to < 0 || to >= slots.length)
+    return false;
+  [slots[from], slots[to]] = [slots[to], slots[from]];
+  s.packLayout = slots.map((i) => i?.uid || "");
+  persist(s);
+  return true;
+}
 export function put(list: Item[], item: Item, capacity: number) {
   if (!canPut(list, item, capacity)) return false;
   normalizeStacks(list);
