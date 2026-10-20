@@ -50,10 +50,12 @@ blender --background --threads 4 --python scripts/assets/build-rounded-village.p
 
 ## 可搜索容器与战利品盒
 
-`container-kit.glb` 含9类容器的18个独立开合状态，使用上面已固定版本的CC0素材，授权全文均随本目录提供。地图中的模型与平面地图的精灵图使用同一套源模型：
+`container-kit.glb` 含11类容器的22个独立开合状态，使用上面已固定版本的CC0素材，授权全文均随本目录提供。地图中的模型与平面地图的精灵图使用同一套源模型：
 
 | 游戏容器 | 完整素材基础 | 为玩法所做修改 |
 |---|---|---|
+| 旧藤筐 | Pleasant Picnic `picnic_basket_square` | 保留藤编箱身、提手与双盖，搜索后向两侧掀开原盖 |
+| 生锈工具盒 | Pleasant Picnic `cooler` | 缩短为锈红铁盒、磨损斑、金属扣和提手，原箱盖后翻 |
 | 纸箱 | Homely House `package` | 原纸箱贴图、包裹封口；搜索后打开纸板折翼 |
 | 猫砂桶 | KayKit Hexagon `bucket_empty` | 木桶箍圈；新增可掀起木盖与提手 |
 | 工具柜 | Furniture Bits `cabinet_medium` | 保留柜框和抽屉，分离原柜门、开启后可见层板 |
@@ -64,7 +66,7 @@ blender --background --threads 4 --python scripts/assets/build-rounded-village.p
 | 普通敌人战利品 | KayKit Hexagon `crate_long_empty` | 小型独立木盒、灰绿铰链盖、绑带、锁扣，搜索后掀盖 |
 | 首领战利品 | 同上 | 藏蓝箱体、金色包角和绑带、盖顶猫爪徽章，区别普通敌猫 |
 
-所有活动部分先烘焙原对象变换，再绕真实铰链旋转；避免重复位移造成杆件外伸。容器清空保留搜索后状态。临近时使用法线扩张的背面外壳描边：保险箱、武器箱、豪华猫窝、首领盒为金色，其余白色，远离或隔墙不显示。模型与贴图全部打包，不依赖运行时远程下载。
+所有活动部分先烘焙原对象变换，再绕真实铰链旋转；避免重复位移造成杆件外伸。容器清空保留搜索后状态。临近时使用法线扩张的背面外壳描边：保险箱、武器箱、豪华猫窝、首领盒为金色，其余白色，范围由105扩大60%到168，金色描边由1.25加粗到2.6；远离或隔墙不显示。模型与贴图全部打包，不依赖运行时远程下载。
 
 复现容器（Blender 4.3；依次传上述五个固定版本素材根目录）：
 
@@ -74,4 +76,4 @@ blender -b -t 2 --python scripts/assets/render-container-sprites.py
 python scripts/assets/pack-container-sprites.py
 ```
 
-后两步使用同一GLB渲染并打包18帧透明PNG，供其余平面视角地图显示相同容器外形；打包脚本依赖Pillow。
+后两步使用同一GLB渲染并打包22帧透明PNG，供其余平面视角地图显示相同容器外形；打包脚本依赖Pillow。

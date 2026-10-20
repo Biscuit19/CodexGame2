@@ -39,6 +39,8 @@ import {
   packCapacity,
   packGrid,
   movePackSlot,
+  sortPack,
+  sellCommonCollectibles,
   move,
   equip,
   buy,
@@ -202,19 +204,20 @@ function syncBaseMenu() {
       "base-menu",
       "base-settings",
       "base-help",
+      "sell-confirm",
       "safe",
       "help",
       "settings",
     ].includes(modal)
   ) {
-    content = ["safe", "help", "settings"].includes(modal)
+    content = ["sell-confirm", "safe", "help", "settings"].includes(modal)
       ? baseModal()
       : modal === "base-menu"
         ? `<h1>基地菜单</h1>${btn("返回开始界面", "to-title", "", "secondary full")}${btn("设置", "base-settings", "", "secondary full")}${btn("操作指南", "base-help", "", "secondary full")}${btn("继续整备", "close-modal", "", "primary full")}`
         : modal === "base-settings"
           ? `${heading("设置")}${settingsContent()}${btn("返回基地菜单", "settings", "", "secondary full")}`
           : `${guide()}${btn("返回基地菜单", "settings", "", "secondary full")}`;
-    if (!["safe", "help", "settings"].includes(modal))
+    if (!["sell-confirm", "safe", "help", "settings"].includes(modal))
       content = `<section class="modal pause-modal panel">${btn("×", "close-modal", 'aria-label="关闭"', "close")}${content}</section>`;
   }
   setDialog(baseMenu, content);
@@ -322,7 +325,7 @@ function card(i: Item, from: string, shop = false) {
   const d = db[i.id],
     chosen = selected?.uid === i.uid,
     locked = shop && unlocked(s) < (d.unlock ?? 0);
-  return `<button class="item-slot ${chosen ? "selected" : ""}" style="--rarity:${itemNameColor(i.id)}" data-action="${shop ? "buy" : from === "loot" ? "loot-select" : "select"}" data-id="${shop ? i.id : i.uid}" data-from="${from}" data-item="${i.id}" ${shop ? "" : 'draggable="true"'} ${locked ? "disabled" : ""}><span class="quality">${rarity[d.tier]}</span>${itemIcon(i, 52)}<strong style="color:${itemNameColor(i.id) || "inherit"}">${name(i.id)}</strong>${d.kind === "food" && shop ? '<span class="item-kind">补给品</span>' : ""}<span class="${["food", "ammo"].includes(d.kind) ? "stack-quantity" : ""}">${shop ? (locked ? "尚未解锁" : `◈ ${money(d.price)}`) : d.kind === "ammo" ? `${i.qty} 发` : d.kind === "food" ? `补给品×${i.qty}` : i.durability !== undefined ? `${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}` : d.kind === "collectible" ? `◈ ${money(sale(i))}` : kindNames[d.kind]}</span>${shop ? `<small>${d.damage ? `伤害 ${d.damage}${d.pellets! > 1 ? `×${d.pellets}` : ""} · 弹匣 ${d.mag}` : d.capacity ? `${d.capacity} 格` : d.kind === "food" ? foodEffect(d) : d.kind === "ammo" ? "每组 120 发" : `${d.tier} 级防护`}</small>` : ""}</button>`;
+  return `<button class="item-slot ${chosen ? "selected" : ""}" style="--rarity:${itemNameColor(i.id)}" data-action="${shop ? "buy" : from === "loot" ? "loot-select" : "select"}" data-id="${shop ? i.id : i.uid}" data-from="${from}" data-item="${i.id}" ${shop ? "" : 'draggable="true"'} ${locked ? "disabled" : ""}><span class="quality">${rarity[d.tier]}</span>${itemIcon(i, 52)}<strong style="color:${itemNameColor(i.id) || "inherit"}">${name(i.id)}</strong>${d.kind === "food" && shop ? '<span class="food-category">食物</span>' : ""}<span class="${["food", "ammo"].includes(d.kind) ? "stack-quantity" : ""}">${shop ? (locked ? "尚未解锁" : `◈ ${money(d.price)}`) : d.kind === "ammo" ? `${i.qty} 发` : d.kind === "food" ? `<small class="food-category">食物</small>×${i.qty}` : i.durability !== undefined ? `${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}` : d.kind === "collectible" ? `◈ ${money(sale(i))}` : kindNames[d.kind]}</span>${shop ? `<small>${d.damage ? `伤害 ${d.damage}${d.pellets! > 1 ? `×${d.pellets}` : ""} · 弹匣 ${d.mag}` : d.capacity ? `${d.capacity} 格` : d.kind === "food" ? foodEffect(d) : d.kind === "ammo" ? "每组 120 发" : `${d.tier} 级防护`}</small>` : ""}</button>`;
 }
 function remember() {
   if (s.temporary) return;
@@ -349,7 +352,7 @@ function settingsContent(inRaid = false) {
     )
     .join(
       "",
-    )}<label><span>准星颜色</span><input aria-label="准星颜色" type="color" value="${s.settings.aim}" data-setting="aim"/></label></div>${!inRaid && !title && !s.temporary ? `<div class="save-tools">${heading("存档管理")}<div class="button-row">${btn("导出存档", "export", "", "secondary")}<label class="button secondary">导入存档<input id="import-save" type="file" accept=".json,application/json" hidden/></label></div><p>存档保存在当前浏览器，可导出备份。</p>${btn("返回开始界面", "to-title", "", "secondary full")}</div>` : ""}`;
+    )}<label><span>准星颜色</span><input aria-label="准星颜色" type="color" value="${s.settings.aim}" data-setting="aim"/></label><label><span>准星样式</span><select aria-label="准星样式" data-setting="crosshair"><option value="ring" ${s.settings.crosshair !== "cross" ? "selected" : ""}>圆环准星</option><option value="cross" ${s.settings.crosshair === "cross" ? "selected" : ""}>中空十字准星</option></select></label></div>${!inRaid && !title && !s.temporary ? `<div class="save-tools">${heading("存档管理")}<div class="button-row">${btn("导出存档", "export", "", "secondary")}<label class="button secondary">导入存档<input id="import-save" type="file" accept=".json,application/json" hidden/></label></div><p>存档保存在当前浏览器，可导出备份。</p>${btn("返回开始界面", "to-title", "", "secondary full")}</div>` : ""}`;
 }
 function guide() {
   return `${heading("操作指南")}<div class="guide-grid">${[
@@ -432,7 +435,7 @@ function equipped() {
     .join("")}</div>`;
 }
 function inventoryPanel() {
-  return `<section class="panel inventory-panel" aria-label="左侧背包"><div class="equipment-fixed">${heading("当前装备")}${equipped()}</div><div class="pack-heading">${heading("背包", `${s.pack.length}/${packCapacity(s)} 格`)}${!raid ? btn("全部放回", "stash-all", s.pack.length ? "" : "disabled", "secondary") : ""}</div><div class="inventory-scroll" data-drop="pack"><div class="slot-grid pack-grid" data-grid="pack">${packGrid(
+  return `<section class="panel inventory-panel" aria-label="左侧背包"><div class="equipment-fixed">${heading("当前装备")}${equipped()}</div><div class="pack-heading">${heading("背包", `${s.pack.length}/${packCapacity(s)} 格`)}${raid ? `<strong class="raid-income">本局收入 ◈ ${money(raid.extractedLootValue())}</strong>` : ""}${btn("整理", "sort-pack", "", "secondary")}${!raid ? btn("全部放回", "stash-all", s.pack.length ? "" : "disabled", "secondary") : ""}</div><div class="inventory-scroll" data-drop="pack"><div class="slot-grid pack-grid" data-grid="pack">${packGrid(
     s,
   )
     .map((i) => (i ? card(i, "pack") : emptySlots(1)))
@@ -658,7 +661,7 @@ function warehouse() {
     )
     .join(
       "",
-    )}</select><select id="sort" aria-label="排序"><option value="type" ${sort === "type" ? "selected" : ""}>按类型</option><option value="tier" ${sort === "tier" ? "selected" : ""}>按品质</option><option value="value" ${sort === "value" ? "selected" : ""}>按价值</option></select>${btn("出售收集品", "sell-all", "", "secondary")}${btn(s.warehouse < 4 ? `扩容 ◈ ${money(warehouseCosts[s.warehouse + 1])}` : "已满级", "warehouse", s.warehouse >= 4 ? "disabled" : "", "secondary")}</div><div class="warehouse-scroll"><div class="slot-grid warehouse-grid" data-grid="stash">${list.map((i) => card(i, "stash")).join("")}${Array.from({ length: s.stash.length - list.length }, () => '<div class="filtered-slot" aria-label="筛选隐藏的物品">已占用</div>').join("")}${emptySlots(capacities[s.warehouse] - s.stash.length)}</div></div></section></div>`;
+    )}</select><select id="sort" aria-label="排序"><option value="type" ${sort === "type" ? "selected" : ""}>按类型</option><option value="tier" ${sort === "tier" ? "selected" : ""}>按品质</option><option value="value" ${sort === "value" ? "selected" : ""}>按价值</option></select>${btn("出售珍贵及以下收集品", "sell-all", "", "secondary")}${btn(s.warehouse < 4 ? `扩容 ◈ ${money(warehouseCosts[s.warehouse + 1])}` : "已满级", "warehouse", s.warehouse >= 4 ? "disabled" : "", "secondary")}</div><div class="warehouse-scroll"><div class="slot-grid warehouse-grid" data-grid="stash">${list.map((i) => card(i, "stash")).join("")}${Array.from({ length: s.stash.length - list.length }, () => '<div class="filtered-slot" aria-label="筛选隐藏的物品">已占用</div>').join("")}${emptySlots(capacities[s.warehouse] - s.stash.length)}</div></div></section></div>`;
 }
 function shop() {
   const products = items.filter((d) =>
@@ -747,7 +750,7 @@ function render() {
   syncMapDialog();
   scene3d?.show(false);
   canvas.classList.add("hidden");
-  document.body.classList.remove("in-raid");
+  document.body.classList.remove("in-raid", "aiming");
   syncBaseMenu();
   syncCollectionDialog();
   setDialog(resultDialog, !title && result ? resultModal(result) : "");
@@ -768,13 +771,15 @@ function baseModal() {
   )
     return "";
   let content =
-    modal === "help"
-      ? guide()
-      : modal === "safe"
-        ? `${heading("升级安全箱")}<div class="safe-options">${safeNames.map((n, i) => btn(`${icon("safe", "#d8bf88", 54)}<strong>${n}</strong><span>${safeCap[i]} 格</span><span>${i <= s.safe ? "已拥有" : i === 3 && !s.defeated.includes("yeed") ? "击败猫伊德后解锁" : `◈ ${money(safePrice[i])}`}</span>`, "safe", `data-id="${i}" ${i <= s.safe || (i === 3 && !s.defeated.includes("yeed")) ? "disabled" : ""}`)).join("")}</div>`
-        : modal === "settings"
-          ? settingsContent()
-          : "";
+    modal === "sell-confirm"
+      ? `${heading("确认出售")}<p class="sell-question">确认出售全部珍贵及以下收集品？</p>${btn("确认出售", "confirm-sell", "", "primary full")}${btn("取消", "close-modal", "", "secondary full")}`
+      : modal === "help"
+        ? guide()
+        : modal === "safe"
+          ? `${heading("升级安全箱")}<div class="safe-options">${safeNames.map((n, i) => btn(`${icon("safe", "#d8bf88", 54)}<strong>${n}</strong><span>${safeCap[i]} 格</span><span>${i <= s.safe ? "已拥有" : i === 3 && !s.defeated.includes("yeed") ? "击败猫伊德后解锁" : `◈ ${money(safePrice[i])}`}</span>`, "safe", `data-id="${i}" ${i <= s.safe || (i === 3 && !s.defeated.includes("yeed")) ? "disabled" : ""}`)).join("")}</div>`
+          : modal === "settings"
+            ? settingsContent()
+            : "";
   return `<section class="modal panel">${btn("×", "close-modal", 'aria-label="关闭"', "close")}${content}</section>`;
 }
 function resultModal(r: Result) {
@@ -798,7 +803,7 @@ function renderRaid() {
   canvas.classList.remove("hidden");
   document.body.classList.add("in-raid");
   if (r.map !== 0) scene3d?.show(false);
-  root.innerHTML = `<div class="raid-hud"><div class="raid-top"><strong>${maps[r.map].name}</strong><div id="boss-hud"></div>${btn('<b id="raid-time">15:00</b><span>菜单</span>', "pause", "", "raid-timer")}</div><canvas id="minimap" width="260" height="200" data-action="toggle-map" aria-label="打开战区地图"></canvas><div class="raid-bottom"><section class="vitals"><div><strong id="hp-number">100</strong><span>生命</span></div><div class="meter"><i id="hp-fill"></i></div><div class="stamina-row"><span>体力</span><strong id="st-number">${MOVEMENT.maxStamina}</strong><span id="sprint-state">疾跑</span></div><div class="meter stamina"><i id="st-fill"></i></div><span id="armor-readout"></span><span id="regen-readout"></span></section><section class="food-hud" aria-label="当前食物"><div id="food-art"></div><strong id="food-name"></strong><span id="food-quantity"></span><small>Q 食用</small></section><div class="raid-shortcuts"><span>空格 翻滚</span><span>E 搜索</span><span>Tab 背包</span><span>M 地图</span></div><section class="weapon-hud"><div class="hud-weapon-column"><strong id="weapon-name"></strong><div id="weapon-art" class="hud-weapon-art" aria-hidden="true"></div><span id="weapon-condition"></span></div><div class="hud-ammo-column"><div class="hud-rounds"><b id="mag-count"></b><span id="reserve-count"></span></div><div class="hud-ammo-details"><span id="ammo-art" class="hud-ammo-art" aria-hidden="true"></span><span id="ammo-name"></span></div></div></section></div><div id="action-progress" class="action-progress hidden"></div><div id="crosshair"></div></div><div id="raid-overlay">${raidOverlay()}</div>`;
+  root.innerHTML = `<div class="raid-hud"><div class="raid-top"><strong>${maps[r.map].name}</strong><div id="boss-hud"></div>${btn('<b id="raid-time">15:00</b><span>菜单</span>', "pause", "", "raid-timer")}</div><canvas id="minimap" width="260" height="200" data-action="toggle-map" aria-label="打开战区地图"></canvas><div class="raid-bottom"><section class="vitals"><div><strong id="hp-number">100</strong><span>生命</span></div><div class="meter"><i id="hp-fill"></i></div><div class="stamina-row"><span>体力</span><strong id="st-number">${MOVEMENT.maxStamina}</strong><span id="sprint-state">疾跑</span></div><div class="meter stamina"><i id="st-fill"></i></div><span id="armor-readout"></span><span id="regen-readout"></span></section><section class="food-hud" aria-label="当前食物"><div id="food-art"></div><strong id="food-name"></strong><span id="food-quantity"></span><small>Q 食用</small></section><div class="raid-shortcuts"><span>空格 翻滚</span><span>E 搜索</span><span>Tab 背包</span><span>M 地图</span></div><section class="weapon-hud"><div class="hud-weapon-column"><strong id="weapon-name"></strong><div id="weapon-art" class="hud-weapon-art" aria-hidden="true"></div><span id="weapon-condition"></span></div><div class="hud-ammo-column"><div class="hud-rounds"><b id="mag-count"></b><span id="reserve-count"></span></div><div class="hud-ammo-details"><span id="ammo-art" class="hud-ammo-art" aria-hidden="true"></span><span id="ammo-name"></span></div></div></section></div><div id="paid-exit-hint" class="paid-exit-hint hidden"></div><div id="action-progress" class="action-progress hidden"></div><div id="crosshair" class="${s.settings.crosshair === "cross" ? "cross" : "ring"}" style="--aim:${s.settings.aim}"></div></div><div id="raid-overlay">${raidOverlay()}</div>`;
   overlay();
   updateHUD();
 }
@@ -867,6 +872,29 @@ function updateHUD() {
       ? itemIcon({ id: ammoId, uid: ammoId, qty: 1 }, 48)
       : "";
     ammoArt.classList.toggle("hidden", !ammoId);
+  }
+  document.body.classList.toggle(
+    "aiming",
+    !r.inventory && !r.mapOpen && !r.paused && !r.done,
+  );
+  const crosshair = document.getElementById("crosshair");
+  if (crosshair) {
+    crosshair.className = s.settings.crosshair === "cross" ? "cross" : "ring";
+    crosshair.style.setProperty("--aim", s.settings.aim);
+  }
+  const paidExit = r.exits.find(
+    (e) =>
+      e.active &&
+      e.paid &&
+      !e.bought &&
+      Math.hypot(e.x - r.p.x, e.y - r.p.y) < 170,
+  );
+  const paidHint = document.getElementById("paid-exit-hint");
+  if (paidHint) {
+    paidHint.classList.toggle("hidden", !paidExit || r.paused || r.inventory);
+    paidHint.textContent = paidExit
+      ? `按 E 付费以开启撤离点 · ◈ ${money(maps[r.map].fee)}`
+      : "";
   }
   const currentFood = s.equipment.food;
   set("food-name", currentFood ? name(currentFood.id) : "没有食物");
@@ -1193,10 +1221,17 @@ async function action(el: HTMLElement) {
       selected = undefined;
       render();
     }
+  } else if (a === "sort-pack") {
+    sortPack(s);
+    closeItemMenu();
+    if (raid) overlay();
+    else render();
   } else if (a === "sell-all") {
-    let value = 0;
-    for (const i of [...s.stash])
-      if (db[i.id].kind === "collectible") value += sell(s, "stash", i.uid);
+    modal = "sell-confirm";
+    render();
+  } else if (a === "confirm-sell") {
+    const value = sellCommonCollectibles(s);
+    modal = "";
     toast(`出售获得 ${money(value)} 金币`);
     render();
   } else if (a === "category") {
@@ -1351,6 +1386,8 @@ document.addEventListener("input", (e) => {
     key = input.dataset.setting as keyof Save["settings"];
   if (!key) return;
   if (key === "aim") s.settings.aim = input.value;
+  else if (key === "crosshair")
+    s.settings.crosshair = input.value as "ring" | "cross";
   else s.settings[key] = Number(input.value);
   sound.apply();
   const out = input.parentElement?.querySelector("output");
@@ -1415,7 +1452,7 @@ root.addEventListener("pointerover", (e) => {
     const tip = document.createElement("div");
     tip.id = "item-tooltip";
     tip.className = "panel item-tooltip";
-    tip.innerHTML = `<strong style="color:${itemNameColor(d.id) || "inherit"}">${esc(name(d.id))}</strong><span class="item-kind">${kindNames[d.kind]}</span><p>${esc(d.desc)}</p>${d.kind === "food" ? `<p class="item-function">${foodEffect(d)}</p>` : ""}`;
+    tip.innerHTML = `<strong style="color:${itemNameColor(d.id) || "inherit"}">${esc(name(d.id))}</strong>${d.kind === "food" ? '<span class="food-category">食物</span>' : ""}<p>${esc(d.desc)}</p>${d.kind === "food" ? `<p class="item-function">${foodEffect(d)}</p>` : ""}`;
     root.append(tip);
     const r = el.getBoundingClientRect(),
       b = tip.getBoundingClientRect();
@@ -1703,7 +1740,8 @@ window.addEventListener("pointermove", (e) => {
   const c = document.querySelector<HTMLElement>("#crosshair");
   if (c) {
     c.style.transform = `translate(${e.clientX}px,${e.clientY}px)`;
-    c.style.borderColor = s.settings.aim;
+    c.style.setProperty("--aim", s.settings.aim);
+    c.className = s.settings.crosshair === "cross" ? "cross" : "ring";
   }
 });
 canvas.addEventListener("pointerdown", (e) => {

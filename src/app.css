@@ -2349,3 +2349,35 @@ body:has(.discovery-card) #toasts {
 .item-kind { color: #e5ddc4; font-size: 18px; font-weight: 600; }
 
 .item-slot > .stack-quantity { white-space: nowrap; }
+
+/* Compact categories, legible notifications, and village-colored scrolling. */
+.food-category, .item-tooltip .food-category, .item-slot .food-category {
+  font-size: 14px; font-weight: 500; color: #d3dcc3;
+}
+.item-tooltip > .food-category { display: block; margin-top: 3px; }
+.raid-income { color: #ffe08b; font-size: 22px; display: block; margin: 4px 0; }
+.pack-heading { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.pack-heading > .panel-heading { flex-basis: 100%; }
+.pack-heading > .raid-income { flex: 1; margin: 0; }
+.aiming, .aiming * { cursor: none !important; }
+body:not(.aiming) #crosshair { display: none; }
+#crosshair { border-color: var(--aim, #edd39a); }
+#crosshair.cross { border: 0; border-radius: 0; width: 28px; height: 28px; top: -14px; left: -14px;
+ background: linear-gradient(var(--aim),var(--aim)) 0 50%/8px 2px no-repeat,
+ linear-gradient(var(--aim),var(--aim)) 100% 50%/8px 2px no-repeat,
+ linear-gradient(var(--aim),var(--aim)) 50% 0/2px 8px no-repeat,
+ linear-gradient(var(--aim),var(--aim)) 50% 100%/2px 8px no-repeat;
+ filter: drop-shadow(0 1px 1px #13291f);
+}
+#crosshair.cross:after { display: none; }
+.toast, .in-raid .toast, .paid-exit-hint { font-size: 34px; line-height: 1.5; }
+#toasts,.in-raid #toasts,.in-raid:has(.inventory-panel) #toasts { max-width: min(850px, calc(100vw - 40px)); }
+.paid-exit-hint { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); padding: 10px 22px;
+ background: #193729ed; color: #ffe08b; border: 1px solid #c9b674; border-radius: 9px; pointer-events: none; }
+.sell-question { font-size: 26px; line-height: 1.6; }
+* { scrollbar-width: thin; scrollbar-color: #b5ad78 #203b2d; }
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: #203b2d; border-radius: 8px; }
+::-webkit-scrollbar-thumb { background: #9b9e6a; border: 3px solid #203b2d; border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: #d1bd7e; }
+::-webkit-scrollbar-corner { background: #203b2d; }

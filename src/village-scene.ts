@@ -379,8 +379,9 @@ export function createVillageScene(
   const plantGroups = new Map<string, typeof villageDecorations>();
   for (const item of villageDecorations) {
     if (
-      r.containers.some((c) => Math.hypot(c.x - item.x, c.y - item.y) < 65) ||
-      r.exits.some((e) => Math.hypot(e.x - item.x, e.y - item.y) < 100)
+      item.kind !== "hay" &&
+      (r.containers.some((c) => Math.hypot(c.x - item.x, c.y - item.y) < 65) ||
+        r.exits.some((e) => Math.hypot(e.x - item.x, e.y - item.y) < 100))
     )
       continue;
     const entries = plantGroups.get(item.kind) || [];

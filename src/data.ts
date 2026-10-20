@@ -390,7 +390,7 @@ export const kindNames: Record<Kind, string> = {
   helmet: "头盔",
   bag: "背包",
   ammo: "子弹",
-  food: "补给品",
+  food: "食物",
   collectible: "收集品",
 };
 export const makeItem = (id: string, qty = 1): Item => {

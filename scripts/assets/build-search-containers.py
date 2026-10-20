@@ -77,10 +77,26 @@ def split_front(o,w,d,h):
         bm.to_mesh(obj.data);bm.free();obj.data.update()
     return panel
 
-for kind in ['box','litter','cabinet','medical','weapon','bed','safe','corpse','boss-corpse']:
+for kind in ['basket','toolbox','box','litter','cabinet','medical','weapon','bed','safe','corpse','boss-corpse']:
   for opened in [False,True]:
     before=set(bpy.context.scene.objects)
-    if kind=='box':
+    if kind=='basket':
+        parts=source(PIC/'picnic_basket_square.gltf',43,33,34)
+        if opened:
+            for o in parts:
+                if 'lid_left' in o.name:turn([o],(-18,0,15),-1.1,'Y')
+                elif 'lid_right' in o.name:turn([o],(18,0,15),1.1,'Y')
+        block('old_basket_tag',(0,-16.5,11),(10,.6,6),'#c3ab78',.4)
+    elif kind=='toolbox':
+        parts=source(PIC/'cooler.gltf',43,26,23)
+        tint(parts,'#a76c4d')
+        lid=[o for o in parts if 'lid' in o.name or 'handle' in o.name]
+        for x in [-15,15]:block('rusted_tool_clasp',(x,-13.5,12),(3,1.2,7),'#626f68',.4)
+        for x,z in [(-10,8),(8,14),(15,5)]:block('rust_patch',(x,-13.15,z),(5,.5,2),'#b87b46',.5)
+        block('tool_badge',(0,-13.8,11),(12,.7,4),'#bac1a4',.4)
+        lid.append(block('worn_toolbox_spine',(0,0,23),(34,3,1),'#53655c',.5))
+        if opened:turn(lid,(0,11,17),-1.15)
+    elif kind=='box':
         parts=source(HOME/'package.gltf',42,32,28)
         if opened:
             for o in parts:clip_top(o,23)
@@ -171,4 +187,4 @@ for root in roots:
     for obj in root.children:obj.select_set(True)
 bpy.ops.export_scene.gltf(filepath=str(OUT/'container-kit.glb'),export_format='GLB',use_selection=True,
     export_animations=False,export_cameras=False,export_lights=False,export_apply=True)
-print('EXPORTED 18 container state models',flush=True)
+print('EXPORTED 22 container state models',flush=True)

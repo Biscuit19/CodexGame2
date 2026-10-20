@@ -2,13 +2,17 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import kit from "./assets/village/container-kit.glb?url";
 import type { Container, Raid } from "./raid";
-import { containerKind, highValueContainer } from "./container-info";
+import {
+  containerKind,
+  highValueContainer,
+  CONTAINER_HIGHLIGHT_RANGE,
+} from "./container-info";
 let loaded: Promise<THREE.Group> | undefined;
-const outlineMaterial = (color: string) =>
+const outlineMaterial = (color: string, high: boolean) =>
   new THREE.ShaderMaterial({
     uniforms: {
       outlineColor: { value: new THREE.Color(color) },
-      width: { value: 1.25 },
+      width: { value: high ? 2.6 : 1.25 },
     },
     vertexShader: `uniform float width;void main(){gl_Position=projectionMatrix*modelViewMatrix*vec4(position+normal*width,1.0);}`,
     fragmentShader: `uniform vec3 outlineColor;void main(){gl_FragColor=vec4(outlineColor,1.0);}`,
@@ -48,7 +52,8 @@ export function createContainerModel(c: Container): ContainerModel {
           if (o instanceof THREE.Mesh) meshes.push(o);
         });
         const outline = outlineMaterial(
-          highValueContainer(c) ? "#ffdc69" : "#f7fbff",
+          highValueContainer(c) ? "#ffe044" : "#f7fbff",
+          highValueContainer(c),
         );
         for (const mesh of meshes) {
           mesh.geometry = mesh.geometry.clone();
@@ -80,7 +85,7 @@ export function updateContainerModel(m: ContainerModel, c: Container, r: Raid) {
   m.closed.visible = !c.open;
   m.opened.visible = c.open;
   const nearby =
-    Math.hypot(c.x - r.p.x, c.y - r.p.y) < 105 &&
+    Math.hypot(c.x - r.p.x, c.y - r.p.y) < CONTAINER_HIGHLIGHT_RANGE &&
     r.lineClear(r.p.x, r.p.y, c.x, c.y);
   for (const edge of m.outlines) edge.visible = nearby;
   m.group.userData.highlighted = nearby;

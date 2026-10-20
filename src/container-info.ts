@@ -1,5 +1,8 @@
 import type { Container } from "./raid";
+export const CONTAINER_HIGHLIGHT_RANGE = 168;
 export const containerKinds = [
+  "basket",
+  "toolbox",
   "box",
   "litter",
   "cabinet",

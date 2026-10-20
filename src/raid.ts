@@ -473,7 +473,7 @@ export class Raid {
                 ? "bed"
                 : i % 3 === 0
                   ? "cabinet"
-                  : "box";
+                  : ["box", "basket", "toolbox"][i % 3];
       const high = ["safe", "weapon", "bed"].includes(type);
       const entries = Array.from({ length: high ? 3 : 2 }, () =>
         loot(this.random, m, high),
@@ -504,6 +504,8 @@ export class Raid {
             bed: "豪华猫窝",
             cabinet: "工具柜",
             box: "纸箱",
+            basket: "旧藤筐",
+            toolbox: "生锈工具盒",
           } as Record<string, string>
         )[type],
         type,
@@ -602,7 +604,7 @@ export class Raid {
         y: 1640,
         name: maps[m].free[1],
         paid: false,
-        active: this.random() > 0.5,
+        active: true,
         bought: false,
       },
       {
@@ -1305,7 +1307,9 @@ export class Raid {
       return;
     }
     const ex = this.exits.find(
-      (e) => e.active && Math.hypot(e.x - this.p.x, e.y - this.p.y) < 85,
+      (e) =>
+        e.active &&
+        Math.hypot(e.x - this.p.x, e.y - this.p.y) < (e.paid ? 170 : 85),
     );
     if (ex?.paid && !ex.bought) {
       if (this.save.coins < maps[this.map].fee) {
@@ -1650,13 +1654,6 @@ export class Raid {
     if (this.time < 300 && !this.warning) {
       this.warning = true;
       this.notify("最后 5 分钟 · 立即规划撤离路线");
-      this.sound.play("alert");
-      if ("speechSynthesis" in window) {
-        const u = new SpeechSynthesisUtterance("行动剩余五分钟，请准备撤离");
-        u.lang = "zh-CN";
-        u.volume = this.save.settings.master * this.save.settings.sfx;
-        window.speechSynthesis.speak(u);
-      }
     }
     const p = this.p;
     let dx = (keys.has("KeyD") ? 1 : 0) - (keys.has("KeyA") ? 1 : 0),

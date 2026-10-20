@@ -51,7 +51,7 @@ test("背包实体拖拽交换、空位保留，名称品质和功能说明清�
     ids[0],
   );
   await page.locator(`.pack-grid [data-id="${ids[1]}"]`).click();
-  await expect(page.locator("#item-menu")).toContainText("补给品");
+  await expect(page.locator("#item-menu")).toContainText("食物");
   const colors = await page.evaluate(() => {
     const menu = document.querySelector("#item-menu")!;
     return [
@@ -61,7 +61,7 @@ test("背包实体拖拽交换、空位保留，名称品质和功能说明清�
   });
   expect(colors[0]).not.toBe(colors[1]);
   await expect(page.locator(`.pack-grid [data-id="${ids[1]}"]`)).toContainText(
-    "补给品",
+    "食物",
   );
   const foodLayout = await page
     .locator(`.pack-grid [data-id="${ids[1]}"]`)

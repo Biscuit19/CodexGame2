@@ -57,7 +57,7 @@ test("7000乡野原始素材、猫咪比例房屋与真实门洞几何", async (
   });
   expect(models.size).toEqual([7000, 5500]);
   expect(Math.max(...models.texture)).toBeLessThanOrEqual(4096);
-  expect(models.buildings).toHaveLength(20);
+  expect(models.buildings).toHaveLength(22);
   for (const b of models.buildings) {
     expect(b.vertices).toBeGreaterThan(b.openStructure ? 100 : 3000);
     expect(b.textured).toBe(true);
@@ -154,7 +154,7 @@ test("7000乡野原始素材、猫咪比例房屋与真实门洞几何", async (
   expect(errors).toEqual([]);
 });
 
-test("乡野三桥、二十栋建筑入口实走、室内搜索和三秒撤离", async ({ page }) => {
+test("乡野三桥、二十二栋建筑入口实走、室内搜索和三秒撤离", async ({ page }) => {
   test.setTimeout(120000);
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));

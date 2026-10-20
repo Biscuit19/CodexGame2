@@ -214,6 +214,28 @@ for (const [i, [x, y, kind]] of (
     openStructure: kind,
   });
 }
+// Small farmyard annexes reuse the established source houses and open timber frame.
+for (const [i, [x, y]] of [
+  [1760, 240],
+  [2170, 580],
+].entries()) {
+  villageBuildings.push({
+    id: `boss-annex-${i}`,
+    name: "",
+    x: Math.floor(villagePoint(x, y).x / 16) * 16 + 8,
+    y: Math.floor(villagePoint(x, y).y / 16) * 16 + 8,
+    w: i ? 300 : 220,
+    h: i ? 200 : 132,
+    height: i ? 140 : 228,
+    model: i ? "open-workshop" : "hunter-side",
+    rotation: i ? -Math.PI / 4 : Math.PI / 4,
+    entryDepth: i ? 0 : 44,
+    doorY: i ? 100 : 110,
+    doorOffset: 0,
+    doorWidth: i ? 240 : 70.4,
+    openStructure: i ? "workshop" : undefined,
+  });
+}
 // Six sites follow the user's marked atlas rectangles (world coordinates).
 export const markedVillageSites = [
   { x: 430, y: 1190, kind: "cabin" },
@@ -676,16 +698,35 @@ export function buildVillage(r: Raid) {
   for (const [x, y] of villageTrees) add(x, y, 28, 28, 80, "village-tree");
   for (const [x, y] of villageRocks) add(x, y, 42, 32, 26, "village-rock");
   for (const p of villageProps)
-    if (p.solid)
+    if (p.solid || !["blanket", "bird", "cobblestones"].includes(p.model))
       add(
         p.x,
         p.y,
-        p.w,
-        p.d,
+        p.w * 0.72,
+        p.d * 0.72,
         Math.min(90, p.height),
         "village-furniture",
         p.rotation,
       );
+  for (const p of villageDecorations.filter((d) => d.kind === "hay"))
+    add(
+      p.x,
+      p.y,
+      p.size * 0.72,
+      p.size * 0.55,
+      Math.min(65, p.size * 0.7),
+      "village-prop-core",
+      p.angle,
+    );
+  for (const [x, y, w, h, z] of [
+    [155, 685, 110, 46, 40],
+    [2240, 1040, 58, 40, 50],
+    [2240, 815, 78, 72, 180],
+    [2260, 1230, 75, 75, 140],
+  ]) {
+    const p = villagePoint(x, y);
+    add(p.x, p.y, w, h, z, "village-prop-core");
+  }
   const covers = [
     [180, 700, 65, 35],
     [780, 960, 65, 40],
@@ -713,6 +754,7 @@ export function buildVillage(r: Raid) {
       shop: [0.35, 0.4, 0.23, 0.02, 0],
       clinic: [0.16, 0.39, 0.41, 0.04, 0],
       barn: [0.06, 0.25, 0.55, 0.1399, 0.0001],
+      "boss-yard": [0.12, 0.3, 0.48, 0.099, 0.001],
       boss: [0.02, 0.12, 0.56, 0.299, 0.001],
     };
     let roll = r.random(),
@@ -792,6 +834,7 @@ export function buildVillage(r: Raid) {
     const callIndex = callIndices[region] || 0;
     callIndices[region] = callIndex + 1;
     if (r.random() > chance) return;
+    if (type === "box") type = ["box", "basket", "toolbox"][callIndex % 3];
     const high = ["safe", "weapon", "bed"].includes(type),
       count = high ? 3 : 2;
     const items: Item[] = [];
@@ -832,6 +875,8 @@ export function buildVillage(r: Raid) {
     }
     const names: Record<string, string> = {
       box: "纸箱",
+      basket: "旧藤筐",
+      toolbox: "生锈工具盒",
       litter: "猫砂桶",
       cabinet: "工具柜",
       medical: "医疗箱",
@@ -913,6 +958,27 @@ export function buildVillage(r: Raid) {
   container("boss", "bed", 1800, 550, 0.5);
   container("boss", "safe", 2010, 380);
   container("boss", "box", 2140, 580);
+  // Exactly eight extra farmyard containers: two high, three medium, three ordinary.
+  for (const [type, x, y] of [
+    ["weapon", 1740, 400],
+    ["bed", 2080, 200],
+    ["cabinet", 1780, 620],
+    ["medical", 2210, 365],
+    ["cabinet", 2040, 640],
+    ["basket", 1860, 600],
+  ] as const)
+    container("boss-yard", type, x, y);
+  for (const [i, type] of ["toolbox", "box"].entries()) {
+    container("boss-yard", type, 0, 0);
+    Object.assign(
+      r.containers.at(-1)!,
+      buildingWorld(
+        villageBuildings.find((b) => b.id === `boss-annex-${i}`)!,
+        0,
+        i ? 0 : -16,
+      ),
+    );
+  }
   for (const c of r.containers) Object.assign(c, r.freePoint(c.x, c.y));
   const enemy = (
     x: number,
@@ -979,7 +1045,7 @@ export function buildVillage(r: Raid) {
       ...villagePoint(2140, 500),
       name: "农庄内院 B",
       paid: false,
-      active: r.random() > 0.5,
+      active: true,
       bought: false,
     },
     {
@@ -997,7 +1063,9 @@ export function buildVillage(r: Raid) {
       buildingWorld(b, 0, -18),
     );
   }
-  for (const b of villageBuildings.filter((b) => b.openStructure)) {
+  for (const b of villageBuildings.filter(
+    (b) => b.openStructure && !b.id.startsWith("boss-annex"),
+  )) {
     for (const x of [-70, 70]) {
       container("outbuilding", "box", 0, 0);
       Object.assign(
@@ -1313,3 +1381,33 @@ for (const [x, y] of [
   const p = villagePoint(x, y);
   villageDecorations.push({ kind: "hay", ...p, size: 70, angle: x * 0.01 });
 }
+
+// Hard decorations must keep clear of road centerlines and house approaches.
+const nearVillageRoute = (x: number, y: number, margin: number) =>
+  [...villageRoads, ...villagePaths].some((road) =>
+    road.slice(1).some((q, i) => segmentDistance(x, y, road[i], q) < margin),
+  );
+function moveHardDecoration(p: { x: number; y: number }, size: number) {
+  if (!nearVillageRoute(p.x, p.y, size * 0.5 + 35)) return;
+  const origin = { ...p };
+  for (const radius of [80, 130, 190, 260, 340])
+    for (let i = 0; i < 12; i++) {
+      const x = origin.x + Math.cos((i * Math.PI) / 6) * radius,
+        y = origin.y + Math.sin((i * Math.PI) / 6) * radius;
+      if (
+        !nearVillageRoute(x, y, size * 0.5 + 45) &&
+        decorationFree(x, y, size * 0.5 + 10)
+      ) {
+        p.x = x;
+        p.y = y;
+        return;
+      }
+    }
+}
+for (const p of villageProps)
+  if (!p.buildingId && !["blanket", "bird", "cobblestones"].includes(p.model)) {
+    moveHardDecoration(p, Math.max(p.w, p.d));
+    p.solid = true;
+  }
+for (const p of villageDecorations.filter((p) => p.kind === "hay"))
+  moveHardDecoration(p, p.size);

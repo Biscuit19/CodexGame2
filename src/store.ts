@@ -30,6 +30,7 @@ export interface Settings {
   sfx: number;
   shake: number;
   aim: string;
+  crosshair?: "ring" | "cross";
 }
 export interface Save {
   temporary?: boolean;
@@ -90,6 +91,7 @@ export const defaults: Settings = {
   sfx: 0.7,
   shake: 0.35,
   aim: "#edd39a",
+  crosshair: "ring",
 };
 export function newSave(slot = 0): Save {
   const save: Save = {
@@ -355,6 +357,11 @@ export function validateSave(data: unknown): Save {
       s.settings[n] > 1
     )
       throw Error("设置数据无效");
+  if (
+    s.settings.crosshair !== undefined &&
+    !["ring", "cross"].includes(s.settings.crosshair)
+  )
+    throw Error("准星样式无效");
   if (!/^#[0-9a-f]{6}$/i.test(s.settings.aim)) throw Error("瞄准色无效");
   if (s.loadedRounds) {
     if (!Array.isArray(s.loadedRounds) || s.loadedRounds.length > 2)
@@ -982,4 +989,33 @@ export function rescue(s: Save) {
   }
   persist(s);
   return true;
+}
+
+/** Sort visual slots without altering stacks, provenance or capacity. */
+export function sortPack(s: Save) {
+  const kinds = [
+    "weapon",
+    "armor",
+    "helmet",
+    "bag",
+    "ammo",
+    "food",
+    "melee",
+    "collectible",
+  ];
+  s.pack.sort(
+    (a, b) =>
+      kinds.indexOf(db[a.id].kind) - kinds.indexOf(db[b.id].kind) ||
+      sale(b) - sale(a),
+  );
+  s.packLayout = s.pack.map((i) => i.uid);
+  packGrid(s);
+  persist(s);
+}
+export function sellCommonCollectibles(s: Save) {
+  let value = 0;
+  for (const i of [...s.stash])
+    if (db[i.id].kind === "collectible" && db[i.id].tier <= 3)
+      value += sell(s, "stash", i.uid);
+  return value;
 }

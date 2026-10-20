@@ -3,6 +3,7 @@ import {
   containerKinds,
   containerKind,
   highValueContainer,
+  CONTAINER_HIGHLIGHT_RANGE,
 } from "./container-info";
 import type { Container, Raid } from "./raid";
 const atlas = new Image();
@@ -21,10 +22,10 @@ export function drawContainerSprite(
   const x = c.x - 50,
     y = c.y - 67;
   if (
-    Math.hypot(c.x - r.p.x, c.y - r.p.y) < 105 &&
+    Math.hypot(c.x - r.p.x, c.y - r.p.y) < CONTAINER_HIGHLIGHT_RANGE &&
     r.lineClear(r.p.x, r.p.y, c.x, c.y)
   ) {
-    const color = highValueContainer(c) ? "#ffdc69" : "#f7fbff";
+    const color = highValueContainer(c) ? "#ffe044" : "#f7fbff";
     if (!silhouettes.has(color)) {
       const canvas = document.createElement("canvas");
       canvas.width = atlas.width;
@@ -43,8 +44,8 @@ export function drawContainerSprite(
         row * 256,
         256,
         256,
-        x + Math.cos((n * Math.PI) / 4) * 1.3,
-        y + Math.sin((n * Math.PI) / 4) * 1.3,
+        x + Math.cos((n * Math.PI) / 4) * (highValueContainer(c) ? 2.6 : 1.3),
+        y + Math.sin((n * Math.PI) / 4) * (highValueContainer(c) ? 2.6 : 1.3),
         100,
         100,
       );

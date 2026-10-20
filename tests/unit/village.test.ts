@@ -192,9 +192,11 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
     for (let seed = 0; seed < 200; seed++) {
       const r = start(seed);
       expect(r.containers.length).toBeGreaterThanOrEqual(46);
-      expect(r.containers.length).toBeLessThanOrEqual(73);
+      expect(r.containers.length).toBeLessThanOrEqual(81);
       expect(
-        r.containers.filter((c) => ["box", "litter"].includes(c.type)).length,
+        r.containers.filter((c) =>
+          ["box", "basket", "toolbox", "litter"].includes(c.type),
+        ).length,
       ).toBeGreaterThan(
         r.containers.filter((c) => ["safe", "weapon", "bed"].includes(c.type))
           .length,
@@ -232,7 +234,8 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
         totals[b].value / totals[b].count,
       );
     for (const [region, t] of Object.entries(totals))
-      if (!["boss", "barn"].includes(region)) expect(t.legend).toBe(0);
+      if (!["boss", "boss-yard", "barn"].includes(region))
+        expect(t.legend).toBe(0);
     expect(totals.boss.legend / totals.boss.count).toBeLessThan(0.005);
   });
   it("大地图A*可跨河经桥和旋转门寻路，实际AI能过主桥；B点在农庄内无击杀限制", () => {
@@ -278,7 +281,7 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
     expect(r.exits[0]).toMatchObject({ active: true, paid: false });
     expect(r.exits[2]).toMatchObject({ active: true, paid: true });
   });
-  it("相同种子的容器内容、敌猫装备与撤离开放状态和扩图前逐项一致", () => {
+  it("同种子容器内容、敌猫装备与常驻撤离状态符合当前乡野内容基线", () => {
     for (const [seed, hash] of Object.entries(baselineContent)) {
       const r = start(Number(seed)),
         data = {
@@ -382,7 +385,7 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
           Math.hypot(huts[i].x - huts[j].x, huts[i].y - huts[j].y),
         ).toBeGreaterThan(650);
     const sites = villageBuildings.filter(
-      (b) => b.openStructure && !b.markedSite,
+      (b) => b.openStructure && !b.markedSite && !b.id.startsWith("boss-annex"),
     );
     expect(sites).toHaveLength(4);
     expect(new Set(sites.map((b) => b.openStructure)).size).toBe(2);
