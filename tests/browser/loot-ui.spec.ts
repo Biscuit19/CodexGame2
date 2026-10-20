@@ -63,6 +63,15 @@ test("背包实体拖拽交换、空位保留，名称品质和功能说明清�
   await expect(page.locator(`.pack-grid [data-id="${ids[1]}"]`)).toContainText(
     "补给品",
   );
+  const foodLayout = await page
+    .locator(`.pack-grid [data-id="${ids[1]}"]`)
+    .evaluate((el) => ({
+      name: el.querySelector("strong")!.getBoundingClientRect().height,
+      quantity: el.querySelector(".stack-quantity")!.getBoundingClientRect()
+        .height,
+    }));
+  expect(foodLayout.name).toBeGreaterThanOrEqual(20);
+  expect(foodLayout.quantity).toBeLessThan(26);
   await page.screenshot({ path: "test-results/chrome-pack-slot-stats.png" });
   await page.keyboard.press("Escape");
   await page.keyboard.press("Escape");

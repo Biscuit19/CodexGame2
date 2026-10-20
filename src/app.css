@@ -2347,3 +2347,5 @@ body:has(.discovery-card) #toasts {
 /* Gameplay stats share one readable accent, separate from flavor descriptions. */
 .item-function,.item-menu .item-function,.item-tooltip .item-function,.shop-grid .item-slot small { color: #75e8ef; font-weight: 650; }
 .item-kind { color: #e5ddc4; font-size: 18px; font-weight: 600; }
+
+.item-slot > .stack-quantity { white-space: nowrap; }
