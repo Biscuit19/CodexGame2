@@ -1,146 +1,630 @@
 {
-  "fps-blaster": {
-    "repo": "KenneyNL/Starter-Kit-FPS",
-    "sha": "185fd2326d74a5cf858cffc616f87cf9696f9cc0",
-    "path": "sounds/blaster.ogg",
-    "url": "https://raw.githubusercontent.com/KenneyNL/Starter-Kit-FPS/185fd2326d74a5cf858cffc616f87cf9696f9cc0/sounds/blaster.ogg"
+  "version": 2,
+  "previewOnly": true,
+  "date": "2026-10-20 UTC",
+  "sets": [
+    {
+      "id": "E",
+      "name": "SnakeF8 · 实录枪械",
+      "author": "SnakeF8",
+      "description": "四种口径、完整换弹和枪机操作。优先听作者提供的去回声版本；另留自然回声供对照。",
+      "scope": "枪声、完整换弹、枪机；不含翻滚与穿戴。",
+      "license": "Public domain；作者在评论中明确同意按 CC0 使用",
+      "source": "https://f8studios.itch.io/snakes-authentic-gun-sounds",
+      "extraSource": "https://f8studios.itch.io/snakes-second-authentic-gun-sounds-pack",
+      "evidence": "第一包 5.0/5（22 评分），第二包 4.7/5（14 评分）；在 itch.io 免费 gun 资产默认热门页中，第一包第 2、第二包第 4（353 项含模型等资产的榜单，并非全球音频榜）。有开发者公开反馈已用于游戏。",
+      "evidenceUrl": "https://itch.io/game-assets/free/tag-gun",
+      "mode": "local"
+    },
+    {
+      "id": "F",
+      "name": "Still North · 枪械录音库",
+      "author": "Ben Jaszczak、Brian Nelson、Kevin Heras、Matthew Nanney（同一录音团队）",
+      "description": "真实型号、立体声和自然空间尾音。保留发行包的完整单发与连发录音，便于判断是不是你想要的枪声。",
+      "scope": "本次取得 Prepared 发行包：四类枪声；此包没有换弹、翻滚、穿戴，未用其他声补齐。",
+      "license": "CC0",
+      "source": "https://opengameart.org/content/the-free-firearm-sound-library",
+      "evidence": "OpenGameArt 页面 11,742 次下载、54 收藏；Creative Field Recording 有专文介绍，开发者社区检索结果亦有长期推荐记录。虽然发行较早，使用依据明确。",
+      "evidenceUrl": "https://www.creativefieldrecording.com/2014/02/23/how-to-apply-metadata-to-the-free-firearms-sound-library-download/",
+      "mode": "local"
+    },
+    {
+      "id": "G",
+      "name": "Mike Koenig · 原声选集",
+      "author": "Mike Koenig",
+      "description": "同一作者的 9mm、霰弹枪、AK-47、.416 狙击枪及弹匣操作原声。保留完整录音，不用重混制造枪型差别。",
+      "scope": "枪声、连发、弹匣退出/装入与机枪上弹。原包未标注具体型号的换弹保持原名，不虚构四种独立换弹。",
+      "license": "CC BY 3.0，署名 Mike Koenig / SoundBible.com",
+      "source": "https://soundbible.com/tags-gun.html",
+      "evidence": "9mm / 霰弹枪 / 机枪四条页面 Downloads 为 287,920 / 398,494 / 387,436 / 501,553；AK-47 125,581、狙击 65,325、三条弹匣操作 51,058 / 40,651 / 28,110。StudioBinder 推荐清单列有 SoundBible。数字不是实际游戏项目数。",
+      "evidenceUrl": "https://www.studiobinder.com/blog/free-gun-sounds-download/",
+      "mode": "local"
+    },
+    {
+      "id": "H",
+      "name": "RA The Sun God · 霰弹与换弹",
+      "author": "RA The Sun God",
+      "description": "霰弹枪射击，以及老式霰弹枪、Mossberg 590、SPAS12 三种原页标注的换弹声。专门比较较重枪声与机械操作。",
+      "scope": "霰弹枪与三种换弹的专题选集；没有其他三类枪声、翻滚或穿戴，不以改调补齐。",
+      "license": "CC BY 3.0，署名 RA The Sun God / SoundBible.com",
+      "source": "https://soundbible.com/1958-Shotgun-12ga-Fire.html",
+      "evidence": "射击原页 528,702 次下载；三条换弹原页 242,755 / 156,000 / 91,664 次下载，均标注 Attribution 3.0。SoundBible 列在 StudioBinder 的枪声资源推荐中。",
+      "evidenceUrl": "https://soundbible.com/1958-Shotgun-12ga-Fire.html",
+      "mode": "local"
+    },
+    {
+      "id": "I",
+      "name": "JKirsch · 9mm 与自动射击",
+      "author": "JKirsch",
+      "description": "Glock 17 的单发、连续射击、Glock 18 全自动，以及重机枪。直接比较作者原声的轻重和自动射击听感。",
+      "scope": "手枪与自动枪声专题选集；重机枪仍叫重机枪，不冒充霰弹或狙击。没有换弹、翻滚或穿戴。",
+      "license": "CC BY 3.0，署名 JKirsch / SoundBible.com",
+      "source": "https://soundbible.com/1382-9mm-Glock-17.html",
+      "evidence": "四条原页 Downloads：Glock 17 单发 423,285、连续 77,559、Glock 18 全自动 71,410、重机枪 525,693。SoundBible 列在 StudioBinder 的枪声资源推荐中。",
+      "evidenceUrl": "https://soundbible.com/1382-9mm-Glock-17.html",
+      "mode": "local"
+    }
+  ],
+  "bonus": {
+    "id": "J",
+    "name": "动作补充 · FilmCow 实录",
+    "author": "Jason Steele / FilmCow",
+    "description": "专门试听衣物摩擦、身体落地、起身、持枪移动和拉链。这里只列实际录下的动作；不是把它们都叫作成品翻滚或护甲扣合声。",
+    "scope": "翻滚的衣物/落地组件、拿取武器的移动声、穿戴的布料/拉链组件。枪的空击声不充当射击声。待选定后再与具体动画同步。",
+    "license": "FilmCow Royalty Free SFX License（自定义许可，非 CC0）；允许 web streams、游戏等；不得转售，且有用途限制",
+    "source": "https://filmcow.itch.io/filmcow-sfx",
+    "evidence": "4.9/5、134 条评分；多位开发者在评论附实际使用作品链接。实录库提供超过 4,000 个声音。",
+    "evidenceUrl": "https://filmcow.itch.io/filmcow-sfx",
+    "mode": "local"
   },
-  "fps-blaster_repeater": {
-    "repo": "KenneyNL/Starter-Kit-FPS",
-    "sha": "185fd2326d74a5cf858cffc616f87cf9696f9cc0",
-    "path": "sounds/blaster_repeater.ogg",
-    "url": "https://raw.githubusercontent.com/KenneyNL/Starter-Kit-FPS/185fd2326d74a5cf858cffc616f87cf9696f9cc0/sounds/blaster_repeater.ogg"
-  },
-  "fps-enemy_attack": {
-    "repo": "KenneyNL/Starter-Kit-FPS",
-    "sha": "185fd2326d74a5cf858cffc616f87cf9696f9cc0",
-    "path": "sounds/enemy_attack.ogg",
-    "url": "https://raw.githubusercontent.com/KenneyNL/Starter-Kit-FPS/185fd2326d74a5cf858cffc616f87cf9696f9cc0/sounds/enemy_attack.ogg"
-  },
-  "fps-weapon_change": {
-    "repo": "KenneyNL/Starter-Kit-FPS",
-    "sha": "185fd2326d74a5cf858cffc616f87cf9696f9cc0",
-    "path": "sounds/weapon_change.ogg",
-    "url": "https://raw.githubusercontent.com/KenneyNL/Starter-Kit-FPS/185fd2326d74a5cf858cffc616f87cf9696f9cc0/sounds/weapon_change.ogg"
-  },
-  "fps-jump_c": {
-    "repo": "KenneyNL/Starter-Kit-FPS",
-    "sha": "185fd2326d74a5cf858cffc616f87cf9696f9cc0",
-    "path": "sounds/jump_c.ogg",
-    "url": "https://raw.githubusercontent.com/KenneyNL/Starter-Kit-FPS/185fd2326d74a5cf858cffc616f87cf9696f9cc0/sounds/jump_c.ogg"
-  },
-  "fps-land": {
-    "repo": "KenneyNL/Starter-Kit-FPS",
-    "sha": "185fd2326d74a5cf858cffc616f87cf9696f9cc0",
-    "path": "sounds/land.ogg",
-    "url": "https://raw.githubusercontent.com/KenneyNL/Starter-Kit-FPS/185fd2326d74a5cf858cffc616f87cf9696f9cc0/sounds/land.ogg"
-  },
-  "sf-laser_small_000": {
-    "repo": "Boyquotes/kenney-sci-fi-sounds-for-godot",
-    "sha": "c094967fe930c57ddb376f67c75f8aa0296690b7",
-    "path": "addons/kenney sci-fi sounds/laser_small_000.ogg",
-    "url": "https://raw.githubusercontent.com/Boyquotes/kenney-sci-fi-sounds-for-godot/c094967fe930c57ddb376f67c75f8aa0296690b7/addons/kenney%20sci-fi%20sounds/laser_small_000.ogg"
-  },
-  "sf-laser_small_002": {
-    "repo": "Boyquotes/kenney-sci-fi-sounds-for-godot",
-    "sha": "c094967fe930c57ddb376f67c75f8aa0296690b7",
-    "path": "addons/kenney sci-fi sounds/laser_small_002.ogg",
-    "url": "https://raw.githubusercontent.com/Boyquotes/kenney-sci-fi-sounds-for-godot/c094967fe930c57ddb376f67c75f8aa0296690b7/addons/kenney%20sci-fi%20sounds/laser_small_002.ogg"
-  },
-  "sf-laser_large_000": {
-    "repo": "Boyquotes/kenney-sci-fi-sounds-for-godot",
-    "sha": "c094967fe930c57ddb376f67c75f8aa0296690b7",
-    "path": "addons/kenney sci-fi sounds/laser_large_000.ogg",
-    "url": "https://raw.githubusercontent.com/Boyquotes/kenney-sci-fi-sounds-for-godot/c094967fe930c57ddb376f67c75f8aa0296690b7/addons/kenney%20sci-fi%20sounds/laser_large_000.ogg"
-  },
-  "sf-laser_large_003": {
-    "repo": "Boyquotes/kenney-sci-fi-sounds-for-godot",
-    "sha": "c094967fe930c57ddb376f67c75f8aa0296690b7",
-    "path": "addons/kenney sci-fi sounds/laser_large_003.ogg",
-    "url": "https://raw.githubusercontent.com/Boyquotes/kenney-sci-fi-sounds-for-godot/c094967fe930c57ddb376f67c75f8aa0296690b7/addons/kenney%20sci-fi%20sounds/laser_large_003.ogg"
-  },
-  "sf-door_close_001": {
-    "repo": "Boyquotes/kenney-sci-fi-sounds-for-godot",
-    "sha": "c094967fe930c57ddb376f67c75f8aa0296690b7",
-    "path": "addons/kenney sci-fi sounds/door_close_001.ogg",
-    "url": "https://raw.githubusercontent.com/Boyquotes/kenney-sci-fi-sounds-for-godot/c094967fe930c57ddb376f67c75f8aa0296690b7/addons/kenney%20sci-fi%20sounds/door_close_001.ogg"
-  },
-  "sf-door_open_000": {
-    "repo": "Boyquotes/kenney-sci-fi-sounds-for-godot",
-    "sha": "c094967fe930c57ddb376f67c75f8aa0296690b7",
-    "path": "addons/kenney sci-fi sounds/door_open_000.ogg",
-    "url": "https://raw.githubusercontent.com/Boyquotes/kenney-sci-fi-sounds-for-godot/c094967fe930c57ddb376f67c75f8aa0296690b7/addons/kenney%20sci-fi%20sounds/door_open_000.ogg"
-  },
-  "sf-impact_metal_001": {
-    "repo": "Boyquotes/kenney-sci-fi-sounds-for-godot",
-    "sha": "c094967fe930c57ddb376f67c75f8aa0296690b7",
-    "path": "addons/kenney sci-fi sounds/impact_metal_001.ogg",
-    "url": "https://raw.githubusercontent.com/Boyquotes/kenney-sci-fi-sounds-for-godot/c094967fe930c57ddb376f67c75f8aa0296690b7/addons/kenney%20sci-fi%20sounds/impact_metal_001.ogg"
-  },
-  "ui-click_001": {
-    "repo": "Calinou/kenney-interface-sounds",
-    "sha": "4596a49eaf5a533948d49a47467f606bcdea70ff",
-    "path": "addons/kenney_interface_sounds/click_001.wav",
-    "url": "https://raw.githubusercontent.com/Calinou/kenney-interface-sounds/4596a49eaf5a533948d49a47467f606bcdea70ff/addons/kenney_interface_sounds/click_001.wav"
-  },
-  "ui-drop_002": {
-    "repo": "Calinou/kenney-interface-sounds",
-    "sha": "4596a49eaf5a533948d49a47467f606bcdea70ff",
-    "path": "addons/kenney_interface_sounds/drop_002.wav",
-    "url": "https://raw.githubusercontent.com/Calinou/kenney-interface-sounds/4596a49eaf5a533948d49a47467f606bcdea70ff/addons/kenney_interface_sounds/drop_002.wav"
-  },
-  "ui-switch_001": {
-    "repo": "Calinou/kenney-interface-sounds",
-    "sha": "4596a49eaf5a533948d49a47467f606bcdea70ff",
-    "path": "addons/kenney_interface_sounds/switch_001.wav",
-    "url": "https://raw.githubusercontent.com/Calinou/kenney-interface-sounds/4596a49eaf5a533948d49a47467f606bcdea70ff/addons/kenney_interface_sounds/switch_001.wav"
-  },
-  "ui-switch_003": {
-    "repo": "Calinou/kenney-interface-sounds",
-    "sha": "4596a49eaf5a533948d49a47467f606bcdea70ff",
-    "path": "addons/kenney_interface_sounds/switch_003.wav",
-    "url": "https://raw.githubusercontent.com/Calinou/kenney-interface-sounds/4596a49eaf5a533948d49a47467f606bcdea70ff/addons/kenney_interface_sounds/switch_003.wav"
-  },
-  "ui-select_002": {
-    "repo": "Calinou/kenney-interface-sounds",
-    "sha": "4596a49eaf5a533948d49a47467f606bcdea70ff",
-    "path": "addons/kenney_interface_sounds/select_002.wav",
-    "url": "https://raw.githubusercontent.com/Calinou/kenney-interface-sounds/4596a49eaf5a533948d49a47467f606bcdea70ff/addons/kenney_interface_sounds/select_002.wav"
-  },
-  "ui-open_001": {
-    "repo": "Calinou/kenney-interface-sounds",
-    "sha": "4596a49eaf5a533948d49a47467f606bcdea70ff",
-    "path": "addons/kenney_interface_sounds/open_001.wav",
-    "url": "https://raw.githubusercontent.com/Calinou/kenney-interface-sounds/4596a49eaf5a533948d49a47467f606bcdea70ff/addons/kenney_interface_sounds/open_001.wav"
-  },
-  "imp-impact_wood_medium_000": {
-    "repo": "Boyquotes/kenney-impact-sounds-for-godot",
-    "sha": "999dd1684873f8b020a3aa5b26e713da21688924",
-    "path": "addons/kenney impact sounds/impact_wood_medium_000.ogg",
-    "url": "https://raw.githubusercontent.com/Boyquotes/kenney-impact-sounds-for-godot/999dd1684873f8b020a3aa5b26e713da21688924/addons/kenney%20impact%20sounds/impact_wood_medium_000.ogg"
-  },
-  "imp-impact_wood_light_000": {
-    "repo": "Boyquotes/kenney-impact-sounds-for-godot",
-    "sha": "999dd1684873f8b020a3aa5b26e713da21688924",
-    "path": "addons/kenney impact sounds/impact_wood_light_000.ogg",
-    "url": "https://raw.githubusercontent.com/Boyquotes/kenney-impact-sounds-for-godot/999dd1684873f8b020a3aa5b26e713da21688924/addons/kenney%20impact%20sounds/impact_wood_light_000.ogg"
-  },
-  "imp-impact_metal_light_001": {
-    "repo": "Boyquotes/kenney-impact-sounds-for-godot",
-    "sha": "999dd1684873f8b020a3aa5b26e713da21688924",
-    "path": "addons/kenney impact sounds/impact_metal_light_001.ogg",
-    "url": "https://raw.githubusercontent.com/Boyquotes/kenney-impact-sounds-for-godot/999dd1684873f8b020a3aa5b26e713da21688924/addons/kenney%20impact%20sounds/impact_metal_light_001.ogg"
-  },
-  "imp-impact_soft_medium_001": {
-    "repo": "Boyquotes/kenney-impact-sounds-for-godot",
-    "sha": "999dd1684873f8b020a3aa5b26e713da21688924",
-    "path": "addons/kenney impact sounds/impact_soft_medium_001.ogg",
-    "url": "https://raw.githubusercontent.com/Boyquotes/kenney-impact-sounds-for-godot/999dd1684873f8b020a3aa5b26e713da21688924/addons/kenney%20impact%20sounds/impact_soft_medium_001.ogg"
-  },
-  "imp-footstep_carpet_000": {
-    "repo": "Boyquotes/kenney-impact-sounds-for-godot",
-    "sha": "999dd1684873f8b020a3aa5b26e713da21688924",
-    "path": "addons/kenney impact sounds/footstep_carpet_000.ogg",
-    "url": "https://raw.githubusercontent.com/Boyquotes/kenney-impact-sounds-for-godot/999dd1684873f8b020a3aa5b26e713da21688924/addons/kenney%20impact%20sounds/footstep_carpet_000.ogg"
-  }
+  "tracks": [
+    {
+      "set": "E",
+      "id": "9mm",
+      "name": "9mm 单发｜轻型枪声候选",
+      "group": "shot",
+      "container": "snake2.zip",
+      "member": "Snake's SECOND Authentic Gun Sounds/Isolated/9mm/MP3/9mm Single Isolated.mp3",
+      "source": "https://f8studios.itch.io/snakes-second-authentic-gun-sounds-pack",
+      "note": "原作者去回声版本，文件直接复制。9mm 原录音是手枪，作为轻型枪声参考，不宣称是实录冲锋枪。"
+    },
+    {
+      "set": "E",
+      "id": "556",
+      "name": "5.56 单发｜步枪",
+      "group": "shot",
+      "container": "snake1.zip",
+      "member": "Snake's Authentic Gun Sounds/Isolated/5.56/MP3/556 Single Isolated MP3.mp3",
+      "source": "https://f8studios.itch.io/snakes-authentic-gun-sounds",
+      "note": "原作者去回声版本，文件直接复制；无变调、滤波或重混。"
+    },
+    {
+      "set": "E",
+      "id": "762",
+      "name": "7.62×54R 单发｜栓动步枪",
+      "group": "shot",
+      "container": "snake1.zip",
+      "member": "Snake's Authentic Gun Sounds/Isolated/7.62x54R/MP3/762x54r Single Isolated MP3.mp3",
+      "source": "https://f8studios.itch.io/snakes-authentic-gun-sounds",
+      "note": "原作者去回声版本，文件直接复制；无变调、滤波或重混。"
+    },
+    {
+      "set": "E",
+      "id": "20g",
+      "name": "20 Gauge 单发｜霰弹枪",
+      "group": "shot",
+      "container": "snake2.zip",
+      "member": "Snake's SECOND Authentic Gun Sounds/Isolated/20 Gauge/MP3/20 Gauge Single Isolated.mp3",
+      "source": "https://f8studios.itch.io/snakes-second-authentic-gun-sounds-pack",
+      "note": "原作者去回声版本，文件直接复制；无变调、滤波或重混。"
+    },
+    {
+      "set": "E",
+      "id": "ar-reload",
+      "name": "AR 完整换弹",
+      "group": "reload",
+      "container": "snake1.zip",
+      "member": "Snake's Authentic Gun Sounds/Reloads, Cycling & More/MP3/AR Reload Full MP3.mp3",
+      "source": "https://f8studios.itch.io/snakes-authentic-gun-sounds",
+      "note": "原作者完整换弹录音，尚未按游戏中的换弹时长加速。"
+    },
+    {
+      "set": "E",
+      "id": "ak-reload",
+      "name": "AK 完整换弹",
+      "group": "reload",
+      "container": "snake1.zip",
+      "member": "Snake's Authentic Gun Sounds/Reloads, Cycling & More/MP3/AK Reload Full MP3.mp3",
+      "source": "https://f8studios.itch.io/snakes-authentic-gun-sounds",
+      "note": "原作者完整换弹录音，尚未按游戏中的换弹时长加速。"
+    },
+    {
+      "set": "E",
+      "id": "sniper-reload",
+      "name": ".308 栓动完整换弹",
+      "group": "reload",
+      "container": "snake1.zip",
+      "member": "Snake's Authentic Gun Sounds/Reloads, Cycling & More/MP3/308 Magazine Full MP3.mp3",
+      "source": "https://f8studios.itch.io/snakes-authentic-gun-sounds",
+      "note": "原作者完整换弹录音，尚未按游戏中的换弹时长加速。"
+    },
+    {
+      "set": "E",
+      "id": "pump-reload",
+      "name": "泵动霰弹枪完整换弹",
+      "group": "reload",
+      "container": "snake1.zip",
+      "member": "Snake's Authentic Gun Sounds/Reloads, Cycling & More/MP3/Pump Reload Full Fast MP3.mp3",
+      "source": "https://f8studios.itch.io/snakes-authentic-gun-sounds",
+      "note": "原作者完整换弹录音，尚未按游戏中的换弹时长加速。"
+    },
+    {
+      "set": "E",
+      "id": "bolt",
+      "name": "AR 枪机释放｜拿取动作备选",
+      "group": "action",
+      "container": "snake1.zip",
+      "member": "Snake's Authentic Gun Sounds/Reloads, Cycling & More/MP3/AR Bolt Release MP3.mp3",
+      "source": "https://f8studios.itch.io/snakes-authentic-gun-sounds",
+      "note": "原作者完整录音。枪机释放是机械动作，不当作每次切枪的音效。"
+    },
+    {
+      "set": "E",
+      "id": "9mm-burst",
+      "name": "9mm 三连发｜作者原始版本",
+      "group": "shot",
+      "container": "snake2.zip",
+      "member": "Snake's SECOND Authentic Gun Sounds/Isolated/9mm/MP3/9mm Burst Isolated.mp3",
+      "source": "https://f8studios.itch.io/snakes-second-authentic-gun-sounds-pack",
+      "note": "作者已制作的连发文件，直接复制，没有在此叠加或拼接。"
+    },
+    {
+      "set": "E",
+      "id": "556-burst",
+      "name": "5.56 连发｜作者原始版本",
+      "group": "shot",
+      "container": "snake1.zip",
+      "member": "Snake's Authentic Gun Sounds/Isolated/5.56/MP3/556 Burst Isolated MP3.mp3",
+      "source": "https://f8studios.itch.io/snakes-authentic-gun-sounds",
+      "note": "作者已制作的连发文件，直接复制，没有在此叠加或拼接。"
+    },
+    {
+      "set": "E",
+      "id": "20g-natural",
+      "name": "20 Gauge 单发｜自然回声对照",
+      "group": "shot",
+      "container": "snake2.zip",
+      "member": "Snake's SECOND Authentic Gun Sounds/Full Sounds/20 Gauge/MP3/20 Gauge Single.mp3",
+      "source": "https://f8studios.itch.io/snakes-second-authentic-gun-sounds-pack",
+      "note": "原作者自然回声版本，与去回声版本分开试听。"
+    },
+    {
+      "set": "F",
+      "id": "m45",
+      "name": "M45 冲锋枪｜近距离单发",
+      "group": "shot",
+      "container": "firearms",
+      "member": "Prepared SFX Library/Carl Gustav M45/G_31P.wav",
+      "source": "https://opengameart.org/content/the-free-firearm-sound-library",
+      "note": "按发行包元数据标注型号、距离和单发/连发。完整 WAV 仅转码为 MP3，保留立体声、尾音与时长。"
+    },
+    {
+      "set": "F",
+      "id": "ar15",
+      "name": "AR-15 步枪｜近距离单发",
+      "group": "shot",
+      "container": "firearms",
+      "member": "Prepared SFX Library/AR-15/D_32P.wav",
+      "source": "https://opengameart.org/content/the-free-firearm-sound-library",
+      "note": "按发行包元数据标注型号、距离和单发/连发。完整 WAV 仅转码为 MP3，保留立体声、尾音与时长。"
+    },
+    {
+      "set": "F",
+      "id": "mosin",
+      "name": "莫辛栓动步枪｜近距离单发",
+      "group": "shot",
+      "container": "firearms",
+      "member": "Prepared SFX Library/Mosin Nagant/M_21P.wav",
+      "source": "https://opengameart.org/content/the-free-firearm-sound-library",
+      "note": "按发行包元数据标注型号、距离和单发/连发。完整 WAV 仅转码为 MP3，保留立体声、尾音与时长。"
+    },
+    {
+      "set": "F",
+      "id": "nova",
+      "name": "Benelli Nova 霰弹枪｜近距离单发",
+      "group": "shot",
+      "container": "firearms",
+      "member": "Prepared SFX Library/Nova/O_21P.wav",
+      "source": "https://opengameart.org/content/the-free-firearm-sound-library",
+      "note": "按发行包元数据标注型号、距离和单发/连发。完整 WAV 仅转码为 MP3，保留立体声、尾音与时长。"
+    },
+    {
+      "set": "F",
+      "id": "m45-burst",
+      "name": "M45 冲锋枪｜近距离短连发",
+      "group": "shot",
+      "container": "firearms",
+      "member": "Prepared SFX Library/Carl Gustav M45/G_33P.wav",
+      "source": "https://opengameart.org/content/the-free-firearm-sound-library",
+      "note": "按发行包元数据标注型号、距离和单发/连发。完整 WAV 仅转码为 MP3，保留立体声、尾音与时长。"
+    },
+    {
+      "set": "F",
+      "id": "ak-burst",
+      "name": "AK-47 步枪｜近距离短连发",
+      "group": "shot",
+      "container": "firearms",
+      "member": "Prepared SFX Library/AK-47/C_29P.wav",
+      "source": "https://opengameart.org/content/the-free-firearm-sound-library",
+      "note": "按发行包元数据标注型号、距离和单发/连发。完整 WAV 仅转码为 MP3，保留立体声、尾音与时长。"
+    },
+    {
+      "set": "G",
+      "id": "sb9mm",
+      "name": "9mm 单发｜原作者录音",
+      "group": "shot",
+      "container": "file",
+      "member": "sb9mm.mp3",
+      "source": "https://soundbible.com/2120-9mm-Gunshot.html",
+      "note": "完整原作者 MP3 直接复制。CC BY 3.0；该条目页面标注 287,920 次下载。",
+      "downloadUrl": "https://soundbible.com/mp3/9_mm_gunshot-mike-koenig-123.mp3"
+    },
+    {
+      "set": "G",
+      "id": "sbshotgun",
+      "name": "10 Gauge 霰弹枪｜立体声",
+      "group": "shot",
+      "container": "file",
+      "member": "sbshotgun.mp3",
+      "source": "https://soundbible.com/1262-10-Guage-Shotgun.html",
+      "note": "完整原作者 MP3 直接复制。CC BY 3.0；该条目页面标注 398,494 次下载。",
+      "downloadUrl": "https://soundbible.com/mp3/10 Guage Shotgun-SoundBible.com-74120584.mp3"
+    },
+    {
+      "set": "G",
+      "id": "sbauto",
+      "name": "机枪三段自动射击",
+      "group": "shot",
+      "container": "file",
+      "member": "sbauto.mp3",
+      "source": "https://soundbible.com/1201-Automatic-Machine-Gun-3x.html",
+      "note": "完整原作者 MP3 直接复制。CC BY 3.0；该条目页面标注 387,436 次下载。",
+      "downloadUrl": "https://soundbible.com/mp3/Automatic Machine Gun 3x-SoundBible.com-555886359.mp3"
+    },
+    {
+      "set": "G",
+      "id": "sb50",
+      "name": ".50 机枪连发",
+      "group": "shot",
+      "container": "file",
+      "member": "sb50.mp3",
+      "source": "https://soundbible.com/1228-Machine-Gun-Burst-50-Cal.html",
+      "note": "完整原作者 MP3 直接复制。CC BY 3.0；该条目页面标注 501,553 次下载。",
+      "downloadUrl": "https://soundbible.com/mp3/Machine Gun Burst 50 Cal-SoundBible.com-1762114555.mp3"
+    },
+    {
+      "set": "J",
+      "id": "cloth1",
+      "name": "衣物快速摩擦 1｜翻滚组件",
+      "group": "action",
+      "container": "filmcow.zip",
+      "member": "FilmCow Recorded SFX/clothing movement 2.wav",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "note": "这是衣物移动录音，不是完整翻滚。 原始 WAV 仅转码；没有叠加撞击声或改调。"
+    },
+    {
+      "set": "J",
+      "id": "cloth2",
+      "name": "衣物快速摩擦 2｜翻滚组件",
+      "group": "action",
+      "container": "filmcow.zip",
+      "member": "FilmCow Recorded SFX/clothing movement 5.wav",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "note": "这是衣物移动录音，不是完整翻滚。 原始 WAV 仅转码；没有叠加撞击声或改调。"
+    },
+    {
+      "set": "J",
+      "id": "ruffle",
+      "name": "衣物整理｜穿戴组件",
+      "group": "action",
+      "container": "filmcow.zip",
+      "member": "FilmCow Recorded SFX/clothes ruffle 1.wav",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "note": "这是衣物整理，不冒充护甲金属扣合。 原始 WAV 仅转码；没有叠加撞击声或改调。"
+    },
+    {
+      "set": "J",
+      "id": "fall1",
+      "name": "身体落地 1｜翻滚落地组件",
+      "group": "action",
+      "container": "filmcow.zip",
+      "member": "FilmCow Recorded SFX/body fall 1.wav",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "note": "这是身体落地，尚未与猫咪翻滚动画匹配。 原始 WAV 仅转码；没有叠加撞击声或改调。"
+    },
+    {
+      "set": "J",
+      "id": "fall2",
+      "name": "身体落地 2｜翻滚落地组件",
+      "group": "action",
+      "container": "filmcow.zip",
+      "member": "FilmCow Recorded SFX/body fall 3.wav",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "note": "这是身体落地，尚未与猫咪翻滚动画匹配。 原始 WAV 仅转码；没有叠加撞击声或改调。"
+    },
+    {
+      "set": "J",
+      "id": "get-up",
+      "name": "身体起身｜动作参考",
+      "group": "action",
+      "container": "filmcow.zip",
+      "member": "FilmCow Recorded SFX/body get up 1.wav",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "note": "这是起身，不是翻滚或跳跃。 原始 WAV 仅转码；没有叠加撞击声或改调。"
+    },
+    {
+      "set": "J",
+      "id": "gun1",
+      "name": "拿动枪械 1｜从容器装备备选",
+      "group": "action",
+      "container": "filmcow.zip",
+      "member": "FilmCow Recorded SFX/gun movement 1.wav",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "note": "原始持枪移动动作，仅考虑装备进入栏位，局内切枪不使用大声装备音。 原始 WAV 仅转码；没有叠加撞击声或改调。"
+    },
+    {
+      "set": "J",
+      "id": "gun2",
+      "name": "拿动枪械 2｜从容器装备备选",
+      "group": "action",
+      "container": "filmcow.zip",
+      "member": "FilmCow Recorded SFX/gun movement 3.wav",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "note": "原始持枪移动动作，不是击发也不是换弹。 原始 WAV 仅转码；没有叠加撞击声或改调。"
+    },
+    {
+      "set": "J",
+      "id": "zip1",
+      "name": "拉链 1｜装备布料组件",
+      "group": "action",
+      "container": "filmcow.zip",
+      "member": "FilmCow Recorded SFX/zipper 1.wav",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "note": "原始拉链声，不是枪机或弹匣。 原始 WAV 仅转码；没有叠加撞击声或改调。"
+    },
+    {
+      "set": "J",
+      "id": "zip2",
+      "name": "拉链 2｜装备布料组件",
+      "group": "action",
+      "container": "filmcow.zip",
+      "member": "FilmCow Recorded SFX/zipper 3.wav",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "note": "原始拉链声，不是枪机或弹匣。 原始 WAV 仅转码；没有叠加撞击声或改调。"
+    },
+    {
+      "set": "G",
+      "id": "sbmkak",
+      "name": "AK-47 连发",
+      "group": "shot",
+      "container": "file",
+      "member": "sbmkak.mp3",
+      "source": "https://soundbible.com/987-AK47-Assault-Rifle.html",
+      "downloadUrl": "https://soundbible.com/mp3/AK47 Assault Rifle-SoundBible.com-1510616487.mp3",
+      "note": "原页的枪型/动作名称，完整 MP3 直接复制，无变调、滤波、剪辑或重混。该条目页面标注 125,581 次下载；CC BY 3.0，见本页署名说明。",
+      "downloads": 125581
+    },
+    {
+      "set": "G",
+      "id": "sbmksniper",
+      "name": ".416 Barrett 狙击枪｜三次射击",
+      "group": "shot",
+      "container": "file",
+      "member": "sbmksniper.mp3",
+      "source": "https://soundbible.com/1880-416-Barrett-Sniper-3x.html",
+      "downloadUrl": "https://soundbible.com/mp3/416_Barrett_Sniper_3x-Mike_Koenig-1194963533.mp3",
+      "note": "原页的枪型/动作名称，完整 MP3 直接复制，无变调、滤波、剪辑或重混。该条目页面标注 65,325 次下载；CC BY 3.0，见本页署名说明。",
+      "downloads": 65325
+    },
+    {
+      "set": "G",
+      "id": "sbmklock",
+      "name": "机枪上弹｜Lock And Load",
+      "group": "reload",
+      "container": "file",
+      "member": "sbmklock.mp3",
+      "source": "https://soundbible.com/1069-Lock-And-Load.html",
+      "downloadUrl": "https://soundbible.com/mp3/Lock And Load-SoundBible.com-658079324.mp3",
+      "note": "原页的枪型/动作名称，完整 MP3 直接复制，无变调、滤波、剪辑或重混。该条目页面标注 51,058 次下载；CC BY 3.0，见本页署名说明。",
+      "downloads": 51058
+    },
+    {
+      "set": "G",
+      "id": "sbmkreload",
+      "name": "退出弹匣并换弹｜Eject Clip And Re-Load",
+      "group": "reload",
+      "container": "file",
+      "member": "sbmkreload.mp3",
+      "source": "https://soundbible.com/414-Eject-Clip-And-Re-Load.html",
+      "downloadUrl": "https://soundbible.com/mp3/Eject Clip And Re-Load-SoundBible.com-423238371.mp3",
+      "note": "原页的枪型/动作名称，完整 MP3 直接复制，无变调、滤波、剪辑或重混。该条目页面标注 40,651 次下载；CC BY 3.0，见本页署名说明。",
+      "downloads": 40651
+    },
+    {
+      "set": "G",
+      "id": "sbmkclip",
+      "name": "装入机枪弹匣｜Pop In Clip",
+      "group": "reload",
+      "container": "file",
+      "member": "sbmkclip.mp3",
+      "source": "https://soundbible.com/415-Machine-Gun-Pop-In-Clip.html",
+      "downloadUrl": "https://soundbible.com/mp3/Machine Gun Pop In Clip-SoundBible.com-1726852999.mp3",
+      "note": "原页的枪型/动作名称，完整 MP3 直接复制，无变调、滤波、剪辑或重混。该条目页面标注 28,110 次下载；CC BY 3.0，见本页署名说明。",
+      "downloads": 28110
+    },
+    {
+      "set": "H",
+      "id": "sbrashot",
+      "name": "SPAS12 霰弹枪射击",
+      "group": "shot",
+      "container": "file",
+      "member": "sbrashot.mp3",
+      "source": "https://soundbible.com/1958-Shotgun-12ga-Fire.html",
+      "downloadUrl": "https://soundbible.com/mp3/shotgun-spas_12-RA_The_Sun_God-503834910.mp3",
+      "note": "原页的枪型/动作名称，完整 MP3 直接复制，无变调、滤波、剪辑或重混。该条目页面标注 528,702 次下载；CC BY 3.0，见本页署名说明。",
+      "downloads": 528702
+    },
+    {
+      "set": "H",
+      "id": "sbrareload",
+      "name": "老式霰弹枪换弹",
+      "group": "reload",
+      "container": "file",
+      "member": "sbrareload.mp3",
+      "source": "https://soundbible.com/1996-Shotgun-Reload-Old.html",
+      "downloadUrl": "https://soundbible.com/mp3/shotgun-reload-old_school-RA_The_Sun_God-580332022.mp3",
+      "note": "原页的枪型/动作名称，完整 MP3 直接复制，无变调、滤波、剪辑或重混。该条目页面标注 242,755 次下载；CC BY 3.0，见本页署名说明。",
+      "downloads": 242755
+    },
+    {
+      "set": "H",
+      "id": "sbrapump",
+      "name": "Mossberg 590 泵动霰弹枪换弹",
+      "group": "reload",
+      "container": "file",
+      "member": "sbrapump.mp3",
+      "source": "https://soundbible.com/1959-Shotgun-Reload-Pump.html",
+      "downloadUrl": "https://soundbible.com/mp3/shotgun-reload-mossberg590-RA_The_Sun_God-1398444554.mp3",
+      "note": "原页的枪型/动作名称，完整 MP3 直接复制，无变调、滤波、剪辑或重混。该条目页面标注 156,000 次下载；CC BY 3.0，见本页署名说明。",
+      "downloads": 156000
+    },
+    {
+      "set": "H",
+      "id": "sbraspas",
+      "name": "SPAS12 霰弹枪换弹",
+      "group": "reload",
+      "container": "file",
+      "member": "sbraspas.mp3",
+      "source": "https://soundbible.com/1961-Shotgun-Reload-Spas-12.html",
+      "downloadUrl": "https://soundbible.com/mp3/shotgun-reload-spas_12-RA_The_Sun_God-429646006.mp3",
+      "note": "原页的枪型/动作名称，完整 MP3 直接复制，无变调、滤波、剪辑或重混。该条目页面标注 91,664 次下载；CC BY 3.0，见本页署名说明。",
+      "downloads": 91664
+    },
+    {
+      "set": "I",
+      "id": "sbjk9mm",
+      "name": "Glock 17 9mm｜单发",
+      "group": "shot",
+      "container": "file",
+      "member": "sbjk9mm.mp3",
+      "source": "https://soundbible.com/1382-9mm-Glock-17.html",
+      "downloadUrl": "https://soundbible.com/mp3/9mm Glock 17-SoundBible.com-1873916083.mp3",
+      "note": "原页的枪型/动作名称，完整 MP3 直接复制，无变调、滤波、剪辑或重混。该条目页面标注 423,285 次下载；CC BY 3.0，见本页署名说明。",
+      "downloads": 423285
+    },
+    {
+      "set": "I",
+      "id": "sbjkglock",
+      "name": "Glock 17 9mm｜连续射击",
+      "group": "shot",
+      "container": "file",
+      "member": "sbjkglock.mp3",
+      "source": "https://soundbible.com/1389-Glock-17-9mm.html",
+      "downloadUrl": "https://soundbible.com/mp3/Glock 17 9mm-SoundBible.com-149518286.mp3",
+      "note": "原页的枪型/动作名称，完整 MP3 直接复制，无变调、滤波、剪辑或重混。该条目页面标注 77,559 次下载；CC BY 3.0，见本页署名说明。",
+      "downloads": 77559
+    },
+    {
+      "set": "I",
+      "id": "sbjkauto",
+      "name": "Glock 18｜全自动射击",
+      "group": "shot",
+      "container": "file",
+      "member": "sbjkauto.mp3",
+      "source": "https://soundbible.com/1384-Glock-18-Full-Auto.html",
+      "downloadUrl": "https://soundbible.com/mp3/Glock 18 Full Auto-SoundBible.com-1696369275.mp3",
+      "note": "原页的枪型/动作名称，完整 MP3 直接复制，无变调、滤波、剪辑或重混。该条目页面标注 71,410 次下载；CC BY 3.0，见本页署名说明。",
+      "downloads": 71410
+    },
+    {
+      "set": "I",
+      "id": "sbjkheavy",
+      "name": "重机枪射击｜原页未标具体型号",
+      "group": "shot",
+      "container": "file",
+      "member": "sbjkheavy.mp3",
+      "source": "https://soundbible.com/1387-Heavy-Machine-Gun-Fire.html",
+      "downloadUrl": "https://soundbible.com/mp3/Heavy Machine Gun Fire-SoundBible.com-1845154036.mp3",
+      "note": "原页的枪型/动作名称，完整 MP3 直接复制，无变调、滤波、剪辑或重混。该条目页面标注 525,693 次下载；CC BY 3.0，见本页署名说明。",
+      "downloads": 525693
+    }
+  ],
+  "retained": ["A-shot-smg.mp3"],
+  "sourceArchives": [
+    {
+      "file": "snake1.zip",
+      "bytes": 11695802,
+      "sha256": "43762a883d6fbbf1093eca0810bce0f14c992eb452dc2e09ae50ee31fbb455e3"
+    },
+    {
+      "file": "snake2.zip",
+      "bytes": 13574124,
+      "sha256": "aaddfdafe2ed6f11b6f30bfd2fc35cd062d50e415999bcabb693a6c6a7a73a6a"
+    },
+    {
+      "file": "firearms.7z",
+      "bytes": 193954738,
+      "sha256": "cc1ab5a99a0a365105c7c5dd783f4b0b1fe90938114d3ceec53856bfe005f7d6"
+    },
+    {
+      "file": "filmcow.zip",
+      "bytes": 907469983,
+      "sha256": "dd85a2c09f7519a7185c0b315a7fc3c42f69ddfd544e1bf5e61f26beab374864"
+    }
+  ],
+  "alternatives": [
+    {
+      "id": "H",
+      "name": "Epic Stock Media · 免费枪声包",
+      "author": "Epic Stock Media",
+      "description": "专业游戏音效厂牌的 Guns & Firearms 免费包。这里播放作者官方 SoundCloud 演示，未经本项目处理。",
+      "scope": "官方整包演示；尚未取得逐项文件。免费领取需要在原站提交邮箱，本项目未代填或注册。",
+      "license": "原站 royalty-free / EULA；禁止独立音效再分发，故不托管文件或 ZIP",
+      "source": "https://epicstockmedia.com/freesounds/guns-firearms/",
+      "evidence": "从公开搜索与作者发行页核验到真实免费包和原作者演示。作者页没有该包下载人数；不把厂牌知名度冒充此包采用量。",
+      "evidenceUrl": "https://epicstockmedia.com/freesounds/guns-firearms/",
+      "mode": "official",
+      "embeds": [
+        {
+          "title": "官方 Guns & Firearms 免费包演示",
+          "url": "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1098789661&auto_play=false",
+          "link": "https://soundcloud.com/epicstockmedia/week-4-guns-epic-stock-media-free-sounds"
+        }
+      ]
+    },
+    {
+      "id": "I",
+      "name": "Krotos · 免费枪械包",
+      "author": "Krotos Audio",
+      "description": "免费包明确列有 AK-47、9mm、SPAS12 枪声及各自换弹。这里提供官方页面中的枪械风格演示，方便先判断方向。",
+      "scope": "官方视频是枪械预设风格演示，不能冒充免费包逐文件试听。免费包尚需原站邮箱领取；没有狙击枪、翻滚或穿戴录音。",
+      "license": "官方页明确 royalty-free，用于媒体制作；未取得包内文件与领取许可，暂不接入游戏或重新分发",
+      "source": "https://krotos.studio/free-sound-effects/gun-shot-sfx-pack",
+      "evidence": "已核验官方免费清单及实际演示。没有取得该包公开下载/评分数，不宣称它是高下载包；该候选的逐项核验程度低于 E/F/G。",
+      "evidenceUrl": "https://krotos.studio/free-sound-effects/gun-shot-sfx-pack",
+      "mode": "official",
+      "embeds": [
+        {
+          "title": "官方 AK-47 预设演示（不是免费包逐项录音）",
+          "url": "https://www.youtube.com/embed/QOcKe-QMuCI",
+          "link": "https://www.youtube.com/watch?v=QOcKe-QMuCI"
+        },
+        {
+          "title": "官方 9mm 预设演示（不是免费包逐项录音）",
+          "url": "https://www.youtube.com/embed/YVvxGkjWIds",
+          "link": "https://www.youtube.com/watch?v=YVvxGkjWIds"
+        }
+      ]
+    }
+  ]
 }

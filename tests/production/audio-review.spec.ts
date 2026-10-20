@@ -10,7 +10,7 @@ test("访问独立试听页不覆盖离线游戏首页，试听页和音频也�
   });
   await page.waitForFunction(() => !!navigator.serviceWorker.controller);
   await page.goto("/audio-review/index.html");
-  await expect(page.locator(".set")).toHaveCount(4);
+  await expect(page.locator("#sets .set")).toHaveCount(5);
   await context.setOffline(true);
   await page.goto("/");
   await expect(
@@ -18,7 +18,7 @@ test("访问独立试听页不覆盖离线游戏首页，试听页和音频也�
   ).toBeVisible();
   await expect(page.locator(".set")).toHaveCount(0);
   await page.goto("/audio-review/");
-  await expect(page.locator(".set")).toHaveCount(4);
+  await expect(page.locator("#sets .set")).toHaveCount(5);
   await page.getByRole("tab", { name: "换弹", exact: true }).click();
   const audio = page.locator(".set audio").first();
   await audio.click({ position: { x: 20, y: 20 } });

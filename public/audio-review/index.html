@@ -3,529 +3,571 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>三角猫行动 · 四套音效试听</title>
+    <title>三角猫行动 · 第二轮音效选材</title>
     <style>
       :root {
         color-scheme: dark;
-        --bg: #172c25;
-        --panel: #254336;
-        --line: #9baf8a55;
-        --gold: #ecd19c;
-        --text: #f0f1df;
+        --bg: #182e27;
+        --panel: #294737;
+        --text: #f3efdc;
+        --muted: #c6d0bc;
+        --gold: #efd29c;
+        --line: #a1b48c55;
       }
       * {
         box-sizing: border-box;
       }
       body {
         margin: 0;
-        background: radial-gradient(ellipse at top, #35553f, var(--bg));
         color: var(--text);
+        background: radial-gradient(ellipse at top, #385842, var(--bg));
         font:
           18px/1.65 system-ui,
           "Microsoft YaHei",
           sans-serif;
       }
       main {
-        max-width: 1560px;
+        max-width: 1400px;
         margin: auto;
-        padding: 30px 24px 60px;
+        padding: 30px 24px 70px;
       }
       h1 {
-        font-size: 36px;
+        font-size: 34px;
         line-height: 1.3;
-        margin: 0 0 12px;
+        margin: 8px 0 14px;
       }
       h2 {
+        font-size: 26px;
         margin: 0;
-        font-size: 27px;
       }
       h3 {
-        margin: 0;
-        font-size: 21px;
+        font-size: 20px;
+        margin: 0 0 10px;
       }
       p {
-        margin: 8px 0 16px;
+        margin: 10px 0;
       }
       a {
         color: var(--gold);
+        overflow-wrap: anywhere;
       }
       button,
-      select,
       input {
         font: inherit;
       }
-      button,
-      select {
-        background: #315341;
-        color: var(--text);
+      button {
+        background: #385c45;
         border: 1px solid var(--line);
         border-radius: 12px;
-        padding: 9px 16px;
+        padding: 9px 15px;
+        color: var(--text);
         cursor: pointer;
       }
       button:hover {
         border-color: var(--gold);
-        background: #466248;
+        background: #4a684b;
       }
       button:focus-visible,
       a:focus-visible,
       input:focus-visible,
-      select:focus-visible {
+      summary:focus-visible {
         outline: 3px solid var(--gold);
         outline-offset: 3px;
       }
-      .primary {
-        background: var(--gold);
-        color: #234032;
-        font-weight: 700;
-      }
       .tag {
-        font-size: 16px;
-        padding: 3px 10px;
+        display: inline-block;
+        font-size: 15px;
         border: 1px solid var(--line);
         border-radius: 99px;
+        padding: 3px 10px;
         color: var(--gold);
       }
-      .intro {
-        max-width: 1000px;
+      .heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
       }
-      .notice {
-        padding: 15px 20px;
+      .notice,
+      .reference,
+      .controls,
+      details {
+        background: #223f30;
         border: 1px solid var(--line);
-        border-radius: 15px;
-        background: #203b2e;
+        border-radius: 16px;
+        padding: 18px 22px;
         margin: 18px 0;
       }
       .controls {
         position: sticky;
         top: 0;
         z-index: 3;
-        background: #1a3229f7;
-        border: 1px solid var(--line);
-        border-radius: 16px;
-        padding: 15px 20px;
-        box-shadow: 0 5px 20px #081e2255;
+        background: #1c352cf7;
       }
       .toolbar {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 12px 20px;
         flex-wrap: wrap;
       }
       .volume {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 10px;
       }
       .volume input {
-        width: 145px;
         accent-color: var(--gold);
+        width: 130px;
       }
-      .toolbar label {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .now {
+      #status {
         color: var(--gold);
-        font-size: 19px;
-        min-height: 31px;
         margin: 10px 0 0;
+        min-height: 30px;
       }
+      .muted {
+        color: var(--muted);
+        font-size: 16px;
+      }
+      .jump,
       .tabs {
         display: flex;
-        gap: 8px;
+        gap: 10px;
         flex-wrap: wrap;
         margin: 16px 0;
       }
-      .tabs button[aria-selected="true"] {
+      .jump a {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        text-decoration: none;
+        padding: 6px 12px;
+      }
+      .tabs [aria-selected="true"] {
         background: var(--gold);
-        color: #264132;
-        font-weight: 700;
+        color: #243f30;
       }
       .grid {
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 16px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        align-items: start;
       }
       .set {
-        background: #254336e6;
+        min-width: 0;
+        background: #294737;
         border: 1px solid var(--line);
         border-radius: 20px;
         overflow: hidden;
+        scroll-margin-top: 180px;
       }
       .set-header {
         padding: 20px;
         border-bottom: 1px solid var(--line);
-        min-height: 310px;
-        display: flex;
-        flex-direction: column;
       }
       .set-header h2 {
         display: flex;
-        align-items: center;
+        align-items: start;
         gap: 10px;
+        font-size: 24px;
+        line-height: 1.4;
       }
       .letter {
-        background: var(--gold);
-        color: #254336;
-        width: 40px;
-        height: 40px;
-        border-radius: 13px;
+        flex: none;
         display: inline-grid;
         place-items: center;
-        font-size: 25px;
+        background: var(--gold);
+        color: #254336;
+        border-radius: 11px;
+        width: 35px;
+        height: 35px;
       }
-      .set[data-set="B"] .letter {
-        background: #b9d7aa;
-      }
-      .set[data-set="C"] .letter {
-        background: #b2d9e1;
-      }
-      .set[data-set="D"] .letter {
-        background: #e9bfad;
-      }
-      .set-header p {
-        font-size: 17px;
-        color: #dce2cf;
-        margin: 12px 0;
-      }
-      .set-header .origin {
-        font-size: 15px;
-        color: #b8cab5;
-      }
-      .set-actions {
-        margin-top: auto;
-        display: flex;
-        gap: 12px;
-        align-items: center;
-        flex-wrap: wrap;
-      }
-      .set-actions a {
+      .author {
         font-size: 16px;
+        color: var(--gold);
+      }
+      .scope {
+        font-size: 16px;
+        border-left: 3px solid #e1cb8d;
+        padding-left: 10px;
+        color: var(--muted);
+      }
+      .set-header details {
+        margin: 12px 0 0;
+        padding: 10px;
+        background: #213e30;
+        font-size: 15px;
       }
       .clips {
-        padding: 8px 16px 14px;
+        padding: 6px 18px 18px;
       }
       .clip {
-        padding: 14px 2px;
+        padding: 17px 0;
         border-bottom: 1px solid var(--line);
-        border-radius: 9px;
       }
       .clip:last-child {
         border: 0;
       }
-      .clip.playing {
-        background: #d9bd7330;
+      .clip h3 {
+        font-size: 19px;
+        margin: 0 0 6px;
       }
-      .clip-label {
-        display: flex;
-        justify-content: space-between;
-        gap: 8px;
-        align-items: center;
-        margin-bottom: 9px;
-        font-size: 18px;
+      .clip p {
+        font-size: 15px;
+        color: var(--muted);
       }
-      .clip-label a {
-        font-size: 14px;
-        color: #becbb5;
-      }
-      .clip audio {
+      audio {
         width: 100%;
-        height: 40px;
-        display: block;
-        min-width: 0;
+        height: 43px;
+        margin: 7px 0;
       }
-      details {
-        margin-top: 22px;
-        background: #203b2d;
-        border: 1px solid var(--line);
-        border-radius: 16px;
-        padding: 16px 20px;
+      .clip-links {
+        display: flex;
+        gap: 16px;
+        font-size: 15px;
+        flex-wrap: wrap;
+      }
+      .playing {
+        background: #385c4155;
+        border-radius: 10px;
+        outline: 2px solid #e6c99188;
+        outline-offset: 6px;
+      }
+      .set-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 15px;
+      }
+      .official {
+        padding: 20px;
+      }
+      .official iframe {
+        border: 0;
+        width: 100%;
+        height: 230px;
+        border-radius: 12px;
+        background: #15291f;
+      }
+      .official .media-block + .media-block {
+        margin-top: 20px;
+      }
+      .official-note {
+        color: #f2d396;
+      }
+      .empty {
+        padding: 18px;
+        color: var(--muted);
+        font-size: 16px;
+      }
+      .bonus {
+        margin-top: 28px;
+        scroll-margin-top: 180px;
+      }
+      .bonus .clips {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0 26px;
+      }
+      .reference {
+        max-width: 720px;
+      }
+      .reference p {
+        font-size: 16px;
       }
       summary {
         cursor: pointer;
-        font-size: 21px;
-        color: var(--gold);
+        font-weight: 650;
       }
-      .refs {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 15px;
-        margin-top: 15px;
-      }
-      .ref audio {
-        width: 100%;
-        height: 40px;
-      }
-      .muted {
-        color: #b9c8b1;
-        font-size: 16px;
-      }
-      .sources li {
-        margin: 8px 0;
-      }
-      .error {
-        color: #ffbca7;
-      }
-      .loading {
-        padding: 30px;
+      li {
+        margin: 10px 0;
       }
       footer {
+        color: var(--muted);
         margin-top: 30px;
         font-size: 16px;
-        color: #bed0b9;
       }
-      .heading-row {
-        display: flex;
-        justify-content: space-between;
-        gap: 20px;
-        align-items: center;
+      #error {
+        color: #ffd4b0;
       }
-      .zip {
-        white-space: nowrap;
+      section[hidden] {
+        display: none;
       }
-      @media (max-width: 1100px) {
-        .grid,
-        .refs {
+      .primary {
+        background: var(--gold);
+        color: #254336;
+        font-weight: 700;
+      }
+      #source-guide {
+        font-size: 17px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 16px;
+      }
+      th,
+      td {
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+        padding: 10px;
+      }
+      .table-wrap {
+        overflow-x: auto;
+      }
+      @media (max-width: 1050px) {
+        .grid {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
-        .set-header {
-          min-height: 210px;
+        .bonus .clips {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
         }
       }
       @media (max-width: 650px) {
-        body {
-          font-size: 17px;
-        }
         main {
           padding: 20px 12px 45px;
         }
         h1 {
           font-size: 28px;
         }
+        .heading {
+          align-items: start;
+        }
+        .heading > a {
+          font-size: 16px;
+          white-space: nowrap;
+        }
         .grid,
-        .refs {
+        .bonus .clips {
           grid-template-columns: minmax(0, 1fr);
         }
         .controls {
-          padding: 12px;
           position: static;
+          padding: 14px;
+        }
+        .set {
+          scroll-margin-top: 16px;
+        }
+        .notice,
+        .reference {
+          padding: 16px;
         }
         .set-header {
-          min-height: 0;
+          padding: 18px;
         }
         .toolbar {
-          gap: 10px;
-        }
-        .heading-row {
-          align-items: start;
-          flex-direction: column;
+          gap: 10px 14px;
         }
         .volume input {
-          width: 110px;
+          width: 105px;
         }
-        button,
-        select {
-          padding: 8px 12px;
+        button {
           max-width: 100%;
         }
-        .clip-label {
-          font-size: 19px;
+        .bonus {
+          scroll-margin-top: 16px;
         }
       }
     </style>
   </head>
   <body>
     <main>
-      <div class="heading-row">
-        <div>
-          <span class="tag">独立试听 · 尚未装入游戏</span>
-          <h1>三角猫行动 · 四套音效试听</h1>
-        </div>
-        <a href="../">返回游戏</a>
+      <div class="heading">
+        <span class="tag">原素材选材 · 未替换游戏音效</span
+        ><a href="../">返回游戏</a>
       </div>
-      <p class="intro">
-        A、B、C 是三种素材混音方案，D
-        是本次从零制作的原创方案。每套都有四类枪声、四类换弹声，以及装备武器、装备护具、翻滚和挥刀声。可以单独听，也可以让同一种声音按
-        A → B → C → D 播放。
+      <h1>第二轮音效选材 · 五位不同作者</h1>
+      <p>
+        先听能辨认动作和枪型的原声。E–I 五组均可在本页逐项播放。额外提供 FilmCow
+        动作录音，专门比较衣物摩擦、落地和拿动装备。
       </p>
       <div class="notice">
-        已按同类声音统一参考音量，并降低高频、长尾和尖锐起音。请先听下方的<strong>原版参考</strong>，保持设备音量不变再比较。这里的音量调节不影响游戏或存档。切枪不再使用大音量装备声，已单独列出安静参考；选定方案后再接入游戏。
+        <strong>旧方案仅保留 A 的冲锋枪。</strong
+        >其余旧候选与原创合成已弃用。本轮枪声不变调、不滤波、不重混；原始 MP3
+        直接复制，WAV
+        仅完整转码。<strong>五个来源不等于五套都齐全的成品</strong>：各组缺少哪些枪型和动作，均在各组注明。
       </div>
       <section class="controls" aria-label="试听控制">
         <div class="toolbar">
           <label class="volume"
             >试听音量<input
+              id="volume"
               type="range"
               min="0"
               max="100"
               value="80"
-              id="volume"
               aria-label="试听音量"
             /><output id="volume-value">80%</output></label
-          ><button id="stop">停止全部</button
           ><label
-            >对比项目<select
-              id="compare-item"
-              aria-label="对比项目"
-            ></select></label
-          ><button id="compare" class="primary">依次对比四套</button
-          ><label><input type="checkbox" id="burst" />枪声听连射</label>
+            ><input id="level" type="checkbox" checked />统一本页试听音量</label
+          ><button id="stop">停止全部</button
+          ><button id="representatives">连播五位作者代表枪声</button>
         </div>
-        <p class="now" id="status" role="status" aria-live="polite">
-          准备加载试听方案……
+        <p id="status" role="status" aria-live="polite">正在加载……</p>
+        <p class="muted">
+          音量统一只影响本页播放器，不改音频文件。默认统一试听音量；关闭后会恢复原始电平，请先调低设备音量。
         </p>
       </section>
-      <details open>
-        <summary>原版参考与安静切枪</summary>
-        <p class="muted">
-          按原始合成方式及默认游戏音量渲染，便于比较听感与响度。它们不是另外一套候选方案。游戏原先没有这次新增的大音量切枪声，后续恢复安静的切换行为。
+      <section class="reference" aria-label="保留的冲锋枪参考">
+        <h2>保留参考 · 旧 A 冲锋枪</h2>
+        <p>
+          文件与上一轮相同。这是你勉强认可的参考，仍等待你决定是否正式采用。
         </p>
-        <div id="references" class="refs"></div>
-      </details>
+        <div id="references"></div>
+      </section>
+      <nav class="jump" aria-label="作者跳转">
+        <a href="#set-E">E · SnakeF8</a><a href="#set-F">F · Still North</a
+        ><a href="#set-G">G · Mike Koenig</a
+        ><a href="#set-H">H · RA The Sun God</a><a href="#set-I">I · JKirsch</a
+        ><a href="#action-supplement">动作补充 · FilmCow</a>
+      </nav>
       <div class="tabs" role="tablist" aria-label="声音分类">
-        <button role="tab" aria-selected="true" data-group="shot">
+        <button role="tab" data-group="all" aria-selected="true">全部</button
+        ><button role="tab" data-group="shot" aria-selected="false">
           枪械射击</button
-        ><button role="tab" aria-selected="false" data-group="reload">
+        ><button role="tab" data-group="reload" aria-selected="false">
           换弹</button
-        ><button role="tab" aria-selected="false" data-group="action">
-          装备与动作
+        ><button role="tab" data-group="action" aria-selected="false">
+          翻滚与装备
         </button>
       </div>
-      <div id="sets" class="grid"><p class="loading">正在加载……</p></div>
-      <details>
-        <summary>素材来源、推荐依据与使用范围</summary>
+      <div id="sets" class="grid"><p>正在加载素材……</p></div>
+      <section id="action-supplement" class="set bonus"></section>
+      <details id="source-guide">
+        <summary>怎么判断这些素材，为什么没有把每组都填满</summary>
         <p>
-          三套素材方案采用同一成熟作者 Kenney
-          的不同系列，<strong>并非三个独立厂牌，也不是原素材直接播放</strong>：它们经过重新选段、柔化和统一音量，形成三个待选方向。D
-          不含这些外部素材，完全从零合成。
-        </p>
-        <ul class="sources">
-          <li>
-            A：<a href="https://github.com/KenneyNL/Starter-Kit-FPS"
-              >Kenney 官方 FPS Starter Kit</a
-            >，官方项目约1,001星（检索时快照），2026年项目说明明确标注音效CC0。
-          </li>
-          <li>
-            B：<a href="https://kenney.nl/assets/impact-sounds"
-              >Kenney Impact Sounds</a
-            >＋<a href="https://kenney.nl/assets/interface-sounds"
-              >Interface Sounds</a
-            >，CC0。
-          </li>
-          <li>
-            C：<a href="https://kenney.nl/assets/sci-fi-sounds"
-              >Kenney Sci-Fi Sounds</a
-            >＋Interface Sounds，CC0。
-          </li>
-          <li>
-            推荐依据：<a href="https://github.com/ellisonleao/magictools"
-              >Magictools 开发者资源清单</a
-            >（约17,532星），收录 Kenney 和
-            Freesound。星数是项目或清单的关注度，<strong>不是某个音效包的下载量，也不据此声称是热门榜前三</strong>。
-          </li>
-        </ul>
-        <p class="muted">
-          本次尝试访问
-          Kenney、itch.io、Freesound、Sonniss、OpenGameArt、Reddit及搜索引擎，均被环境网络规则拦截；能核验的原作者项目、开发者推荐清单与合法素材镜像已明确列出，这些外站的热度与下载量本轮暂未核验。制作依据是来源、波形／包络与频谱处理；最终听感请以你在此页的选择为准。
+          枪声要有击发的冲击与枪型差别；换弹要有真实的弹匣、装弹和枪机动作。翻滚的核心是衣物摩擦和身体落地，穿戴是拿取、布料及扣合。枪机声、拉链声和衣物声都保留真实名称，不冒充整套动作。
         </p>
         <p>
-          <a href="licenses/Kenney-FPS-README.md">官方项目授权说明</a> ·
-          <a href="licenses/Kenney-SciFi-CC0.txt">科幻音效许可</a> ·
-          <a href="licenses/Kenney-Interface-CC0.txt">界面音效许可</a> ·
-          <a href="licenses/Kenney-Impact-CC0.txt">碰撞音效许可</a> ·
-          <a href="manifest.json">全部试听文件与来源</a>
+          免费枪械录音包通常不同时包含翻滚、护具穿戴。这里将缺项公开，动作录音单列，选定后再按猫咪动画做必要的时长匹配。五组均有逐项原声；G/H/I
+          是按作者整理的专题选集，<strong>不是五套都包含四类枪声、四类换弹和全部动作的现成套装</strong>。
+        </p>
+        <p>
+          来源热度使用原站评分、明确标注的下载数或独立推荐文章。没有公开数字的厂牌只列来源，不编造排名。较早发行但有明确使用记录的录音库标注年份背景，不以新旧代替质量判断。
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>作者</th>
+                <th>可核验的使用依据</th>
+              </tr>
+            </thead>
+            <tbody id="evidence"></tbody>
+          </table>
+        </div>
+        <p>
+          <a href="manifest.json">逐项文件、来源与处理清单</a> ·
+          <a href="licenses/ATTRIBUTION.md">署名与授权说明</a> ·
+          <a href="licenses/FilmCow-license.pdf">FilmCow 原始许可</a>
         </p>
       </details>
       <footer>
-        这里只播放候选音效，不会应用选项，不会写入存档。你可以选整套，也可以告诉我：枪声用
-        D、换弹用 B、翻滚用 A 等。
+        这里只供选择，没有更换游戏内音效，也不写入存档。可以按声音选：例如 E 的
+        AR 换弹、F 的 M45 单发，以及某条动作录音；不用被迫选同一整套。
       </footer>
     </main>
     <script>
       const $ = (s) => document.querySelector(s);
       let data,
-        group = "shot",
+        group = "all",
         volume = 0.8,
+        level = true,
         token = 0,
         transport = new Audio(),
-        sequence = false,
         resolvePlay = null;
-      const status = (t) => {
-        $("#status").textContent = t;
-      };
-      const nativePlayers = () => [...document.querySelectorAll("audio")];
+      const status = (t) => ($("#status").textContent = t);
+      const esc = (s) =>
+        String(s).replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
+      const audios = () => [...document.querySelectorAll("audio")];
+      function gain(t) {
+        return volume * (level ? t.previewGain : 1);
+      }
       function stop(keep) {
         token++;
-        sequence = false;
         transport.pause();
         transport.currentTime = 0;
         if (resolvePlay) {
           resolvePlay(false);
           resolvePlay = null;
         }
-        nativePlayers().forEach((a) => {
+        audios().forEach((a) => {
           if (a !== keep) a.pause();
         });
         document
           .querySelectorAll(".playing")
-          .forEach((el) => el.classList.remove("playing"));
+          .forEach((a) => a.classList.remove("playing"));
       }
-      function lookup(s, id) {
-        if ($("#burst").checked && id.startsWith("shot-"))
-          id = id.replace("shot-", "burst-");
-        return data.tracks.find((t) => t.set === s && t.id === id);
-      }
-      function attach(a, label) {
-        a.volume = volume;
+      function attach(a, t) {
+        a.volume = gain(t);
+        a.dataset.gain = t.previewGain;
         a.addEventListener("play", () => {
           stop(a);
-          nativePlayers().forEach((x) => {
-            if (x !== a) x.pause();
-          });
-          status("正在试听：" + label);
+          status("正在试听：" + t.name);
           a.closest(".clip")?.classList.add("playing");
         });
         a.addEventListener("ended", () => {
           a.closest(".clip")?.classList.remove("playing");
-          if (!sequence) status("播放结束，可以换一套对比。");
+          status("播放结束。");
         });
         a.addEventListener("error", () =>
-          status("音频暂时无法加载，请刷新或下载该方案试听。"),
+          status("音频加载失败，请打开原作者页面或刷新重试。"),
         );
+      }
+      function clip(t) {
+        return `<div class="clip" data-track="${t.set}-${t.id}"><h3>${esc(t.name)}</h3><audio controls preload="none" src="${esc(t.url)}" aria-label="${esc(t.set + " " + t.name)}"></audio><p>${t.duration.toFixed(2)} 秒 · ${t.channels === 2 ? "立体声" : "单声道"} · ${esc(t.processing)}</p><p>${esc(t.note)}</p><div class="clip-links"><a href="${esc(t.source)}" target="_blank" rel="noopener">原作者条目</a>${t.set === "J" ? "" : `<a href="${esc(t.url)}" download>下载原声试听</a>`}</div></div>`;
+      }
+      function header(s) {
+        return `<header class="set-header"><h2><span class="letter">${s.id}</span>${esc(s.name)}</h2><p class="author">作者：${esc(s.author)}</p><p>${esc(s.description)}</p><p class="scope">${esc(s.scope)}</p><details><summary>来源、使用依据与授权</summary><p>${esc(s.evidence)}</p><p>${esc(s.license)}</p><a href="${esc(s.source)}" target="_blank" rel="noopener">原作者发行页</a>${s.extraSource ? ` · <a href="${esc(s.extraSource)}" target="_blank" rel="noopener">第二包</a>` : ""}</details>${s.mode === "local" ? `<div class="set-actions"><button data-sequence="${s.id}">连播当前分类</button></div>` : ""}</header>`;
       }
       function render() {
         stop();
         $("#sets").innerHTML = data.sets
-          .map(
-            (s) =>
-              `<section class="set" data-set="${s.id}"><header class="set-header"><h2><span class="letter">${s.id}</span>${s.name}</h2><p>${s.description}</p><p class="origin">${s.kind} · ${s.origin}</p><div class="set-actions"><button data-sequence="${s.id}">全套连播</button><a class="zip" href="方案${s.id}.zip" download>下载整套</a></div></header><div class="clips">${data.categories
-                .filter((c) => c.group === group)
-                .map((c) => {
-                  const t = lookup(s.id, c.id);
-                  return `<div class="clip" data-clip="${s.id}-${c.id}"><div class="clip-label"><strong>${c.name}</strong><small>${t.duration.toFixed(2)}秒</small><a href="${t.url}" download>下载</a></div><audio controls preload="none" src="${t.url}" aria-label="${s.id} ${s.name} ${c.name}"></audio></div>`;
-                })
-                .join("")}</div></section>`,
-          )
+          .map((s) => {
+            const ts = data.tracks.filter(
+              (t) => t.set === s.id && (group === "all" || group === t.group),
+            );
+            return `<section id="set-${s.id}" class="set" data-set="${s.id}">${header(s)}${`<div class="clips">${ts.length ? ts.map(clip).join("") : '<p class="empty">该原包在本次取得的文件中没有此类声音，没有用其他声音补齐。</p>'}</div>`}</section>`;
+          })
           .join("");
-        nativePlayers()
-          .filter((a) => a.closest(".set"))
-          .forEach((a) => attach(a, a.getAttribute("aria-label")));
-        status("请选择一个声音，或点击“依次对比四套”。");
+        const j = data.bonus;
+        $("#action-supplement").hidden = !["all", "action"].includes(group);
+        $("#action-supplement").innerHTML =
+          header(j) +
+          `<div class="clips">${data.tracks
+            .filter((t) => t.set === "J")
+            .map(clip)
+            .join("")}</div>`;
+        document.querySelectorAll("[data-track] audio").forEach((a) => {
+          const t = data.tracks.find(
+            (t) =>
+              `${t.set}-${t.id}` === a.closest("[data-track]").dataset.track,
+          );
+          attach(a, t);
+        });
+        status("原素材已加载，可逐项试听。");
       }
-      async function playOne(s, c, id) {
-        if (token !== id) return false;
-        const t = lookup(s.id, c.id);
+      function playOne(t, id) {
+        if (id !== token) return Promise.resolve(false);
         document
           .querySelectorAll(".playing")
-          .forEach((el) => el.classList.remove("playing"));
+          .forEach((a) => a.classList.remove("playing"));
         document
-          .querySelector(`[data-clip="${s.id}-${c.id}"]`)
+          .querySelector(`[data-track="${t.set}-${t.id}"]`)
           ?.classList.add("playing");
-        status(`正在试听：${s.id} ${s.name} · ${c.name}`);
         transport.src = t.url;
-        transport.volume = volume;
+        transport.volume = gain(t);
+        transport.dataset.gain = t.previewGain;
+        status("正在连播：" + t.set + " · " + t.name);
         return new Promise((resolve) => {
           let done = false;
           const finish = (ok) => {
@@ -537,50 +579,60 @@
           resolvePlay = finish;
           transport.onended = () => finish(true);
           transport.onerror = () => {
-            status("音频加载失败，可以下载整套试听。");
+            status("音频加载失败，已停止。");
             finish(false);
           };
           transport.play().catch(() => {
-            if (token === id)
-              status("播放被浏览器阻止，请再点击一次播放按钮。");
+            if (id === token) status("播放被浏览器阻止，请再次点击播放。");
             finish(false);
           });
         });
       }
       async function playList(list) {
         stop();
-        sequence = true;
-        const id = token;
-        for (const [s, c] of list) {
-          if (token !== id || !(await playOne(s, c, id))) return;
-          await new Promise((r) => setTimeout(r, 400));
+        if (!list.length) {
+          status("当前分类没有可连播的本地录音。");
+          return;
         }
-        if (token === id) {
-          sequence = false;
+        const id = token;
+        for (const t of list) {
+          if (id !== token || !(await playOne(t, id))) return;
+          await new Promise((r) => setTimeout(r, 350));
+        }
+        if (id === token) {
           document
             .querySelectorAll(".playing")
-            .forEach((el) => el.classList.remove("playing"));
-          status("这一轮播放结束。可以选择其他项目继续比较。");
+            .forEach((a) => a.classList.remove("playing"));
+          status("这一轮播放结束。");
         }
       }
       $("#stop").onclick = () => {
         stop();
-        status("已停止。");
+        status("已停止全部。");
       };
+      function applyVolume() {
+        audios().forEach(
+          (a) =>
+            (a.volume = volume * (level ? Number(a.dataset.gain || 1) : 1)),
+        );
+        transport.volume =
+          volume * (level ? Number(transport.dataset.gain || 1) : 1);
+      }
       $("#volume").oninput = (e) => {
         volume = e.target.value / 100;
         $("#volume-value").value = e.target.value + "%";
-        nativePlayers().forEach((a) => (a.volume = volume));
-        transport.volume = volume;
+        applyVolume();
       };
-      $("#compare").onclick = () => {
-        const c = data.categories.find(
-          (c) => c.id === $("#compare-item").value,
+      $("#level").onchange = (e) => {
+        level = e.target.checked;
+        applyVolume();
+        status(
+          level
+            ? "已统一本页试听音量；文件原声不变。"
+            : "原始录音音量可能较大，请先调低设备音量。",
         );
-        playList(data.sets.map((s) => [s, c]));
       };
-      $("#burst").onchange = render;
-      document.querySelector(".tabs").onclick = (e) => {
+      $(".tabs").onclick = (e) => {
         const b = e.target.closest("[data-group]");
         if (!b || !data) return;
         group = b.dataset.group;
@@ -589,46 +641,64 @@
           .forEach((x) => x.setAttribute("aria-selected", String(x === b)));
         render();
       };
-      $("#sets").onclick = (e) => {
-        const b = e.target.closest("[data-sequence]");
-        if (b)
+      $("#representatives").onclick = () => {
+        if (data)
           playList(
-            data.categories.map((c) => [
-              data.sets.find((s) => s.id === b.dataset.sequence),
-              c,
-            ]),
+            [
+              ["E", "556"],
+              ["F", "ar15"],
+              ["G", "sbmkak"],
+              ["H", "sbrashot"],
+              ["I", "sbjk9mm"],
+            ].map(([s, id]) =>
+              data.tracks.find((t) => t.set === s && t.id === id),
+            ),
           );
       };
-      fetch("manifest.json")
+      document.addEventListener("click", (e) => {
+        const seq = e.target.closest("[data-sequence]");
+        if (seq && data)
+          playList(
+            data.tracks.filter(
+              (t) =>
+                t.set === seq.dataset.sequence &&
+                (group === "all" || group === t.group),
+            ),
+          );
+      });
+      fetch("manifest-v2.json", { cache: "no-cache" })
         .then((r) => {
           if (!r.ok) throw Error();
           return r.json();
         })
         .then((d) => {
           data = d;
-          $("#compare-item").innerHTML = data.categories
-            .map((c) => `<option value="${c.id}">${c.name}</option>`)
-            .join("");
-          $("#references").innerHTML = data.references
+          $("#references").innerHTML = d.references
             .map(
-              (r) =>
-                `<div class="ref"><h3>${r.name}</h3><audio controls preload="none" src="${r.url}" aria-label="${r.name}"></audio></div>`,
+              (t) =>
+                `<audio controls preload="none" src="${esc(t.url)}" aria-label="${esc(t.name)}"></audio>`,
             )
             .join("");
           document
-            .querySelectorAll(".ref audio")
-            .forEach((a) => attach(a, a.getAttribute("aria-label")));
+            .querySelectorAll("#references audio")
+            .forEach((a, i) => attach(a, d.references[i]));
+          $("#evidence").innerHTML = [...d.sets, d.bonus]
+            .map(
+              (s) =>
+                `<tr><td><a href="${esc(s.evidenceUrl)}" target="_blank" rel="noopener">${esc(s.author)}</a></td><td>${esc(s.evidence)}</td></tr>`,
+            )
+            .join("");
           render();
         })
         .catch(() => {
-          status("试听文件加载失败，请刷新页面。");
-          $("#sets").innerHTML = '<p class="error">暂时无法加载音效清单。</p>';
+          $("#sets").innerHTML =
+            '<p id="error">试听清单加载失败，请刷新重试。</p>';
+          status("无法加载试听清单。");
         });
-      window.addEventListener("pagehide", stop);
+      window.addEventListener("pagehide", () => stop());
       document.addEventListener("visibilitychange", () => {
         if (document.hidden) stop();
       });
-      // Update an existing game worker so the audition page cannot replace its offline home HTML.
       if ("serviceWorker" in navigator)
         navigator.serviceWorker
           .getRegistration("../")
