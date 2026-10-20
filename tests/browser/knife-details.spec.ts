@@ -12,7 +12,7 @@ test("枪械描述按枪型与品质着色、散射与每秒射速，商店提�
   const m = page.locator("#item-menu");
   await expect(m).toContainText("常见 · 冲锋枪");
   await expect(m).toContainText("射速 12 发／秒");
-  await expect(m).toContainText("散射 0.12");
+  await expect(m).toContainText("散布 13.8°");
   await expect(m).not.toContainText("耐久");
   await expect(m).not.toContainText("威力");
   await expect(m).not.toContainText("发／分");
@@ -33,12 +33,12 @@ test("枪械描述按枪型与品质着色、散射与每秒射速，商店提�
   expect(Math.abs(a!.y + a!.height / 2 - b!.y - b!.height / 2)).toBeLessThan(3);
   await page.locator(".shop-grid [data-item=w9]").click();
   await expect(m).toContainText("珍贵 · 狙击枪");
-  await expect(m).toContainText("散射 0");
+  await expect(m).toContainText("散布 0°");
   await expect(m).toContainText("射速 0.75 发／秒");
   await page.locator(".shop-heading h2").click();
   await page.locator(".shop-grid [data-item=w16]").click();
   await expect(m).toContainText("霰弹枪");
-  await expect(m).toContainText("散射 0.17");
+  await expect(m).toContainText("散布 20.9°");
 });
 test("两种出售确认弹窗窄版且按钮间隔清楚，取消与Esc保留物品", async ({
   page,

@@ -18,6 +18,8 @@ import {
   BASE_PACK,
   EXTRACT_SECONDS,
   MOVEMENT,
+  MELEE_SWING_SECONDS,
+  melee,
   wearWeapon,
   weaponDamageScale,
   randomWeapon,
@@ -842,11 +844,15 @@ export class Raid {
     else {
       this.interrupt();
       this.reload = this.weapon.reload!;
-      this.sound.play("reload");
+      this.sound.play("reload", 1, {
+        weaponClass: this.weapon.weaponClass,
+        seconds: this.weapon.reload,
+      });
     }
   }
   finishReload() {
     this.reload = 0;
+    this.sound.stopReload?.();
     if (!this.weapon) return;
     let count = Math.min(this.weapon.mag! - this.mag, this.reserve),
       brought = 0;
@@ -881,18 +887,22 @@ export class Raid {
       this.activeWeapon = to;
     this.ammoTier = this.weaponItem?.loaded?.tier ?? this.ammoTier;
     this.reload = 0;
+    this.sound.stopReload?.();
     this.syncLoaded();
     persist(this.save);
+    this.sound.play("equip-weapon");
     return true;
   }
   selectWeapon(slot: "primary" | "secondary" | "melee") {
     const item = this.save.equipment[slot];
     if (!item) return false;
+    if (this.activeWeapon !== slot) this.sound.play("equip-weapon");
     this.syncLoaded();
     this.activeWeapon = slot;
     this.ammoTier =
       this.magazineTiers[item.uid] ?? item.loaded?.tier ?? this.ammoTier;
     this.reload = 0;
+    this.sound.stopReload?.();
     return true;
   }
   switchWeapon(direction = 1) {
@@ -923,9 +933,16 @@ export class Raid {
       if (this.weaponItem?.uid === item.uid)
         this.ammoTier = this.magazineTiers[item.uid];
       this.reload = 0;
+      this.sound.stopReload?.();
       this.syncLoaded();
     }
 
+    if (ok)
+      this.sound.play(
+        db[item.id].kind === "weapon" || db[item.id].kind === "melee"
+          ? "equip-weapon"
+          : "equip-gear",
+      );
     return ok;
   }
   loadAmmo(
@@ -970,6 +987,7 @@ export class Raid {
         ? db[this.save.equipment.ammo.id].tier
         : oldTier);
     this.reload = 0;
+    this.sound.stopReload?.();
     if (!target && oldTier !== this.ammoTier && this.weaponItem)
       this.loadMagazine();
     persist(this.save);
@@ -1003,6 +1021,7 @@ export class Raid {
     delete this.magazines[i.uid];
     delete this.magazineTiers[i.uid];
     this.reload = 0;
+    this.sound.stopReload?.();
     this.syncLoaded();
     persist(this.save);
     return true;
@@ -1117,7 +1136,7 @@ export class Raid {
         pellet === 0,
       );
     }
-    this.sound.play("shot");
+    this.sound.play("shot", 1, { weaponClass: this.weapon.weaponClass });
     wearWeapon(this.weaponItem!);
     this.shake = Math.max(
       this.shake,
@@ -1160,10 +1179,10 @@ export class Raid {
       !this.save.equipment.melee
     )
       return;
-    this.meleeCooldown = 0.45;
+    this.meleeCooldown = MELEE_SWING_SECONDS;
     this.meleeSwing++;
     this.interrupt(true);
-    this.sound.play("roll");
+    this.sound.play("melee");
     this.combatFX.push({
       kind: "melee",
       x: this.p.x,
@@ -1189,7 +1208,7 @@ export class Raid {
           y: e.y - 24,
           vx: Math.cos(a),
           vy: Math.sin(a),
-          damage: 48,
+          damage: melee.damage!,
           tier: 1,
           friendly: true,
           travel: 0,
@@ -1465,11 +1484,14 @@ export class Raid {
       if (this.weaponItem?.uid === item.uid)
         this.ammoTier = this.magazineTiers[item.uid];
       this.reload = 0;
+      this.sound.stopReload?.();
       this.syncLoaded();
     }
     this.value += Math.floor(db[item.id].price * 0.65);
     persist(this.save);
-    this.sound.play("click");
+    this.sound.play(
+      kind === "weapon" || kind === "melee" ? "equip-weapon" : "equip-gear",
+    );
     this.onChange();
     return true;
   }
@@ -1942,6 +1964,11 @@ export class Raid {
       ) {
         if (!e.mag) {
           e.reload = weapons[e.weapon].reload!;
+          this.sound.play("reload", 1, {
+            weaponClass: weapons[e.weapon].weaponClass,
+            seconds: e.reload,
+            enemy: true,
+          });
         } else {
           const gun = weapons[e.weapon];
           const shots = gun.pellets ?? 1;
@@ -1978,7 +2005,10 @@ export class Raid {
                     ? 1.7
                     : 0.65 + this.random() * 0.65,
           );
-          this.sound.play("enemy");
+          this.sound.play("shot", 1, {
+            weaponClass: gun.weaponClass,
+            enemy: true,
+          });
         }
       }
       if (e.skillCool <= 0) {

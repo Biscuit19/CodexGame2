@@ -1,9 +1,10 @@
+import { MELEE_SWING_SECONDS } from "./data";
 import type { Group } from "three";
 
 const ease = (t: number) => t * t * (3 - 2 * t);
 /** A short wind-up, a cross-body diagonal cut, then a smooth return to the held pose. */
 export function knifeSwingPose(cooldown: number, swing: number) {
-  const t = Math.max(0, Math.min(1, 1 - cooldown / 0.45));
+  const t = Math.max(0, Math.min(1, 1 - cooldown / MELEE_SWING_SECONDS));
   const side = swing % 2 ? 1 : -1;
   let sweep = 0,
     lift = 0,

@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import "./app.css";
 import {
   db,
+  weaponSpreadDegrees,
   collectibles,
   foodEffect,
   itemNameColor,
@@ -542,14 +543,16 @@ function selectedActions() {
     );
   const spec =
     d.kind === "weapon"
-      ? `${d.pellets! > 1 ? `伤害 ${d.damage}×${d.pellets} 弹丸` : `伤害 ${d.damage}`} · 弹匣 ${d.mag} · 射速 ${Number(((d.rpm ?? 0) / 60).toFixed(2))} 发／秒 · 射程 ${d.range} · 散射 ${d.spread ?? 0}`
-      : d.kind === "bag"
-        ? `容量 ${d.capacity} 格`
-        : d.kind === "food"
-          ? `${foodEffect(d)} · 食用 ${d.useTime} 秒${d.healOverTime ? "；持续效果不叠加，食用新的持续补给会刷新效果" : ""}`
-          : d.kind === "ammo"
-            ? `${d.tier} 级弹药 · 每组最多 120 发`
-            : "";
+      ? `${d.pellets! > 1 ? `伤害 ${d.damage}×${d.pellets} 弹丸` : `伤害 ${d.damage}`} · 弹匣 ${d.mag} · 射速 ${Number(((d.rpm ?? 0) / 60).toFixed(2))} 发／秒 · 射程 ${d.range} · 散布 ${weaponSpreadDegrees(d)}°`
+      : d.kind === "melee"
+        ? `伤害 ${d.damage} · 攻速 ${Number(((d.rpm ?? 0) / 60).toFixed(2))} 次／秒`
+        : d.kind === "bag"
+          ? `容量 ${d.capacity} 格`
+          : d.kind === "food"
+            ? `${foodEffect(d)} · 食用 ${d.useTime} 秒${d.healOverTime ? "；持续效果不叠加，食用新的持续补给会刷新效果" : ""}`
+            : d.kind === "ammo"
+              ? `${d.tier} 级弹药 · 每组最多 120 发`
+              : "";
   return `<h3 style="color:${itemNameColor(i.id) || "inherit"}">${esc(name(i.id))}</h3><span style="color:${itemNameColor(i.id)}">${rarity[d.tier]} · ${d.kind === "weapon" ? weaponClassNames[d.weaponClass!] : kindNames[d.kind]}</span><p class="item-description">${esc(d.desc)}</p><p class="item-sale-value">出售价值 ◈ ${money(sale(i))} 金币</p>${spec ? `<p class="item-function">${spec}</p>` : ""}${d.kind === "armor" || d.kind === "helmet" ? `<p class="item-function">防护评分 ${Math.round(protection(i))}（等级×剩余耐久）</p>` : ""}<div class="item-options">${options}</div>`;
 }
 function closeItemMenu() {
@@ -642,6 +645,10 @@ function equipSelected(slot?: keyof Equipment) {
     else if (!raid || kind !== "weapon")
       ok = equip(s, selected.from, i.uid, slot === "secondary");
   }
+  if (ok && !raid)
+    sound.play(
+      kind === "weapon" || kind === "melee" ? "equip-weapon" : "equip-gear",
+    );
   if (!ok) toast("无法装备，请检查装备类型和背包空间");
   closeItemMenu();
   if (raid) overlay();

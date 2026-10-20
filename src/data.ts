@@ -15,6 +15,15 @@ export const weaponClassNames: Record<WeaponClass, string> = {
   sniper: "狙击枪",
   shotgun: "霰弹枪",
 };
+/** Full angular cone, including the existing shotgun pellet jitter (+/-7.5%). */
+export function weaponSpreadDegrees(def: ItemDef) {
+  return Number(
+    (
+      (((def.spread ?? 0) * 360) / Math.PI) *
+      ((def.pellets ?? 1) > 1 ? 1.075 : 1)
+    ).toFixed(1),
+  );
+}
 export interface ItemDef {
   id: string;
   name: string;
@@ -64,7 +73,8 @@ export function takeQuantity(item: Item, quantity: number): Item {
 export const AMMO_STACK = 120,
   FOOD_STACK = 5,
   BASE_PACK = 20,
-  EXTRACT_SECONDS = 3;
+  EXTRACT_SECONDS = 3,
+  MELEE_SWING_SECONDS = 0.45;
 export const MOVEMENT = {
   maxStamina: 100,
   runSpeed: 220,
@@ -85,7 +95,7 @@ export const melee: ItemDef = {
   desc: "不需要子弹，只需要一点勇气，以及对方刚好正在换弹。",
   damage: 48,
   range: 85,
-  rpm: 120,
+  rpm: 60 / MELEE_SWING_SECONDS,
 };
 export const rarity = ["", "常见", "优良", "珍贵", "稀世", "传说"];
 export const colors = [
