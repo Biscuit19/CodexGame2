@@ -1,3 +1,4 @@
+import { animateKnifeHold } from "./knife-motion";
 import {
   containerHighlighted,
   containerHighlightColor,
@@ -768,10 +769,12 @@ export class ThreeRenderer {
     player.gun.visible = r.activeWeapon !== "melee" && !!r.weaponItem;
     player.knife.visible =
       r.activeWeapon === "melee" && !!r.save.equipment.melee;
-    player.knife.rotation.y =
-      r.meleeCooldown > 0
-        ? Math.sin((r.meleeCooldown / 0.45) * Math.PI) * 1.7
-        : 0;
+    animateKnifeHold(
+      player.knife,
+      player.player!.arms[0],
+      r.meleeCooldown,
+      r.meleeSwing,
+    );
     const ids = new Set(["player"]);
     for (const e of r.enemies) {
       ids.add(e.id);

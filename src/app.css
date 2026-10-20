@@ -2405,3 +2405,11 @@ body:not(.aiming) #crosshair { display: none; }
 .batch-chosen .item-slot { outline: 2px solid #e5c785; background-color: #63734188; }
 .preflight-list { font-size: 23px; line-height: 1.7; color: #f0d4a1; padding-left: 28px; }
 .preflight-list + p { font-size: 23px; }
+
+/* Compact sale review, with room to distinguish the two actions. */
+.sale-confirm-modal { width: min(490px, calc(100vw - 48px)); }
+.sale-confirm-modal > .full { display: block; }
+.sale-confirm-modal > .full + .full { margin-top: 20px; }
+.shop-heading { grid-column: 1 / -1; display: flex; align-items: center; gap: 24px; }
+.shop-heading h2 { margin: 0; font-size: 29px; white-space: nowrap; }
+.shop-heading .shop-shortcut { margin: 0; }

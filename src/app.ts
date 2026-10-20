@@ -542,7 +542,7 @@ function selectedActions() {
     );
   const spec =
     d.kind === "weapon"
-      ? `${weaponClassNames[d.weaponClass!]} · ${d.pellets! > 1 ? `伤害 ${d.damage}×${d.pellets} 弹丸` : `伤害 ${d.damage}`} · 弹匣 ${d.mag} · 射速 ${d.rpm} 发／分 · 射程 ${d.range}`
+      ? `${d.pellets! > 1 ? `伤害 ${d.damage}×${d.pellets} 弹丸` : `伤害 ${d.damage}`} · 弹匣 ${d.mag} · 射速 ${Number(((d.rpm ?? 0) / 60).toFixed(2))} 发／秒 · 射程 ${d.range} · 散射 ${d.spread ?? 0}`
       : d.kind === "bag"
         ? `容量 ${d.capacity} 格`
         : d.kind === "food"
@@ -550,7 +550,7 @@ function selectedActions() {
           : d.kind === "ammo"
             ? `${d.tier} 级弹药 · 每组最多 120 发`
             : "";
-  return `<h3 style="color:${itemNameColor(i.id) || "inherit"}">${esc(name(i.id))}</h3><span style="color:${itemNameColor(i.id)}">${rarity[d.tier]} · ${kindNames[d.kind]}</span><p class="item-description">${esc(d.desc)}</p><p class="item-sale-value">出售价值 ◈ ${money(sale(i))} 金币</p>${d.kind === "weapon" ? `<p class="item-function">耐久 ${Math.ceil(i.durability ?? d.durability!)}/${Math.ceil(i.maxDurability ?? d.durability!)} · 威力 ${Math.round(weaponDamageScale(i.durability ?? d.durability!) * 100)}%</p>` : ""}${spec ? `<p class="item-function">${spec}</p>` : ""}${d.kind === "armor" || d.kind === "helmet" ? `<p class="item-function">防护评分 ${Math.round(protection(i))}（等级×剩余耐久）</p>` : ""}<div class="item-options">${options}</div>`;
+  return `<h3 style="color:${itemNameColor(i.id) || "inherit"}">${esc(name(i.id))}</h3><span style="color:${itemNameColor(i.id)}">${rarity[d.tier]} · ${d.kind === "weapon" ? weaponClassNames[d.weaponClass!] : kindNames[d.kind]}</span><p class="item-description">${esc(d.desc)}</p><p class="item-sale-value">出售价值 ◈ ${money(sale(i))} 金币</p>${spec ? `<p class="item-function">${spec}</p>` : ""}${d.kind === "armor" || d.kind === "helmet" ? `<p class="item-function">防护评分 ${Math.round(protection(i))}（等级×剩余耐久）</p>` : ""}<div class="item-options">${options}</div>`;
 }
 function closeItemMenu() {
   document.querySelector("#item-menu")?.remove();
@@ -700,7 +700,7 @@ function shop() {
   if (category === "food") products.sort((a, b) => a.price - b.price);
   else if (category === "weapon")
     products.sort((a, b) => a.tier - b.tier || a.price - b.price);
-  return `<div class="shop-layout"><aside class="panel shop-categories">${heading("补给商店")}${[
+  return `<div class="shop-layout"><header class="shop-heading"><h2>补给商店</h2><span class="shop-shortcut">双击或F购买物品。</span></header><aside class="panel shop-categories">${[
     ["weapon", "武器"],
     ["armor", "护具与背包"],
     ["ammo", "子弹"],
@@ -716,7 +716,7 @@ function shop() {
     )
     .join(
       "",
-    )}${btn("领取救济包", "rescue", "", "secondary")}</aside><section class="panel shop-products">${heading("商品", "回收比例 65%")}<p class="shop-shortcut">双击或F购买物品。</p>${
+    )}${btn("领取救济包", "rescue", "", "secondary")}</aside><section class="panel shop-products">${heading("商品", "回收比例 65%")}${
     category === "weapon"
       ? `<label class="weapon-filter">枪械类型<select id="weapon-filter" aria-label="枪械类型"><option value="all">全部枪械</option>${Object.entries(
           weaponClassNames,
@@ -816,7 +816,7 @@ function baseModal() {
               : modal === "settings"
                 ? settingsContent()
                 : "";
-  return `<section class="modal panel">${btn("×", "close-modal", 'aria-label="关闭"', "close")}${content}</section>`;
+  return `<section class="modal panel ${["sell-confirm", "batch-confirm"].includes(modal) ? "sale-confirm-modal" : ""}">${btn("×", "close-modal", 'aria-label="关闭"', "close")}${content}</section>`;
 }
 function resultModal(r: Result) {
   return `<section class="modal result-panel panel"><h1>${s.completed && r.bosses.includes("doctor") ? "行动完成" : r.success ? "成功撤离" : "行动失败"}</h1><p>${esc(r.reason)}</p><div class="result-stats">${[

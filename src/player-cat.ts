@@ -606,6 +606,7 @@ export function animatePlayerCat(
   });
   pose.arms.forEach((arm, i) => {
     const step = Math.sin(walk + i * Math.PI);
+    arm.rotation.y = 0;
     arm.rotation.x = walk
       ? -step *
         forward *

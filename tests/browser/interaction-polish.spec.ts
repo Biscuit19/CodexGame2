@@ -121,8 +121,9 @@ test("容器白金粗描边与名称同步，持刀抬起，战斗根节点隐�
       .knife.getObjectByName("cat-paw-knife");
     return { pitch: k.rotation.x, bank: k.rotation.z };
   });
-  expect(grip.pitch).toBeLessThan(-0.9);
-  expect(Math.abs(grip.bank)).toBeLessThan(0.2);
+  expect(grip.pitch).toBeLessThan(-0.5);
+  expect(grip.pitch).toBeGreaterThan(-0.8);
+  expect(Math.abs(grip.bank)).toBeLessThan(0.35);
   const side = await page.evaluate(() => {
     const g = (window as any).__game;
     return g.renderer3d.project(g.raid.p.x + 200, g.raid.p.y, 0);

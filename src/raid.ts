@@ -216,6 +216,7 @@ export class Raid {
   healItem = "";
   healSource?: Container;
   meleeCooldown = 0;
+  meleeSwing = 0;
   healDuration = 0;
   regeneration = { remaining: 0, rate: 0 };
   extract = 0;
@@ -1160,6 +1161,7 @@ export class Raid {
     )
       return;
     this.meleeCooldown = 0.45;
+    this.meleeSwing++;
     this.interrupt(true);
     this.sound.play("roll");
     this.combatFX.push({
