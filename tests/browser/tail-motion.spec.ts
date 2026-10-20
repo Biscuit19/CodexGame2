@@ -1,3 +1,4 @@
+import { acceptPreflightIfPresent } from "./helpers/deploy";
 import { test, expect } from "@playwright/test";
 
 test("尾巴贴近身体并从各级背包下方伸出，随机摆动及翻滚不穿头包", async ({
@@ -13,6 +14,7 @@ test("尾巴贴近身体并从各级背包下方伸出，随机摆动及翻滚�
   await page.getByRole("button", { name: "临时测试入口" }).click();
   await page.getByRole("button", { name: "进入地图一", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await acceptPreflightIfPresent(page);
   await page.evaluate(() => {
     const g = (window as any).__game;
     g.raid.enemies = [];

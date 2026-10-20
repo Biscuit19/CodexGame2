@@ -280,7 +280,8 @@ export class Raid {
         .filter((i) => db[i.id].kind === "ammo")
         .map((i) => db[i.id].tier),
     );
-    if (!save.equipment.primary) this.activeWeapon = "melee";
+    if (!save.equipment.primary)
+      this.activeWeapon = save.equipment.secondary ? "secondary" : "melee";
     this.ammoTier =
       this.weaponItem?.loaded?.tier ??
       (save.equipment.ammo ? db[save.equipment.ammo.id].tier : this.ammoTier);
@@ -504,7 +505,7 @@ export class Raid {
             bed: "豪华猫窝",
             cabinet: "工具柜",
             box: "纸箱",
-            basket: "旧藤筐",
+            basket: "鸟窝",
             toolbox: "生锈工具盒",
           } as Record<string, string>
         )[type],
@@ -1375,6 +1376,17 @@ export class Raid {
     if (!c || index < 0 || index >= c.revealed) return;
     const candidate = c.items[index],
       kind = db[candidate.id].kind;
+    if (autoEquip && !safe && kind === "weapon") {
+      const empty = !this.save.equipment.primary
+        ? "primary"
+        : !this.save.equipment.secondary
+          ? "secondary"
+          : undefined;
+      if (empty) {
+        this.equipContainer(candidate.uid, empty);
+        return;
+      }
+    }
     if (
       autoEquip &&
       (kind === "armor" || kind === "helmet") &&

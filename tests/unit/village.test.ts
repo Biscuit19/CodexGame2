@@ -192,7 +192,11 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
     for (let seed = 0; seed < 200; seed++) {
       const r = start(seed);
       expect(r.containers.length).toBeGreaterThanOrEqual(46);
-      expect(r.containers.length).toBeLessThanOrEqual(81);
+      expect(r.containers.length).toBeLessThanOrEqual(
+        81 +
+          villageProps.filter((p) => ["cooler", "trashcan"].includes(p.model))
+            .length,
+      );
       expect(
         r.containers.filter((c) =>
           ["box", "basket", "toolbox", "litter"].includes(c.type),
@@ -372,7 +376,7 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
     );
     expect(villageBuildings.find((b) => b.id === "barn")!.flatRoof).toBe(true);
   });
-  it("南侧压缩且三座桥缩短，三间小屋分散，四处无顶搜索点各有两个低级容器", () => {
+  it("南侧压缩且三座桥缩短，三间小屋分散，四处废屋与棚屋各有两个低级容器", () => {
     const r = start();
     expect(villageY(6000)).toBe(5500);
     expect(villageY(3000)).toBe(3000);
@@ -388,7 +392,7 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
       (b) => b.openStructure && !b.markedSite && !b.id.startsWith("boss-annex"),
     );
     expect(sites).toHaveLength(4);
-    expect(new Set(sites.map((b) => b.openStructure)).size).toBe(2);
+    expect(new Set(sites.map((b) => b.model)).size).toBe(3);
     for (const b of sites) {
       for (const x of [-b.w / 2, 0, b.w / 2])
         for (const y of [-b.h / 2, 0, b.h / 2]) {
@@ -403,7 +407,9 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
       expect(boxes).toHaveLength(2);
       expect(
         boxes.every(
-          (c) => c.type === "box" && c.items.every((i) => db[i.id].tier <= 3),
+          (c) =>
+            ["box", "basket", "toolbox"].includes(c.type) &&
+            c.items.every((i) => db[i.id].tier <= 3),
         ),
       ).toBe(true);
     }

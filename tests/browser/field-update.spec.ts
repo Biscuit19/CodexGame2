@@ -1,3 +1,4 @@
+import { acceptPreflightIfPresent } from "./helpers/deploy";
 import { test, expect, type Page } from "@playwright/test";
 async function start(page: Page) {
   await page.goto("/?test=1");
@@ -6,6 +7,7 @@ async function start(page: Page) {
 async function deploy(page: Page) {
   await page.getByRole("button", { name: "进入地图一", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await acceptPreflightIfPresent(page);
   await page.evaluate(() => {
     (window as any).__game.raid.enemies = [];
   });
@@ -96,7 +98,7 @@ test("物品悬停只保留小字食物分类，整理背包与批量出售确�
       x: g.raid.p.x,
       y: g.raid.p.y,
       type: "basket",
-      name: "旧藤筐",
+      name: "鸟窝",
       items: [i],
       revealed: 1,
       open: true,
@@ -301,7 +303,11 @@ test("农庄两处新增小建筑可真实走入并搜索，新增八个容器�
       const width =
         body.geometry.boundingBox.max.x - body.geometry.boundingBox.min.x;
       // House side trim extends to ±2.95 source units; structural walls remain ±2.5.
-      const expectedWidth = b.openStructure ? b.w : b.w * 1.18;
+      const expectedWidth = b.model.startsWith("weathered-shed")
+        ? 303
+        : b.openStructure
+          ? b.w
+          : b.w * 1.18;
       if (Math.abs(width - expectedWidth) > 3)
         throw Error(`${b.id}: source body ${width}, expected ${expectedWidth}`);
       const renderer = g.renderer3d,

@@ -27,7 +27,7 @@ Tiny Treats Homely House另采用原版长椅和信箱，Pretty Park增加原版
 复现：使用Blender 4.3及上述固定版本素材：
 
 ```sh
-blender --background --threads 4 --python scripts/assets/build-rounded-village.py -- /path/to/Tiny-Treats-Homely-House-1.0 /path/to/Tiny-Treats-Pretty-Park-1.0 /path/to/Tiny-Treats-Pleasant-Picnic-1.0 /path/to/Tiny-Treats-Charming-Kitchen-1.0 /path/to/KayKit-Furniture-Bits-1.0 /path/to/KayKit-Medieval-Hexagon-Pack-1.0
+blender --background --threads 4 --python scripts/assets/build-rounded-village.py -- /path/to/Tiny-Treats-Homely-House-1.0 /path/to/Tiny-Treats-Pretty-Park-1.0 /path/to/Tiny-Treats-Pleasant-Picnic-1.0 /path/to/Tiny-Treats-Charming-Kitchen-1.0 /path/to/KayKit-Furniture-Bits-1.0 /path/to/KayKit-Medieval-Hexagon-Pack-1.0 /path/to/Tiny-Treats-Pretty-Park-1.0
 ```
 
 ## 保留的小型道具：KayKit
@@ -50,11 +50,13 @@ blender --background --threads 4 --python scripts/assets/build-rounded-village.p
 
 ## 可搜索容器与战利品盒
 
-`container-kit.glb` 含11类容器的22个独立开合状态，使用上面已固定版本的CC0素材，授权全文均随本目录提供。地图中的模型与平面地图的精灵图使用同一套源模型：
+`container-kit.glb` 含13类容器的26个独立开合状态，使用上面已固定版本的CC0素材，授权全文均随本目录提供。地图中的模型与平面地图的精灵图使用同一套源模型：
 
 | 游戏容器 | 完整素材基础 | 为玩法所做修改 |
 |---|---|---|
-| 旧藤筐 | Pleasant Picnic `picnic_basket_square` | 保留藤编箱身、提手与双盖，搜索后向两侧掀开原盖 |
+| 鸟窝（内部沿用basket标识） | Pleasant Picnic `picnic_basket_round` | 降低篮身、增加交织枝条与中心鸟蛋；搜索后变成两片碎蛋壳和蛋黄 |
+| 乡间保温箱（中级） | Pleasant Picnic `cooler` | 保留原蓝白箱体与提手，搜索后掀开原箱盖 |
+| 绿色垃圾桶（低级） | Pretty Park `trashcan` | 原绿色镂空桶身、深色内胆及绿色铰链盖；搜索后盖子轻翘 |
 | 生锈工具盒 | Pleasant Picnic `cooler` | 缩短为锈红铁盒、磨损斑、金属扣和提手，原箱盖后翻 |
 | 纸箱 | Homely House `package` | 原纸箱贴图、包裹封口；搜索后打开纸板折翼 |
 | 猫砂桶 | KayKit Hexagon `bucket_empty` | 木桶箍圈；新增可掀起木盖与提手 |
@@ -68,12 +70,19 @@ blender --background --threads 4 --python scripts/assets/build-rounded-village.p
 
 所有活动部分先烘焙原对象变换，再绕真实铰链旋转；避免重复位移造成杆件外伸。容器清空保留搜索后状态。临近时使用法线扩张的背面外壳描边：保险箱、武器箱、豪华猫窝、首领盒为金色，其余白色，范围由105扩大60%到168，金色描边由1.25加粗到2.6；远离或隔墙不显示。模型与贴图全部打包，不依赖运行时远程下载。
 
-复现容器（Blender 4.3；依次传上述五个固定版本素材根目录）：
+复现容器（Blender 4.3；依次传上述五个固定版本素材根目录及Pretty Park素材根目录）：
 
 ```sh
-blender -b -t 2 --python scripts/assets/build-search-containers.py -- /path/to/Tiny-Treats-Homely-House-1.0 /path/to/Tiny-Treats-Pleasant-Picnic-1.0 /path/to/Tiny-Treats-Charming-Kitchen-1.0 /path/to/KayKit-Furniture-Bits-1.0 /path/to/KayKit-Medieval-Hexagon-Pack-1.0
+blender -b -t 2 --python scripts/assets/build-search-containers.py -- /path/to/Tiny-Treats-Homely-House-1.0 /path/to/Tiny-Treats-Pleasant-Picnic-1.0 /path/to/Tiny-Treats-Charming-Kitchen-1.0 /path/to/KayKit-Furniture-Bits-1.0 /path/to/KayKit-Medieval-Hexagon-Pack-1.0 /path/to/Tiny-Treats-Pretty-Park-1.0
 blender -b -t 2 --python scripts/assets/render-container-sprites.py
 python scripts/assets/pack-container-sprites.py
 ```
 
-后两步使用同一GLB渲染并打包22帧透明PNG，供其余平面视角地图显示相同容器外形；打包脚本依赖Pillow。
+后两步使用同一GLB渲染并打包26帧透明PNG，供其余平面视角地图显示相同容器外形；打包脚本依赖Pillow。
+
+
+## 破旧棚屋
+
+`weathered-shed-a.glb`与`weathered-shed-b.glb`由已有Tiny Treats衍生的`open-ruin.glb`墙体、窗户和地板改建：一款为旧木板单坡棚顶与铁皮补丁，另一款为灰绿波纹铁皮矮屋顶，均增加磨旧侧板、角柱、钉帽和半开木门。保留可通行宽门洞，室内搜索时墙顶按现有规则淡化；全部四处露天厂房模型已替换。许可沿用本目录已提供的CC0来源，不引入运行时下载。
+
+复现：在与容器相同的源素材根目录配置下，运行`blender -b -t 2 --python scripts/assets/build-weathered-sheds.py`。脚本默认使用本地`/tmp/tiny-*`等源目录，也接受与容器脚本相同的参数。

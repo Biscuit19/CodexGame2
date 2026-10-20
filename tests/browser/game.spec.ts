@@ -1,3 +1,4 @@
+import { acceptPreflightIfPresent } from "./helpers/deploy";
 import { test, expect, type Page } from "@playwright/test";
 
 test("原生弹窗调用异常仍显示可点击菜单，不会只暂停而无菜单", async ({
@@ -601,6 +602,7 @@ async function start(page: Page, mode = "standard") {
 async function deploy(page: Page) {
   await page.getByRole("button", { name: "战区地图", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await acceptPreflightIfPresent(page);
   await expect(page.locator("#scene3d")).toBeVisible({ timeout: 20000 });
   await expect(page.locator("#raid-time")).toBeVisible();
 }

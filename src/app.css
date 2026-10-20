@@ -2381,3 +2381,12 @@ body:not(.aiming) #crosshair { display: none; }
 ::-webkit-scrollbar-thumb { background: #9b9e6a; border: 3px solid #203b2d; border-radius: 8px; }
 ::-webkit-scrollbar-thumb:hover { background: #d1bd7e; }
 ::-webkit-scrollbar-corner { background: #203b2d; }
+
+.shop-shortcut { color: #ead49f; font-size: 21px; margin: 0 0 18px; }
+.shop-grid .item-slot:disabled { opacity: .7; }
+.batch-item { position: relative; min-width: 0; }
+.batch-item .item-slot { width: 100%; }
+.batch-item > input { position: absolute; z-index: 2; top: 8px; left: 8px; width: 20px; height: 20px; margin: 0; accent-color: #d2ba79; cursor: pointer; }
+.batch-chosen .item-slot { outline: 2px solid #e5c785; background-color: #63734188; }
+.preflight-list { font-size: 23px; line-height: 1.7; color: #f0d4a1; padding-left: 28px; }
+.preflight-list + p { font-size: 23px; }

@@ -1,3 +1,4 @@
+import { acceptPreflightIfPresent } from "./helpers/deploy";
 import { test, expect, type Page } from "@playwright/test";
 async function start(page: Page) {
   await page.goto("/?test=1");
@@ -6,6 +7,7 @@ async function start(page: Page) {
 async function deploy(page: Page) {
   await page.getByRole("button", { name: "进入地图一", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await acceptPreflightIfPresent(page);
   await page.evaluate(() => {
     const r = (window as any).__game.raid;
     r.enemies = [];

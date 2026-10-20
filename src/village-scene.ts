@@ -61,7 +61,8 @@ import pallet from "./assets/village/pallet.glb?url";
 import water_bucket from "./assets/village/water-bucket.glb?url";
 import target from "./assets/village/target.glb?url";
 import open_ruin from "./assets/village/open-ruin.glb?url";
-import open_workshop from "./assets/village/open-workshop.glb?url";
+import shedA from "./assets/village/weathered-shed-a.glb?url";
+import shedB from "./assets/village/weathered-shed-b.glb?url";
 const urls: Record<string, string> = {
   "stone-ruin": stoneRuin,
   hunter,
@@ -76,7 +77,8 @@ const urls: Record<string, string> = {
   "water-bucket": water_bucket,
   target: target,
   "open-ruin": open_ruin,
-  "open-workshop": open_workshop,
+  "weathered-shed-a": shedA,
+  "weathered-shed-b": shedB,
 
   clinic,
   shop,
@@ -373,7 +375,9 @@ export function createVillageScene(
   prop("windmill", 2240, 815, 230, 190, 340);
   prop("barrel", 2260, 1230, 110, 110, 180);
   stage.userData.props = villageProps;
-  for (const p of villageProps)
+  for (const p of villageProps.filter(
+    (p) => !["cooler", "trashcan"].includes(p.model),
+  ))
     add(p.model, p.x, p.y, p.w, p.d, p.height, -p.rotation);
   stage.userData.decorations = villageDecorations;
   const plantGroups = new Map<string, typeof villageDecorations>();

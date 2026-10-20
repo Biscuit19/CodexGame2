@@ -1,3 +1,4 @@
+import { acceptPreflightIfPresent } from "./helpers/deploy";
 import { test, expect, type Page } from "@playwright/test";
 const ids = ["c0_0", "c0_1", "c0_6", "c2_4", "c4_0"];
 const rgb = [
@@ -142,6 +143,7 @@ test("隐藏测试入口资金与地图图鉴全解锁，购买、退出、结�
       await page.getByRole("button", { name: "战区地图", exact: true }).click();
     await page.locator(`[data-action="map-select"][data-id="${map}"]`).click();
     await page.getByRole("button", { name: "开始行动", exact: true }).click();
+    await acceptPreflightIfPresent(page);
     await expect(page.locator("#raid-time")).toBeVisible();
     await page.keyboard.press("Escape");
     await page.getByRole("button", { name: "退出本局", exact: true }).click();
@@ -164,6 +166,7 @@ test("隐藏测试入口资金与地图图鉴全解锁，购买、退出、结�
   await page.keyboard.press("Escape");
   await page.getByRole("button", { name: "战区地图", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await acceptPreflightIfPresent(page);
   await page.evaluate(() =>
     (window as any).__game.raid.finish(true, "测试撤离"),
   );
@@ -203,6 +206,7 @@ test("补给按五份分堆、拖拽合并，食用只扣一份", async ({ page 
   await page.getByRole("button", { name: "返回基地", exact: true }).click();
   await page.getByRole("button", { name: "战区地图", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await acceptPreflightIfPresent(page);
   await page.evaluate(() => {
     const r = (window as any).__game.raid;
     r.enemies = [];
@@ -239,6 +243,7 @@ test("首次发现顶部居中，五档颜色与描述门槛正确，武器弹�
   await start(page);
   await page.getByRole("button", { name: "战区地图", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await acceptPreflightIfPresent(page);
   await page.evaluate(() => {
     const g = (window as any).__game;
     g.raid.enemies = [];
@@ -332,6 +337,7 @@ test("实际逐件搜索仅收藏品在顶部首次提示，高品质没有右�
   await start(page);
   await page.getByRole("button", { name: "进入地图一", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await acceptPreflightIfPresent(page);
   const searched = ["m4", "a5", "h5", "f4", "w3", "c0_6", "c2_4", "c4_0"];
   await page.evaluate(async (ids) => {
     const g = (window as any).__game,
@@ -439,6 +445,7 @@ test("Chrome 连续停留撤离点后显示顶层结算，截图、命中测试�
   await start(page);
   await page.getByRole("button", { name: "进入地图一", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await acceptPreflightIfPresent(page);
   await page.evaluate(async () => {
     const g = (window as any).__game,
       d = await import("/src/data.ts"),
@@ -526,6 +533,7 @@ test("实际撤离带入物资价值为零，再次出击只计算新捡且最�
   await start(page);
   await page.getByRole("button", { name: "进入地图一", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await acceptPreflightIfPresent(page);
   const moveToExit = async () =>
     page.evaluate(() => {
       const r = (window as any).__game.raid;
@@ -549,6 +557,7 @@ test("实际撤离带入物资价值为零，再次出击只计算新捡且最�
   await page.locator('[data-action="close-result"]').click();
   await page.getByRole("button", { name: "进入地图一", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await acceptPreflightIfPresent(page);
   await page.evaluate(async () => {
     const g = (window as any).__game,
       r = g.raid,
@@ -573,6 +582,7 @@ test("实际撤离带入物资价值为零，再次出击只计算新捡且最�
   await page.locator('[data-action="close-result"]').click();
   await page.getByRole("button", { name: "进入地图一", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await acceptPreflightIfPresent(page);
   await moveToExit();
   await expect(value).toHaveText("◈ 0", { timeout: 7000 });
 });

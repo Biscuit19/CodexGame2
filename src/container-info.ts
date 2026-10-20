@@ -3,6 +3,8 @@ export const CONTAINER_HIGHLIGHT_RANGE = 168;
 export const containerKinds = [
   "basket",
   "toolbox",
+  "cooler",
+  "trashcan",
   "box",
   "litter",
   "cabinet",

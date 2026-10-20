@@ -39,6 +39,10 @@ import {
   packCapacity,
   packGrid,
   movePackSlot,
+  deploymentWarnings,
+  unequipToStash,
+  sellSelectedStash,
+  shopUnlockHint,
   sortPack,
   sellCommonCollectibles,
   move,
@@ -205,19 +209,37 @@ function syncBaseMenu() {
       "base-settings",
       "base-help",
       "sell-confirm",
+      "batch-confirm",
+      "preflight",
       "safe",
       "help",
       "settings",
     ].includes(modal)
   ) {
-    content = ["sell-confirm", "safe", "help", "settings"].includes(modal)
+    content = [
+      "preflight",
+      "batch-confirm",
+      "sell-confirm",
+      "safe",
+      "help",
+      "settings",
+    ].includes(modal)
       ? baseModal()
       : modal === "base-menu"
         ? `<h1>基地菜单</h1>${btn("返回开始界面", "to-title", "", "secondary full")}${btn("设置", "base-settings", "", "secondary full")}${btn("操作指南", "base-help", "", "secondary full")}${btn("继续整备", "close-modal", "", "primary full")}`
         : modal === "base-settings"
           ? `${heading("设置")}${settingsContent()}${btn("返回基地菜单", "settings", "", "secondary full")}`
           : `${guide()}${btn("返回基地菜单", "settings", "", "secondary full")}`;
-    if (!["sell-confirm", "safe", "help", "settings"].includes(modal))
+    if (
+      ![
+        "preflight",
+        "batch-confirm",
+        "sell-confirm",
+        "safe",
+        "help",
+        "settings",
+      ].includes(modal)
+    )
       content = `<section class="modal pause-modal panel">${btn("×", "close-modal", 'aria-label="关闭"', "close")}${content}</section>`;
   }
   setDialog(baseMenu, content);
@@ -248,7 +270,10 @@ let slots: (Save | null)[] = [null, null, null],
   category = "weapon",
   mapIndex = 0,
   modal = "",
-  pausePage = "menu",
+  batchMode = false;
+const batchUids = new Set<string>();
+let preflightMap: number | undefined;
+let pausePage = "menu",
   newMode: "standard" | "easy" = "standard",
   newSlot = 0,
   newName = "三花七号",
@@ -325,7 +350,7 @@ function card(i: Item, from: string, shop = false) {
   const d = db[i.id],
     chosen = selected?.uid === i.uid,
     locked = shop && unlocked(s) < (d.unlock ?? 0);
-  return `<button class="item-slot ${chosen ? "selected" : ""}" style="--rarity:${itemNameColor(i.id)}" data-action="${shop ? "buy" : from === "loot" ? "loot-select" : "select"}" data-id="${shop ? i.id : i.uid}" data-from="${from}" data-item="${i.id}" ${shop ? "" : 'draggable="true"'} ${locked ? "disabled" : ""}><span class="quality">${rarity[d.tier]}</span>${itemIcon(i, 52)}<strong style="color:${itemNameColor(i.id) || "inherit"}">${name(i.id)}</strong>${d.kind === "food" && shop ? '<span class="food-category">食物</span>' : ""}<span class="${["food", "ammo"].includes(d.kind) ? "stack-quantity" : ""}">${shop ? (locked ? "尚未解锁" : `◈ ${money(d.price)}`) : d.kind === "ammo" ? `${i.qty} 发` : d.kind === "food" ? `<small class="food-category">食物</small>×${i.qty}` : i.durability !== undefined ? `${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}` : d.kind === "collectible" ? `◈ ${money(sale(i))}` : kindNames[d.kind]}</span>${shop ? `<small>${d.damage ? `伤害 ${d.damage}${d.pellets! > 1 ? `×${d.pellets}` : ""} · 弹匣 ${d.mag}` : d.capacity ? `${d.capacity} 格` : d.kind === "food" ? foodEffect(d) : d.kind === "ammo" ? "每组 120 发" : `${d.tier} 级防护`}</small>` : ""}</button>`;
+  return `<button class="item-slot ${chosen ? "selected" : ""}" style="--rarity:${itemNameColor(i.id)}" data-action="${batchMode && from === "stash" ? "batch-toggle" : shop ? "buy" : from === "loot" ? "loot-select" : "select"}" data-id="${shop ? i.id : i.uid}" data-from="${from}" data-item="${i.id}" ${shop || (batchMode && from === "stash") ? "" : 'draggable="true"'} ${locked ? "disabled" : ""}><span class="quality">${rarity[d.tier]}</span>${itemIcon(i, 52)}<strong style="color:${itemNameColor(i.id) || "inherit"}">${name(i.id)}</strong>${d.kind === "food" && shop ? '<span class="food-category">食物</span>' : ""}<span class="${["food", "ammo"].includes(d.kind) ? "stack-quantity" : ""}">${shop ? (locked ? esc(shopUnlockHint(s, i.id)) : `◈ ${money(d.price)}`) : d.kind === "ammo" ? `${i.qty} 发` : d.kind === "food" ? `<small class="food-category">食物</small>×${i.qty}` : i.durability !== undefined ? `${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}` : d.kind === "collectible" ? `◈ ${money(sale(i))}` : kindNames[d.kind]}</span>${shop ? `<small>${d.damage ? `伤害 ${d.damage}${d.pellets! > 1 ? `×${d.pellets}` : ""} · 弹匣 ${d.mag}` : d.capacity ? `${d.capacity} 格` : d.kind === "food" ? foodEffect(d) : d.kind === "ammo" ? "每组 120 发" : `${d.tier} 级防护`}</small>` : ""}</button>`;
 }
 function remember() {
   if (s.temporary) return;
@@ -661,7 +686,7 @@ function warehouse() {
     )
     .join(
       "",
-    )}</select><select id="sort" aria-label="排序"><option value="type" ${sort === "type" ? "selected" : ""}>按类型</option><option value="tier" ${sort === "tier" ? "selected" : ""}>按品质</option><option value="value" ${sort === "value" ? "selected" : ""}>按价值</option></select>${btn("出售珍贵及以下收集品", "sell-all", "", "secondary")}${btn(s.warehouse < 4 ? `扩容 ◈ ${money(warehouseCosts[s.warehouse + 1])}` : "已满级", "warehouse", s.warehouse >= 4 ? "disabled" : "", "secondary")}</div><div class="warehouse-scroll"><div class="slot-grid warehouse-grid" data-grid="stash">${list.map((i) => card(i, "stash")).join("")}${Array.from({ length: s.stash.length - list.length }, () => '<div class="filtered-slot" aria-label="筛选隐藏的物品">已占用</div>').join("")}${emptySlots(capacities[s.warehouse] - s.stash.length)}</div></div></section></div>`;
+    )}</select><select id="sort" aria-label="排序"><option value="type" ${sort === "type" ? "selected" : ""}>按类型</option><option value="tier" ${sort === "tier" ? "selected" : ""}>按品质</option><option value="value" ${sort === "value" ? "selected" : ""}>按价值</option></select>${batchMode ? `${btn(`出售所选（${batchUids.size}）`, "batch-review", batchUids.size ? "" : "disabled", "primary")}${btn("退出批量出售", "batch-cancel", "", "secondary")}` : `${btn("批量出售", "batch-start", "", "secondary")}${btn("出售珍贵及以下收集品", "sell-all", "", "secondary")}`}${btn(s.warehouse < 4 ? `扩容 ◈ ${money(warehouseCosts[s.warehouse + 1])}` : "已满级", "warehouse", s.warehouse >= 4 ? "disabled" : "", "secondary")}</div><div class="warehouse-scroll"><div class="slot-grid warehouse-grid" data-grid="stash">${list.map((i) => (batchMode ? `<div class="batch-item ${batchUids.has(i.uid) ? "batch-chosen" : ""}"><input type="checkbox" data-action="batch-toggle" data-id="${i.uid}" aria-label="选择${esc(name(i.id))}" ${batchUids.has(i.uid) ? "checked" : ""}>${card(i, "stash")}</div>` : card(i, "stash"))).join("")}${Array.from({ length: s.stash.length - list.length }, () => '<div class="filtered-slot" aria-label="筛选隐藏的物品">已占用</div>').join("")}${emptySlots(capacities[s.warehouse] - s.stash.length)}</div></div></section></div>`;
 }
 function shop() {
   const products = items.filter((d) =>
@@ -691,7 +716,7 @@ function shop() {
     )
     .join(
       "",
-    )}${btn("领取救济包", "rescue", "", "secondary")}</aside><section class="panel shop-products">${heading("商品", "回收比例 65%")}${
+    )}${btn("领取救济包", "rescue", "", "secondary")}</aside><section class="panel shop-products">${heading("商品", "回收比例 65%")}<p class="shop-shortcut">双击或F购买物品。</p>${
     category === "weapon"
       ? `<label class="weapon-filter">枪械类型<select id="weapon-filter" aria-label="枪械类型"><option value="all">全部枪械</option>${Object.entries(
           weaponClassNames,
@@ -722,7 +747,7 @@ function mapsPage() {
     )
     .join(
       "",
-    )}</div><div class="button-row">${btn("查看整备", "nav", 'data-id="loadout"', "secondary")}${btn("开始行动", "deploy", mapIndex > unlocked(s) || (!s.equipment.primary && !s.equipment.melee) ? "disabled" : "", "primary")}</div>${!s.equipment.primary && !s.equipment.melee ? '<p class="warning-text">请先装备武器。</p>' : ""}</section></section>`;
+    )}</div><div class="button-row">${btn("查看整备", "nav", 'data-id="loadout"', "secondary")}${btn("开始行动", "deploy", mapIndex > unlocked(s) ? "disabled" : "", "primary")}</div>${!s.equipment.primary && !s.equipment.melee ? '<p class="warning-text">请先装备武器。</p>' : ""}</section></section>`;
 }
 function collection() {
   return `<section>${heading("收藏图鉴", `${s.collection.length}/${collectibles.length}`)}${[
@@ -771,15 +796,25 @@ function baseModal() {
   )
     return "";
   let content =
-    modal === "sell-confirm"
-      ? `${heading("确认出售")}<p class="sell-question">确认出售全部珍贵及以下收集品？</p>${btn("确认出售", "confirm-sell", "", "primary full")}${btn("取消", "close-modal", "", "secondary full")}`
-      : modal === "help"
-        ? guide()
-        : modal === "safe"
-          ? `${heading("升级安全箱")}<div class="safe-options">${safeNames.map((n, i) => btn(`${icon("safe", "#d8bf88", 54)}<strong>${n}</strong><span>${safeCap[i]} 格</span><span>${i <= s.safe ? "已拥有" : i === 3 && !s.defeated.includes("yeed") ? "击败猫伊德后解锁" : `◈ ${money(safePrice[i])}`}</span>`, "safe", `data-id="${i}" ${i <= s.safe || (i === 3 && !s.defeated.includes("yeed")) ? "disabled" : ""}`)).join("")}</div>`
-          : modal === "settings"
-            ? settingsContent()
-            : "";
+    modal === "preflight"
+      ? `${heading("出战前检查")}<ul class="preflight-list">${deploymentWarnings(
+          s,
+        )
+          .map((t) => `<li>${esc(t)}</li>`)
+          .join(
+            "",
+          )}</ul><p>确定继续前往战区吗？</p>${btn("返回装备", "preflight-back", "", "secondary full")}${btn("继续前往", "preflight-go", "", "primary full")}`
+      : modal === "batch-confirm"
+        ? `${heading("确认批量出售")}<p class="sell-question">确认出售选中的${[...batchUids].filter((uid) => s.stash.some((i) => i.uid === uid)).length}件物品？</p><p>预计获得 ◈ ${money(s.stash.filter((i) => batchUids.has(i.uid)).reduce((n, i) => n + sale(i), 0))} 金币</p>${btn("确认批量出售", "batch-confirm", "", "primary full")}${btn("取消", "close-modal", "", "secondary full")}`
+        : modal === "sell-confirm"
+          ? `${heading("确认出售")}<p class="sell-question">确认出售全部珍贵及以下收集品？</p>${btn("确认出售", "confirm-sell", "", "primary full")}${btn("取消", "close-modal", "", "secondary full")}`
+          : modal === "help"
+            ? guide()
+            : modal === "safe"
+              ? `${heading("升级安全箱")}<div class="safe-options">${safeNames.map((n, i) => btn(`${icon("safe", "#d8bf88", 54)}<strong>${n}</strong><span>${safeCap[i]} 格</span><span>${i <= s.safe ? "已拥有" : i === 3 && !s.defeated.includes("yeed") ? "击败猫伊德后解锁" : `◈ ${money(safePrice[i])}`}</span>`, "safe", `data-id="${i}" ${i <= s.safe || (i === 3 && !s.defeated.includes("yeed")) ? "disabled" : ""}`)).join("")}</div>`
+              : modal === "settings"
+                ? settingsContent()
+                : "";
   return `<section class="modal panel">${btn("×", "close-modal", 'aria-label="关闭"', "close")}${content}</section>`;
 }
 function resultModal(r: Result) {
@@ -982,12 +1017,12 @@ function updateHUD() {
       );
   }
 }
-function deploy() {
+function deploy(confirmed = false) {
   clearDiscoveries();
-  if (!s.equipment.primary && !s.equipment.melee) {
-    page = "loadout";
+  if (!confirmed && deploymentWarnings(s).length) {
+    preflightMap = mapIndex;
+    modal = "preflight";
     render();
-    toast("请先装备武器");
     return;
   }
   if (mapIndex > unlocked(s)) {
@@ -1144,6 +1179,8 @@ async function action(el: HTMLElement) {
     render();
   } else if (a === "nav") {
     page = id!;
+    batchMode = false;
+    batchUids.clear();
     if (page === "loadout") sort = "type";
     selected = undefined;
     modal = "";
@@ -1173,18 +1210,11 @@ async function action(el: HTMLElement) {
   else if (a === "equip" || a === "equip-secondary")
     equipSelected(a === "equip-secondary" ? "secondary" : undefined);
   else if (a === "unequip") {
-    const slot = id as keyof Equipment,
-      i = s.equipment[slot];
-    if (i) {
-      if (slot === "bag" && s.pack.length > BASE_PACK)
-        return toast("请先整理背包");
-      if (!canPut(s.stash, i, capacities[s.warehouse]))
-        return toast("仓库已满");
-      put(s.stash, i, capacities[s.warehouse]);
-      s.equipment[slot] = null;
-      remember();
-      render();
-    }
+    const i = s.equipment[id as keyof Equipment];
+    if (i && !unequipToStash(s, i.uid))
+      toast("无法卸下，请检查仓库空间和背包容量");
+    closeItemMenu();
+    render();
   } else if (a === "stash-all") {
     const r = stashAll(s);
     closeItemMenu();
@@ -1226,6 +1256,31 @@ async function action(el: HTMLElement) {
     closeItemMenu();
     if (raid) overlay();
     else render();
+  } else if (a === "batch-start") {
+    batchMode = true;
+    batchUids.clear();
+    closeItemMenu();
+    render();
+  } else if (a === "batch-toggle") {
+    if (batchUids.has(id!)) batchUids.delete(id!);
+    else if (s.stash.some((i) => i.uid === id)) batchUids.add(id!);
+    render();
+  } else if (a === "batch-cancel") {
+    batchMode = false;
+    batchUids.clear();
+    render();
+  } else if (a === "batch-review") {
+    if (batchUids.size) {
+      modal = "batch-confirm";
+      render();
+    }
+  } else if (a === "batch-confirm") {
+    const value = sellSelectedStash(s, batchUids);
+    batchUids.clear();
+    batchMode = false;
+    modal = "";
+    toast(`出售获得 ${money(value)} 金币`);
+    render();
   } else if (a === "sell-all") {
     modal = "sell-confirm";
     render();
@@ -1257,6 +1312,16 @@ async function action(el: HTMLElement) {
     mapIndex = 0;
     page = "maps";
     render();
+  } else if (a === "preflight-back") {
+    modal = "";
+    preflightMap = undefined;
+    page = "loadout";
+    render();
+  } else if (a === "preflight-go") {
+    if (preflightMap !== undefined) mapIndex = preflightMap;
+    preflightMap = undefined;
+    modal = "";
+    deploy(true);
   } else if (a === "deploy") deploy();
   else if (a === "close-result") {
     result = undefined;
@@ -1354,6 +1419,22 @@ document.addEventListener("click", (e) => {
 });
 let hoveredLootUid: string | undefined;
 function quickItem(from: ItemSource, uid: string) {
+  if (batchMode && !raid) return;
+  if (from === "shop" && !raid) {
+    if (!db[uid] || unlocked(s) < (db[uid].unlock ?? 0)) return;
+    closeItemMenu();
+    toast(
+      buy(s, uid) ? "已购买，物品放入仓库" : "无法购买，请检查金币、空间与库存",
+    );
+    render();
+    return;
+  }
+  if (from === "equipment" && !raid) {
+    closeItemMenu();
+    if (!unequipToStash(s, uid)) toast("无法卸下，请检查仓库空间和背包容量");
+    render();
+    return;
+  }
   if (from === "loot") {
     const n = raid?.search?.items.findIndex((i) => i.uid === uid) ?? -1;
     if (n >= 0) raid?.take(n, false, true);
@@ -1377,8 +1458,10 @@ function quickItem(from: ItemSource, uid: string) {
   else if (from === "pack" && !raid) selectedMove("stash");
 }
 root.addEventListener("dblclick", (e) => {
-  const el = (e.target as HTMLElement).closest<HTMLElement>(".item-slot");
-  if (el && el.dataset.from !== "shop")
+  const el = (e.target as HTMLElement).closest<HTMLElement>(
+    ".item-slot,.equipped-item",
+  );
+  if (el && !el.hasAttribute("disabled"))
     quickItem(el.dataset.from as Source, el.dataset.id!);
 });
 document.addEventListener("input", (e) => {
@@ -1632,6 +1715,20 @@ window.addEventListener(
       return;
     if (["Tab", "Space"].includes(e.code)) e.preventDefault();
     if (!raid || raid.done) {
+      if (e.code === "KeyF" && !e.repeat && !title && !modal) {
+        const item = document
+          .elementFromPoint(pointer.x, pointer.y)
+          ?.closest<HTMLElement>(".item-slot,.equipped-item");
+        if (item?.hasAttribute("disabled")) return;
+        const target = item
+          ? { from: item.dataset.from as ItemSource, uid: item.dataset.id! }
+          : selected;
+        if (target) {
+          e.preventDefault();
+          quickItem(target.from, target.uid);
+        }
+        return;
+      }
       if (e.code === "Escape" && !title) {
         e.preventDefault();
         e.stopImmediatePropagation();

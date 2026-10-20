@@ -1,3 +1,4 @@
+import { acceptPreflightIfPresent } from "./helpers/deploy";
 import { test, expect, type Page } from "@playwright/test";
 
 async function start(page: Page) {
@@ -122,6 +123,7 @@ for (const viewport of [
     await page.getByRole("button", { name: "返回基地", exact: true }).click();
     await page.getByRole("button", { name: "进入地图一", exact: true }).click();
     await page.getByRole("button", { name: "开始行动", exact: true }).click();
+    await acceptPreflightIfPresent(page);
     await page.evaluate(async () => {
       const g = (window as any).__game,
         d = await import("/src/data.ts");
@@ -198,6 +200,7 @@ test("撤离显示实际物资价值和鼓励按钮，仓库每次打开默认�
   await start(page);
   await page.getByRole("button", { name: "进入地图一", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await acceptPreflightIfPresent(page);
   await page.evaluate(async () => {
     const g = (window as any).__game,
       d = await import("/src/data.ts");

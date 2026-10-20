@@ -1,3 +1,4 @@
+import { acceptPreflightIfPresent } from "./helpers/deploy";
 import { test, expect } from "@playwright/test";
 test.use({ video: "on" });
 test("B方案圆团三花玩家的连续轮廓、独立四肢和待机动作在Chrome实际渲染", async ({
@@ -16,6 +17,7 @@ test("B方案圆团三花玩家的连续轮廓、独立四肢和待机动作在C
     .click();
   await page.getByRole("button", { name: "进入地图一", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await acceptPreflightIfPresent(page);
   await page.evaluate(async () => {
     const g = (window as any).__game,
       d = await import("/src/data.ts");

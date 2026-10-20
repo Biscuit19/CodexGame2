@@ -270,6 +270,15 @@ for (const [i, site] of markedVillageSites.entries()) {
     openStructure: cabin ? undefined : site.kind,
   });
 }
+
+for (const [i, b] of villageBuildings
+  .filter((b) => b.openStructure === "workshop")
+  .entries()) {
+  b.model = i % 2 ? "weathered-shed-b" : "weathered-shed-a";
+  b.openStructure = "ruin";
+  b.height = 180;
+  b.doorWidth = 180;
+}
 export function buildingLocal(b: VillageBuilding, x: number, y: number) {
   const dx = x - b.x,
     dy = y - b.y,
@@ -698,7 +707,10 @@ export function buildVillage(r: Raid) {
   for (const [x, y] of villageTrees) add(x, y, 28, 28, 80, "village-tree");
   for (const [x, y] of villageRocks) add(x, y, 42, 32, 26, "village-rock");
   for (const p of villageProps)
-    if (p.solid || !["blanket", "bird", "cobblestones"].includes(p.model))
+    if (
+      !["cooler", "trashcan"].includes(p.model) &&
+      (p.solid || !["blanket", "bird", "cobblestones"].includes(p.model))
+    )
       add(
         p.x,
         p.y,
@@ -754,6 +766,7 @@ export function buildVillage(r: Raid) {
       shop: [0.35, 0.4, 0.23, 0.02, 0],
       clinic: [0.16, 0.39, 0.41, 0.04, 0],
       barn: [0.06, 0.25, 0.55, 0.1399, 0.0001],
+      supply: [0.22, 0.43, 0.32, 0.03, 0],
       "boss-yard": [0.12, 0.3, 0.48, 0.099, 0.001],
       boss: [0.02, 0.12, 0.56, 0.299, 0.001],
     };
@@ -840,7 +853,10 @@ export function buildVillage(r: Raid) {
     const items: Item[] = [];
     for (let i = 0; i < count; i++) {
       const n = r.random();
-      if ((region === "clinic" && n < 0.7) || (type === "medical" && i === 0)) {
+      if (
+        (region === "clinic" && n < 0.7) ||
+        (["medical", "cooler"].includes(type) && i === 0)
+      ) {
         const pool = foods.filter((f) => f.tier <= 3);
         items.push(makeItem(pool[Math.floor(r.random() * pool.length)].id));
       } else if (type === "weapon" && i === 0) {
@@ -875,8 +891,10 @@ export function buildVillage(r: Raid) {
     }
     const names: Record<string, string> = {
       box: "纸箱",
-      basket: "旧藤筐",
+      basket: "鸟窝",
       toolbox: "生锈工具盒",
+      cooler: "乡间保温箱",
+      trashcan: "绿色垃圾桶",
       litter: "猫砂桶",
       cabinet: "工具柜",
       medical: "医疗箱",
@@ -1073,6 +1091,13 @@ export function buildVillage(r: Raid) {
         buildingWorld(b, x, b.model === "stone-ruin" ? 65 : -35),
       );
     }
+  }
+  // Converted decorations retain their world positions but use searchable models.
+  for (const p of villageProps.filter((p) =>
+    ["cooler", "trashcan"].includes(p.model),
+  )) {
+    container(p.model === "cooler" ? "supply" : "wild", p.model, 0, 0);
+    Object.assign(r.containers.at(-1)!, r.freePoint(p.x, p.y));
   }
 }
 

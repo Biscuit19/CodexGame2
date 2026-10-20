@@ -1,3 +1,4 @@
+import { acceptPreflightIfPresent } from "./helpers/deploy";
 import { test, expect } from "@playwright/test";
 
 test("玩家实际前进后退左右移动使用对应步态，手脚交替且停止后复位", async ({
@@ -13,6 +14,7 @@ test("玩家实际前进后退左右移动使用对应步态，手脚交替且�
   await page.getByRole("button", { name: "临时测试入口" }).click();
   await page.getByRole("button", { name: "进入地图一", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await acceptPreflightIfPresent(page);
   const samples: Record<string, any> = {};
   for (const [name, key] of [
     ["forward", "KeyS"],

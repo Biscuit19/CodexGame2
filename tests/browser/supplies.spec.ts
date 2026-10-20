@@ -1,3 +1,4 @@
+import { acceptPreflightIfPresent } from "./helpers/deploy";
 import { test, expect, type Page } from "@playwright/test";
 
 async function start(page: Page) {
@@ -14,6 +15,7 @@ test("首次搜索未拾取也点亮图鉴，顶中提示、未发现问号与�
   await start(page);
   await page.getByRole("button", { name: "战区地图", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await acceptPreflightIfPresent(page);
   await page.evaluate(async () => {
     const g = (window as any).__game,
       d = await import("/src/data.ts"),
@@ -107,6 +109,7 @@ test("十种补给展示三种回血效果，持续回血可暂停且没有浏�
   await page.getByRole("button", { name: "返回基地", exact: true }).click();
   await page.getByRole("button", { name: "战区地图", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await acceptPreflightIfPresent(page);
   await page.evaluate(async () => {
     const g = (window as any).__game,
       d = await import("/src/data.ts");

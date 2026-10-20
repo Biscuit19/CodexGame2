@@ -1,3 +1,4 @@
+import { createCatKnife } from "./cat-knife";
 import * as THREE from "three";
 import { MarchingCubes } from "three/addons/objects/MarchingCubes.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
@@ -480,12 +481,7 @@ export function createPlayerCat(appearance?: CatAppearance): PlayerCatRig {
   knife.position.copy(gun.position);
   knife.scale.copy(gun.scale);
   arms[0].add(gun, knife);
-  const blade = new THREE.Mesh(
-    new RoundedBoxGeometry(3, 5, 22, 3, 0.8),
-    new THREE.MeshStandardMaterial({ color: "#f3dea3", roughness: 0.6 }),
-  );
-  blade.position.z = 14;
-  knife.add(blade);
+  knife.add(createCatKnife());
   knife.visible = false;
   const { helmet, vest, pack } = appearance
     ? {

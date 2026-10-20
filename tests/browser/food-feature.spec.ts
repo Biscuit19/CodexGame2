@@ -1,3 +1,4 @@
+import { acceptPreflightIfPresent } from "./helpers/deploy";
 import { test, expect, type Page } from "@playwright/test";
 async function start(page: Page) {
   await page.goto("/?test=1");
@@ -9,6 +10,7 @@ async function start(page: Page) {
 async function deploy(page: Page) {
   await page.getByRole("button", { name: "进入地图一", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await acceptPreflightIfPresent(page);
   await page.evaluate(() => ((window as any).__game.raid.enemies = []));
 }
 test("发现提示图文顺序、字号与四字文案正确，更稀有提示覆盖后不重播旧提示", async ({

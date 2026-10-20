@@ -1,3 +1,4 @@
+import { acceptPreflightIfPresent } from "./helpers/deploy";
 import { test, expect } from "@playwright/test";
 
 test("矮身三花的五级猫耳头盔护甲背包同步穿脱并保持耳壳随动", async ({
@@ -13,6 +14,7 @@ test("矮身三花的五级猫耳头盔护甲背包同步穿脱并保持耳壳�
   await page.getByRole("button", { name: "临时测试入口" }).click();
   await page.getByRole("button", { name: "进入地图一", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await acceptPreflightIfPresent(page);
   await page.evaluate(() => {
     const g = (window as any).__game;
     g.raid.enemies = [];

@@ -77,16 +77,52 @@ def split_front(o,w,d,h):
         bm.to_mesh(obj.data);bm.free();obj.data.update()
     return panel
 
-for kind in ['basket','toolbox','box','litter','cabinet','medical','weapon','bed','safe','corpse','boss-corpse']:
+for kind in ['basket','toolbox','cooler','trashcan','box','litter','cabinet','medical','weapon','bed','safe','corpse','boss-corpse']:
   for opened in [False,True]:
     before=set(bpy.context.scene.objects)
     if kind=='basket':
-        parts=source(PIC/'picnic_basket_square.gltf',43,33,34)
-        if opened:
-            for o in parts:
-                if 'lid_left' in o.name:turn([o],(-18,0,15),-1.1,'Y')
-                elif 'lid_right' in o.name:turn([o],(18,0,15),1.1,'Y')
-        block('old_basket_tag',(0,-16.5,11),(10,.6,6),'#c3ab78',.4)
+        # A shallow woven nest, with one intact egg or recognizably broken shells.
+        parts=source(PIC/'picnic_basket_round.gltf',43,39,25)
+        for o in parts:clip_top(o,13)
+        for ring in range(4):
+            for n in range(12):
+                angle=n*math.tau/12+ring*.37
+                x=math.cos(angle)*(18+ring*.6);y=math.sin(angle)*(15+ring*.6)
+                twig=block('woven_nest_twig',(x,y,7+ring*1.6),(11,1.5,1.2),['#93704a','#bd965f','#a38352'][n%3],.5)
+                bake(twig);turn([twig],(x,y,7+ring*1.6),angle+math.pi/2,'Z')
+        if not opened:
+            bpy.ops.mesh.primitive_uv_sphere_add(segments=28,ring_count=20,radius=1,location=(0,0,18))
+            egg=bpy.context.object;egg.name='intact_nest_egg';egg.scale=(7,6,10);egg.data.materials.append(material('#efe1bc'))
+            for face in egg.data.polygons:face.use_smooth=True
+        else:
+            for side in [-1,1]:
+                verts=[];faces=[];steps=24;rings=8
+                for i in range(rings+1):
+                    t=(i/rings)*math.pi/2
+                    for n in range(steps):
+                        angle=n*math.tau/steps;rim=math.sin(t)**4*(n%2)*1.0
+                        verts.append((math.cos(angle)*6.5*math.sin(t),math.sin(angle)*5.5*math.sin(t),-7.5*math.cos(t)+rim))
+                for i in range(rings):
+                    for n in range(steps):a=i*steps+n;b=i*steps+(n+1)%steps;faces.append((a,b,b+steps,a+steps))
+                mesh=bpy.data.meshes.new('jagged_egg_shell');mesh.from_pydata(verts,[],faces);mesh.update()
+                shell=bpy.data.objects.new('broken_egg_half',mesh);bpy.context.collection.objects.link(shell)
+                shell.data.materials.append(material('#f2e6c9'));shell.location=(side*8,0,16)
+                shell.rotation_euler=(0,side*.45,side*.15)
+                for face in mesh.polygons:face.use_smooth=True
+                mod=shell.modifiers.new('shell_wall','SOLIDIFY');mod.thickness=.5
+            cylinder('broken_egg_yolk',(0,-1,9),4,1,'#d5ac56')
+    elif kind=='cooler':
+        parts=source(PIC/'cooler.gltf',44,34,32)
+        lid=[o for o in parts if 'lid' in o.name or 'handle' in o.name]
+        if opened:turn(lid,(0,15,24),-1.05)
+    elif kind=='trashcan':
+        park=Path(SOURCE_ARGS[5] if len(SOURCE_ARGS)>5 else '/tmp/tiny-park')/'addons/tiny_treats_pretty_park_set/Assets/gltf'
+        source(park/'trashcan.gltf',37,37,50)
+        cylinder('bin_inner_liner',(0,0,25),13,39,'#243e32')
+        lid=[cylinder('green_bin_lid',(0,0,51.5),19,2.5,'#367859')]
+        lid.append(block('bin_lid_handle',(0,0,54),(10,3,3),'#285e44',.7))
+        block('bin_rear_hinge',(0,17,50),(8,3,4),'#576d58',.5)
+        if opened:turn(lid,(0,17,50),-.34)
     elif kind=='toolbox':
         parts=source(PIC/'cooler.gltf',43,26,23)
         tint(parts,'#a76c4d')
@@ -187,4 +223,4 @@ for root in roots:
     for obj in root.children:obj.select_set(True)
 bpy.ops.export_scene.gltf(filepath=str(OUT/'container-kit.glb'),export_format='GLB',use_selection=True,
     export_animations=False,export_cameras=False,export_lights=False,export_apply=True)
-print('EXPORTED 22 container state models',flush=True)
+print('EXPORTED 26 container state models',flush=True)

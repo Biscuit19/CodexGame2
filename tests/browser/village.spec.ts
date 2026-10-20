@@ -1,3 +1,4 @@
+import { acceptPreflightIfPresent } from "./helpers/deploy";
 import { test, expect, type Page } from "@playwright/test";
 
 async function enter(page: Page, keepBoss = false) {
@@ -5,6 +6,7 @@ async function enter(page: Page, keepBoss = false) {
   await page.getByRole("button", { name: "临时测试入口", exact: true }).click();
   await page.getByRole("button", { name: "进入地图一", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await acceptPreflightIfPresent(page);
   await page.waitForFunction(
     () => (window as any).__game.renderer3d.villageStage?.userData.assetsReady,
   );

@@ -1,4 +1,4 @@
-"""Render the same 22 GLB states for the game's remaining flat-view maps."""
+"""Render the same 26 GLB states for the game's remaining flat-view maps."""
 import bpy,math
 from pathlib import Path
 from mathutils import Vector
@@ -16,7 +16,7 @@ bpy.ops.object.light_add(type='AREA',location=(-70,-100,170));bpy.context.object
 sc.render.resolution_x=sc.render.resolution_y=256;sc.render.resolution_percentage=100
 sc.render.film_transparent=True;sc.view_settings.view_transform='Standard'
 out=Path('/tmp/container-sprites');out.mkdir(exist_ok=True)
-kinds=['basket','toolbox','box','litter','cabinet','medical','weapon','bed','safe','corpse','boss_corpse']
+kinds=['basket','toolbox','cooler','trashcan','box','litter','cabinet','medical','weapon','bed','safe','corpse','boss_corpse']
 for row,state in enumerate(['closed','open']):
  for col,kind in enumerate(kinds):
     for root in roots:

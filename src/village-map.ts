@@ -184,6 +184,26 @@ function createAtlas() {
     "#d8733f",
   ];
   for (const [index, b] of villageBuildings.entries()) {
+    if (b.model.startsWith("weathered-shed")) {
+      c.save();
+      c.translate(b.x * S, b.y * S);
+      c.rotate(b.rotation);
+      rounded(c, -17, -10, 34, 23, 2, "#ac9c7a", "#695e47");
+      rounded(
+        c,
+        -19,
+        -13,
+        38,
+        13,
+        2,
+        b.model.endsWith("a") ? "#8a6a4d" : "#7e8b7e",
+        "#5f624c",
+      );
+      c.fillStyle = "#504c3d";
+      c.fillRect(-4, 4, 8, 8);
+      c.restore();
+      continue;
+    }
     if (b.openStructure) {
       c.save();
       c.translate(b.x * S, b.y * S);

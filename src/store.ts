@@ -865,7 +865,7 @@ export function repair(s: Save, slot: keyof Equipment | Item) {
   return true;
 }
 export function beginRaid(s: Save) {
-  if (s.pending || (!s.equipment.primary && !s.equipment.melee)) return false;
+  if (s.pending) return false;
   s.raidBackup = JSON.stringify({ ...s, raidBackup: undefined });
   s.pending = true;
   s.stats.raids++;
@@ -1018,4 +1018,53 @@ export function sellCommonCollectibles(s: Save) {
     if (db[i.id].kind === "collectible" && db[i.id].tier <= 3)
       value += sell(s, "stash", i.uid);
   return value;
+}
+
+/** Preflight is advisory; only accessible carried supplies count as prepared. */
+export function deploymentWarnings(s: Save) {
+  const warnings: string[] = [];
+  if (!s.equipment.primary && !s.equipment.secondary)
+    warnings.push("未装备枪械（至少1把）");
+  const rounds =
+    s.pack
+      .filter((i) => db[i.id].kind === "ammo")
+      .reduce((n, i) => n + i.qty, 0) +
+    (s.equipment.ammo?.qty || 0) +
+    [s.equipment.primary, s.equipment.secondary].reduce(
+      (n, i) => n + (i?.loaded?.count || 0),
+      0,
+    );
+  if (rounds < 120)
+    warnings.push(
+      `携带子弹不足120发（当前${rounds}发，还缺${120 - rounds}发）`,
+    );
+  if (
+    !s.equipment.food?.qty &&
+    !s.pack.some((i) => db[i.id].kind === "food" && i.qty > 0)
+  )
+    warnings.push("未携带食物（至少1份）");
+  return warnings;
+}
+export function unequipToStash(s: Save, uid: string) {
+  const slot = (Object.keys(s.equipment) as (keyof Equipment)[]).find(
+    (k) => s.equipment[k]?.uid === uid,
+  );
+  if (!slot) return false;
+  const item = s.equipment[slot]!;
+  if (slot === "bag" && s.pack.length > BASE_PACK) return false;
+  if (!canPut(s.stash, item, capacities[s.warehouse])) return false;
+  put(s.stash, item, capacities[s.warehouse]);
+  s.equipment[slot] = null;
+  persist(s);
+  return true;
+}
+export function sellSelectedStash(s: Save, uids: Iterable<string>) {
+  let value = 0;
+  for (const uid of new Set(uids)) value += sell(s, "stash", uid);
+  return value;
+}
+export function shopUnlockHint(s: Save, id: string) {
+  const level = db[id]?.unlock ?? 0;
+  if (unlocked(s) >= level) return "";
+  return `击败${bosses.find((b) => b.id === ["iron", "swift", "yeed"][level - 1])?.name || "对应首领"}解锁`;
 }

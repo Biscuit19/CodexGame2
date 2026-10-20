@@ -1,3 +1,4 @@
+import { acceptPreflightIfPresent } from "./helpers/deploy";
 import { test, expect } from "@playwright/test";
 
 test("33度斜视下乡村建筑主体与屋顶淡化，瞄准投影一致，实际受弹不打断搜索", async ({
@@ -13,6 +14,7 @@ test("33度斜视下乡村建筑主体与屋顶淡化，瞄准投影一致，实
   await page.getByRole("button", { name: "临时测试入口", exact: true }).click();
   await page.getByRole("button", { name: "进入地图一", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await acceptPreflightIfPresent(page);
   await page.evaluate(async () => {
     const g = (window as any).__game;
     const { villageBuildings } = await import("/src/village.ts" as string);
