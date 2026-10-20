@@ -394,17 +394,16 @@
               type="range"
               min="0"
               max="100"
-              value="80"
+              value="100"
               aria-label="试听音量"
-            /><output id="volume-value">80%</output></label
-          ><label
-            ><input id="level" type="checkbox" checked />统一本页试听音量</label
+            /><output id="volume-value">100%</output></label
+          ><label><input id="level" type="checkbox" />统一本页试听音量</label
           ><button id="stop">停止全部</button
           ><button id="representatives">连播五位作者代表枪声</button>
         </div>
         <p id="status" role="status" aria-live="polite">正在加载……</p>
         <p class="muted">
-          音量统一只影响本页播放器，不改音频文件。默认统一试听音量；关闭后会恢复原始电平，请先调低设备音量。
+          默认以最高音量播放原声。需要统一不同录音的响度时，可勾选“统一本页试听音量”；只影响播放器，不改音频文件。
         </p>
       </section>
       <section class="reference" aria-label="保留的冲锋枪参考">
@@ -470,8 +469,8 @@
       const $ = (s) => document.querySelector(s);
       let data,
         group = "all",
-        volume = 0.8,
-        level = true,
+        volume = 1,
+        level = false,
         token = 0,
         transport = new Audio(),
         resolvePlay = null;

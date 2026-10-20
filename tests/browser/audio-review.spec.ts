@@ -14,6 +14,15 @@ test("五位作者原声可播放、互斥、停止、音量切换与下载；46
   await expect(page.locator("#sets audio")).toHaveCount(35);
   await expect(page.locator("#action-supplement audio")).toHaveCount(10);
   await expect(page.locator("#references audio")).toHaveCount(1);
+  await expect(page.locator("#volume")).toHaveValue("100");
+  await expect(page.locator("#level")).not.toBeChecked();
+  expect(
+    await page
+      .locator("audio")
+      .evaluateAll((elements) =>
+        elements.every((a) => (a as HTMLAudioElement).volume === 1),
+      ),
+  ).toBe(true);
   await expect(page.locator("#references audio")).toHaveAttribute(
     "src",
     "audio/A-shot-smg.mp3",
@@ -35,6 +44,7 @@ test("五位作者原声可播放、互斥、停止、音量切换与下载；46
   await second.click({ position: { x: 20, y: 20 } });
   await expect(second).toHaveJSProperty("paused", false);
   await expect(first).toHaveJSProperty("paused", true);
+  await page.locator("#level").check();
   const previewGain = await second.evaluate((a) =>
     Number((a as HTMLAudioElement).dataset.gain),
   );
