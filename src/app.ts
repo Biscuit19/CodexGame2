@@ -776,6 +776,7 @@ function render() {
   scene3d?.show(false);
   canvas.classList.add("hidden");
   document.body.classList.remove("in-raid", "aiming");
+  document.documentElement.classList.remove("aiming");
   syncBaseMenu();
   syncCollectionDialog();
   setDialog(resultDialog, !title && result ? resultModal(result) : "");
@@ -908,10 +909,11 @@ function updateHUD() {
       : "";
     ammoArt.classList.toggle("hidden", !ammoId);
   }
-  document.body.classList.toggle(
-    "aiming",
-    !r.inventory && !r.mapOpen && !r.paused && !r.done,
-  );
+  const aiming = !r.inventory && !r.mapOpen && !r.paused && !r.done;
+  if (aiming && !document.documentElement.classList.contains("aiming"))
+    window.getSelection()?.removeAllRanges();
+  document.body.classList.toggle("aiming", aiming);
+  document.documentElement.classList.toggle("aiming", aiming);
   const crosshair = document.getElementById("crosshair");
   if (crosshair) {
     crosshair.className = s.settings.crosshair === "cross" ? "cross" : "ring";
@@ -1842,6 +1844,10 @@ window.addEventListener("pointermove", (e) => {
   }
 });
 canvas.addEventListener("pointerdown", (e) => {
+  if (document.documentElement.classList.contains("aiming")) {
+    e.preventDefault();
+    window.getSelection()?.removeAllRanges();
+  }
   if (e.button === 0) {
     mouse.down = true;
     sound.start();

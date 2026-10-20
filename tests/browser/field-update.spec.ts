@@ -194,7 +194,7 @@ test("中空十字准星可选择，战斗隐藏系统鼠标，菜单背包保�
       return g.renderer3d.containers.get(g.raid.containers[2]).outlines[0]
         .material.uniforms.width.value;
     }),
-  ).toBe(2.6);
+  ).toBe(3.4);
   await page.screenshot({ path: "test-results/chrome-gold-outline-150.png" });
   await page.evaluate(() => {
     const r = (window as any).__game.raid;

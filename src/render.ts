@@ -1,3 +1,7 @@
+import {
+  containerHighlighted,
+  containerHighlightColor,
+} from "./container-info";
 import { drawContainerSprite } from "./container-sprites";
 import { drawVillageMap } from "./village-map";
 import { drawVillageGround } from "./village-ground";
@@ -253,7 +257,6 @@ export class Renderer {
             }
           }
           if (Math.hypot(con.x - r.p.x, con.y - r.p.y) < 110) {
-            text(c, con.name, con.x, con.y - 65, 14, "#fff0cb");
             if (r.search === con && con.revealed < con.items.length) {
               const total = importSearchTime(con.items[con.revealed]);
               c.strokeStyle = colors[importTier(con.items[con.revealed])];
@@ -355,9 +358,13 @@ export class Renderer {
       text(c, f.text, f.x, f.y, 18, f.color);
     }
     c.globalAlpha = 1;
-    if (r.near && !r.search && !r.puzzle) {
-      const n = r.near;
-      text(c, "E  搜索", n.x, n.y - 91, 14, "#fff4d6");
+    for (const con of r.containers) {
+      if (!containerHighlighted(con, r)) continue;
+      const label = `${r.near === con && !r.search && !r.puzzle ? "E " : ""}${con.name}`;
+      c.font = '600 23px "三角猫黑体", "Microsoft YaHei", sans-serif';
+      const width = c.measureText(label).width + 20;
+      round(c, con.x - width / 2, con.y - 105, width, 34, 9, "#203d32e8");
+      text(c, label, con.x, con.y - 80, 23, containerHighlightColor(con));
     }
     if (r.exit?.paid && !r.exit.bought)
       text(c, "E  支付并撤离", r.p.x, r.p.y - 105, 16, "#f4d69e");

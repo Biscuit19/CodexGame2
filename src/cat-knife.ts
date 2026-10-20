@@ -79,8 +79,8 @@ export function createCatKnife() {
     mesh.position.set(x, 6, 8);
     g.add(mesh);
   }
-  // Bank the knife slightly so the painted blade stays legible from the game camera.
-  g.rotation.z = 0.65;
+  // Lift the blade from a flat forward hold to an upright grip, with only a small bank.
+  g.rotation.set(-1.05, 0, 0.12);
   box("brown-wrapped-grip", "#935f3e", 0, 0, -3, 5, 6, 16);
   for (const z of [-8, -4, 0, 4])
     box("dark-grip-wrap", "#513e30", 0, 0, z, 5.5, 6.4, 1.4);

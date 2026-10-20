@@ -1,4 +1,8 @@
 import {
+  containerHighlighted,
+  containerHighlightColor,
+} from "./container-info";
+import {
   createContainerModel,
   updateContainerModel,
   type ContainerModel,
@@ -894,10 +898,14 @@ export class ThreeRenderer {
           "#e3bc83",
         );
       }
-    const near = r.near;
-    if (near && !r.search && !r.puzzle) {
-      const p = this.project(near.x, near.y, 65);
-      text(c, `E ${near.name}`, p.x, p.y, 21, "#fff6d6");
+    for (const container of r.containers) {
+      if (!containerHighlighted(container, r)) continue;
+      const p = this.project(container.x, container.y, 65);
+      const label = `${r.near === container && !r.search && !r.puzzle ? "E " : ""}${container.name}`;
+      c.font = '600 23px "三角猫黑体", "Microsoft YaHei", sans-serif';
+      const width = c.measureText(label).width + 20;
+      round(c, p.x - width / 2, p.y - 25, width, 34, 9, "#203d32e8");
+      text(c, label, p.x, p.y, 23, containerHighlightColor(container));
     }
     for (const f of r.floating) {
       const p = this.project(f.x, f.y + 75, 95);
