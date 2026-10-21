@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>搜索与交互音效试听 · 猫尾乡野</title>
+    <link rel="stylesheet" href="review.css" />
+  </head>
+  <body>
+    <main>
+      <header class="intro">
+        <div class="eyebrow">猫尾乡野 · 音效选材</div>
+        <h1>搜索、开箱与小奶嗝，继续选。</h1>
+        <p>
+          23 类，每类 5 个候选，共 115
+          个。已选动作与低级食物已接入游戏；这里是<strong>尚未接入的新候选</strong>，不会改变现用枪声。
+        </p>
+        <div class="links">
+          <a href="../selected/index.html">现用枪声与换弹</a
+          ><a href="../actions/index.html">上一轮动作与进食</a
+          ><a href="#research">选材依据与授权</a>
+        </div>
+      </header>
+      <section class="desk" aria-label="试听控制">
+        <div class="desk-row">
+          <label class="volume"
+            >试听音量
+            <input
+              id="volume"
+              type="range"
+              min="0"
+              max="100"
+              value="100"
+            /><output id="volume-label">100%</output></label
+          >
+          <button id="stop" class="quiet">停止全部</button>
+          <button id="sequence">连听本类 5 个</button>
+          <button id="export" class="quiet">复制我的选择</button>
+        </div>
+        <p id="status" role="status" aria-live="polite">正在载入候选清单…</p>
+      </section>
+      <section class="panel demos" aria-label="组合试听">
+        <h2>放进动作里听</h2>
+        <p class="small">
+          组合使用下方已选项；未选时用各类第一个候选。吃饭预留末尾半秒给短嗝，保留原速。搜索循环只用于体验时长。
+        </p>
+        <div class="options">
+          <label
+            >四级食物时长
+            <select id="meal-time">
+              <option value="0">海鲜拼盘 · 1.2 秒</option>
+              <option value="1">红烧鱼面 · 2.4 秒</option>
+            </select></label
+          >
+          <button id="meal-demo">吃饭＋已选短嗝</button>
+          <button id="knife-demo">按 0.45 秒连挥 5 次</button>
+          <label
+            >搜索时长
+            <select id="search-time">
+              <option>2</option>
+              <option selected>4</option>
+              <option>6</option>
+            </select>
+            秒</label
+          >
+          <button id="search-demo">搜索→发现→装包</button>
+          <label
+            >发现等级
+            <select id="reveal-tier">
+              <option value="discover12">1–2 级</option>
+              <option value="discover3">珍贵</option>
+              <option value="discover4">稀世</option>
+              <option value="discover5">传说</option>
+            </select></label
+          >
+          <button id="rarity-demo">连听四档发现反馈</button>
+        </div>
+      </section>
+      <nav id="categories" aria-label="音效类别"></nav>
+      <section class="category-header">
+        <div>
+          <div class="eyebrow" id="category-count"></div>
+          <h2 id="category-title"></h2>
+        </div>
+        <p id="category-description"></p>
+        <div id="food-items"></div>
+        <div class="options">
+          <label id="version-wrap" hidden
+            >食物版本
+            <select id="version"></select
+          ></label>
+          <label id="effects-wrap" hidden
+            ><input type="checkbox" id="effects" checked />
+            加入轻微恢复点缀</label
+          >
+          <label id="reload-wrap" hidden
+            >换弹播放
+            <select id="reload-time">
+              <option value="0">原速</option>
+              <option value="1.5">同步 1.5 秒动作</option>
+              <option value="2.5">同步 2.5 秒动作</option>
+              <option value="3.5">同步 3.5 秒动作</option>
+            </select></label
+          >
+        </div>
+        <p class="small" id="context-note"></p>
+      </section>
+      <section id="candidates" aria-label="本类候选"></section>
+      <section class="selection panel">
+        <h2>已选 <span id="selection-count">0</span> 项</h2>
+        <p>
+          每类独立选择；四级食物按两个食用时长分别选择，吃饭与短嗝可以自由组合。选择只保留在当前页面，不会写入游戏存档；离开前可复制清单。
+        </p>
+        <pre id="selection-text">还没有选择。</pre>
+      </section>
+      <section id="research" class="panel">
+        <h2>这次怎样找，怎样筛</h2>
+        <p>
+          先查开发者讨论与热门发行页，再核对原作者授权、动作内容和下载/评分依据。下载次数不等于采用它的游戏数量；库的热度也不等于每条音效的热度。
+        </p>
+        <p>
+          换弹优先用开放游戏与开发者设计成品；容器按纸板、塑料、金属、拉链、布料区别。发现反馈由简短确认逐级展开，不用一味加大音量。短嗝为五次独立的自然女声录音，并非婴儿实录；不靠变调冒充小奶嗝。
+        </p>
+        <p>
+          仅剪切、拼接/轻度叠加、固定音量匹配，剪切边缘做 4
+          毫秒防咔哒处理；不变调、不拉伸、不加混响或失真。换弹播放器的同步试听会改变播放速度，原速按钮始终保留。原声展开后可单独听完整录音，只做必要的固定防削波衰减。
+        </p>
+        <details>
+          <summary>搜索范围、未采用的热门库与访问限制</summary>
+          <div id="research-links"></div>
+        </details>
+        <details>
+          <summary>全部作者、热度证据与许可证</summary>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>素材 / 作者</th>
+                  <th>使用依据</th>
+                  <th>授权</th>
+                </tr>
+              </thead>
+              <tbody id="source-table"></tbody>
+            </table>
+          </div>
+        </details>
+        <p class="small">
+          数值为本次 2026-10-21
+          核验快照。少数具体材料与短嗝没有公开下载数，明确标为动作匹配补充；不声称全部都是热门单品。Sonniss
+          / Shapeforms / TomMusic
+          的独立素材分发限制不适合这个逐条公开试听页，保留官方链接供后续考虑。
+        </p>
+      </section>
+      <footer>
+        本页新候选只供试听 · 已选 T4/W4/A3/S4/L4/D5/C1/F1 已接入游戏
+      </footer>
+    </main>
+    <dialog id="copy-dialog">
+      <h2>把下面这段发给我即可</h2>
+      <textarea id="copy-text" readonly aria-label="音效选择清单"></textarea
+      ><button id="close-copy">关闭</button>
+    </dialog>
+    <script type="module" src="review.js"></script>
+  </body>
+</html>

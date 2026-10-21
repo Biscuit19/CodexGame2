@@ -52,10 +52,14 @@ def encode(a, name, folder):
 
 
 def main():
+    global OUT
     parser = argparse.ArgumentParser()
     parser.add_argument('--cache', type=Path, required=True)
+    parser.add_argument('--recipe', type=Path, default=ROOT / 'scripts/assets/action-audio-sources.json')
+    parser.add_argument('--out', type=Path, default=OUT)
     args = parser.parse_args()
-    recipe = json.loads((ROOT / 'scripts/assets/action-audio-sources.json').read_text())
+    OUT = args.out
+    recipe = json.loads(args.recipe.read_text())
     for folder in ['audio', 'originals', 'licenses']:
         (OUT / folder).mkdir(parents=True, exist_ok=True)
     arrays, sources, checked_archives = {}, {}, set()
@@ -129,7 +133,7 @@ def main():
                     p['gain'] = gain
                     parts.append(p)
                 assert np.isfinite(mixed).all() and np.max(np.abs(mixed)) > .002
-                final_gain = active_gain(mixed)
+                final_gain = active_gain(mixed) * version.get('level', 1)
                 mixed *= final_gain
                 assert np.max(np.abs(mixed)) <= .881
                 info = encode(mixed, candidate['id'] + '-' + version['id'], 'audio')
