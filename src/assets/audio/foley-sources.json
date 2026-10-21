@@ -2,92 +2,15 @@
   "license": "CC0-1.0",
   "sampleRate": 44100,
   "sources": {
-    "war-weapon_switch": {
-      "repository": "TeamForbiddenLLC/warfork-free-soundpacks",
-      "revision": "8005f47869cbac20608f1d606621e4b8fcdec574",
-      "path": "cc0/sounds/weapons/weapon_switch.ogg",
-      "url": "https://raw.githubusercontent.com/TeamForbiddenLLC/warfork-free-soundpacks/8005f47869cbac20608f1d606621e4b8fcdec574/cc0/sounds/weapons/weapon_switch.ogg",
-      "sha256": "9f4444e55c0b3b3c9f517f2686543c5f374ba665a5cab45eeb267db050b71981"
-    },
-    "rpg-metalLatch": {
-      "repository": "lavenderdotpet/CC0-Public-Domain-Sounds",
-      "revision": "f2b6264f9ab89fabc266914c3654685d68c5a39b",
-      "path": "kenney_rpgaudio/Audio/metalLatch.ogg",
-      "url": "https://raw.githubusercontent.com/lavenderdotpet/CC0-Public-Domain-Sounds/f2b6264f9ab89fabc266914c3654685d68c5a39b/kenney_rpgaudio/Audio/metalLatch.ogg",
-      "sha256": "ba9ba60b172b3ebc131a940f25793cd2e207aca7af73dc80d637277f060f1708"
-    },
-    "rpg-cloth4": {
-      "repository": "lavenderdotpet/CC0-Public-Domain-Sounds",
-      "revision": "f2b6264f9ab89fabc266914c3654685d68c5a39b",
-      "path": "kenney_rpgaudio/Audio/cloth4.ogg",
-      "url": "https://raw.githubusercontent.com/lavenderdotpet/CC0-Public-Domain-Sounds/f2b6264f9ab89fabc266914c3654685d68c5a39b/kenney_rpgaudio/Audio/cloth4.ogg",
-      "sha256": "e7ab9a6c4466dea874196c61f59bf1da05cfe58748f42fadd695d441a154a99b"
-    },
-    "rpg-clothBelt2": {
-      "repository": "lavenderdotpet/CC0-Public-Domain-Sounds",
-      "revision": "f2b6264f9ab89fabc266914c3654685d68c5a39b",
-      "path": "kenney_rpgaudio/Audio/clothBelt2.ogg",
-      "url": "https://raw.githubusercontent.com/lavenderdotpet/CC0-Public-Domain-Sounds/f2b6264f9ab89fabc266914c3654685d68c5a39b/kenney_rpgaudio/Audio/clothBelt2.ogg",
-      "sha256": "d545b1d9f20e6188140aaf551a96f1e82fe0d15f7ca066fac8b065e1231e0038"
-    },
-    "rpg-beltHandle1": {
-      "repository": "lavenderdotpet/CC0-Public-Domain-Sounds",
-      "revision": "f2b6264f9ab89fabc266914c3654685d68c5a39b",
-      "path": "kenney_rpgaudio/Audio/beltHandle1.ogg",
-      "url": "https://raw.githubusercontent.com/lavenderdotpet/CC0-Public-Domain-Sounds/f2b6264f9ab89fabc266914c3654685d68c5a39b/kenney_rpgaudio/Audio/beltHandle1.ogg",
-      "sha256": "2ef665bd8b65dbe669f4560be38a6d8f04a162e618b15a49e3e71b58e558aab0"
-    },
-    "organic-Gentle Swish": {
-      "repository": "lavenderdotpet/CC0-Public-Domain-Sounds",
-      "revision": "f2b6264f9ab89fabc266914c3654685d68c5a39b",
-      "path": "Micro Pack - Organic Wooshes/Gentle Swish.wav",
-      "url": "https://raw.githubusercontent.com/lavenderdotpet/CC0-Public-Domain-Sounds/f2b6264f9ab89fabc266914c3654685d68c5a39b/Micro%20Pack%20-%20Organic%20Wooshes/Gentle%20Swish.wav",
-      "sha256": "11d39fa96334ef67edd9ba8c09880b4eae1fb1d4bbfd978bf9a845bebffc5885"
-    },
     "organic-Slash": {
       "repository": "lavenderdotpet/CC0-Public-Domain-Sounds",
       "revision": "f2b6264f9ab89fabc266914c3654685d68c5a39b",
       "path": "Micro Pack - Organic Wooshes/Slash.wav",
       "url": "https://raw.githubusercontent.com/lavenderdotpet/CC0-Public-Domain-Sounds/f2b6264f9ab89fabc266914c3654685d68c5a39b/Micro%20Pack%20-%20Organic%20Wooshes/Slash.wav",
       "sha256": "7bad54c4fc2f16c88680946b305e886f5dcb5be1cc8b3939b273968bc6232222"
-    },
-    "impact-impact_soft_heavy_000": {
-      "repository": "Boyquotes/kenney-impact-sounds-for-godot",
-      "revision": "999dd1684873f8b020a3aa5b26e713da21688924",
-      "path": "addons/kenney impact sounds/impact_soft_heavy_000.ogg",
-      "url": "https://raw.githubusercontent.com/Boyquotes/kenney-impact-sounds-for-godot/999dd1684873f8b020a3aa5b26e713da21688924/addons/kenney%20impact%20sounds/impact_soft_heavy_000.ogg",
-      "sha256": "49e7ca88743fca974bb8676ea138b751cfd8f9033b5e7af8736c2a215d6edbc1"
     }
   },
   "tracks": {
-    "equip-weapon": {
-      "duration": 0.34,
-      "layers": [
-        "war-weapon_switch",
-        "rpg-metalLatch"
-      ],
-      "peakTarget": 0.58,
-      "sha256": "33b206857a3ee91d0a5212f3589f000440695ec995d524b94b8c1050ac8cfa75"
-    },
-    "equip-gear": {
-      "duration": 0.46,
-      "layers": [
-        "rpg-clothBelt2",
-        "rpg-beltHandle1"
-      ],
-      "peakTarget": 0.55,
-      "sha256": "2b18bcbee0c0f0546428d2b1b628aa0068257b7c0b15721da634d2fc7989add6"
-    },
-    "roll": {
-      "duration": 0.35,
-      "layers": [
-        "organic-Gentle Swish",
-        "rpg-cloth4",
-        "impact-impact_soft_heavy_000"
-      ],
-      "peakTarget": 0.58,
-      "sha256": "29e6ff189dfe3f688955fb4630af2f30ede44ed707178f58668ef7ed97950dd9"
-    },
     "melee": {
       "duration": 0.25,
       "layers": [

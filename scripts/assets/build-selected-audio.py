@@ -92,8 +92,12 @@ def install_game(manifest):
     for key in outputs:
         (game / (key + '.ogg')).unlink(missing_ok=True)
     data = {'license':'Mixed CC0-1.0 and CC-BY-3.0; see README.md and licenses', 'version':2, 'sampleRate':RATE, 'gunSounds':outputs, 'sources':manifest['sources'], 'processing':manifest['processing'], 'toneFilters':manifest['toneFilters'], 'cuts':manifest['cuts'], 'joins':manifest['joins'], 'retainedFoley':{'metadata':'foley-sources.json','tracks':legacy['tracks']}}
+    if (game / 'approved-actions.json').exists():
+        actions = json.loads((game / 'approved-actions.json').read_text())
+        data['approvedActions'] = {'metadata':'approved-actions.json', 'tracks':actions['tracks']}
+        data['license'] = 'Mixed CC0, CC BY 3.0, CC BY-SA 3.0 and FilmCow royalty-free; see per-track metadata'
     (game / 'sources.json').write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n')
-    print('Installed 8 lossless FLAC gun sounds; 4 existing Foley files remain byte-identical.')
+    print('Installed 8 lossless FLAC gun sounds; existing approved actions and retained Foley untouched.')
 
 
 def main(install=False):

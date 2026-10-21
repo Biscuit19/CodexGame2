@@ -25,8 +25,10 @@ export class Sound {
   private loading = new Map<SampleKey, Promise<AudioBuffer | undefined>>();
   private voices = new Set<AudioBufferSourceNode>();
   private reloadVoice?: AudioBufferSourceNode;
+  private foodVoice?: AudioBufferSourceNode;
   private generation = 0;
   private reloadGeneration = 0;
+  private foodGeneration = 0;
   async prepare() {
     if (!this.ctx) return;
     await Promise.all(
@@ -70,6 +72,7 @@ export class Sound {
   stopSamples() {
     this.generation++;
     this.stopReload();
+    this.stopFood();
     for (const voice of this.voices) {
       try {
         voice.stop();
@@ -79,19 +82,31 @@ export class Sound {
     }
     this.voices.clear();
   }
+  stopFood() {
+    this.foodGeneration++;
+    try {
+      this.foodVoice?.stop();
+    } catch {
+      /* Already ended. */
+    }
+    this.foodVoice = undefined;
+  }
   private sample(name: string, options: SoundOptions) {
     const choice = sampleChoice(name, options);
     if (!choice || !this.ctx) return false;
     if (choice.reload) this.stopReload();
+    if (choice.food) this.stopFood();
     const generation = this.generation,
-      reloadGeneration = this.reloadGeneration;
+      reloadGeneration = this.reloadGeneration,
+      foodGeneration = this.foodGeneration;
     const requested = this.ctx.currentTime;
     const play = (buffer?: AudioBuffer) => {
       if (
         !buffer ||
         !this.ctx ||
         generation !== this.generation ||
-        (choice.reload && reloadGeneration !== this.reloadGeneration)
+        (choice.reload && reloadGeneration !== this.reloadGeneration) ||
+        (choice.food && foodGeneration !== this.foodGeneration)
       )
         return;
       const age = this.ctx.currentTime - requested;
@@ -116,15 +131,18 @@ export class Sound {
       }
       this.voices.add(source);
       if (choice.reload) this.reloadVoice = source;
+      if (choice.food) this.foodVoice = source;
       source.onended = () => {
         this.voices.delete(source);
         source.disconnect();
         gain.disconnect();
         if (this.reloadVoice === source) this.reloadVoice = undefined;
+        if (this.foodVoice === source) this.foodVoice = undefined;
       };
       const offset = choice.seconds ? age * rate : 0;
       if (offset >= buffer.duration) {
         if (this.reloadVoice === source) this.reloadVoice = undefined;
+        if (this.foodVoice === source) this.foodVoice = undefined;
         this.voices.delete(source);
         source.disconnect();
         gain.disconnect();

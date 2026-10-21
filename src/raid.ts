@@ -46,6 +46,7 @@ import {
   refillAmmo,
 } from "./store";
 import { Sound } from "./audio";
+import { foodSamples } from "./audio-samples";
 import {
   buildVillage,
   villageWaterBlocked,
@@ -825,6 +826,7 @@ export class Raid {
     }
     if (this.heal > 0 && cancelHeal) {
       this.heal = 0;
+      this.sound.stopFood?.();
       this.notify("进食被打断");
     }
   }
@@ -1086,6 +1088,7 @@ export class Raid {
     this.healSource = source === "loot" ? this.search : undefined;
     this.healDuration = db[food.id].useTime!;
     this.heal = this.healDuration;
+    this.sound.play("food", 1, { foodId: food.id, seconds: this.healDuration });
     this.onChange();
   }
   shoot() {
@@ -1796,7 +1799,9 @@ export class Raid {
           }
           this.healSource = undefined;
           this.ensureFood();
-          this.sound.play("heal");
+          // Selected food recordings already contain their completion cue.
+          // Tier-four food remains on the existing cue until the user selects it.
+          if (!foodSamples[food.id]) this.sound.play("heal");
           persist(this.save);
           this.onChange();
         }

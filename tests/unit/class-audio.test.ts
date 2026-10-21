@@ -6,7 +6,7 @@ import {
   MELEE_SWING_SECONDS,
   makeItem,
 } from "../../src/data";
-import { sampleBank, sampleChoice } from "../../src/audio-samples";
+import { sampleBank, sampleChoice, foodSamples } from "../../src/audio-samples";
 import { newSave } from "../../src/store";
 import { Raid } from "../../src/raid";
 Object.assign(globalThis, {
@@ -16,7 +16,7 @@ Object.assign(globalThis, {
 function raid() {
   const s = newSave();
   s.temporary = true;
-  const sound = { play: vi.fn(), stopReload: vi.fn() };
+  const sound = { play: vi.fn(), stopReload: vi.fn(), stopFood: vi.fn() };
   const r = new Raid(
     s,
     0,
@@ -31,6 +31,47 @@ function raid() {
   return { s, r, sound };
 }
 describe("按枪型的音效与可读参数", () => {
+  it("已选食物映射到各自音源，餐盒与薯四共用 F1，未选四级不被替换", () => {
+    expect(foodSamples).toEqual({
+      f1: "food-fish",
+      f2: "food-paste",
+      c3_1: "food-ice",
+      c1_9: "food-water",
+      c1_1: "food-milk",
+      f3: "food-can",
+      c1_10: "food-fries",
+      c4_8: "food-fries",
+    });
+    for (const [foodId, key] of Object.entries(foodSamples)) {
+      expect(sampleChoice("food", { foodId, seconds: 1.4 })).toMatchObject({
+        key,
+        seconds: 1.4,
+        food: true,
+      });
+    }
+    expect(sampleChoice("food", { foodId: "f4" })).toBeUndefined();
+    expect(sampleChoice("food", { foodId: "c4_11" })).toBeUndefined();
+  });
+  it("进食开始播放；非进食中断不停止，攻击/翻滚中断立即停止且不消耗物品", () => {
+    const { s, r, sound } = raid();
+    const f = makeItem("f1", 2);
+    s.pack = [f];
+    s.equipment.food = null;
+    r.p.hp = 30;
+    r.useFood();
+    expect(sound.play).toHaveBeenCalledWith("food", 1, {
+      foodId: "f1",
+      seconds: 1,
+    });
+    r.interrupt(false);
+    expect(r.heal).toBe(1);
+    expect(sound.stopFood).not.toHaveBeenCalled();
+    r.interrupt(true);
+    expect(r.heal).toBe(0);
+    expect(sound.stopFood).toHaveBeenCalledTimes(1);
+    expect(s.equipment.food?.qty).toBe(2);
+    expect(r.p.hp).toBe(30);
+  });
   it("角度是完整左右散布扇区，包含霰弹抖动，狙击为零；近战攻速等于真实冷却", () => {
     for (const w of weapons) {
       const limit = (w.spread ?? 0) * ((w.pellets ?? 1) > 1 ? 1.075 : 1);

@@ -3,6 +3,81 @@ async function start(page: any) {
   await page.goto("/?test=1");
   await page.getByRole("button", { name: "临时测试入口", exact: true }).click();
 }
+test("已选进食原声按物品时长播放，攻击中断立即停止且未选四级保留", async ({
+  page,
+}) => {
+  await start(page);
+  await page.evaluate(async () => {
+    await (window as any).__game.sound.prepare();
+  });
+  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "开始行动", exact: true }).click();
+  await expect(page.locator(".raid-hud")).toBeVisible();
+  const result = await page.evaluate(async () => {
+    const g = (window as any).__game,
+      r = g.raid,
+      d = await import("/src/data.ts");
+    r.enemies = [];
+    r.paused = true;
+    const plans: any[] = [];
+    for (const id of [
+      "f1",
+      "f2",
+      "c3_1",
+      "c1_9",
+      "c1_1",
+      "f3",
+      "c1_10",
+      "c4_8",
+    ]) {
+      r.heal = 0;
+      r.p.hp = 10;
+      r.save.pack = [];
+      r.save.equipment.food = d.makeItem(id, 2);
+      r.useFood();
+      const voice = g.sound.foodVoice;
+      const key = [...g.sound.buffers].find(
+        ([, b]: any) => b === voice?.buffer,
+      )?.[0];
+      const plan = {
+        id,
+        key,
+        seconds: voice.buffer.duration / voice.playbackRate.value,
+        expected: d.db[id].useTime,
+        untouched: false,
+        cancelled: false,
+        qty: 0,
+      };
+      r.interrupt(false);
+      plan.untouched = g.sound.foodVoice === voice && r.heal > 0;
+      r.interrupt(true);
+      plan.cancelled = !g.sound.foodVoice && r.heal === 0;
+      plan.qty = r.save.equipment.food.qty;
+      plans.push(plan);
+    }
+    r.heal = 0;
+    r.p.hp = 10;
+    r.save.equipment.food = d.makeItem("f4");
+    r.useFood();
+    return { plans, tier4Voice: !!g.sound.foodVoice };
+  });
+  expect(result.plans.map((p: any) => p.key)).toEqual([
+    "food-fish",
+    "food-paste",
+    "food-ice",
+    "food-water",
+    "food-milk",
+    "food-can",
+    "food-fries",
+    "food-fries",
+  ]);
+  for (const p of result.plans) {
+    expect(p.seconds).toBeCloseTo(p.expected, 4);
+    expect(p.untouched && p.cancelled).toBe(true);
+    expect(p.qty).toBe(2);
+  }
+  expect(result.tier4Voice).toBe(false);
+});
 test("散布显示完整角度，近战详情显示真实伤害与攻速", async ({ page }) => {
   await start(page);
   await page.getByRole("button", { name: "补给商店", exact: true }).click();
@@ -25,7 +100,7 @@ test("散布显示完整角度，近战详情显示真实伤害与攻速", async
     path: "test-results/chrome-melee-damage-attack-speed.png",
   });
 });
-test("Chrome实际解码12个本地音效、真实四类射击及换弹倍速、敌人减音和切枪取消", async ({
+test("Chrome实际解码19个本地音效、真实四类射击及换弹倍速、敌人减音和切枪取消", async ({
   page,
 }) => {
   test.setTimeout(60000);
@@ -64,7 +139,7 @@ test("Chrome实际解码12个本地音效、真实四类射击及换弹倍速、
   });
   expect(
     await page.evaluate(() => (window as any).__game.sound.buffers.size),
-  ).toBe(12);
+  ).toBe(19);
   const silence = await page.evaluate(() => {
     const g = (window as any).__game;
     return [...g.sound.buffers].map(([key, b]: any) => ({
