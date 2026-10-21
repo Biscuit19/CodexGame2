@@ -20,7 +20,12 @@ async function walk(dir) {
   return out;
 }
 const files = (await walk("dist")).filter(
-  (f) => !f.endsWith("/sw.js") && !f.endsWith("/.nojekyll"),
+  (f) =>
+    !f.endsWith("/sw.js") &&
+    !f.endsWith("/.nojekyll") &&
+    // This optional research audition loads on demand. Opening the game must
+    // not download its full set of raw recordings and unused candidates.
+    !f.includes("/audio-review/actions/"),
 );
 const hash = createHash("sha256");
 for (const f of files) hash.update(await readFile(f));

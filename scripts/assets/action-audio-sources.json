@@ -1,0 +1,3479 @@
+{
+  "version": 1,
+  "previewOnly": true,
+  "date": "2026-10-21 Asia/Shanghai",
+  "processing": "只做固定音量匹配、明确时间剪切、顺序拼接/轻度叠加及剪切边缘4毫秒防咔哒处理；不做变调、时间拉伸、EQ、混响、压缩、限幅或程序合成。原声参考保留完整时长；解码越过满幅时只用一次固定衰减防止转码削波。",
+  "sourcePacks": {
+    "filmcow": {
+      "name": "FilmCow Recorded SFX",
+      "author": "Jason Steele / FilmCow",
+      "url": "https://filmcow.itch.io/filmcow-sfx",
+      "license": "FilmCow Royalty Free SFX License",
+      "evidence": "4.9/5，134 条评分；本次 itch.io 免费音效热门页第 3；评论含多款已发布游戏链接。",
+      "scope": "布料、身体落地、拿动枪械、拉链、猫吃东西、饮水。"
+    },
+    "rpg": {
+      "name": "RPG Sound Pack",
+      "author": "artisticdude",
+      "url": "https://opengameart.org/content/rpg-sound-pack",
+      "license": "CC0-1.0",
+      "evidence": "65,122 次下载，410 收藏；原用于 Summoning Wars / FLARE，评论有实际采用反馈。",
+      "scope": ""
+    },
+    "inventory": {
+      "name": "Inventory Sound Effects",
+      "author": "artisticdude（Ogrebane 发布）",
+      "url": "https://opengameart.org/content/inventory-sound-effects",
+      "license": "CC-BY-3.0",
+      "evidence": "15,434 次下载，156 收藏；为 Summoning Wars 制作，OSARE/FLARE 开发者在原页说明使用。",
+      "scope": ""
+    },
+    "owlish": {
+      "name": "202 More Sound Effects",
+      "author": "OwlishMedia",
+      "url": "https://opengameart.org/content/202-more-sound-effects",
+      "license": "CC0-1.0",
+      "evidence": "5,353 次下载，49 收藏；包含录制的饮水、布料、魔术贴，评论有使用作品。",
+      "scope": ""
+    },
+    "crunch": {
+      "name": "7 Eating Crunches",
+      "author": "Tito / StarNinjas",
+      "url": "https://opengameart.org/content/7-eating-crunches",
+      "license": "CC0-1.0",
+      "evidence": "2,530 次下载，15 收藏；有猫咪进食游戏 Feeding Nekotan 的实际使用反馈。",
+      "scope": ""
+    },
+    "spring": {
+      "name": "Gun reload sounds",
+      "author": "SpringySpringo",
+      "url": "https://opengameart.org/content/gun-reload-sounds",
+      "license": "CC0-1.0",
+      "evidence": "手枪/步枪/枪机分别 2,094 / 1,681 / 1,397 次下载；16 收藏。热度中等，动作匹配补充。",
+      "scope": ""
+    },
+    "zero": {
+      "name": "Handgun Reload Sound Effect",
+      "author": "zer0_sol",
+      "url": "https://opengameart.org/content/handgun-reload-sound-effect",
+      "license": "CC0-1.0",
+      "evidence": "1,990 次下载，18 收藏；真实弹匣退出、装入、拉套筒。热度中等，动作匹配补充。",
+      "scope": ""
+    },
+    "gary": {
+      "name": "Handling Guns",
+      "author": "Gary / fossilrecords.net（qubodup 发布）",
+      "url": "https://opengameart.org/content/handling-guns",
+      "license": "CC-BY-SA-3.0",
+      "evidence": "3,927 次下载，39 收藏；为 PARPG 录制，提供操作时间清单。",
+      "scope": ""
+    },
+    "q009": {
+      "name": "Q009’s weapon sounds",
+      "author": "Q009",
+      "url": "https://opengameart.org/content/q009s-weapon-sounds",
+      "license": "CC-BY-SA-3.0",
+      "evidence": "7,067 次下载，52 收藏；最初为 Cube 2: Sauerbraten 制作，有多款游戏使用反馈。",
+      "scope": ""
+    },
+    "bottle": {
+      "name": "Liquid Bottle Drink Set",
+      "author": "Iwan ‘qubodup’ Gabovitch",
+      "url": "https://opengameart.org/content/liquid-bottle-drink-set",
+      "license": "CC0-1.0",
+      "evidence": "1,323 次下载，10 收藏；明确录制开瓶和吞咽。热度中等，仅作为吞咽动作补充。",
+      "scope": ""
+    },
+    "heal": {
+      "name": "8 Heals and Buffs SFX",
+      "author": "leohpaz",
+      "url": "https://opengameart.org/content/8-heals-and-buffs-sfx",
+      "license": "CC-BY-4.0",
+      "evidence": "1,561 次下载，12 收藏；Steam 游戏 Holy Heroes 开发者在原页说明使用。只作低音量恢复点缀。",
+      "scope": ""
+    },
+    "heal3": {
+      "name": "3 Heal Spells",
+      "author": "DoKashiteru",
+      "url": "https://opengameart.org/content/3-heal-spells",
+      "license": "CC-BY-3.0",
+      "evidence": "6,961 次下载，58 收藏；评论有 Lost Labyrinth 等游戏采用。只作低音量恢复点缀。",
+      "scope": ""
+    },
+    "sb-eat": {
+      "name": "Eating",
+      "author": "Caroline Ford",
+      "url": "https://soundbible.com/976-Eating.html",
+      "license": "CC-BY-3.0",
+      "evidence": "原条目 114,311 次下载（不是游戏采用项目数）。",
+      "scope": ""
+    },
+    "sb-chips": {
+      "name": "Eating Chips",
+      "author": "Mike Koenig",
+      "url": "https://soundbible.com/402-Eating-Chips.html",
+      "license": "CC-BY-3.0",
+      "evidence": "原条目 71,670 次下载（不是游戏采用项目数）。",
+      "scope": ""
+    },
+    "sb-chips2": {
+      "name": "Eat Chips",
+      "author": "Caroline Ford",
+      "url": "https://soundbible.com/912-Eat-Chips.html",
+      "license": "CC-BY-3.0",
+      "evidence": "原条目 57,193 次下载（不是游戏采用项目数）。",
+      "scope": ""
+    },
+    "sb-can": {
+      "name": "Beer Can Opening",
+      "author": "Mike Koenig",
+      "url": "https://soundbible.com/216-Beer-Can-Opening.html",
+      "license": "CC-BY-3.0",
+      "evidence": "原条目 90,501 次下载（不是游戏采用项目数）。",
+      "scope": ""
+    },
+    "sb-sodacan": {
+      "name": "Open Soda Can",
+      "author": "KP",
+      "url": "https://soundbible.com/1659-Open-Soda-Can.html",
+      "license": "Public Domain",
+      "evidence": "原条目 53,157 次下载（不是游戏采用项目数）。",
+      "scope": ""
+    },
+    "sb-burp": {
+      "name": "Short Male Burp",
+      "author": "Mike Koenig",
+      "url": "https://soundbible.com/1867-Short-Male-Burp.html",
+      "license": "CC-BY-3.0",
+      "evidence": "原条目 34,200 次下载（不是游戏采用项目数）。",
+      "scope": ""
+    },
+    "sb-belch": {
+      "name": "Belch",
+      "author": "Kevan",
+      "url": "https://soundbible.com/1579-Belch.html",
+      "license": "Public Domain",
+      "evidence": "原条目 125,075 次下载（不是游戏采用项目数）。",
+      "scope": ""
+    },
+    "sb-burp2": {
+      "name": "Burp 2x",
+      "author": "Mike Koenig",
+      "url": "https://soundbible.com/645-Burp-2x.html",
+      "license": "CC-BY-3.0",
+      "evidence": "原条目 41,407 次下载（不是游戏采用项目数）。",
+      "scope": ""
+    },
+    "sb-slurp1": {
+      "name": "Straw Slurp Normal",
+      "author": "Mike Koenig",
+      "url": "https://soundbible.com/856-Straw-Slurp-Normal.html",
+      "license": "CC-BY-3.0",
+      "evidence": "原条目 27,887 次下载（不是游戏采用项目数）。",
+      "scope": ""
+    },
+    "sb-slurp2": {
+      "name": "Straw Slurp",
+      "author": "Mike Koenig",
+      "url": "https://soundbible.com/860-Straw-Slurp.html",
+      "license": "CC-BY-3.0",
+      "evidence": "原条目 27,086 次下载（不是游戏采用项目数）。",
+      "scope": ""
+    },
+    "sb-slurp3": {
+      "name": "Straw Slurp 3",
+      "author": "Mike Koenig",
+      "url": "https://soundbible.com/842-Straw-Slurp-3.html",
+      "license": "CC-BY-3.0",
+      "evidence": "原条目 23,859 次下载（不是游戏采用项目数）。",
+      "scope": ""
+    },
+    "sb-lock": {
+      "name": "Lock And Load",
+      "author": "Mike Koenig",
+      "url": "https://soundbible.com/1069-Lock-And-Load.html",
+      "license": "CC-BY-3.0",
+      "evidence": "原条目 51,058 次下载；机枪上弹成品原声。",
+      "scope": ""
+    },
+    "bsb-0238": {
+      "name": "Licking #1",
+      "author": "DenisChardonnet",
+      "url": "https://bigsoundbank.com/licking-1-s0238.html",
+      "license": "CC0-1.0",
+      "evidence": "此单条无公开下载数；8.3 / 10 (average) - 4 Reviews。动作匹配补充，不宣称热门单品。",
+      "scope": ""
+    },
+    "bsb-0239": {
+      "name": "Licking #2",
+      "author": "DenisChardonnet",
+      "url": "https://bigsoundbank.com/licking-2-s0239.html",
+      "license": "CC0-1.0",
+      "evidence": "此单条无公开下载数；5.0 / 10 (average) - 2 Reviews Comment Exactly what i needed!。动作匹配补充，不宣称热门单品。",
+      "scope": ""
+    },
+    "bsb-0352": {
+      "name": "Mouth Noises #1",
+      "author": "DavidGreck",
+      "url": "https://bigsoundbank.com/mouth-noises-1-s0352.html",
+      "license": "CC0-1.0",
+      "evidence": "此单条无公开下载数；6.1 / 10 (average) - 17 Reviews。动作匹配补充，不宣称热门单品。",
+      "scope": ""
+    },
+    "bsb-0353": {
+      "name": "Mouth noises #2",
+      "author": "DavidGreck",
+      "url": "https://bigsoundbank.com/mouth-noises-2-s0353.html",
+      "license": "CC0-1.0",
+      "evidence": "此单条无公开下载数；3.6 / 10 (average) - 7 Reviews。动作匹配补充，不宣称热门单品。",
+      "scope": ""
+    },
+    "bsb-1244": {
+      "name": "Straw, suction #1",
+      "author": "Joseph SARDIN",
+      "url": "https://bigsoundbank.com/straw-suction-1-s1244.html",
+      "license": "CC0-1.0",
+      "evidence": "此单条无公开下载数；8.0 / 10 (average) - 1 Reviews。动作匹配补充，不宣称热门单品。",
+      "scope": ""
+    },
+    "bsb-1245": {
+      "name": "Straw, suction #2",
+      "author": "Joseph SARDIN",
+      "url": "https://bigsoundbank.com/straw-suction-2-s1245.html",
+      "license": "CC0-1.0",
+      "evidence": "此单条无公开下载数；8.8 / 10 (average) - 4 Reviews。动作匹配补充，不宣称热门单品。",
+      "scope": ""
+    },
+    "bsb-0407": {
+      "name": "Eat a Rusk",
+      "author": "Joseph SARDIN",
+      "url": "https://bigsoundbank.com/eat-a-rusk-s0407.html",
+      "license": "CC0-1.0",
+      "evidence": "此单条无公开下载数；6.2 / 10 (average) - 43 Reviews。动作匹配补充，不宣称热门单品。",
+      "scope": ""
+    }
+  },
+  "research": [
+    {
+      "name": "开发者推荐：游戏音效的转折点",
+      "url": "https://www.reddit.com/r/gamedev/comments/1mh8943/what_was_your_game_changer_for_sfx_when_you_were/",
+      "note": "通过 Brave 索引读到社区总结：推荐 Sonniss、FilmCow、Freesound，强调按动作组成寻找。Reddit 直连返回 403，未把索引当作原始授权。"
+    },
+    {
+      "name": "翻滚音效的 Foley 组成",
+      "url": "https://www.reddit.com/r/GameAudio/comments/kfwr6e/looking_for_audio_of_a_person_rolling_like_in_a/",
+      "note": "搜索索引中最高回答建议布料摩擦、材料触地与重量组件；不是单纯风声。"
+    },
+    {
+      "name": "itch.io 免费音效热门页",
+      "url": "https://itch.io/game-assets/free/tag-sound-effects",
+      "note": "本次 FilmCow 第3、Nox Essentials 第9；只是该页默认热门排序，不是全球使用榜。"
+    },
+    {
+      "name": "Sonniss GDC",
+      "url": "https://sonniss.com/gameaudiogdc/",
+      "note": "社区广泛推荐且可用于游戏，但明确禁止单独分发音效；不把其文件打包在公开逐条试听页，仅保留官方来源备选。"
+    },
+    {
+      "name": "Mixkit",
+      "url": "https://mixkit.co/terms/",
+      "note": "存在咀嚼候选；独立音效托管/再分发限制，不纳入本次本地试听。"
+    },
+    {
+      "name": "Nox Essentials",
+      "url": "https://nox-sound-design.itch.io/essentials-series-sfx-nox-sound",
+      "note": "5.0/5，51评分，CC0。实为环境、脚步、声音动作等；不能用脚步冒充完整翻滚，未强行补齐。"
+    },
+    {
+      "name": "AllSlayer Equipment",
+      "url": "https://allslayer.itch.io/equipment-inventory-audio-pack",
+      "note": "作者明确大量失真、降至22050Hz，评分1.5/5（2评分）；与用户希望的干净听感不符，排除。"
+    },
+    {
+      "name": "Freesound",
+      "url": "https://freesound.org/",
+      "note": "平台页面访问受限，未绕过访问限制；未取得原页许可的文件不使用。"
+    }
+  ],
+  "sources": {
+    "fc-cat": {
+      "pack": "filmcow",
+      "name": "cat eating.wav",
+      "author": "Jason Steele / FilmCow",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "license": "FilmCow Royalty Free SFX License",
+      "note": "",
+      "archive": "files/filmcow.zip",
+      "member": "FilmCow Recorded SFX/cat eating.wav",
+      "archiveSha256": "dd85a2c09f7519a7185c0b315a7fc3c42f69ddfd544e1bf5e61f26beab374864",
+      "downloadPage": "https://filmcow.itch.io/filmcow-sfx",
+      "path": "files/filmcow/cat eating.wav",
+      "sourceSha256": "4dd8a14569b480aa4fa9329913140d39e2b22e56c4087f13b656c06c2fa58e4f",
+      "sourceDuration": 48.624042
+    },
+    "fc-drink2": {
+      "pack": "filmcow",
+      "name": "drinking and swallowing 2.wav",
+      "author": "Jason Steele / FilmCow",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "license": "FilmCow Royalty Free SFX License",
+      "note": "",
+      "archive": "files/filmcow.zip",
+      "member": "FilmCow Recorded SFX/drinking and swallowing 2.wav",
+      "archiveSha256": "dd85a2c09f7519a7185c0b315a7fc3c42f69ddfd544e1bf5e61f26beab374864",
+      "downloadPage": "https://filmcow.itch.io/filmcow-sfx",
+      "path": "files/filmcow/drinking and swallowing 2.wav",
+      "sourceSha256": "862b70adbd1195150dce7d9fc9e94fd2a9b1ad31927e27f7d4bb1d60b4785750",
+      "sourceDuration": 2.0665
+    },
+    "fc-drink3": {
+      "pack": "filmcow",
+      "name": "drinking and swallowing 3.wav",
+      "author": "Jason Steele / FilmCow",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "license": "FilmCow Royalty Free SFX License",
+      "note": "",
+      "archive": "files/filmcow.zip",
+      "member": "FilmCow Recorded SFX/drinking and swallowing 3.wav",
+      "archiveSha256": "dd85a2c09f7519a7185c0b315a7fc3c42f69ddfd544e1bf5e61f26beab374864",
+      "downloadPage": "https://filmcow.itch.io/filmcow-sfx",
+      "path": "files/filmcow/drinking and swallowing 3.wav",
+      "sourceSha256": "98aa4e7a8b0bdfa4a2126529e4089591ef1d846678ca2359fc1d9c14efcf2a97",
+      "sourceDuration": 2.922729
+    },
+    "fc-fall5": {
+      "pack": "filmcow",
+      "name": "body fall 5.wav",
+      "author": "Jason Steele / FilmCow",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "license": "FilmCow Royalty Free SFX License",
+      "note": "",
+      "archive": "files/filmcow.zip",
+      "member": "FilmCow Recorded SFX/body fall 5.wav",
+      "archiveSha256": "dd85a2c09f7519a7185c0b315a7fc3c42f69ddfd544e1bf5e61f26beab374864",
+      "downloadPage": "https://filmcow.itch.io/filmcow-sfx",
+      "path": "files/filmcow/body fall 5.wav",
+      "sourceSha256": "dc794f1ef1c9a859a54208c88841019cbc785b3e362974e24b80fb031fcf5f0b",
+      "sourceDuration": 0.894042
+    },
+    "fc-fall7": {
+      "pack": "filmcow",
+      "name": "body fall 7.wav",
+      "author": "Jason Steele / FilmCow",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "license": "FilmCow Royalty Free SFX License",
+      "note": "",
+      "archive": "files/filmcow.zip",
+      "member": "FilmCow Recorded SFX/body fall 7.wav",
+      "archiveSha256": "dd85a2c09f7519a7185c0b315a7fc3c42f69ddfd544e1bf5e61f26beab374864",
+      "downloadPage": "https://filmcow.itch.io/filmcow-sfx",
+      "path": "files/filmcow/body fall 7.wav",
+      "sourceSha256": "26fbaf05ca2e8d89c6cce5b89c8590a49d2049a7c1d8fab49dc7aaafb2fa21c2",
+      "sourceDuration": 0.862854
+    },
+    "fc-fall9": {
+      "pack": "filmcow",
+      "name": "body fall 9.wav",
+      "author": "Jason Steele / FilmCow",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "license": "FilmCow Royalty Free SFX License",
+      "note": "",
+      "archive": "files/filmcow.zip",
+      "member": "FilmCow Recorded SFX/body fall 9.wav",
+      "archiveSha256": "dd85a2c09f7519a7185c0b315a7fc3c42f69ddfd544e1bf5e61f26beab374864",
+      "downloadPage": "https://filmcow.itch.io/filmcow-sfx",
+      "path": "files/filmcow/body fall 9.wav",
+      "sourceSha256": "8509968bcefce8bc31aa32b4dc8d5a8510307f11cc2bd84fda83ff234fc28f38",
+      "sourceDuration": 0.853125
+    },
+    "fc-fall12": {
+      "pack": "filmcow",
+      "name": "body fall 12.wav",
+      "author": "Jason Steele / FilmCow",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "license": "FilmCow Royalty Free SFX License",
+      "note": "",
+      "archive": "files/filmcow.zip",
+      "member": "FilmCow Recorded SFX/body fall 12.wav",
+      "archiveSha256": "dd85a2c09f7519a7185c0b315a7fc3c42f69ddfd544e1bf5e61f26beab374864",
+      "downloadPage": "https://filmcow.itch.io/filmcow-sfx",
+      "path": "files/filmcow/body fall 12.wav",
+      "sourceSha256": "c65e095a44fbd29716d0a0c87d934e6f7b90870cd68aa42660d576e3e7549d20",
+      "sourceDuration": 0.977
+    },
+    "fc-cloth12": {
+      "pack": "filmcow",
+      "name": "clothing movement 12.wav",
+      "author": "Jason Steele / FilmCow",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "license": "FilmCow Royalty Free SFX License",
+      "note": "",
+      "archive": "files/filmcow.zip",
+      "member": "FilmCow Recorded SFX/clothing movement 12.wav",
+      "archiveSha256": "dd85a2c09f7519a7185c0b315a7fc3c42f69ddfd544e1bf5e61f26beab374864",
+      "downloadPage": "https://filmcow.itch.io/filmcow-sfx",
+      "path": "files/filmcow/clothing movement 12.wav",
+      "sourceSha256": "7261b82f97ffe9a0ed95e5679abeefd0a6a584399b01c9f498060134e17cfc80",
+      "sourceDuration": 1.741979
+    },
+    "fc-cloth17": {
+      "pack": "filmcow",
+      "name": "clothing movement 17.wav",
+      "author": "Jason Steele / FilmCow",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "license": "FilmCow Royalty Free SFX License",
+      "note": "",
+      "archive": "files/filmcow.zip",
+      "member": "FilmCow Recorded SFX/clothing movement 17.wav",
+      "archiveSha256": "dd85a2c09f7519a7185c0b315a7fc3c42f69ddfd544e1bf5e61f26beab374864",
+      "downloadPage": "https://filmcow.itch.io/filmcow-sfx",
+      "path": "files/filmcow/clothing movement 17.wav",
+      "sourceSha256": "ace43b67ec2ad34f33a84fa0a2f9481c044a7609dc589640d166c8c0ce2c3a62",
+      "sourceDuration": 2.748438
+    },
+    "fc-zip7": {
+      "pack": "filmcow",
+      "name": "zipper 7.wav",
+      "author": "Jason Steele / FilmCow",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "license": "FilmCow Royalty Free SFX License",
+      "note": "",
+      "archive": "files/filmcow.zip",
+      "member": "FilmCow Recorded SFX/zipper 7.wav",
+      "archiveSha256": "dd85a2c09f7519a7185c0b315a7fc3c42f69ddfd544e1bf5e61f26beab374864",
+      "downloadPage": "https://filmcow.itch.io/filmcow-sfx",
+      "path": "files/filmcow/zipper 7.wav",
+      "sourceSha256": "a930080fb22f9203b0c68b796e46ca5213f649576bb93d19e1c160a1bfb24ad3",
+      "sourceDuration": 1.898417
+    },
+    "fc-gun10": {
+      "pack": "filmcow",
+      "name": "gun movement 10.wav",
+      "author": "Jason Steele / FilmCow",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "license": "FilmCow Royalty Free SFX License",
+      "note": "",
+      "archive": "files/filmcow.zip",
+      "member": "FilmCow Recorded SFX/gun movement 10.wav",
+      "archiveSha256": "dd85a2c09f7519a7185c0b315a7fc3c42f69ddfd544e1bf5e61f26beab374864",
+      "downloadPage": "https://filmcow.itch.io/filmcow-sfx",
+      "path": "files/filmcow/gun movement 10.wav",
+      "sourceSha256": "ae9bf9fd3f972b13e00ebcb3eca9ee1e2fee558b89833b9a69a65d03e517e819",
+      "sourceDuration": 1.43325
+    },
+    "fc-gun17": {
+      "pack": "filmcow",
+      "name": "gun movement 17.wav",
+      "author": "Jason Steele / FilmCow",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "license": "FilmCow Royalty Free SFX License",
+      "note": "",
+      "archive": "files/filmcow.zip",
+      "member": "FilmCow Recorded SFX/gun movement 17.wav",
+      "archiveSha256": "dd85a2c09f7519a7185c0b315a7fc3c42f69ddfd544e1bf5e61f26beab374864",
+      "downloadPage": "https://filmcow.itch.io/filmcow-sfx",
+      "path": "files/filmcow/gun movement 17.wav",
+      "sourceSha256": "109e0e8c809453ef39b5e09c2c8f7a9f12433ee7956793a149acca4a909cfeae",
+      "sourceDuration": 1.16025
+    },
+    "fc-bag3": {
+      "pack": "filmcow",
+      "name": "bag of tortilla chips 3.wav",
+      "author": "Jason Steele / FilmCow",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "license": "FilmCow Royalty Free SFX License",
+      "note": "",
+      "archive": "files/filmcow.zip",
+      "member": "FilmCow Recorded SFX/bag of tortilla chips 3.wav",
+      "archiveSha256": "dd85a2c09f7519a7185c0b315a7fc3c42f69ddfd544e1bf5e61f26beab374864",
+      "downloadPage": "https://filmcow.itch.io/filmcow-sfx",
+      "path": "files/filmcow/bag of tortilla chips 3.wav",
+      "sourceSha256": "acc8b24e27ea6a2c0fd23354055ab90ad5f87a1203b5ac401360f851e806752f",
+      "sourceDuration": 1.645583
+    },
+    "fc-bag6": {
+      "pack": "filmcow",
+      "name": "bag of tortilla chips 6.wav",
+      "author": "Jason Steele / FilmCow",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "license": "FilmCow Royalty Free SFX License",
+      "note": "",
+      "archive": "files/filmcow.zip",
+      "member": "FilmCow Recorded SFX/bag of tortilla chips 6.wav",
+      "archiveSha256": "dd85a2c09f7519a7185c0b315a7fc3c42f69ddfd544e1bf5e61f26beab374864",
+      "downloadPage": "https://filmcow.itch.io/filmcow-sfx",
+      "path": "files/filmcow/bag of tortilla chips 6.wav",
+      "sourceSha256": "d2a4f1c89c00dd5fd5db4e280483f552b06dc6d2359ed59521d028db9564f740",
+      "sourceDuration": 1.375833
+    },
+    "fc-box4": {
+      "pack": "filmcow",
+      "name": "box of cereal handled 4.wav",
+      "author": "Jason Steele / FilmCow",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "license": "FilmCow Royalty Free SFX License",
+      "note": "",
+      "archive": "files/filmcow.zip",
+      "member": "FilmCow Recorded SFX/box of cereal handled 4.wav",
+      "archiveSha256": "dd85a2c09f7519a7185c0b315a7fc3c42f69ddfd544e1bf5e61f26beab374864",
+      "downloadPage": "https://filmcow.itch.io/filmcow-sfx",
+      "path": "files/filmcow/box of cereal handled 4.wav",
+      "sourceSha256": "da2d9658cf7e1d51b69350036668e049e5224ceb3470cbdcb370bb9414eff15b",
+      "sourceDuration": 0.792625
+    },
+    "rpg-light": {
+      "pack": "rpg",
+      "name": "inventory/armor-light.wav",
+      "author": "artisticdude",
+      "source": "https://opengameart.org/content/rpg-sound-pack",
+      "license": "CC0-1.0",
+      "note": "",
+      "archive": "files/rpg-rpg_sound_pack.zip",
+      "archiveSha256": "f80754a9c04854e30c9da89d0186540ad097309d98b41387b6e83029e2601421",
+      "archiveDownload": "https://opengameart.org/sites/default/files/rpg_sound_pack.zip",
+      "member": "RPG Sound Pack/inventory/armor-light.wav",
+      "path": "files/extracted/rpg-rpg_sound_pack/RPG Sound Pack/inventory/armor-light.wav",
+      "sourceSha256": "1600329c7607eede7a441f66152f0626dd84e4b13f84ccd07887d020ba1c6b9e",
+      "sourceDuration": 0.5
+    },
+    "rpg-cloth": {
+      "pack": "rpg",
+      "name": "inventory/cloth.wav",
+      "author": "artisticdude",
+      "source": "https://opengameart.org/content/rpg-sound-pack",
+      "license": "CC0-1.0",
+      "note": "",
+      "archive": "files/rpg-rpg_sound_pack.zip",
+      "archiveSha256": "f80754a9c04854e30c9da89d0186540ad097309d98b41387b6e83029e2601421",
+      "archiveDownload": "https://opengameart.org/sites/default/files/rpg_sound_pack.zip",
+      "member": "RPG Sound Pack/inventory/cloth.wav",
+      "path": "files/extracted/rpg-rpg_sound_pack/RPG Sound Pack/inventory/cloth.wav",
+      "sourceSha256": "d829b5ed7a47086771c639495713498e44ce28814f4ea6ddf30cb1f18c085c3f",
+      "sourceDuration": 0.458333
+    },
+    "rpg-metal": {
+      "pack": "rpg",
+      "name": "inventory/metal-small2.wav",
+      "author": "artisticdude",
+      "source": "https://opengameart.org/content/rpg-sound-pack",
+      "license": "CC0-1.0",
+      "note": "",
+      "archive": "files/rpg-rpg_sound_pack.zip",
+      "archiveSha256": "f80754a9c04854e30c9da89d0186540ad097309d98b41387b6e83029e2601421",
+      "archiveDownload": "https://opengameart.org/sites/default/files/rpg_sound_pack.zip",
+      "member": "RPG Sound Pack/inventory/metal-small2.wav",
+      "path": "files/extracted/rpg-rpg_sound_pack/RPG Sound Pack/inventory/metal-small2.wav",
+      "sourceSha256": "19c13a87e0f241cf05417506760d32eb1e2a61dc77c7798ea86b22fa9260f596",
+      "sourceDuration": 0.331771
+    },
+    "rpg-bubble": {
+      "pack": "rpg",
+      "name": "inventory/bubble.wav",
+      "author": "artisticdude",
+      "source": "https://opengameart.org/content/rpg-sound-pack",
+      "license": "CC0-1.0",
+      "note": "",
+      "archive": "files/rpg-rpg_sound_pack.zip",
+      "archiveSha256": "f80754a9c04854e30c9da89d0186540ad097309d98b41387b6e83029e2601421",
+      "archiveDownload": "https://opengameart.org/sites/default/files/rpg_sound_pack.zip",
+      "member": "RPG Sound Pack/inventory/bubble.wav",
+      "path": "files/extracted/rpg-rpg_sound_pack/RPG Sound Pack/inventory/bubble.wav",
+      "sourceSha256": "c5f15d81e2b169784b737d31876ef67eb6957232f3e9c8186dde12c2370c822e",
+      "sourceDuration": 0.456259
+    },
+    "rpg-bubble2": {
+      "pack": "rpg",
+      "name": "inventory/bubble2.wav",
+      "author": "artisticdude",
+      "source": "https://opengameart.org/content/rpg-sound-pack",
+      "license": "CC0-1.0",
+      "note": "",
+      "archive": "files/rpg-rpg_sound_pack.zip",
+      "archiveSha256": "f80754a9c04854e30c9da89d0186540ad097309d98b41387b6e83029e2601421",
+      "archiveDownload": "https://opengameart.org/sites/default/files/rpg_sound_pack.zip",
+      "member": "RPG Sound Pack/inventory/bubble2.wav",
+      "path": "files/extracted/rpg-rpg_sound_pack/RPG Sound Pack/inventory/bubble2.wav",
+      "sourceSha256": "fea5d8f0049a71b0a73b3086271fc18d0b5d733965b53fbfe550b6de26b1bef9",
+      "sourceDuration": 0.437506
+    },
+    "rpg-bubble3": {
+      "pack": "rpg",
+      "name": "inventory/bubble3.wav",
+      "author": "artisticdude",
+      "source": "https://opengameart.org/content/rpg-sound-pack",
+      "license": "CC0-1.0",
+      "note": "",
+      "archive": "files/rpg-rpg_sound_pack.zip",
+      "archiveSha256": "f80754a9c04854e30c9da89d0186540ad097309d98b41387b6e83029e2601421",
+      "archiveDownload": "https://opengameart.org/sites/default/files/rpg_sound_pack.zip",
+      "member": "RPG Sound Pack/inventory/bubble3.wav",
+      "path": "files/extracted/rpg-rpg_sound_pack/RPG Sound Pack/inventory/bubble3.wav",
+      "sourceSha256": "d6a3d8e0119b902f5d01ceeda42bf34f31da6b53e854742db65f06b805a9c302",
+      "sourceDuration": 0.729161
+    },
+    "rpg-burp": {
+      "pack": "rpg",
+      "name": "misc/burp.wav",
+      "author": "artisticdude",
+      "source": "https://opengameart.org/content/rpg-sound-pack",
+      "license": "CC0-1.0",
+      "note": "",
+      "archive": "files/rpg-rpg_sound_pack.zip",
+      "archiveSha256": "f80754a9c04854e30c9da89d0186540ad097309d98b41387b6e83029e2601421",
+      "archiveDownload": "https://opengameart.org/sites/default/files/rpg_sound_pack.zip",
+      "member": "RPG Sound Pack/misc/burp.wav",
+      "path": "files/extracted/rpg-rpg_sound_pack/RPG Sound Pack/misc/burp.wav",
+      "sourceSha256": "cebc5ef40701bd7916b7e9661f23fe431efa5df1d4a52aad769e27b4c7f29f15",
+      "sourceDuration": 1.208333
+    },
+    "inv-leather": {
+      "pack": "inventory",
+      "name": "leather_inventory.wav",
+      "author": "artisticdude（Ogrebane 发布）",
+      "source": "https://opengameart.org/content/inventory-sound-effects",
+      "license": "CC-BY-3.0",
+      "note": "",
+      "archive": "files/inventory-inventory_sound_effects.zip",
+      "archiveSha256": "a61770f1564e285b2dd52e6fd6808e4b170520c25d67e49e3e0c107ac659288c",
+      "archiveDownload": "https://opengameart.org/sites/default/files/inventory_sound_effects.zip",
+      "member": "inventory_sound_effects/leather_inventory.wav",
+      "path": "files/extracted/inventory-inventory_sound_effects/inventory_sound_effects/leather_inventory.wav",
+      "sourceSha256": "31d75251d96aaa767efc6aa326e40c1b52e05f1832a751f49744551a2f916e28",
+      "sourceDuration": 1.17551
+    },
+    "inv-cloth": {
+      "pack": "inventory",
+      "name": "cloth-inventory.wav",
+      "author": "artisticdude（Ogrebane 发布）",
+      "source": "https://opengameart.org/content/inventory-sound-effects",
+      "license": "CC-BY-3.0",
+      "note": "",
+      "archive": "files/inventory-inventory_sound_effects.zip",
+      "archiveSha256": "a61770f1564e285b2dd52e6fd6808e4b170520c25d67e49e3e0c107ac659288c",
+      "archiveDownload": "https://opengameart.org/sites/default/files/inventory_sound_effects.zip",
+      "member": "inventory_sound_effects/cloth-inventory.wav",
+      "path": "files/extracted/inventory-inventory_sound_effects/inventory_sound_effects/cloth-inventory.wav",
+      "sourceSha256": "1bdcc843cb3b3b5ceea2d55df3580db623e822e85cb1f393b63b480fd8d2e439",
+      "sourceDuration": 0.679184
+    },
+    "owl-drink1": {
+      "pack": "owlish",
+      "name": "Drink/Drink_01.wav",
+      "author": "OwlishMedia",
+      "source": "https://opengameart.org/content/202-more-sound-effects",
+      "license": "CC0-1.0",
+      "note": "",
+      "archive": "files/owlish-MoreSounds.zip",
+      "archiveSha256": "9428c1437137d9ea06ba94e13da12488d4c57990a1c32d83db9e7707e69fb3af",
+      "archiveDownload": "https://opengameart.org/sites/default/files/MoreSounds.zip",
+      "member": "Drink/Drink_01.wav",
+      "path": "files/extracted/owlish-MoreSounds/Drink/Drink_01.wav",
+      "sourceSha256": "11f6f90b8be847968e868a6a643fbb017c7116959ae3907216357949d8c1fe91",
+      "sourceDuration": 0.499025
+    },
+    "owl-drink5": {
+      "pack": "owlish",
+      "name": "Drink/Drink_05.wav",
+      "author": "OwlishMedia",
+      "source": "https://opengameart.org/content/202-more-sound-effects",
+      "license": "CC0-1.0",
+      "note": "",
+      "archive": "files/owlish-MoreSounds.zip",
+      "archiveSha256": "9428c1437137d9ea06ba94e13da12488d4c57990a1c32d83db9e7707e69fb3af",
+      "archiveDownload": "https://opengameart.org/sites/default/files/MoreSounds.zip",
+      "member": "Drink/Drink_05.wav",
+      "path": "files/extracted/owlish-MoreSounds/Drink/Drink_05.wav",
+      "sourceSha256": "e2f455d9bfd61dbfd596dd7939d5579c01f3f238ea4f011c4dc7027d383831a3",
+      "sourceDuration": 1.825261
+    },
+    "owl-cloth4": {
+      "pack": "owlish",
+      "name": "Cloth/Cloth_04.wav",
+      "author": "OwlishMedia",
+      "source": "https://opengameart.org/content/202-more-sound-effects",
+      "license": "CC0-1.0",
+      "note": "",
+      "archive": "files/owlish-MoreSounds.zip",
+      "archiveSha256": "9428c1437137d9ea06ba94e13da12488d4c57990a1c32d83db9e7707e69fb3af",
+      "archiveDownload": "https://opengameart.org/sites/default/files/MoreSounds.zip",
+      "member": "Cloth/Cloth_04.wav",
+      "path": "files/extracted/owlish-MoreSounds/Cloth/Cloth_04.wav",
+      "sourceSha256": "23de90ec4e0ce509f03b8a24a7e855b99af1262827d601f8d11b601d9f343cf2",
+      "sourceDuration": 0.573583
+    },
+    "owl-cloth5": {
+      "pack": "owlish",
+      "name": "Cloth/Cloth_05.wav",
+      "author": "OwlishMedia",
+      "source": "https://opengameart.org/content/202-more-sound-effects",
+      "license": "CC0-1.0",
+      "note": "",
+      "archive": "files/owlish-MoreSounds.zip",
+      "archiveSha256": "9428c1437137d9ea06ba94e13da12488d4c57990a1c32d83db9e7707e69fb3af",
+      "archiveDownload": "https://opengameart.org/sites/default/files/MoreSounds.zip",
+      "member": "Cloth/Cloth_05.wav",
+      "path": "files/extracted/owlish-MoreSounds/Cloth/Cloth_05.wav",
+      "sourceSha256": "01521e1895f50ec054db264a967b71f0b68f26b08a2952d8d57e69f2f3ebc1be",
+      "sourceDuration": 0.396644
+    },
+    "owl-velcro": {
+      "pack": "owlish",
+      "name": "Velcro/Velcro_03.wav",
+      "author": "OwlishMedia",
+      "source": "https://opengameart.org/content/202-more-sound-effects",
+      "license": "CC0-1.0",
+      "note": "",
+      "archive": "files/owlish-MoreSounds.zip",
+      "archiveSha256": "9428c1437137d9ea06ba94e13da12488d4c57990a1c32d83db9e7707e69fb3af",
+      "archiveDownload": "https://opengameart.org/sites/default/files/MoreSounds.zip",
+      "member": "Velcro/Velcro_03.wav",
+      "path": "files/extracted/owlish-MoreSounds/Velcro/Velcro_03.wav",
+      "sourceSha256": "fb6bdc433093719b085b99c43ca5042dd474a25f1e82f3bac50744f3dc8c0b15",
+      "sourceDuration": 0.660454
+    },
+    "owl-plastic": {
+      "pack": "owlish",
+      "name": "Plastic/Plastic_06.wav",
+      "author": "OwlishMedia",
+      "source": "https://opengameart.org/content/202-more-sound-effects",
+      "license": "CC0-1.0",
+      "note": "",
+      "archive": "files/owlish-MoreSounds.zip",
+      "archiveSha256": "9428c1437137d9ea06ba94e13da12488d4c57990a1c32d83db9e7707e69fb3af",
+      "archiveDownload": "https://opengameart.org/sites/default/files/MoreSounds.zip",
+      "member": "Plastic/Plastic_06.wav",
+      "path": "files/extracted/owlish-MoreSounds/Plastic/Plastic_06.wav",
+      "sourceSha256": "f2526251e1aa8f295ff81dc63a17d644c09194dd7bde0f544756738954f2505f",
+      "sourceDuration": 1.204717
+    },
+    "crunch3": {
+      "pack": "crunch",
+      "name": "crunch.3.ogg",
+      "author": "Tito / StarNinjas",
+      "source": "https://opengameart.org/content/7-eating-crunches",
+      "license": "CC0-1.0",
+      "note": "",
+      "archive": "files/crunch-crunch_-_tito.zip",
+      "archiveSha256": "92017d0e4130d5b3fb4622ae9c17f4b4c099f5fdd08ea7c3322cea9e0b81f85f",
+      "archiveDownload": "https://opengameart.org/sites/default/files/crunch_-_tito.zip",
+      "member": "crunch.3.ogg",
+      "path": "files/extracted/crunch-crunch_-_tito/crunch.3.ogg",
+      "sourceSha256": "a24b3e10c6085662eed6ac9f34e133b4d2e645d67121ecdc1d9e66dc279e828d",
+      "sourceDuration": 0.847528
+    },
+    "gary-load": {
+      "pack": "gary",
+      "name": "45ACP_Loading.wav",
+      "author": "Gary / fossilrecords.net（qubodup 发布）",
+      "source": "https://opengameart.org/content/handling-guns",
+      "license": "CC-BY-SA-3.0",
+      "note": "",
+      "archive": "files/gary-Gary%20Guns.zip",
+      "archiveSha256": "bf4974a49d9416422b32a2c80addf7640932fb6c2fc809c137c389cb645f06dc",
+      "archiveDownload": "https://opengameart.org/sites/default/files/Gary%20Guns.zip",
+      "member": "Gary Guns/45ACP_Loading.wav",
+      "path": "files/extracted/gary-Gary%20Guns/Gary Guns/45ACP_Loading.wav",
+      "sourceSha256": "b36fc171e435bc300c0e98bbf7544df7d8cb4030c7ecb73827ec2861d1ab5336",
+      "sourceDuration": 8.061383
+    },
+    "gary-slide": {
+      "pack": "gary",
+      "name": "45ACP_slide.wav",
+      "author": "Gary / fossilrecords.net（qubodup 发布）",
+      "source": "https://opengameart.org/content/handling-guns",
+      "license": "CC-BY-SA-3.0",
+      "note": "",
+      "archive": "files/gary-Gary%20Guns.zip",
+      "archiveSha256": "bf4974a49d9416422b32a2c80addf7640932fb6c2fc809c137c389cb645f06dc",
+      "archiveDownload": "https://opengameart.org/sites/default/files/Gary%20Guns.zip",
+      "member": "Gary Guns/45ACP_slide.wav",
+      "path": "files/extracted/gary-Gary%20Guns/Gary Guns/45ACP_slide.wav",
+      "sourceSha256": "b854cb05087afb13679e3223e34bb2f897a55df42148a3bd063aed197617ce68",
+      "sourceDuration": 10.091474
+    },
+    "q009-switch": {
+      "pack": "q009",
+      "name": "weapswitch.ogg",
+      "author": "Q009",
+      "source": "https://opengameart.org/content/q009s-weapon-sounds",
+      "license": "CC-BY-SA-3.0",
+      "note": "作者为游戏制作的武器拿取/切换原声；本项目只试听从容器装备，不改变局内切枪。",
+      "archive": "files/q009-q009-sounds.zip",
+      "archiveSha256": "34bbb21f78e252f1b969d00e9c8c00c8720bb3868c1e51bfce9db93e939dd6e7",
+      "archiveDownload": "https://opengameart.org/sites/default/files/q009-sounds.zip",
+      "member": "q009/weapswitch.ogg",
+      "path": "files/extracted/q009-q009-sounds/q009/weapswitch.ogg",
+      "sourceSha256": "daef10a4badf147aa92627f2c669654be8e425bbe226b429fbf9686a79484999",
+      "sourceDuration": 0.338186
+    },
+    "bottle-swallow": {
+      "pack": "bottle",
+      "name": "swallow-05.flac",
+      "author": "Iwan ‘qubodup’ Gabovitch",
+      "source": "https://opengameart.org/content/liquid-bottle-drink-set",
+      "license": "CC0-1.0",
+      "note": "",
+      "archive": "files/bottle-qubodup-bottle-and-drink-sounds.7z",
+      "archiveSha256": "6d2b9dade6ff4c20cbe2b2a7c405cd219b901bfce7045b28f5ba8b8683c7a5e7",
+      "archiveDownload": "https://opengameart.org/sites/default/files/qubodup-bottle-and-drink-sounds.7z",
+      "member": "qubodup-bottle-and-drink-sounds/swallow-05.flac",
+      "path": "files/extracted/bottle-qubodup-bottle-and-drink-sounds/qubodup-bottle-and-drink-sounds/swallow-05.flac",
+      "sourceSha256": "4247794e00938617736cddfc0d8ba40d697354316a461fba4fe5b85d057bf0c4",
+      "sourceDuration": 0.973552
+    },
+    "bottle-gulp": {
+      "pack": "bottle",
+      "name": "swallow-01.flac",
+      "author": "Iwan ‘qubodup’ Gabovitch",
+      "source": "https://opengameart.org/content/liquid-bottle-drink-set",
+      "license": "CC0-1.0",
+      "note": "",
+      "archive": "files/bottle-qubodup-bottle-and-drink-sounds.7z",
+      "archiveSha256": "6d2b9dade6ff4c20cbe2b2a7c405cd219b901bfce7045b28f5ba8b8683c7a5e7",
+      "archiveDownload": "https://opengameart.org/sites/default/files/qubodup-bottle-and-drink-sounds.7z",
+      "member": "qubodup-bottle-and-drink-sounds/swallow-01.flac",
+      "path": "files/extracted/bottle-qubodup-bottle-and-drink-sounds/qubodup-bottle-and-drink-sounds/swallow-01.flac",
+      "sourceSha256": "46e6bbb47d2572b1f2d7155e18906ee736454c7145252d8427c2c1c1125478d3",
+      "sourceDuration": 0.340781
+    },
+    "heal-bright": {
+      "pack": "heal",
+      "name": "02_Heal_02.wav",
+      "author": "leohpaz",
+      "source": "https://opengameart.org/content/8-heals-and-buffs-sfx",
+      "license": "CC-BY-4.0",
+      "note": "",
+      "archive": "files/heal8-8_rpg_heals_buffs_sfx_samples.zip",
+      "archiveSha256": "2c3a8f3158629d52d4eca92969ca05fd4d80ab9480ba683d6ca3e6f18b68aee5",
+      "archiveDownload": "https://opengameart.org/sites/default/files/8_rpg_heals_buffs_sfx_samples.zip",
+      "member": "02_Heal_02.wav",
+      "path": "files/extracted/heal8-8_rpg_heals_buffs_sfx_samples/02_Heal_02.wav",
+      "sourceSha256": "af8f4d5128284735731b710e5a54d00e3bc30622d21f3c46cceaccf17e69c473",
+      "sourceDuration": 2.0
+    },
+    "heal-soft": {
+      "pack": "heal3",
+      "name": "healspell2.aif",
+      "author": "DoKashiteru",
+      "source": "https://opengameart.org/content/3-heal-spells",
+      "license": "CC-BY-3.0",
+      "note": "",
+      "archive": "files/heal3-3%20heal%20spells.zip",
+      "archiveSha256": "3be8593bf481463919ac0ce64cef090062e939ee5c41bbc6d079fdedf860dfce",
+      "archiveDownload": "https://opengameart.org/sites/default/files/3%20heal%20spells.zip",
+      "member": "healspell2.aif",
+      "path": "files/extracted/heal3-3%20heal%20spells/healspell2.aif",
+      "sourceSha256": "2b2c56c0652481f1c81aa4a5d43b68bfbe1754e47681768d9cd9af679e1f250f",
+      "sourceDuration": 3.2
+    },
+    "spring-rifle": {
+      "pack": "spring",
+      "name": "spring-assaultriflereload1_0.wav",
+      "author": "SpringySpringo",
+      "source": "https://opengameart.org/content/gun-reload-sounds",
+      "license": "CC0-1.0",
+      "note": "",
+      "path": "files/spring-assaultriflereload1_0.wav",
+      "sourceSha256": "efb2d724d634eabe6ba8d3065686abca848bb7497d4d43a5e4aed5e5ea23016f",
+      "sourceDuration": 1.555737,
+      "downloadUrl": "https://opengameart.org/sites/default/files/assaultriflereload1_0.wav"
+    },
+    "spring-pistol": {
+      "pack": "spring",
+      "name": "spring-gunreload1.wav",
+      "author": "SpringySpringo",
+      "source": "https://opengameart.org/content/gun-reload-sounds",
+      "license": "CC0-1.0",
+      "note": "",
+      "path": "files/spring-gunreload1.wav",
+      "sourceSha256": "685cac6a184e3cc3ec09a25b6ddb1d6feffd86d469778f339aa423d384035c50",
+      "sourceDuration": 1.578957,
+      "downloadUrl": "https://opengameart.org/sites/default/files/gunreload1.wav"
+    },
+    "zero-reload": {
+      "pack": "zero",
+      "name": "zero-reload.wav",
+      "author": "zer0_sol",
+      "source": "https://opengameart.org/content/handgun-reload-sound-effect",
+      "license": "CC0-1.0",
+      "note": "",
+      "path": "files/zero-reload.wav",
+      "sourceSha256": "091399145b174ac3b2e0df245b4712a13ce85df072e37256b0fc32658718be53",
+      "sourceDuration": 1.590567,
+      "downloadUrl": "https://opengameart.org/sites/default/files/reload.wav"
+    },
+    "sb-eat": {
+      "pack": "sb-eat",
+      "name": "Eating",
+      "author": "Caroline Ford",
+      "source": "https://soundbible.com/976-Eating.html",
+      "license": "CC-BY-3.0",
+      "note": "",
+      "path": "files/sb-Eating-SoundBible.com-1470347575.mp3",
+      "sourceSha256": "e11a5b66452cadc8f75a7234bbf64c9e280db1358acac6f2fab21017912d6732",
+      "sourceDuration": 2.45551,
+      "downloadUrl": "https://soundbible.com/mp3/Eating-SoundBible.com-1470347575.mp3"
+    },
+    "sb-chips": {
+      "pack": "sb-chips",
+      "name": "Eating Chips",
+      "author": "Mike Koenig",
+      "source": "https://soundbible.com/402-Eating-Chips.html",
+      "license": "CC-BY-3.0",
+      "note": "",
+      "path": "files/sb-Eating Chips-SoundBible.com-792375474.mp3",
+      "sourceSha256": "e146a826f165f927e429fdfbcead57f078bcf02ba21b612c1f8c3ec2cdbe8c46",
+      "sourceDuration": 3.317551,
+      "downloadUrl": "https://soundbible.com/mp3/Eating Chips-SoundBible.com-792375474.mp3"
+    },
+    "sb-chips2": {
+      "pack": "sb-chips2",
+      "name": "Eat Chips",
+      "author": "Caroline Ford",
+      "source": "https://soundbible.com/912-Eat-Chips.html",
+      "license": "CC-BY-3.0",
+      "note": "",
+      "path": "files/sb-Eat Chips-SoundBible.com-1842806405.mp3",
+      "sourceSha256": "aff9701f3d4071d841bf09736f074cca322b6a4bd84296e54452483b3a81a26a",
+      "sourceDuration": 2.56,
+      "downloadUrl": "https://soundbible.com/mp3/Eat Chips-SoundBible.com-1842806405.mp3"
+    },
+    "sb-can": {
+      "pack": "sb-can",
+      "name": "Beer Can Opening",
+      "author": "Mike Koenig",
+      "source": "https://soundbible.com/216-Beer-Can-Opening.html",
+      "license": "CC-BY-3.0",
+      "note": "开罐仅用拉环段，避开长碳酸尾音；不是鱼罐头实录。",
+      "path": "files/sb-Beer Can Opening-SoundBible.com-1428393126.mp3",
+      "sourceSha256": "c426910d1c35fd269169ab835649556dce9516d55e6f0fdad9393d3b7dbb8e74",
+      "sourceDuration": 2.063673,
+      "downloadUrl": "https://soundbible.com/mp3/Beer Can Opening-SoundBible.com-1428393126.mp3"
+    },
+    "sb-sodacan": {
+      "pack": "sb-sodacan",
+      "name": "Open Soda Can",
+      "author": "KP",
+      "source": "https://soundbible.com/1659-Open-Soda-Can.html",
+      "license": "Public Domain",
+      "note": "开罐仅用拉环段，避开长碳酸尾音；不是鱼罐头实录。",
+      "path": "files/sb-Open_Soda_Can-KP-1219969174.mp3",
+      "sourceSha256": "235ccabd875591474677e539b082d22a34f94f3128ece64b63d2423220cf47c0",
+      "sourceDuration": 0.783625,
+      "downloadUrl": "https://soundbible.com/mp3/Open_Soda_Can-KP-1219969174.mp3"
+    },
+    "sb-burp": {
+      "pack": "sb-burp",
+      "name": "Short Male Burp",
+      "author": "Mike Koenig",
+      "source": "https://soundbible.com/1867-Short-Male-Burp.html",
+      "license": "CC-BY-3.0",
+      "note": "",
+      "path": "files/sb-short_male_burp-Mike_Koenig-832127430.mp3",
+      "sourceSha256": "68a0d21ad8d88deeb9d9cb75aab949a8396ffca3d72cf24ef2ebc0152add9b55",
+      "sourceDuration": 0.574694,
+      "downloadUrl": "https://soundbible.com/mp3/short_male_burp-Mike_Koenig-832127430.mp3"
+    },
+    "sb-belch": {
+      "pack": "sb-belch",
+      "name": "Belch",
+      "author": "Kevan",
+      "source": "https://soundbible.com/1579-Belch.html",
+      "license": "Public Domain",
+      "note": "",
+      "path": "files/sb-Belch-Kevan-136688254.mp3",
+      "sourceSha256": "634e30b20a18003c3c718051603ef12d17200f893a15b6142a8b6eb065199fa3",
+      "sourceDuration": 2.063673,
+      "downloadUrl": "https://soundbible.com/mp3/Belch-Kevan-136688254.mp3"
+    },
+    "sb-burp2": {
+      "pack": "sb-burp2",
+      "name": "Burp 2x",
+      "author": "Mike Koenig",
+      "source": "https://soundbible.com/645-Burp-2x.html",
+      "license": "CC-BY-3.0",
+      "note": "",
+      "path": "files/sb-Burp 2x-SoundBible.com-1895509911.mp3",
+      "sourceSha256": "9a6b8f5be159589ccfb85f0d5e184ed10e6c8b13eb94a581dcaebe6b185c2cd2",
+      "sourceDuration": 2.063673,
+      "downloadUrl": "https://soundbible.com/mp3/Burp 2x-SoundBible.com-1895509911.mp3"
+    },
+    "sb-slurp1": {
+      "pack": "sb-slurp1",
+      "name": "Straw Slurp Normal",
+      "author": "Mike Koenig",
+      "source": "https://soundbible.com/856-Straw-Slurp-Normal.html",
+      "license": "CC-BY-3.0",
+      "note": "原录音为吸管吸食，剪成吸溜组件；不是实录吃面。",
+      "path": "files/sb-Straw Slurp Normal-SoundBible.com-1043822318.mp3",
+      "sourceSha256": "9e179776d8234758415488dd505da1e41f3d1e906727a65b8ca7f34e276fa0d8",
+      "sourceDuration": 3.709388,
+      "downloadUrl": "https://soundbible.com/mp3/Straw Slurp Normal-SoundBible.com-1043822318.mp3"
+    },
+    "sb-slurp2": {
+      "pack": "sb-slurp2",
+      "name": "Straw Slurp",
+      "author": "Mike Koenig",
+      "source": "https://soundbible.com/860-Straw-Slurp.html",
+      "license": "CC-BY-3.0",
+      "note": "原录音为吸管吸食，剪成吸溜组件；不是实录吃面。",
+      "path": "files/sb-Straw Slurp-SoundBible.com-1248566513.mp3",
+      "sourceSha256": "2315ccbcda21d18effa1eb3ce468c6f19aa5e0040f0b6e368f7e7559de78f9d1",
+      "sourceDuration": 5.642449,
+      "downloadUrl": "https://soundbible.com/mp3/Straw Slurp-SoundBible.com-1248566513.mp3"
+    },
+    "sb-slurp3": {
+      "pack": "sb-slurp3",
+      "name": "Straw Slurp 3",
+      "author": "Mike Koenig",
+      "source": "https://soundbible.com/842-Straw-Slurp-3.html",
+      "license": "CC-BY-3.0",
+      "note": "原录音为吸管吸食，剪成吸溜组件；不是实录吃面。",
+      "path": "files/sb-Straw Slurp 3-SoundBible.com-389506879.mp3",
+      "sourceSha256": "8942cfc3477260d9723042f366ea8486c1685eae7d1ce58dc321b686f59fb7e1",
+      "sourceDuration": 5.250612,
+      "downloadUrl": "https://soundbible.com/mp3/Straw Slurp 3-SoundBible.com-389506879.mp3"
+    },
+    "sb-lock": {
+      "pack": "sb-lock",
+      "name": "Lock And Load",
+      "author": "Mike Koenig",
+      "source": "https://soundbible.com/1069-Lock-And-Load.html",
+      "license": "CC-BY-3.0",
+      "note": "",
+      "path": "files/sb-lock.mp3",
+      "sourceSha256": "07b9d30dbd7377de6305c4eaadf44b13894524f6c63aef961f0ea3899ee0ce4a",
+      "sourceDuration": 2.063673
+    },
+    "bsb-0238": {
+      "pack": "bsb-0238",
+      "name": "licking-1",
+      "author": "DenisChardonnet",
+      "source": "https://bigsoundbank.com/licking-1-s0238.html",
+      "license": "CC0-1.0",
+      "note": "原作者设计的舔食。",
+      "path": "files/bsb-0238.wav",
+      "sourceSha256": "bc32cc0769c1bb691458d1c31dc64a1bbf7b2fd6fd52bfc66a2f06e81761147e",
+      "sourceDuration": 1.43093,
+      "downloadUrl": "https://bigsoundbank.com/UPLOAD/bwf-en/0238.wav"
+    },
+    "bsb-0239": {
+      "pack": "bsb-0239",
+      "name": "licking-2",
+      "author": "DenisChardonnet",
+      "source": "https://bigsoundbank.com/licking-2-s0239.html",
+      "license": "CC0-1.0",
+      "note": "原作者设计的舔食。",
+      "path": "files/bsb-0239.wav",
+      "sourceSha256": "be5011dd4fb815e212059ae57e8c73ad78e1a20d7fdb917cc1f6938e7c9bd516",
+      "sourceDuration": 1.137778,
+      "downloadUrl": "https://bigsoundbank.com/UPLOAD/bwf-en/0239.wav"
+    },
+    "bsb-0352": {
+      "pack": "bsb-0352",
+      "name": "mouth-noises-1",
+      "author": "DavidGreck",
+      "source": "https://bigsoundbank.com/mouth-noises-1-s0352.html",
+      "license": "CC0-1.0",
+      "note": "",
+      "path": "files/bsb-0352.wav",
+      "sourceSha256": "60784b41503d5c021f8766fe2645f8eac9bae1a574f74aef293c5d17e377ff17",
+      "sourceDuration": 4.832653,
+      "downloadUrl": "https://bigsoundbank.com/UPLOAD/bwf-en/0352.wav"
+    },
+    "bsb-0353": {
+      "pack": "bsb-0353",
+      "name": "mouth-noises-2",
+      "author": "DavidGreck",
+      "source": "https://bigsoundbank.com/mouth-noises-2-s0353.html",
+      "license": "CC0-1.0",
+      "note": "",
+      "path": "files/bsb-0353.wav",
+      "sourceSha256": "53bc43220bdf5ecaa0f4adb86b179e5c54b9f003c2c495f4e88b00768eb92f29",
+      "sourceDuration": 2.612245,
+      "downloadUrl": "https://bigsoundbank.com/UPLOAD/bwf-en/0353.wav"
+    },
+    "bsb-1244": {
+      "pack": "bsb-1244",
+      "name": "straw-suction-1",
+      "author": "Joseph SARDIN",
+      "source": "https://bigsoundbank.com/straw-suction-1-s1244.html",
+      "license": "CC0-1.0",
+      "note": "原声为吸管吸食，用作吸溜组件；不是吃面实录。",
+      "path": "files/bsb-1244.wav",
+      "sourceSha256": "3630ce933cb43ba92bca6b7754d9fe67790831b37f17d60ae8c24707e4ecad10",
+      "sourceDuration": 3.568479,
+      "downloadUrl": "https://bigsoundbank.com/UPLOAD/bwf-en/1244.wav"
+    },
+    "bsb-1245": {
+      "pack": "bsb-1245",
+      "name": "straw-suction-2",
+      "author": "Joseph SARDIN",
+      "source": "https://bigsoundbank.com/straw-suction-2-s1245.html",
+      "license": "CC0-1.0",
+      "note": "原声为吸管吸食，用作吸溜组件；不是吃面实录。",
+      "path": "files/bsb-1245.wav",
+      "sourceSha256": "8da8569866baf204a84263e8e7cddbf8c16e8fcc8db01a7b6a9dc0b6b2ad1c9e",
+      "sourceDuration": 3.051979,
+      "downloadUrl": "https://bigsoundbank.com/UPLOAD/bwf-en/1245.wav"
+    },
+    "bsb-0407": {
+      "pack": "bsb-0407",
+      "name": "eat-a-rusk",
+      "author": "Joseph SARDIN",
+      "source": "https://bigsoundbank.com/eat-a-rusk-s0407.html",
+      "license": "CC0-1.0",
+      "note": "",
+      "path": "files/bsb-0407.wav",
+      "sourceSha256": "3987c59b86f3cacd012054d1f5bbba21ca3c2b42554e8285cd00cb2004fd35f3",
+      "sourceDuration": 13.512358,
+      "downloadUrl": "https://bigsoundbank.com/UPLOAD/bwf-en/0407.wav"
+    }
+  },
+  "groups": [
+    {
+      "id": "reload",
+      "title": "换弹",
+      "description": "5 个完整动作候选；可原速听，也可在播放器中按实际换弹时长播放。现用换弹暂不替换。",
+      "items": [],
+      "candidates": [
+        {
+          "id": "R1",
+          "name": "轻型步枪 · 完整换弹",
+          "note": "气动枪录音；弹匣和机件清楚，较轻。",
+          "reason": "推荐先比较 R1 和 R2：完整动作、节奏易识别。",
+          "versions": [
+            {
+              "id": "natural",
+              "name": "原速换弹",
+              "duration": 1.55574,
+              "parts": [
+                {
+                  "source": "spring-rifle",
+                  "length": 1.55574,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "spring-assaultriflereload1_0.wav"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "R2",
+          "name": "手枪结构 · 弹匣退出＋装入＋上膛",
+          "note": "完整换弹，不把单次机械点击冒充完整换弹。",
+          "reason": "推荐先比较 R1 和 R2：完整动作、节奏易识别。",
+          "versions": [
+            {
+              "id": "natural",
+              "name": "原速换弹",
+              "duration": 1.59057,
+              "parts": [
+                {
+                  "source": "zero-reload",
+                  "length": 1.59057,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "zero-reload.wav"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "R3",
+          "name": "轻型短枪 · 完整换弹",
+          "note": "与 R1 同作者的另一套动作录音，不是变调副本。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "natural",
+              "name": "原速换弹",
+              "duration": 1.57896,
+              "parts": [
+                {
+                  "source": "spring-pistol",
+                  "length": 1.57896,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "spring-gunreload1.wav"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "R4",
+          "name": "金属结构 · 换匣与上膛",
+          "note": "取作者标注的装匣和上膛段，去掉原录音中间的长停顿。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "natural",
+              "name": "原速换弹",
+              "duration": 1.85,
+              "parts": [
+                {
+                  "source": "gary-load",
+                  "length": 0.5,
+                  "at": 0,
+                  "start": 3.0,
+                  "level": 1,
+                  "label": "退出弹匣"
+                },
+                {
+                  "source": "gary-load",
+                  "length": 0.7,
+                  "at": 0.52,
+                  "start": 0.1,
+                  "level": 1,
+                  "label": "装入弹匣"
+                },
+                {
+                  "source": "gary-load",
+                  "length": 0.55,
+                  "at": 1.25,
+                  "start": 1.12,
+                  "level": 1,
+                  "label": "拉机件上膛"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "R5",
+          "name": "偏重机械 · 换匣与上膛",
+          "note": "原作者仅录制机枪装入弹匣；这里配合 Gary 退匣和上膛组成换弹示例，不称为原作者完整换弹。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "natural",
+              "name": "原速换弹",
+              "duration": 1.8,
+              "parts": [
+                {
+                  "source": "gary-load",
+                  "length": 0.5,
+                  "at": 0,
+                  "start": 3.0,
+                  "level": 1,
+                  "label": "退出弹匣"
+                },
+                {
+                  "source": "sb-lock",
+                  "length": 0.65,
+                  "at": 0.55,
+                  "start": 0,
+                  "level": 1,
+                  "label": "插入弹匣（原声仅为装入弹匣）"
+                },
+                {
+                  "source": "gary-slide",
+                  "length": 0.5,
+                  "at": 1.25,
+                  "start": 0.22,
+                  "level": 1,
+                  "label": "拉机件上膛"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "roll",
+      "title": "翻滚",
+      "description": "按当前 0.35 秒动作安排布料与身体落地；保留最多 0.08 秒自然落地尾音。5 种用不同原始录音，不靠变调凑数。",
+      "items": [],
+      "candidates": [
+        {
+          "id": "T1",
+          "name": "轻布翻身＋轻落地",
+          "note": "动作组合，不是原作者录制的完整翻滚；0–0.35 秒翻身，落地尾音到 0.43 秒。",
+          "reason": "T1 / T2 优先：柔软、短促；没有爆炸、风暴或金属碰撞层。",
+          "versions": [
+            {
+              "id": "roll",
+              "name": "匹配 0.35 秒翻滚",
+              "duration": 0.43,
+              "parts": [
+                {
+                  "source": "fc-cloth12",
+                  "length": 0.29,
+                  "at": 0,
+                  "start": 0.32,
+                  "level": 0.85,
+                  "label": "翻身时衣物摩擦"
+                },
+                {
+                  "source": "fc-fall9",
+                  "length": 0.2,
+                  "at": 0.23,
+                  "start": 0.02,
+                  "level": 0.6,
+                  "label": "翻滚后段落地"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "T2",
+          "name": "短布擦动＋身体落地",
+          "note": "动作组合，不是原作者录制的完整翻滚；0–0.35 秒翻身，落地尾音到 0.43 秒。",
+          "reason": "T1 / T2 优先：柔软、短促；没有爆炸、风暴或金属碰撞层。",
+          "versions": [
+            {
+              "id": "roll",
+              "name": "匹配 0.35 秒翻滚",
+              "duration": 0.43,
+              "parts": [
+                {
+                  "source": "owl-cloth5",
+                  "length": 0.29,
+                  "at": 0,
+                  "start": 0,
+                  "level": 0.85,
+                  "label": "翻身时衣物摩擦"
+                },
+                {
+                  "source": "fc-fall7",
+                  "length": 0.2,
+                  "at": 0.23,
+                  "start": 0.02,
+                  "level": 0.6,
+                  "label": "翻滚后段落地"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "T3",
+          "name": "柔软衣物＋分段着地",
+          "note": "动作组合，不是原作者录制的完整翻滚；0–0.35 秒翻身，落地尾音到 0.43 秒。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "roll",
+              "name": "匹配 0.35 秒翻滚",
+              "duration": 0.43,
+              "parts": [
+                {
+                  "source": "fc-cloth17",
+                  "length": 0.29,
+                  "at": 0,
+                  "start": 0.6,
+                  "level": 0.85,
+                  "label": "翻身时衣物摩擦"
+                },
+                {
+                  "source": "fc-fall12",
+                  "length": 0.2,
+                  "at": 0.23,
+                  "start": 0.12,
+                  "level": 0.6,
+                  "label": "翻滚后段落地"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "T4",
+          "name": "紧凑衣物＋较有重量的着地",
+          "note": "动作组合，不是原作者录制的完整翻滚；0–0.35 秒翻身，落地尾音到 0.43 秒。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "roll",
+              "name": "匹配 0.35 秒翻滚",
+              "duration": 0.43,
+              "parts": [
+                {
+                  "source": "owl-cloth4",
+                  "length": 0.29,
+                  "at": 0,
+                  "start": 0.08,
+                  "level": 0.85,
+                  "label": "翻身时衣物摩擦"
+                },
+                {
+                  "source": "fc-fall5",
+                  "length": 0.2,
+                  "at": 0.23,
+                  "start": 0.08,
+                  "level": 0.6,
+                  "label": "翻滚后段落地"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "T5",
+          "name": "游戏布料＋短落地",
+          "note": "动作组合，不是原作者录制的完整翻滚；0–0.35 秒翻身，落地尾音到 0.43 秒。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "roll",
+              "name": "匹配 0.35 秒翻滚",
+              "duration": 0.43,
+              "parts": [
+                {
+                  "source": "rpg-cloth",
+                  "length": 0.29,
+                  "at": 0,
+                  "start": 0,
+                  "level": 0.85,
+                  "label": "翻身时衣物摩擦"
+                },
+                {
+                  "source": "fc-fall9",
+                  "length": 0.2,
+                  "at": 0.23,
+                  "start": 0.02,
+                  "level": 0.6,
+                  "label": "翻滚后段落地"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "weapon",
+      "title": "装备武器",
+      "description": "从容器把武器装备到栏位；提供拿取、紧凑游戏式和机械式区别。",
+      "items": [],
+      "candidates": [
+        {
+          "id": "W1",
+          "name": "拿动枪械 · 稍有重量",
+          "note": "仅用于从容器装备进入栏位；不用于局内滚轮切枪。机械式候选会比纯拿取更强调机件。",
+          "reason": "W1 / W2 是拿动枪械原声；W3 是实际游戏使用的作者设计音。",
+          "versions": [
+            {
+              "id": "equip",
+              "name": "装备动作",
+              "duration": 0.9,
+              "parts": [
+                {
+                  "source": "fc-gun10",
+                  "length": 0.9,
+                  "at": 0,
+                  "start": 0.1,
+                  "level": 1,
+                  "label": "gun movement 10.wav"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "W2",
+          "name": "拿动枪械 · 轻操作",
+          "note": "仅用于从容器装备进入栏位；不用于局内滚轮切枪。机械式候选会比纯拿取更强调机件。",
+          "reason": "W1 / W2 是拿动枪械原声；W3 是实际游戏使用的作者设计音。",
+          "versions": [
+            {
+              "id": "equip",
+              "name": "装备动作",
+              "duration": 0.8,
+              "parts": [
+                {
+                  "source": "fc-gun17",
+                  "length": 0.8,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "gun movement 17.wav"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "W3",
+          "name": "游戏成品 · 紧凑武器拿取",
+          "note": "仅用于从容器装备进入栏位；不用于局内滚轮切枪。机械式候选会比纯拿取更强调机件。",
+          "reason": "W1 / W2 是拿动枪械原声；W3 是实际游戏使用的作者设计音。",
+          "versions": [
+            {
+              "id": "equip",
+              "name": "装备动作",
+              "duration": 0.337,
+              "parts": [
+                {
+                  "source": "q009-switch",
+                  "length": 0.337,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "weapswitch.ogg"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "W4",
+          "name": "机械式 · 短拉机件",
+          "note": "仅用于从容器装备进入栏位；不用于局内滚轮切枪。机械式候选会比纯拿取更强调机件。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "equip",
+              "name": "装备动作",
+              "duration": 0.5,
+              "parts": [
+                {
+                  "source": "gary-slide",
+                  "length": 0.5,
+                  "at": 0,
+                  "start": 0.22,
+                  "level": 1,
+                  "label": "45ACP_slide.wav"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "W5",
+          "name": "轻金属 · 入栏确认",
+          "note": "仅用于从容器装备进入栏位；不用于局内滚轮切枪。机械式候选会比纯拿取更强调机件。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "equip",
+              "name": "装备动作",
+              "duration": 0.3,
+              "parts": [
+                {
+                  "source": "rpg-metal",
+                  "length": 0.3,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "inventory/metal-small2.wav"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gear",
+      "title": "装备护具",
+      "description": "皮革、轻甲、布料、魔术贴和拉链 5 个方向；可与装备武器分开选择。",
+      "items": [],
+      "candidates": [
+        {
+          "id": "A1",
+          "name": "皮革护具 · 柔韧摩擦",
+          "note": "保留材料本身的音色，不用切枪声代替穿戴。",
+          "reason": "A1 适合偏柔和风格；A2 更像游戏中短促的装备确认。",
+          "versions": [
+            {
+              "id": "equip",
+              "name": "护具装备",
+              "duration": 0.9,
+              "parts": [
+                {
+                  "source": "inv-leather",
+                  "length": 0.9,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "leather_inventory.wav"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "A2",
+          "name": "轻护甲 · 扣合",
+          "note": "保留材料本身的音色，不用切枪声代替穿戴。",
+          "reason": "A1 适合偏柔和风格；A2 更像游戏中短促的装备确认。",
+          "versions": [
+            {
+              "id": "equip",
+              "name": "护具装备",
+              "duration": 0.5,
+              "parts": [
+                {
+                  "source": "rpg-light",
+                  "length": 0.5,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "inventory/armor-light.wav"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "A3",
+          "name": "布制服装 · 穿上",
+          "note": "保留材料本身的音色，不用切枪声代替穿戴。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "equip",
+              "name": "护具装备",
+              "duration": 0.679,
+              "parts": [
+                {
+                  "source": "inv-cloth",
+                  "length": 0.679,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "cloth-inventory.wav"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "A4",
+          "name": "魔术贴 · 固定护具",
+          "note": "保留材料本身的音色，不用切枪声代替穿戴。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "equip",
+              "name": "护具装备",
+              "duration": 0.66,
+              "parts": [
+                {
+                  "source": "owl-velcro",
+                  "length": 0.66,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "Velcro/Velcro_03.wav"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "A5",
+          "name": "拉链 · 收紧装备",
+          "note": "保留材料本身的音色，不用切枪声代替穿戴。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "equip",
+              "name": "护具装备",
+              "duration": 0.9,
+              "parts": [
+                {
+                  "source": "fc-zip7",
+                  "length": 0.9,
+                  "at": 0,
+                  "start": 0.15,
+                  "level": 1,
+                  "label": "zipper 7.wav"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "solid",
+      "title": "低级固体 · 小鱼干",
+      "description": "常见食物，1 秒食用，立即恢复 12 生命。5 种咀嚼质感。",
+      "items": [
+        {
+          "id": "f1",
+          "name": "小鱼干",
+          "tier": 1,
+          "seconds": 1,
+          "effect": "立即恢复 12 生命"
+        }
+      ],
+      "candidates": [
+        {
+          "id": "S1",
+          "name": "清脆咀嚼",
+          "note": "小鱼干：以咬、嚼为主，不附加魔法或打嗝。",
+          "reason": "S1 / S2 的原条目下载量较高，动作也最直观。",
+          "versions": [
+            {
+              "id": "fish",
+              "name": "小鱼干 · 1 秒",
+              "duration": 1,
+              "parts": [
+                {
+                  "source": "sb-chips",
+                  "length": 1,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "Eating Chips"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "S2",
+          "name": "连续小口嚼",
+          "note": "小鱼干：以咬、嚼为主，不附加魔法或打嗝。",
+          "reason": "S1 / S2 的原条目下载量较高，动作也最直观。",
+          "versions": [
+            {
+              "id": "fish",
+              "name": "小鱼干 · 1 秒",
+              "duration": 1,
+              "parts": [
+                {
+                  "source": "sb-chips2",
+                  "length": 1,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "Eat Chips"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "S3",
+          "name": "游戏式一口脆",
+          "note": "小鱼干：以咬、嚼为主，不附加魔法或打嗝。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "fish",
+              "name": "小鱼干 · 1 秒",
+              "duration": 1,
+              "parts": [
+                {
+                  "source": "crunch3",
+                  "length": 0.79753,
+                  "at": 0,
+                  "start": 0.05,
+                  "level": 1,
+                  "label": "crunch.3.ogg"
+                },
+                {
+                  "source": "crunch3",
+                  "length": 0.23,
+                  "at": 0.7,
+                  "start": 0.05,
+                  "level": 0.7,
+                  "label": "第二小口"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "S4",
+          "name": "干粮脆咬",
+          "note": "小鱼干：以咬、嚼为主，不附加魔法或打嗝。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "fish",
+              "name": "小鱼干 · 1 秒",
+              "duration": 1,
+              "parts": [
+                {
+                  "source": "bsb-0407",
+                  "length": 1,
+                  "at": 0,
+                  "start": 0.08,
+                  "level": 1,
+                  "label": "eat-a-rusk"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "S5",
+          "name": "猫咪真实进食",
+          "note": "小鱼干：以咬、嚼为主，不附加魔法或打嗝。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "fish",
+              "name": "小鱼干 · 1 秒",
+              "duration": 1,
+              "parts": [
+                {
+                  "source": "fc-cat",
+                  "length": 1,
+                  "at": 0,
+                  "start": 8,
+                  "level": 1,
+                  "label": "cat eating.wav"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lick",
+      "title": "低级软食 · 猫条与冰淇淋",
+      "description": "不把猫条、冰淇淋做成硬饼干咔嚓声；可切换 1.4 / 1.2 秒版本。",
+      "items": [
+        {
+          "id": "f2",
+          "name": "肉泥猫条",
+          "tier": 2,
+          "seconds": 1.4,
+          "effect": "立即恢复 20 生命"
+        },
+        {
+          "id": "c3_1",
+          "name": "蜜雪喵城冰淇淋",
+          "tier": 2,
+          "seconds": 1.2,
+          "effect": "立即恢复 18 生命"
+        }
+      ],
+      "candidates": [
+        {
+          "id": "L1",
+          "name": "圆润舔食 · 设计原声",
+          "note": "舔食与软食候选；前两条是原作者轻度设计的舔食，后三条为自然嘴部/猫进食录音。",
+          "reason": "L1 更接近明确的舔食轮廓；L3 保留真猫进食质感。",
+          "versions": [
+            {
+              "id": "paste",
+              "name": "肉泥猫条 · 1.4 秒",
+              "duration": 1.4,
+              "parts": [
+                {
+                  "source": "bsb-0238",
+                  "length": 1.4,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "licking-1"
+                }
+              ]
+            },
+            {
+              "id": "ice",
+              "name": "蜜雪喵城冰淇淋 · 1.2 秒",
+              "duration": 1.2,
+              "parts": [
+                {
+                  "source": "bsb-0238",
+                  "length": 1.2,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "licking-1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "L2",
+          "name": "短促舔食 · 设计原声",
+          "note": "舔食与软食候选；前两条是原作者轻度设计的舔食，后三条为自然嘴部/猫进食录音。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "paste",
+              "name": "肉泥猫条 · 1.4 秒",
+              "duration": 1.4,
+              "parts": [
+                {
+                  "source": "bsb-0239",
+                  "length": 1.13778,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "licking-2"
+                },
+                {
+                  "source": "bsb-0239",
+                  "length": 0.16,
+                  "at": 1.24,
+                  "start": 0,
+                  "level": 0.6,
+                  "label": "末尾小口"
+                }
+              ]
+            },
+            {
+              "id": "ice",
+              "name": "蜜雪喵城冰淇淋 · 1.2 秒",
+              "duration": 1.2,
+              "parts": [
+                {
+                  "source": "bsb-0239",
+                  "length": 1.13778,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "licking-2"
+                },
+                {
+                  "source": "bsb-0239",
+                  "length": 0.16,
+                  "at": 1.04,
+                  "start": 0,
+                  "level": 0.6,
+                  "label": "末尾小口"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "L3",
+          "name": "猫咪舔嚼 · 实录",
+          "note": "舔食与软食候选；前两条是原作者轻度设计的舔食，后三条为自然嘴部/猫进食录音。",
+          "reason": "L1 更接近明确的舔食轮廓；L3 保留真猫进食质感。",
+          "versions": [
+            {
+              "id": "paste",
+              "name": "肉泥猫条 · 1.4 秒",
+              "duration": 1.4,
+              "parts": [
+                {
+                  "source": "fc-cat",
+                  "length": 1.4,
+                  "at": 0,
+                  "start": 16,
+                  "level": 1,
+                  "label": "cat eating.wav"
+                }
+              ]
+            },
+            {
+              "id": "ice",
+              "name": "蜜雪喵城冰淇淋 · 1.2 秒",
+              "duration": 1.2,
+              "parts": [
+                {
+                  "source": "fc-cat",
+                  "length": 1.2,
+                  "at": 0,
+                  "start": 16,
+                  "level": 1,
+                  "label": "cat eating.wav"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "L4",
+          "name": "嘴唇小口动作",
+          "note": "舔食与软食候选；前两条是原作者轻度设计的舔食，后三条为自然嘴部/猫进食录音。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "paste",
+              "name": "肉泥猫条 · 1.4 秒",
+              "duration": 1.4,
+              "parts": [
+                {
+                  "source": "bsb-0352",
+                  "length": 1.4,
+                  "at": 0,
+                  "start": 0.12,
+                  "level": 1,
+                  "label": "mouth-noises-1"
+                }
+              ]
+            },
+            {
+              "id": "ice",
+              "name": "蜜雪喵城冰淇淋 · 1.2 秒",
+              "duration": 1.2,
+              "parts": [
+                {
+                  "source": "bsb-0352",
+                  "length": 1.2,
+                  "at": 0,
+                  "start": 0.12,
+                  "level": 1,
+                  "label": "mouth-noises-1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "L5",
+          "name": "软食抿嘴动作",
+          "note": "舔食与软食候选；前两条是原作者轻度设计的舔食，后三条为自然嘴部/猫进食录音。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "paste",
+              "name": "肉泥猫条 · 1.4 秒",
+              "duration": 1.4,
+              "parts": [
+                {
+                  "source": "bsb-0353",
+                  "length": 1.4,
+                  "at": 0,
+                  "start": 0.2,
+                  "level": 1,
+                  "label": "mouth-noises-2"
+                }
+              ]
+            },
+            {
+              "id": "ice",
+              "name": "蜜雪喵城冰淇淋 · 1.2 秒",
+              "duration": 1.2,
+              "parts": [
+                {
+                  "source": "bsb-0353",
+                  "length": 1.2,
+                  "at": 0,
+                  "start": 0.2,
+                  "level": 1,
+                  "label": "mouth-noises-2"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "drink",
+      "title": "低级液体 · 水与核爪饮品",
+      "description": "液体使用喝水/吞咽，不使用固体咀嚼。提供 1 秒水与 1.4 秒饮品版本。",
+      "items": [
+        {
+          "id": "c1_9",
+          "name": "喵哈哈矿泉水",
+          "tier": 1,
+          "seconds": 1,
+          "effect": "10 秒内持续恢复 22 生命"
+        },
+        {
+          "id": "c1_1",
+          "name": "六个核爪",
+          "tier": 2,
+          "seconds": 1.4,
+          "effect": "12 秒内持续恢复 32 生命"
+        }
+      ],
+      "candidates": [
+        {
+          "id": "D1",
+          "name": "轻饮两口",
+          "note": "液体饮用；恢复在食用完成后按游戏既定规则持续生效，声音不循环播放十几秒。",
+          "reason": "D1 / D2 优先比较，两种录音来源与吞咽节奏不同。",
+          "versions": [
+            {
+              "id": "water",
+              "name": "喵哈哈矿泉水 · 1 秒",
+              "duration": 1,
+              "parts": [
+                {
+                  "source": "fc-drink2",
+                  "length": 1,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "drinking and swallowing 2.wav"
+                }
+              ]
+            },
+            {
+              "id": "milk",
+              "name": "六个核爪 · 1.4 秒",
+              "duration": 1.4,
+              "parts": [
+                {
+                  "source": "fc-drink2",
+                  "length": 1.4,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "drinking and swallowing 2.wav"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "D2",
+          "name": "自然饮水吞咽",
+          "note": "液体饮用；恢复在食用完成后按游戏既定规则持续生效，声音不循环播放十几秒。",
+          "reason": "D1 / D2 优先比较，两种录音来源与吞咽节奏不同。",
+          "versions": [
+            {
+              "id": "water",
+              "name": "喵哈哈矿泉水 · 1 秒",
+              "duration": 1,
+              "parts": [
+                {
+                  "source": "owl-drink5",
+                  "length": 1,
+                  "at": 0,
+                  "start": 0.15,
+                  "level": 1,
+                  "label": "Drink/Drink_05.wav"
+                }
+              ]
+            },
+            {
+              "id": "milk",
+              "name": "六个核爪 · 1.4 秒",
+              "duration": 1.4,
+              "parts": [
+                {
+                  "source": "owl-drink5",
+                  "length": 1.4,
+                  "at": 0,
+                  "start": 0.15,
+                  "level": 1,
+                  "label": "Drink/Drink_05.wav"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "D3",
+          "name": "清楚的吞咽",
+          "note": "液体饮用；恢复在食用完成后按游戏既定规则持续生效，声音不循环播放十几秒。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "water",
+              "name": "喵哈哈矿泉水 · 1 秒",
+              "duration": 1,
+              "parts": [
+                {
+                  "source": "bottle-swallow",
+                  "length": 0.97355,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "swallow-05.flac"
+                }
+              ]
+            },
+            {
+              "id": "milk",
+              "name": "六个核爪 · 1.4 秒",
+              "duration": 1.4,
+              "parts": [
+                {
+                  "source": "bottle-swallow",
+                  "length": 0.97355,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "swallow-05.flac"
+                },
+                {
+                  "source": "bottle-gulp",
+                  "length": 0.25,
+                  "at": 1.13,
+                  "start": 0,
+                  "level": 0.75,
+                  "label": "末尾吞咽"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "D4",
+          "name": "连续小口饮用",
+          "note": "液体饮用；恢复在食用完成后按游戏既定规则持续生效，声音不循环播放十几秒。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "water",
+              "name": "喵哈哈矿泉水 · 1 秒",
+              "duration": 1,
+              "parts": [
+                {
+                  "source": "fc-drink3",
+                  "length": 1,
+                  "at": 0,
+                  "start": 0.2,
+                  "level": 1,
+                  "label": "drinking and swallowing 3.wav"
+                }
+              ]
+            },
+            {
+              "id": "milk",
+              "name": "六个核爪 · 1.4 秒",
+              "duration": 1.4,
+              "parts": [
+                {
+                  "source": "fc-drink3",
+                  "length": 1.4,
+                  "at": 0,
+                  "start": 0.2,
+                  "level": 1,
+                  "label": "drinking and swallowing 3.wav"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "D5",
+          "name": "短口喝水",
+          "note": "液体饮用；恢复在食用完成后按游戏既定规则持续生效，声音不循环播放十几秒。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "water",
+              "name": "喵哈哈矿泉水 · 1 秒",
+              "duration": 1,
+              "parts": [
+                {
+                  "source": "owl-drink1",
+                  "length": 0.49902,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "Drink/Drink_01.wav"
+                },
+                {
+                  "source": "bottle-gulp",
+                  "length": 0.25,
+                  "at": 0.73,
+                  "start": 0,
+                  "level": 0.75,
+                  "label": "末尾吞咽"
+                }
+              ]
+            },
+            {
+              "id": "milk",
+              "name": "六个核爪 · 1.4 秒",
+              "duration": 1.4,
+              "parts": [
+                {
+                  "source": "owl-drink1",
+                  "length": 0.49902,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "Drink/Drink_01.wav"
+                },
+                {
+                  "source": "bottle-gulp",
+                  "length": 0.25,
+                  "at": 1.13,
+                  "start": 0,
+                  "level": 0.75,
+                  "label": "末尾吞咽"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "can",
+      "title": "三级食物 · 金枪鱼罐头",
+      "description": "2 秒：开罐 → 吃 → 立即恢复。可单独关闭恢复点缀，只比较食物动作。",
+      "items": [
+        {
+          "id": "f3",
+          "name": "金枪鱼罐头",
+          "tier": 3,
+          "seconds": 2,
+          "effect": "立即恢复 30 生命"
+        }
+      ],
+      "candidates": [
+        {
+          "id": "C1",
+          "name": "拉环＋自然咀嚼",
+          "note": "开罐后再吃，最后低音量立即恢复点缀。开罐录音来自饮料拉环，已避开长喷气段；不是鱼罐头现场实录。",
+          "reason": "C1 / C2 优先：开罐与进食先后最清晰。",
+          "versions": [
+            {
+              "id": "can",
+              "name": "金枪鱼罐头 · 2 秒",
+              "duration": 2,
+              "parts": [
+                {
+                  "source": "sb-sodacan",
+                  "length": 0.48,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "拉环开罐（原声是饮料罐拉环段）"
+                },
+                {
+                  "source": "sb-eat",
+                  "length": 1.32,
+                  "at": 0.5,
+                  "start": 0.05,
+                  "level": 1,
+                  "label": "开罐后吃"
+                },
+                {
+                  "source": "rpg-bubble",
+                  "length": 0.18,
+                  "at": 1.82,
+                  "start": 0.02,
+                  "level": 0.24,
+                  "label": "立即恢复完成提示"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "C2",
+          "name": "金属拉环＋猫咪吃罐",
+          "note": "开罐后再吃，最后低音量立即恢复点缀。开罐录音来自饮料拉环，已避开长喷气段；不是鱼罐头现场实录。",
+          "reason": "C1 / C2 优先：开罐与进食先后最清晰。",
+          "versions": [
+            {
+              "id": "can",
+              "name": "金枪鱼罐头 · 2 秒",
+              "duration": 2,
+              "parts": [
+                {
+                  "source": "sb-can",
+                  "length": 0.48,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "拉环开罐（原声是饮料罐拉环段）"
+                },
+                {
+                  "source": "fc-cat",
+                  "length": 1.32,
+                  "at": 0.5,
+                  "start": 24,
+                  "level": 1,
+                  "label": "开罐后吃"
+                },
+                {
+                  "source": "heal-bright",
+                  "length": 0.18,
+                  "at": 1.82,
+                  "start": 0.02,
+                  "level": 0.24,
+                  "label": "立即恢复完成提示"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "C3",
+          "name": "开盖＋细嚼",
+          "note": "开罐后再吃，最后低音量立即恢复点缀。开罐录音来自饮料拉环，已避开长喷气段；不是鱼罐头现场实录。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "can",
+              "name": "金枪鱼罐头 · 2 秒",
+              "duration": 2,
+              "parts": [
+                {
+                  "source": "sb-sodacan",
+                  "length": 0.48,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "拉环开罐（原声是饮料罐拉环段）"
+                },
+                {
+                  "source": "sb-chips2",
+                  "length": 1.32,
+                  "at": 0.5,
+                  "start": 0.15,
+                  "level": 1,
+                  "label": "开罐后吃"
+                },
+                {
+                  "source": "rpg-bubble2",
+                  "length": 0.18,
+                  "at": 1.82,
+                  "start": 0.02,
+                  "level": 0.24,
+                  "label": "立即恢复完成提示"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "C4",
+          "name": "短拉环＋软食",
+          "note": "开罐后再吃，最后低音量立即恢复点缀。开罐录音来自饮料拉环，已避开长喷气段；不是鱼罐头现场实录。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "can",
+              "name": "金枪鱼罐头 · 2 秒",
+              "duration": 2,
+              "parts": [
+                {
+                  "source": "sb-can",
+                  "length": 0.48,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "拉环开罐（原声是饮料罐拉环段）"
+                },
+                {
+                  "source": "bsb-0352",
+                  "length": 1.32,
+                  "at": 0.5,
+                  "start": 0.65,
+                  "level": 1,
+                  "label": "开罐后吃"
+                },
+                {
+                  "source": "heal-soft",
+                  "length": 0.18,
+                  "at": 1.82,
+                  "start": 0.02,
+                  "level": 0.24,
+                  "label": "立即恢复完成提示"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "C5",
+          "name": "开罐＋猫咪连吃",
+          "note": "开罐后再吃，最后低音量立即恢复点缀。开罐录音来自饮料拉环，已避开长喷气段；不是鱼罐头现场实录。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "can",
+              "name": "金枪鱼罐头 · 2 秒",
+              "duration": 2,
+              "parts": [
+                {
+                  "source": "sb-sodacan",
+                  "length": 0.48,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "拉环开罐（原声是饮料罐拉环段）"
+                },
+                {
+                  "source": "fc-cat",
+                  "length": 1.32,
+                  "at": 0.5,
+                  "start": 34,
+                  "level": 1,
+                  "label": "开罐后吃"
+                },
+                {
+                  "source": "rpg-bubble3",
+                  "length": 0.18,
+                  "at": 1.82,
+                  "start": 0.02,
+                  "level": 0.24,
+                  "label": "立即恢复完成提示"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fries",
+      "title": "三级食物 · 疯狂薯四",
+      "description": "1.8 秒：包装 → 脆咬 → 立即恢复。5 种咀嚼来源，不是同一段简单变调。",
+      "items": [
+        {
+          "id": "c1_10",
+          "name": "肯喵基疯狂薯四",
+          "tier": 3,
+          "seconds": 1.8,
+          "effect": "立即恢复 28 生命"
+        }
+      ],
+      "candidates": [
+        {
+          "id": "F1",
+          "name": "薯条 · 清脆咀嚼",
+          "note": "突出脆咬与即时恢复，不加持续恢复尾声。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "fries",
+              "name": "肯喵基疯狂薯四 · 1.8 秒",
+              "duration": 1.8,
+              "parts": [
+                {
+                  "source": "fc-bag3",
+                  "length": 0.25,
+                  "at": 0,
+                  "start": 0,
+                  "level": 0.65,
+                  "label": "拿出食物的包装声"
+                },
+                {
+                  "source": "sb-chips",
+                  "length": 1.26,
+                  "at": 0.28,
+                  "start": 0,
+                  "level": 1,
+                  "label": "薯条咀嚼"
+                },
+                {
+                  "source": "rpg-bubble",
+                  "length": 0.2,
+                  "at": 1.6,
+                  "start": 0.02,
+                  "level": 0.24,
+                  "label": "立即恢复完成提示"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "F2",
+          "name": "薯条 · 连续小口嚼",
+          "note": "突出脆咬与即时恢复，不加持续恢复尾声。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "fries",
+              "name": "肯喵基疯狂薯四 · 1.8 秒",
+              "duration": 1.8,
+              "parts": [
+                {
+                  "source": "fc-bag6",
+                  "length": 0.25,
+                  "at": 0,
+                  "start": 0,
+                  "level": 0.65,
+                  "label": "拿出食物的包装声"
+                },
+                {
+                  "source": "sb-chips2",
+                  "length": 1.26,
+                  "at": 0.28,
+                  "start": 0,
+                  "level": 1,
+                  "label": "薯条咀嚼"
+                },
+                {
+                  "source": "heal-bright",
+                  "length": 0.2,
+                  "at": 1.6,
+                  "start": 0.02,
+                  "level": 0.24,
+                  "label": "立即恢复完成提示"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "F3",
+          "name": "薯条 · 游戏式一口脆",
+          "note": "突出脆咬与即时恢复，不加持续恢复尾声。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "fries",
+              "name": "肯喵基疯狂薯四 · 1.8 秒",
+              "duration": 1.8,
+              "parts": [
+                {
+                  "source": "fc-bag3",
+                  "length": 0.25,
+                  "at": 0,
+                  "start": 0,
+                  "level": 0.65,
+                  "label": "拿出食物的包装声"
+                },
+                {
+                  "source": "crunch3",
+                  "length": 0.7975279999999999,
+                  "at": 0.28,
+                  "start": 0.05,
+                  "level": 1,
+                  "label": "薯条咀嚼"
+                },
+                {
+                  "source": "rpg-bubble2",
+                  "length": 0.2,
+                  "at": 1.6,
+                  "start": 0.02,
+                  "level": 0.24,
+                  "label": "立即恢复完成提示"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "F4",
+          "name": "薯条 · 干粮脆咬",
+          "note": "突出脆咬与即时恢复，不加持续恢复尾声。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "fries",
+              "name": "肯喵基疯狂薯四 · 1.8 秒",
+              "duration": 1.8,
+              "parts": [
+                {
+                  "source": "fc-bag6",
+                  "length": 0.25,
+                  "at": 0,
+                  "start": 0,
+                  "level": 0.65,
+                  "label": "拿出食物的包装声"
+                },
+                {
+                  "source": "bsb-0407",
+                  "length": 1.26,
+                  "at": 0.28,
+                  "start": 0.08,
+                  "level": 1,
+                  "label": "薯条咀嚼"
+                },
+                {
+                  "source": "heal-soft",
+                  "length": 0.2,
+                  "at": 1.6,
+                  "start": 0.02,
+                  "level": 0.24,
+                  "label": "立即恢复完成提示"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "F5",
+          "name": "薯条 · 猫咪真实进食",
+          "note": "突出脆咬与即时恢复，不加持续恢复尾声。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "fries",
+              "name": "肯喵基疯狂薯四 · 1.8 秒",
+              "duration": 1.8,
+              "parts": [
+                {
+                  "source": "fc-bag3",
+                  "length": 0.25,
+                  "at": 0,
+                  "start": 0,
+                  "level": 0.65,
+                  "label": "拿出食物的包装声"
+                },
+                {
+                  "source": "fc-cat",
+                  "length": 1.26,
+                  "at": 0.28,
+                  "start": 8,
+                  "level": 1,
+                  "label": "薯条咀嚼"
+                },
+                {
+                  "source": "rpg-bubble3",
+                  "length": 0.2,
+                  "at": 1.6,
+                  "start": 0.02,
+                  "level": 0.24,
+                  "label": "立即恢复完成提示"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "meal",
+      "title": "三级食物 · 快乐餐盒",
+      "description": "1.8 秒：开盒/拿取 → 吃 → 立即恢复＋持续恢复启动。",
+      "items": [
+        {
+          "id": "c4_8",
+          "name": "金拱喵快乐餐盒",
+          "tier": 3,
+          "seconds": 1.8,
+          "effect": "立即恢复 18；10 秒内持续恢复 28 生命"
+        }
+      ],
+      "candidates": [
+        {
+          "id": "M1",
+          "name": "餐盒＋软嚼",
+          "note": "三级组合恢复：先短促完成提示，再轻柔启动尾声；只作音效区别，不修改恢复数值。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "meal",
+              "name": "金拱喵快乐餐盒 · 1.8 秒",
+              "duration": 1.8,
+              "parts": [
+                {
+                  "source": "fc-box4",
+                  "length": 0.25,
+                  "at": 0,
+                  "start": 0,
+                  "level": 0.65,
+                  "label": "打开/拿动餐盒（包装组件）"
+                },
+                {
+                  "source": "sb-eat",
+                  "length": 1.1,
+                  "at": 0.28,
+                  "start": 0.05,
+                  "level": 1,
+                  "label": "吃餐盒"
+                },
+                {
+                  "source": "rpg-bubble",
+                  "length": 0.18,
+                  "at": 1.42,
+                  "start": 0.02,
+                  "level": 0.25,
+                  "label": "立即恢复点缀"
+                },
+                {
+                  "source": "rpg-bubble3",
+                  "length": 0.16,
+                  "at": 1.64,
+                  "start": 0.02,
+                  "level": 0.2,
+                  "label": "持续恢复启动点缀"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "M2",
+          "name": "餐盒＋猫咪咀嚼",
+          "note": "三级组合恢复：先短促完成提示，再轻柔启动尾声；只作音效区别，不修改恢复数值。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "meal",
+              "name": "金拱喵快乐餐盒 · 1.8 秒",
+              "duration": 1.8,
+              "parts": [
+                {
+                  "source": "owl-plastic",
+                  "length": 0.25,
+                  "at": 0,
+                  "start": 0,
+                  "level": 0.65,
+                  "label": "打开/拿动餐盒（包装组件）"
+                },
+                {
+                  "source": "fc-cat",
+                  "length": 1.1,
+                  "at": 0.28,
+                  "start": 24,
+                  "level": 1,
+                  "label": "吃餐盒"
+                },
+                {
+                  "source": "heal-bright",
+                  "length": 0.18,
+                  "at": 1.42,
+                  "start": 0.02,
+                  "level": 0.25,
+                  "label": "立即恢复点缀"
+                },
+                {
+                  "source": "rpg-bubble2",
+                  "length": 0.16,
+                  "at": 1.64,
+                  "start": 0.02,
+                  "level": 0.2,
+                  "label": "持续恢复启动点缀"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "M3",
+          "name": "纸盒＋小口吃",
+          "note": "三级组合恢复：先短促完成提示，再轻柔启动尾声；只作音效区别，不修改恢复数值。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "meal",
+              "name": "金拱喵快乐餐盒 · 1.8 秒",
+              "duration": 1.8,
+              "parts": [
+                {
+                  "source": "fc-box4",
+                  "length": 0.25,
+                  "at": 0,
+                  "start": 0,
+                  "level": 0.65,
+                  "label": "打开/拿动餐盒（包装组件）"
+                },
+                {
+                  "source": "sb-chips2",
+                  "length": 1.1,
+                  "at": 0.28,
+                  "start": 0.15,
+                  "level": 1,
+                  "label": "吃餐盒"
+                },
+                {
+                  "source": "rpg-bubble2",
+                  "length": 0.18,
+                  "at": 1.42,
+                  "start": 0.02,
+                  "level": 0.25,
+                  "label": "立即恢复点缀"
+                },
+                {
+                  "source": "rpg-bubble3",
+                  "length": 0.16,
+                  "at": 1.64,
+                  "start": 0.02,
+                  "level": 0.2,
+                  "label": "持续恢复启动点缀"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "M4",
+          "name": "轻包装＋抿食",
+          "note": "三级组合恢复：先短促完成提示，再轻柔启动尾声；只作音效区别，不修改恢复数值。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "meal",
+              "name": "金拱喵快乐餐盒 · 1.8 秒",
+              "duration": 1.8,
+              "parts": [
+                {
+                  "source": "owl-plastic",
+                  "length": 0.25,
+                  "at": 0,
+                  "start": 0,
+                  "level": 0.65,
+                  "label": "打开/拿动餐盒（包装组件）"
+                },
+                {
+                  "source": "bsb-0352",
+                  "length": 1.1,
+                  "at": 0.28,
+                  "start": 0.65,
+                  "level": 1,
+                  "label": "吃餐盒"
+                },
+                {
+                  "source": "heal-soft",
+                  "length": 0.18,
+                  "at": 1.42,
+                  "start": 0.02,
+                  "level": 0.25,
+                  "label": "立即恢复点缀"
+                },
+                {
+                  "source": "rpg-bubble2",
+                  "length": 0.16,
+                  "at": 1.64,
+                  "start": 0.02,
+                  "level": 0.2,
+                  "label": "持续恢复启动点缀"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "M5",
+          "name": "包装＋连吃",
+          "note": "三级组合恢复：先短促完成提示，再轻柔启动尾声；只作音效区别，不修改恢复数值。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "meal",
+              "name": "金拱喵快乐餐盒 · 1.8 秒",
+              "duration": 1.8,
+              "parts": [
+                {
+                  "source": "fc-box4",
+                  "length": 0.25,
+                  "at": 0,
+                  "start": 0,
+                  "level": 0.65,
+                  "label": "打开/拿动餐盒（包装组件）"
+                },
+                {
+                  "source": "fc-cat",
+                  "length": 1.1,
+                  "at": 0.28,
+                  "start": 34,
+                  "level": 1,
+                  "label": "吃餐盒"
+                },
+                {
+                  "source": "rpg-bubble3",
+                  "length": 0.18,
+                  "at": 1.42,
+                  "start": 0.02,
+                  "level": 0.25,
+                  "label": "立即恢复点缀"
+                },
+                {
+                  "source": "rpg-bubble3",
+                  "length": 0.16,
+                  "at": 1.64,
+                  "start": 0.02,
+                  "level": 0.2,
+                  "label": "持续恢复启动点缀"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "noodle",
+      "title": "四级食物 · 红烧鱼面",
+      "description": "2.4 秒：吸溜面 → 打嗝 → 立即恢复＋持续恢复启动。",
+      "items": [
+        {
+          "id": "c4_11",
+          "name": "喵师傅红烧鱼面",
+          "tier": 4,
+          "seconds": 2.4,
+          "effect": "立即恢复 24；16 秒内持续恢复 48 生命"
+        }
+      ],
+      "candidates": [
+        {
+          "id": "N1",
+          "name": "清晰连续吸溜＋短嗝",
+          "note": "真实吸食录音设计的吃面节奏＋真实短打嗝。原吸食多为吸管录音，不冒充实录吃面；原声均可单独听。",
+          "reason": "N1 / N2 优先；五组使用不同吸食原录音，并有不同打嗝结尾。",
+          "versions": [
+            {
+              "id": "noodle",
+              "name": "喵师傅红烧鱼面 · 2.4 秒",
+              "duration": 2.4,
+              "parts": [
+                {
+                  "source": "sb-slurp1",
+                  "length": 1.55,
+                  "at": 0,
+                  "start": 0,
+                  "level": 1,
+                  "label": "吸溜面（使用吸食录音组件）"
+                },
+                {
+                  "source": "sb-burp",
+                  "length": 0.4,
+                  "at": 1.62,
+                  "start": 0,
+                  "level": 0.8,
+                  "label": "吃完打嗝"
+                },
+                {
+                  "source": "rpg-bubble",
+                  "length": 0.18,
+                  "at": 2.05,
+                  "start": 0.02,
+                  "level": 0.24,
+                  "label": "立即恢复点缀"
+                },
+                {
+                  "source": "rpg-bubble2",
+                  "length": 0.14,
+                  "at": 2.26,
+                  "start": 0.02,
+                  "level": 0.2,
+                  "label": "持续恢复启动点缀"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "name": "较饱满的吸溜＋短嗝",
+          "note": "真实吸食录音设计的吃面节奏＋真实短打嗝。原吸食多为吸管录音，不冒充实录吃面；原声均可单独听。",
+          "reason": "N1 / N2 优先；五组使用不同吸食原录音，并有不同打嗝结尾。",
+          "versions": [
+            {
+              "id": "noodle",
+              "name": "喵师傅红烧鱼面 · 2.4 秒",
+              "duration": 2.4,
+              "parts": [
+                {
+                  "source": "sb-slurp2",
+                  "length": 1.55,
+                  "at": 0,
+                  "start": 0.4,
+                  "level": 1,
+                  "label": "吸溜面（使用吸食录音组件）"
+                },
+                {
+                  "source": "sb-belch",
+                  "length": 0.43,
+                  "at": 1.62,
+                  "start": 0.03,
+                  "level": 0.8,
+                  "label": "吃完打嗝"
+                },
+                {
+                  "source": "heal-bright",
+                  "length": 0.18,
+                  "at": 2.05,
+                  "start": 0.02,
+                  "level": 0.24,
+                  "label": "立即恢复点缀"
+                },
+                {
+                  "source": "rpg-bubble2",
+                  "length": 0.14,
+                  "at": 2.26,
+                  "start": 0.02,
+                  "level": 0.2,
+                  "label": "持续恢复启动点缀"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "N3",
+          "name": "较细的吸溜＋短嗝",
+          "note": "真实吸食录音设计的吃面节奏＋真实短打嗝。原吸食多为吸管录音，不冒充实录吃面；原声均可单独听。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "noodle",
+              "name": "喵师傅红烧鱼面 · 2.4 秒",
+              "duration": 2.4,
+              "parts": [
+                {
+                  "source": "sb-slurp3",
+                  "length": 1.55,
+                  "at": 0,
+                  "start": 0.1,
+                  "level": 1,
+                  "label": "吸溜面（使用吸食录音组件）"
+                },
+                {
+                  "source": "rpg-burp",
+                  "length": 0.42,
+                  "at": 1.62,
+                  "start": 0.02,
+                  "level": 0.8,
+                  "label": "吃完打嗝"
+                },
+                {
+                  "source": "rpg-bubble2",
+                  "length": 0.18,
+                  "at": 2.05,
+                  "start": 0.02,
+                  "level": 0.24,
+                  "label": "立即恢复点缀"
+                },
+                {
+                  "source": "rpg-bubble2",
+                  "length": 0.14,
+                  "at": 2.26,
+                  "start": 0.02,
+                  "level": 0.2,
+                  "label": "持续恢复启动点缀"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "name": "清楚吸食纹理＋短嗝",
+          "note": "真实吸食录音设计的吃面节奏＋真实短打嗝。原吸食多为吸管录音，不冒充实录吃面；原声均可单独听。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "noodle",
+              "name": "喵师傅红烧鱼面 · 2.4 秒",
+              "duration": 2.4,
+              "parts": [
+                {
+                  "source": "bsb-1244",
+                  "length": 1.55,
+                  "at": 0,
+                  "start": 0.2,
+                  "level": 1,
+                  "label": "吸溜面（使用吸食录音组件）"
+                },
+                {
+                  "source": "sb-burp2",
+                  "length": 0.43,
+                  "at": 1.62,
+                  "start": 0.05,
+                  "level": 0.8,
+                  "label": "吃完打嗝"
+                },
+                {
+                  "source": "heal-soft",
+                  "length": 0.18,
+                  "at": 2.05,
+                  "start": 0.02,
+                  "level": 0.24,
+                  "label": "立即恢复点缀"
+                },
+                {
+                  "source": "rpg-bubble2",
+                  "length": 0.14,
+                  "at": 2.26,
+                  "start": 0.02,
+                  "level": 0.2,
+                  "label": "持续恢复启动点缀"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "N5",
+          "name": "短促分段吸食＋短嗝",
+          "note": "真实吸食录音设计的吃面节奏＋真实短打嗝。原吸食多为吸管录音，不冒充实录吃面；原声均可单独听。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "noodle",
+              "name": "喵师傅红烧鱼面 · 2.4 秒",
+              "duration": 2.4,
+              "parts": [
+                {
+                  "source": "bsb-1245",
+                  "length": 1.55,
+                  "at": 0,
+                  "start": 0.1,
+                  "level": 1,
+                  "label": "吸溜面（使用吸食录音组件）"
+                },
+                {
+                  "source": "sb-burp2",
+                  "length": 0.4,
+                  "at": 1.62,
+                  "start": 0.67,
+                  "level": 0.8,
+                  "label": "吃完打嗝"
+                },
+                {
+                  "source": "rpg-bubble3",
+                  "length": 0.18,
+                  "at": 2.05,
+                  "start": 0.02,
+                  "level": 0.24,
+                  "label": "立即恢复点缀"
+                },
+                {
+                  "source": "rpg-bubble2",
+                  "length": 0.14,
+                  "at": 2.26,
+                  "start": 0.02,
+                  "level": 0.2,
+                  "label": "持续恢复启动点缀"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "feast",
+      "title": "四级食物 · 海鲜拼盘",
+      "description": "1.2 秒：大吃两口 → 打嗝 → 立即恢复完成。当前数据为立即恢复 60，试听依此匹配。",
+      "items": [
+        {
+          "id": "f4",
+          "name": "豪华海鲜拼盘",
+          "tier": 4,
+          "seconds": 1.2,
+          "effect": "立即恢复 60 生命"
+        }
+      ],
+      "candidates": [
+        {
+          "id": "H1",
+          "name": "大口嚼＋满足短嗝",
+          "note": "1.2 秒内保留多口进食和短打嗝，只取短促结尾，不把食用时长拉长或修改食物数值。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "feast",
+              "name": "豪华海鲜拼盘 · 1.2 秒",
+              "duration": 1.2,
+              "parts": [
+                {
+                  "source": "sb-eat",
+                  "length": 0.67,
+                  "at": 0,
+                  "start": 0.05,
+                  "level": 1,
+                  "label": "连续大口吃"
+                },
+                {
+                  "source": "sb-chips",
+                  "length": 0.26,
+                  "at": 0.28,
+                  "start": 0.1,
+                  "level": 0.65,
+                  "label": "第二口食物"
+                },
+                {
+                  "source": "sb-burp",
+                  "length": 0.36,
+                  "at": 0.71,
+                  "start": 0,
+                  "level": 0.8,
+                  "label": "吃饱短嗝"
+                },
+                {
+                  "source": "rpg-bubble",
+                  "length": 0.12,
+                  "at": 1.08,
+                  "start": 0.02,
+                  "level": 0.24,
+                  "label": "立即恢复完成提示"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "H2",
+          "name": "猫咪连吃＋短嗝",
+          "note": "1.2 秒内保留多口进食和短打嗝，只取短促结尾，不把食用时长拉长或修改食物数值。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "feast",
+              "name": "豪华海鲜拼盘 · 1.2 秒",
+              "duration": 1.2,
+              "parts": [
+                {
+                  "source": "fc-cat",
+                  "length": 0.67,
+                  "at": 0,
+                  "start": 24,
+                  "level": 1,
+                  "label": "连续大口吃"
+                },
+                {
+                  "source": "fc-cat",
+                  "length": 0.26,
+                  "at": 0.28,
+                  "start": 40,
+                  "level": 0.65,
+                  "label": "第二口食物"
+                },
+                {
+                  "source": "sb-belch",
+                  "length": 0.36,
+                  "at": 0.71,
+                  "start": 0.03,
+                  "level": 0.8,
+                  "label": "吃饱短嗝"
+                },
+                {
+                  "source": "heal-bright",
+                  "length": 0.12,
+                  "at": 1.08,
+                  "start": 0.02,
+                  "level": 0.24,
+                  "label": "立即恢复完成提示"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "H3",
+          "name": "清楚咀嚼＋短嗝",
+          "note": "1.2 秒内保留多口进食和短打嗝，只取短促结尾，不把食用时长拉长或修改食物数值。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "feast",
+              "name": "豪华海鲜拼盘 · 1.2 秒",
+              "duration": 1.2,
+              "parts": [
+                {
+                  "source": "sb-chips2",
+                  "length": 0.67,
+                  "at": 0,
+                  "start": 0.15,
+                  "level": 1,
+                  "label": "连续大口吃"
+                },
+                {
+                  "source": "sb-chips",
+                  "length": 0.26,
+                  "at": 0.28,
+                  "start": 0.1,
+                  "level": 0.65,
+                  "label": "第二口食物"
+                },
+                {
+                  "source": "rpg-burp",
+                  "length": 0.36,
+                  "at": 0.71,
+                  "start": 0.02,
+                  "level": 0.8,
+                  "label": "吃饱短嗝"
+                },
+                {
+                  "source": "rpg-bubble2",
+                  "length": 0.12,
+                  "at": 1.08,
+                  "start": 0.02,
+                  "level": 0.24,
+                  "label": "立即恢复完成提示"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "H4",
+          "name": "软嚼加一口＋短嗝",
+          "note": "1.2 秒内保留多口进食和短打嗝，只取短促结尾，不把食用时长拉长或修改食物数值。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "feast",
+              "name": "豪华海鲜拼盘 · 1.2 秒",
+              "duration": 1.2,
+              "parts": [
+                {
+                  "source": "bsb-0352",
+                  "length": 0.67,
+                  "at": 0,
+                  "start": 0.65,
+                  "level": 1,
+                  "label": "连续大口吃"
+                },
+                {
+                  "source": "fc-cat",
+                  "length": 0.26,
+                  "at": 0.28,
+                  "start": 40,
+                  "level": 0.65,
+                  "label": "第二口食物"
+                },
+                {
+                  "source": "sb-burp2",
+                  "length": 0.36,
+                  "at": 0.71,
+                  "start": 0.05,
+                  "level": 0.8,
+                  "label": "吃饱短嗝"
+                },
+                {
+                  "source": "heal-soft",
+                  "length": 0.12,
+                  "at": 1.08,
+                  "start": 0.02,
+                  "level": 0.24,
+                  "label": "立即恢复完成提示"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "H5",
+          "name": "猫咪大餐＋短嗝",
+          "note": "1.2 秒内保留多口进食和短打嗝，只取短促结尾，不把食用时长拉长或修改食物数值。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "feast",
+              "name": "豪华海鲜拼盘 · 1.2 秒",
+              "duration": 1.2,
+              "parts": [
+                {
+                  "source": "fc-cat",
+                  "length": 0.67,
+                  "at": 0,
+                  "start": 34,
+                  "level": 1,
+                  "label": "连续大口吃"
+                },
+                {
+                  "source": "sb-chips",
+                  "length": 0.26,
+                  "at": 0.28,
+                  "start": 0.1,
+                  "level": 0.65,
+                  "label": "第二口食物"
+                },
+                {
+                  "source": "sb-burp2",
+                  "length": 0.36,
+                  "at": 0.71,
+                  "start": 0.67,
+                  "level": 0.8,
+                  "label": "吃饱短嗝"
+                },
+                {
+                  "source": "rpg-bubble3",
+                  "length": 0.12,
+                  "at": 1.08,
+                  "start": 0.02,
+                  "level": 0.24,
+                  "label": "立即恢复完成提示"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
