@@ -262,48 +262,6 @@
           "gain": 0.06529824822144781
         }
       ]
-    },
-    "food-fries": {
-      "file": "food-fries.flac",
-      "candidate": "F1",
-      "version": "fries",
-      "sourceFile": "audio/F1-fries-6609367953.flac",
-      "auditionSha256": "660936795398a5b58895446064dd01cd406263cb56eb2943346c82994666b598",
-      "sha256": "e4f4ad14f1aad16a0e9af036bd944f82df8adeebab86d48eedc345ed8129d456",
-      "duration": 1.8,
-      "gainDb": -3.3200000000000003,
-      "lufs": -29.98,
-      "truePeakDbfs": -9.07,
-      "license": "CC-BY-3.0 + CC0-1.0 + FilmCow Royalty Free SFX License",
-      "parts": [
-        {
-          "source": "fc-bag3",
-          "length": 0.25,
-          "at": 0,
-          "start": 0,
-          "level": 0.65,
-          "label": "拿出食物的包装声",
-          "gain": 1.7476338030534673
-        },
-        {
-          "source": "sb-chips",
-          "length": 1.26,
-          "at": 0.28,
-          "start": 0,
-          "level": 1,
-          "label": "薯条咀嚼",
-          "gain": 2.4320114807670876
-        },
-        {
-          "source": "rpg-bubble",
-          "length": 0.2,
-          "at": 1.6,
-          "start": 0.02,
-          "level": 0.24,
-          "label": "立即恢复完成提示",
-          "gain": 0.06754782527454213
-        }
-      ]
     }
   },
   "sources": {
@@ -675,10 +633,9 @@
     "c3_1": "food-ice",
     "c1_9": "food-water",
     "c1_1": "food-milk",
-    "f3": "food-can",
-    "c1_10": "food-fries",
-    "c4_8": "food-fries"
+    "f3": "food-can"
   },
   "processing": "User-selected audition versions; original per-component fixed gain matching and cut/assembly retained. Only one additional constant gain per complete asset to match current gun bank near current -28.4 LUFS gun bank at -30.0 LUFS; true-peak ceiling -1 dBTP. No new effects or time stretching.",
-  "retained": "Gunshots, reloads, melee and tier-4 food unchanged."
+  "retained": "Gunshots, reloads, melee and tier-4 food unchanged.",
+  "superseded": "food-fries replaced by Eating Chips in approved-interactions.json; tier-4 food now also selected"
 }

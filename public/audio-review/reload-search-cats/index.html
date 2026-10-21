@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>换弹、搜索与猫叫试听 · 猫尾乡野</title>
+    <link rel="stylesheet" href="review.css" />
+  </head>
+  <body>
+    <main>
+      <header class="intro">
+        <div class="eyebrow">猫尾乡野 · 音效选材</div>
+        <h1>换弹、轻搜索与猫咪小脾气。</h1>
+        <p>
+          4 类 × 10 个，共 40
+          个新候选。上一轮已选声音已接入游戏；<strong>本页候选尚未接入</strong>。猫叫可多选并随机连听，搜索可短循环试听。
+        </p>
+        <div class="links">
+          <a href="../interactions/index.html"
+            >上一轮：搜索、容器与四级食物 · 115候选</a
+          >
+          <a href="../selected/index.html">现用枪声与换弹</a
+          ><a href="../index.html">上一轮原声库</a
+          ><a href="#research">选材依据与授权</a>
+        </div>
+      </header>
+      <section class="desk" aria-label="试听控制">
+        <div class="desk-row">
+          <label class="volume"
+            >试听音量
+            <input
+              id="volume"
+              type="range"
+              min="0"
+              max="100"
+              value="100"
+            /><output id="volume-label">100%</output></label
+          >
+          <button id="stop" class="quiet">停止全部</button>
+          <button id="sequence">连听本类 10 个</button>
+          <button id="export" class="quiet">复制我的选择</button>
+        </div>
+        <p id="status" role="status" aria-live="polite">正在载入候选清单…</p>
+      </section>
+      <nav id="categories" aria-label="音效类别"></nav>
+      <section class="category-header">
+        <div>
+          <div class="eyebrow" id="category-count"></div>
+          <h2 id="category-title"></h2>
+        </div>
+        <p id="category-description"></p>
+        <div id="food-items"></div>
+        <div class="options">
+          <label id="loop-wrap" hidden
+            >搜索循环<select id="loop-seconds">
+              <option value="0">单次原速</option>
+              <option value="6" selected>循环 6 秒</option>
+              <option value="12">循环 12 秒</option>
+            </select></label
+          >
+          <button id="family" hidden>选择同风格前 5 条</button
+          ><button id="random" hidden>随机连听 5 条（已选优先）</button>
+          <label id="version-wrap" hidden
+            >食物版本
+            <select id="version"></select
+          ></label>
+          <label id="effects-wrap" hidden
+            ><input type="checkbox" id="effects" checked />
+            加入轻微恢复点缀</label
+          >
+          <label id="reload-wrap" hidden
+            >换弹播放
+            <select id="reload-time">
+              <option value="0">原速</option>
+              <option value="1.5">同步 1.5 秒动作</option>
+              <option value="2.5">同步 2.5 秒动作</option>
+              <option value="3.5">同步 3.5 秒动作</option>
+            </select></label
+          >
+        </div>
+        <p class="small" id="context-note"></p>
+      </section>
+      <section id="candidates" aria-label="本类候选"></section>
+      <section class="selection panel">
+        <h2>已选 <span id="selection-count">0</span> 项</h2>
+        <p>
+          换弹与搜索各选一条，受击与警戒可多选，推荐至少各选五条。选择只保留在当前页面，不会写入游戏存档；离开前可复制清单。
+        </p>
+        <pre id="selection-text">还没有选择。</pre>
+      </section>
+      <section id="research" class="panel">
+        <h2>这次怎样找，怎样筛</h2>
+        <p>
+          先查开发者讨论与热门发行页，再核对原作者授权、动作内容和下载/评分依据。下载次数不等于采用它的游戏数量；库的热度也不等于每条音效的热度。
+        </p>
+        <p>
+          换弹采用此前未出现的开放游戏原音：OpenSoldat 9条、Xonotic
+          1条，共两个作者团队。搜索只留一个短材料动作与停顿，固定压低约10.5dB。受击喵降低约6dB，警戒降低约3.7dB；前五条为同作者同系列的独立录音，其他声线另作比较。
+        </p>
+        <p>
+          仅剪切、固定音量匹配，剪切边缘做 4
+          毫秒防咔哒处理；不变调、不拉伸、不加混响或失真。换弹播放器的同步试听会改变播放速度，原速按钮始终保留。原声展开后可单独听完整录音，只做必要的固定防削波衰减。
+        </p>
+        <details>
+          <summary>搜索范围、未采用的热门库与访问限制</summary>
+          <div id="research-links"></div>
+        </details>
+        <details>
+          <summary>全部作者、热度证据与许可证</summary>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>素材 / 作者</th>
+                  <th>使用依据</th>
+                  <th>授权</th>
+                </tr>
+              </thead>
+              <tbody id="source-table"></tbody>
+            </table>
+          </div>
+        </details>
+        <p class="small">
+          数值为本次 2026-10-21
+          核验快照。一些独立猫叫与Foley没有公开下载数，明确标为动作匹配补充；不声称全部都是热门单品。部分热门原梗和素材库
+          的授权不能支持公开随游戏分发，只作站外参考。不把普通猫叫包装成已确认的网红原梗，也不声称录制了猫受伤。
+        </p>
+      </section>
+      <footer>本页40个候选尚未接入 · 你已选择的上一轮声音已更新游戏</footer>
+    </main>
+    <dialog id="copy-dialog">
+      <h2>把下面这段发给我即可</h2>
+      <textarea id="copy-text" readonly aria-label="音效选择清单"></textarea
+      ><button id="close-copy">关闭</button>
+    </dialog>
+    <script type="module" src="review.js"></script>
+  </body>
+</html>

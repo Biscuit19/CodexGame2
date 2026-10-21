@@ -10,7 +10,7 @@ import reloadShotgun from "./assets/audio/reload-shotgun.flac?url";
 import equipWeapon from "./assets/audio/equip-weapon.flac?url";
 import equipGear from "./assets/audio/equip-gear.flac?url";
 import roll from "./assets/audio/roll.flac?url";
-import melee from "./assets/audio/melee.ogg?url";
+
 import foodFish from "./assets/audio/food-fish.flac?url";
 import foodPaste from "./assets/audio/food-paste.flac?url";
 import foodIce from "./assets/audio/food-ice.flac?url";
@@ -18,6 +18,26 @@ import foodWater from "./assets/audio/food-water.flac?url";
 import foodMilk from "./assets/audio/food-milk.flac?url";
 import foodCan from "./assets/audio/food-can.flac?url";
 import foodFries from "./assets/audio/food-fries.flac?url";
+import meleeFirst from "./assets/audio/melee-first.flac?url";
+import meleeSecond from "./assets/audio/melee-second.flac?url";
+import switchMelee from "./assets/audio/switch-melee.flac?url";
+import foodTier4 from "./assets/audio/food-tier4.flac?url";
+import openBox from "./assets/audio/open-box.flac?url";
+import openToolbox from "./assets/audio/open-toolbox.flac?url";
+import openCooler from "./assets/audio/open-cooler.flac?url";
+import openTrashcan from "./assets/audio/open-trashcan.flac?url";
+import openBasket from "./assets/audio/open-basket.flac?url";
+import openLitter from "./assets/audio/open-litter.flac?url";
+import openCabinet from "./assets/audio/open-cabinet.flac?url";
+import openMedical from "./assets/audio/open-medical.flac?url";
+import openWeapon from "./assets/audio/open-weapon.flac?url";
+import openBed from "./assets/audio/open-bed.flac?url";
+import openSafe from "./assets/audio/open-safe.flac?url";
+import openCorpse from "./assets/audio/open-corpse.flac?url";
+import discover3 from "./assets/audio/discover-3.flac?url";
+import discover4 from "./assets/audio/discover-4.flac?url";
+import discover5 from "./assets/audio/discover-5.flac?url";
+import pack from "./assets/audio/pack.flac?url";
 export const sampleBank = {
   "shot-smg": smg,
   "shot-rifle": rifle,
@@ -30,7 +50,26 @@ export const sampleBank = {
   "equip-weapon": equipWeapon,
   "equip-gear": equipGear,
   roll,
-  melee,
+  "melee-first": meleeFirst,
+  "melee-second": meleeSecond,
+  "switch-melee": switchMelee,
+  "food-tier4": foodTier4,
+  "open-box": openBox,
+  "open-toolbox": openToolbox,
+  "open-cooler": openCooler,
+  "open-trashcan": openTrashcan,
+  "open-basket": openBasket,
+  "open-litter": openLitter,
+  "open-cabinet": openCabinet,
+  "open-medical": openMedical,
+  "open-weapon": openWeapon,
+  "open-bed": openBed,
+  "open-safe": openSafe,
+  "open-corpse": openCorpse,
+  "discover-3": discover3,
+  "discover-4": discover4,
+  "discover-5": discover5,
+  pack: pack,
   "food-fish": foodFish,
   "food-paste": foodPaste,
   "food-ice": foodIce,
@@ -49,12 +88,17 @@ export const foodSamples: Partial<Record<string, SampleKey>> = {
   f3: "food-can",
   c1_10: "food-fries",
   c4_8: "food-fries",
+  f4: "food-tier4",
+  c4_11: "food-tier4",
 };
 export type SoundOptions = {
   weaponClass?: WeaponClass;
   seconds?: number;
   enemy?: boolean;
   foodId?: string;
+  containerType?: string;
+  swing?: number;
+  tier?: number;
 };
 export function sampleChoice(name: string, options: SoundOptions = {}) {
   const kind = options.weaponClass ?? "rifle";
@@ -65,7 +109,19 @@ export function sampleChoice(name: string, options: SoundOptions = {}) {
         ? foodSamples[options.foodId ?? ""]
         : name === "reload"
           ? `reload-${kind}`
-          : name;
+          : name === "melee"
+            ? (options.swing ?? 1) % 2 === 1
+              ? "melee-first"
+              : "melee-second"
+            : name === "switch-weapon"
+              ? "equip-weapon"
+              : name === "open"
+                ? `open-${options.containerType}`
+                : name === "loot"
+                  ? (options.tier ?? 1) >= 3
+                    ? `discover-${Math.min(5, options.tier!)}`
+                    : undefined
+                  : name;
   if (!key || !(key in sampleBank)) return;
   return {
     key: key as SampleKey,

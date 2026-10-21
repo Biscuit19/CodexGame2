@@ -96,6 +96,9 @@ def install_game(manifest):
         actions = json.loads((game / 'approved-actions.json').read_text())
         data['approvedActions'] = {'metadata':'approved-actions.json', 'tracks':actions['tracks']}
         data['license'] = 'Mixed CC0, CC BY 3.0, CC BY-SA 3.0 and FilmCow royalty-free; see per-track metadata'
+    if (game / 'approved-interactions.json').exists():
+        interactions = json.loads((game / 'approved-interactions.json').read_text())
+        data['approvedInteractions'] = {'metadata':'approved-interactions.json', 'tracks':interactions['tracks']}
     (game / 'sources.json').write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n')
     print('Installed 8 lossless FLAC gun sounds; existing approved actions and retained Foley untouched.')
 

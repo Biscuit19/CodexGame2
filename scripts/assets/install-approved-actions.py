@@ -31,3 +31,7 @@ legacy=json.loads((G/'foley-sources.json').read_text());legacy['tracks']={k:v fo
 main=json.loads((G/'sources.json').read_text());main['approvedActions']={'metadata':'approved-actions.json','tracks':tracks};main['retainedFoley']={'metadata':'foley-sources.json','tracks':legacy['tracks']};main['license']='Mixed CC0, CC BY 3.0, CC BY-SA 3.0 and FilmCow royalty-free; see credits and per-track metadata';(G/'sources.json').write_text(json.dumps(main,ensure_ascii=False,indent=2)+'\n')
 for k in ['roll','equip-weapon','equip-gear']:(G/(k+'.ogg')).unlink(missing_ok=True)
 print('Installed',len(tracks),'approved action/food tracks; matched -30.0 LUFS (1.6 dB below current gun bank); guns/reloads/melee unchanged')
+
+# Later explicit selections supersede this historical mapping.
+if (G/'approved-interactions.json').exists():
+ subprocess.run(['python',str(R/'scripts/assets/install-approved-interactions.py')],check=True)

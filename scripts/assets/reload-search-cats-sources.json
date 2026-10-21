@@ -1,0 +1,1765 @@
+{
+  "version": 1,
+  "date": "2026-10-22 Asia/Shanghai",
+  "previewOnly": true,
+  "processing": "Only original sound recordings, cuts, fixed gain and 4ms cut-edge ramps. Search clips include a short quiet pause for looping; no new layering, EQ, pitch or generated sounds. Search at 30%, hurt at 50%, warning at65% of general audition amplitude. Reload sync changes playback speed only in the player.",
+  "groups": [
+    {
+      "id": "reload",
+      "title": "换弹 · 新的开放游戏路线",
+      "description": "10个未出现在前两轮候选中的成品：OpenSoldat 9个不同枪械动作＋Xonotic 1个。不是十位作者，也不是现场实枪录音。先原速听，再比较同步时长。",
+      "items": [],
+      "candidateCount": 10,
+      "candidates": [
+        {
+          "id": "NR1",
+          "name": "MP5 · 紧凑换弹",
+          "note": "OpenSoldat实际游戏成品文件，原速完整动作；不是新录制的实枪现场音频。保留原成品音色，部分原件采样率较低，提供完整原声对照。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 1.89458,
+              "level": 1,
+              "parts": [
+                {
+                  "source": "soldat-mp5",
+                  "start": 0,
+                  "length": 1.88458,
+                  "at": 0,
+                  "level": 1,
+                  "label": "MP5 · 紧凑换弹"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "NR2",
+          "name": "AK74 · 弹匣与机件",
+          "note": "OpenSoldat实际游戏成品文件，原速完整动作；不是新录制的实枪现场音频。保留原成品音色，部分原件采样率较低，提供完整原声对照。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 2.561361,
+              "level": 1,
+              "parts": [
+                {
+                  "source": "soldat-ak74",
+                  "start": 0.004331,
+                  "length": 2.551361,
+                  "at": 0,
+                  "level": 1,
+                  "label": "AK74 · 弹匣与机件"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "NR3",
+          "name": "AUG · 利落换弹",
+          "note": "OpenSoldat实际游戏成品文件，原速完整动作；不是新录制的实枪现场音频。保留原成品音色，部分原件采样率较低，提供完整原声对照。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 1.997256,
+              "level": 1,
+              "parts": [
+                {
+                  "source": "soldat-steyraug",
+                  "start": 0,
+                  "length": 1.987256,
+                  "at": 0,
+                  "level": 1,
+                  "label": "AUG · 利落换弹"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "NR4",
+          "name": "Colt · 手枪换弹",
+          "note": "OpenSoldat实际游戏成品文件，原速完整动作；不是新录制的实枪现场音频。保留原成品音色，部分原件采样率较低，提供完整原声对照。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 1.053039,
+              "level": 1,
+              "parts": [
+                {
+                  "source": "soldat-colt1911",
+                  "start": 0,
+                  "length": 1.043039,
+                  "at": 0,
+                  "level": 1,
+                  "label": "Colt · 手枪换弹"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "NR5",
+          "name": "Desert Eagle · 套筒收尾",
+          "note": "OpenSoldat实际游戏成品文件，原速完整动作；不是新录制的实枪现场音频。保留原成品音色，部分原件采样率较低，提供完整原声对照。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 1.706712,
+              "level": 1,
+              "parts": [
+                {
+                  "source": "soldat-deserteagle",
+                  "start": 0.024331,
+                  "length": 1.696712,
+                  "at": 0,
+                  "level": 1,
+                  "label": "Desert Eagle · 套筒收尾"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "NR6",
+          "name": "Barrett · 重型换弹",
+          "note": "OpenSoldat实际游戏成品文件，原速完整动作；不是新录制的实枪现场音频。保留原成品音色，部分原件采样率较低，提供完整原声对照。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 4.242562,
+              "level": 1,
+              "parts": [
+                {
+                  "source": "soldat-barretm82",
+                  "start": 0.334331,
+                  "length": 4.232562,
+                  "at": 0,
+                  "level": 1,
+                  "label": "Barrett · 重型换弹"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "NR7",
+          "name": "Ruger · 步枪机件",
+          "note": "OpenSoldat实际游戏成品文件，原速完整动作；不是新录制的实枪现场音频。保留原成品音色，部分原件采样率较低，提供完整原声对照。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 1.533333,
+              "level": 1,
+              "parts": [
+                {
+                  "source": "soldat-ruger77",
+                  "start": 0.184331,
+                  "length": 1.523333,
+                  "at": 0,
+                  "level": 1,
+                  "label": "Ruger · 步枪机件"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "NR8",
+          "name": "M249 · 分段装填",
+          "note": "OpenSoldat实际游戏成品文件，原速完整动作；不是新录制的实枪现场音频。保留原成品音色，部分原件采样率较低，提供完整原声对照。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 4.292132,
+              "level": 1,
+              "parts": [
+                {
+                  "source": "soldat-m249",
+                  "start": 0.054331,
+                  "length": 4.282132,
+                  "at": 0,
+                  "level": 1,
+                  "label": "M249 · 分段装填"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "NR9",
+          "name": "M79 · 开膛装填",
+          "note": "OpenSoldat实际游戏成品文件，原速完整动作；不是新录制的实枪现场音频。保留原成品音色，部分原件采样率较低，提供完整原声对照。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 1.946757,
+              "level": 1,
+              "parts": [
+                {
+                  "source": "soldat-m79",
+                  "start": 1.064331,
+                  "length": 1.936757,
+                  "at": 0,
+                  "level": 1,
+                  "label": "M79 · 开膛装填"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "NR10",
+          "name": "Xonotic · 游戏机械换弹",
+          "note": "另一开放FPS的成品换弹，保留原速、完整机械节奏；GPLv3+原音与处理说明随页提供。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 1.829751,
+              "level": 1,
+              "parts": [
+                {
+                  "source": "xonotic-reload",
+                  "start": 0.124331,
+                  "length": 1.819751,
+                  "at": 0,
+                  "level": 1,
+                  "label": "Xonotic · 游戏机械换弹"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "search",
+      "title": "轻量持续搜索 · 短循环",
+      "description": "10个短素材，弱化到一般动作约30%幅度。可单次播放、6/12秒循环。材质类比供比较；不用复杂翻找叠加，不冒充鸭科夫或三角洲原音。",
+      "items": [],
+      "candidateCount": 10,
+      "candidates": [
+        {
+          "id": "LS1",
+          "name": "软包轻翻 · A",
+          "note": "只取一个较短的材料动作，保留短停顿；按低于普通动作约10.5dB的基准试听，避免持续盖住脚步或枪声。不是原游戏搜索录音，也不叠加多种碰撞。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "轻量循环",
+              "duration": 0.85,
+              "level": 0.3,
+              "parts": [
+                {
+                  "source": "elk-0593128c73",
+                  "start": 0.064331,
+                  "length": 0.55,
+                  "at": 0,
+                  "level": 1,
+                  "label": "软包轻翻 · A"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "LS2",
+          "name": "软包轻翻 · B",
+          "note": "只取一个较短的材料动作，保留短停顿；按低于普通动作约10.5dB的基准试听，避免持续盖住脚步或枪声。不是原游戏搜索录音，也不叠加多种碰撞。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "轻量循环",
+              "duration": 0.85,
+              "level": 0.3,
+              "parts": [
+                {
+                  "source": "elk-1bb0e9ddf0",
+                  "start": 0,
+                  "length": 0.55,
+                  "at": 0,
+                  "level": 1,
+                  "label": "软包轻翻 · B"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "LS3",
+          "name": "小片纸材轻动",
+          "note": "只取一个较短的材料动作，保留短停顿；按低于普通动作约10.5dB的基准试听，避免持续盖住脚步或枪声。不是原游戏搜索录音，也不叠加多种碰撞。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "轻量循环",
+              "duration": 0.85,
+              "level": 0.3,
+              "parts": [
+                {
+                  "source": "elk-777f22bf80",
+                  "start": 0.124331,
+                  "length": 0.55,
+                  "at": 0,
+                  "level": 1,
+                  "label": "小片纸材轻动"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "LS4",
+          "name": "轻轻拨纸",
+          "note": "只取一个较短的材料动作，保留短停顿；按低于普通动作约10.5dB的基准试听，避免持续盖住脚步或枪声。不是原游戏搜索录音，也不叠加多种碰撞。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "轻量循环",
+              "duration": 0.85,
+              "level": 0.3,
+              "parts": [
+                {
+                  "source": "elk-c20fac6028",
+                  "start": 0.094331,
+                  "length": 0.55,
+                  "at": 0,
+                  "level": 1,
+                  "label": "轻轻拨纸"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "LS5",
+          "name": "细布料轻擦",
+          "note": "只取一个较短的材料动作，保留短停顿；按低于普通动作约10.5dB的基准试听，避免持续盖住脚步或枪声。不是原游戏搜索录音，也不叠加多种碰撞。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "轻量循环",
+              "duration": 0.85,
+              "level": 0.3,
+              "parts": [
+                {
+                  "source": "ci-435f16b7ac",
+                  "start": 0.034331,
+                  "length": 0.55,
+                  "at": 0,
+                  "level": 1,
+                  "label": "细布料轻擦"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "LS6",
+          "name": "纸片小幅挪动",
+          "note": "只取一个较短的材料动作，保留短停顿；按低于普通动作约10.5dB的基准试听，避免持续盖住脚步或枪声。不是原游戏搜索录音，也不叠加多种碰撞。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "轻量循环",
+              "duration": 0.85,
+              "level": 0.3,
+              "parts": [
+                {
+                  "source": "ci-26318316d2",
+                  "start": 0,
+                  "length": 0.55,
+                  "at": 0,
+                  "level": 1,
+                  "label": "纸片小幅挪动"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "LS7",
+          "name": "轻布声循环",
+          "note": "只取一个较短的材料动作，保留短停顿；按低于普通动作约10.5dB的基准试听，避免持续盖住脚步或枪声。不是原游戏搜索录音，也不叠加多种碰撞。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "轻量循环",
+              "duration": 0.85,
+              "level": 0.3,
+              "parts": [
+                {
+                  "source": "owl-cloth02",
+                  "start": 0.204331,
+                  "length": 0.55,
+                  "at": 0,
+                  "level": 1,
+                  "label": "轻布声循环"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "LS8",
+          "name": "轻取小物件",
+          "note": "只取一个较短的材料动作，保留短停顿；按低于普通动作约10.5dB的基准试听，避免持续盖住脚步或枪声。不是原游戏搜索录音，也不叠加多种碰撞。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "轻量循环",
+              "duration": 0.85,
+              "level": 0.3,
+              "parts": [
+                {
+                  "source": "item-2",
+                  "start": 0.274331,
+                  "length": 0.439751,
+                  "at": 0,
+                  "level": 1,
+                  "label": "轻取小物件"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "LS9",
+          "name": "轻织物挪动",
+          "note": "只取一个较短的材料动作，保留短停顿；按低于普通动作约10.5dB的基准试听，避免持续盖住脚步或枪声。不是原游戏搜索录音，也不叠加多种碰撞。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "轻量循环",
+              "duration": 0.85,
+              "level": 0.3,
+              "parts": [
+                {
+                  "source": "fc-clothing-movement-6.wav",
+                  "start": 0,
+                  "length": 0.55,
+                  "at": 0,
+                  "level": 1,
+                  "label": "轻织物挪动"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "LS10",
+          "name": "衣袋轻翻",
+          "note": "只取一个较短的材料动作，保留短停顿；按低于普通动作约10.5dB的基准试听，避免持续盖住脚步或枪声。不是原游戏搜索录音，也不叠加多种碰撞。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "轻量循环",
+              "duration": 0.85,
+              "level": 0.3,
+              "parts": [
+                {
+                  "source": "fc-clothes-ruffle-1.wav",
+                  "start": 0.184331,
+                  "length": 0.55,
+                  "at": 0,
+                  "level": 1,
+                  "label": "衣袋轻翻"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "player-hurt",
+      "title": "玩家受击 · 低声短喵",
+      "description": "10条候选可多选；PH1–PH5是统一录音系列。随机连听模拟至少5种受击变体，基准比一般动作低6dB。这里只试听，尚未让游戏随机播放。",
+      "items": [],
+      "candidateCount": 10,
+      "candidates": [
+        {
+          "id": "PH1",
+          "name": "短促小喵 · 同组1",
+          "note": "自然短喵作为受击反馈候选，不声称录制了猫受伤。五条为同作者同系列的独立录音，供统一风格随机播放。",
+          "reason": "推荐同组 PH1–PH5：同一录音系列，先比较这五条的统一感。",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 0.71,
+              "level": 0.5,
+              "parts": [
+                {
+                  "source": "bsb-1472",
+                  "start": 0.074331,
+                  "length": 0.7,
+                  "at": 0,
+                  "level": 1,
+                  "label": "短促小喵 · 同组1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "PH2",
+          "name": "短促小喵 · 同组2",
+          "note": "自然短喵作为受击反馈候选，不声称录制了猫受伤。五条为同作者同系列的独立录音，供统一风格随机播放。",
+          "reason": "推荐同组 PH1–PH5：同一录音系列，先比较这五条的统一感。",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 0.71,
+              "level": 0.5,
+              "parts": [
+                {
+                  "source": "bsb-1473",
+                  "start": 0.064331,
+                  "length": 0.7,
+                  "at": 0,
+                  "level": 1,
+                  "label": "短促小喵 · 同组2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "PH3",
+          "name": "短促小喵 · 同组3",
+          "note": "自然短喵作为受击反馈候选，不声称录制了猫受伤。五条为同作者同系列的独立录音，供统一风格随机播放。",
+          "reason": "推荐同组 PH1–PH5：同一录音系列，先比较这五条的统一感。",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 0.71,
+              "level": 0.5,
+              "parts": [
+                {
+                  "source": "bsb-1474",
+                  "start": 0.064331,
+                  "length": 0.7,
+                  "at": 0,
+                  "level": 1,
+                  "label": "短促小喵 · 同组3"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "PH4",
+          "name": "短促小喵 · 同组4",
+          "note": "自然短喵作为受击反馈候选，不声称录制了猫受伤。五条为同作者同系列的独立录音，供统一风格随机播放。",
+          "reason": "推荐同组 PH1–PH5：同一录音系列，先比较这五条的统一感。",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 0.71,
+              "level": 0.5,
+              "parts": [
+                {
+                  "source": "bsb-1475",
+                  "start": 0.084331,
+                  "length": 0.7,
+                  "at": 0,
+                  "level": 1,
+                  "label": "短促小喵 · 同组4"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "PH5",
+          "name": "短促小喵 · 同组5",
+          "note": "自然短喵作为受击反馈候选，不声称录制了猫受伤。五条为同作者同系列的独立录音，供统一风格随机播放。",
+          "reason": "推荐同组 PH1–PH5：同一录音系列，先比较这五条的统一感。",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 0.668231,
+              "level": 0.5,
+              "parts": [
+                {
+                  "source": "bsb-1476",
+                  "start": 0.064331,
+                  "length": 0.658231,
+                  "at": 0,
+                  "level": 1,
+                  "label": "短促小喵 · 同组5"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "PH6",
+          "name": "清楚短喵 · Mike Koenig",
+          "note": "不同作者的声线备选，只取短喵、降低约6dB；自然叫声用作受击反馈，不把它称作猫真实受伤的实录。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 0.86,
+              "level": 0.5,
+              "parts": [
+                {
+                  "source": "sb-meowing",
+                  "start": 0,
+                  "length": 0.85,
+                  "at": 0,
+                  "level": 1,
+                  "label": "清楚短喵 · Mike Koenig"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "PH7",
+          "name": "清亮喵呜 · Cat Stevens",
+          "note": "不同作者的声线备选，只取短喵、降低约6dB；自然叫声用作受击反馈，不把它称作猫真实受伤的实录。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 0.86,
+              "level": 0.5,
+              "parts": [
+                {
+                  "source": "sb-meow",
+                  "start": 0.444331,
+                  "length": 0.85,
+                  "at": 0,
+                  "level": 1,
+                  "label": "清亮喵呜 · Cat Stevens"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "PH8",
+          "name": "被轻触后的小喵",
+          "note": "不同作者的声线备选，只取短喵、降低约6dB；自然叫声用作受击反馈，不把它称作猫真实受伤的实录。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 0.86,
+              "level": 0.5,
+              "parts": [
+                {
+                  "source": "commons-45227845",
+                  "start": 0.174331,
+                  "length": 0.85,
+                  "at": 0,
+                  "level": 1,
+                  "label": "被轻触后的小喵"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "PH9",
+          "name": "暹罗猫短喵",
+          "note": "不同作者的声线备选，只取短喵、降低约6dB；自然叫声用作受击反馈，不把它称作猫真实受伤的实录。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 0.86,
+              "level": 0.5,
+              "parts": [
+                {
+                  "source": "commons-31896202",
+                  "start": 0.234331,
+                  "length": 0.85,
+                  "at": 0,
+                  "level": 1,
+                  "label": "暹罗猫短喵"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "PH10",
+          "name": "轻巧卡通喵",
+          "note": "不同作者的声线备选，只取短喵、降低约6dB；自然叫声用作受击反馈，不把它称作猫真实受伤的实录。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 0.516213,
+              "level": 0.5,
+              "parts": [
+                {
+                  "source": "oga-meow",
+                  "start": 0.004331,
+                  "length": 0.506213,
+                  "at": 0,
+                  "level": 1,
+                  "label": "轻巧卡通喵"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "multi": true
+    },
+    {
+      "id": "enemy-alert",
+      "title": "敌人发现 · 嗷呜与哈气",
+      "description": "10条候选可多选；EA1–EA5是统一录音系列。比较嗷呜、低吼、短哈气；贴近网红猫叫的动作方向，但没有冒用授权不明的原梗。这里只试听，尚未接入敌人AI。",
+      "items": [],
+      "candidateCount": 10,
+      "candidates": [
+        {
+          "id": "EA1",
+          "name": "警告长叫 · 1",
+          "note": "自然嗷呜/低吼的警告方向，保留短促开头与主体；是可用原录音，不宣称就是某条网红“老吴”原梗。",
+          "reason": "EA1–EA5 为同一作者/器材系列，可作为同风格警戒组。",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 1.215488,
+              "level": 0.65,
+              "parts": [
+                {
+                  "source": "bsb-1881",
+                  "start": 0.024331,
+                  "length": 1.205488,
+                  "at": 0,
+                  "level": 1,
+                  "label": "警告长叫 · 1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "EA2",
+          "name": "警告长叫 · 2",
+          "note": "自然嗷呜/低吼的警告方向，保留短促开头与主体；是可用原录音，不宣称就是某条网红“老吴”原梗。",
+          "reason": "EA1–EA5 为同一作者/器材系列，可作为同风格警戒组。",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 0.90585,
+              "level": 0.65,
+              "parts": [
+                {
+                  "source": "bsb-1882",
+                  "start": 0.034331,
+                  "length": 0.89585,
+                  "at": 0,
+                  "level": 1,
+                  "label": "警告长叫 · 2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "EA3",
+          "name": "警告长叫 · 3",
+          "note": "自然嗷呜/低吼的警告方向，保留短促开头与主体；是可用原录音，不宣称就是某条网红“老吴”原梗。",
+          "reason": "EA1–EA5 为同一作者/器材系列，可作为同风格警戒组。",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 0.925669,
+              "level": 0.65,
+              "parts": [
+                {
+                  "source": "bsb-1883",
+                  "start": 0.014331,
+                  "length": 0.915669,
+                  "at": 0,
+                  "level": 1,
+                  "label": "警告长叫 · 3"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "EA4",
+          "name": "低声威吓 · 4",
+          "note": "自然嗷呜/低吼的警告方向，保留短促开头与主体；是可用原录音，不宣称就是某条网红“老吴”原梗。",
+          "reason": "EA1–EA5 为同一作者/器材系列，可作为同风格警戒组。",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 1.26,
+              "level": 0.65,
+              "parts": [
+                {
+                  "source": "bsb-1885",
+                  "start": 0.084331,
+                  "length": 1.25,
+                  "at": 0,
+                  "level": 1,
+                  "label": "低声威吓 · 4"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "EA5",
+          "name": "低声威吓 · 5",
+          "note": "自然嗷呜/低吼的警告方向，保留短促开头与主体；是可用原录音，不宣称就是某条网红“老吴”原梗。",
+          "reason": "EA1–EA5 为同一作者/器材系列，可作为同风格警戒组。",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 1.26,
+              "level": 0.65,
+              "parts": [
+                {
+                  "source": "bsb-1886",
+                  "start": 0.164331,
+                  "length": 1.25,
+                  "at": 0,
+                  "level": 1,
+                  "label": "低声威吓 · 5"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "EA6",
+          "name": "低声威吓 · 6",
+          "note": "自然嗷呜/低吼的警告方向，保留短促开头与主体；是可用原录音，不宣称就是某条网红“老吴”原梗。",
+          "reason": "EA1–EA5 为同一作者/器材系列，可作为同风格警戒组。",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 1.26,
+              "level": 0.65,
+              "parts": [
+                {
+                  "source": "bsb-1887",
+                  "start": 0.184331,
+                  "length": 1.25,
+                  "at": 0,
+                  "level": 1,
+                  "label": "低声威吓 · 6"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "EA7",
+          "name": "低声威吓 · 7",
+          "note": "自然嗷呜/低吼的警告方向，保留短促开头与主体；是可用原录音，不宣称就是某条网红“老吴”原梗。",
+          "reason": "EA1–EA5 为同一作者/器材系列，可作为同风格警戒组。",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 1.26,
+              "level": 0.65,
+              "parts": [
+                {
+                  "source": "bsb-1888",
+                  "start": 0.124331,
+                  "length": 1.25,
+                  "at": 0,
+                  "level": 1,
+                  "label": "低声威吓 · 7"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "EA8",
+          "name": "猫咪短哈气",
+          "note": "不同录音的猫咪警戒方向；EA10较偏抱怨，作为较温和的反差备选，不冒充凶猛哈气。与其他一般动作相比略降约3.7dB。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 1.26,
+              "level": 0.65,
+              "parts": [
+                {
+                  "source": "commons-31903363",
+                  "start": 0.004331,
+                  "length": 1.25,
+                  "at": 0,
+                  "level": 1,
+                  "label": "猫咪短哈气"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "EA9",
+          "name": "Chacha · 警告哈气",
+          "note": "不同录音的猫咪警戒方向；EA10较偏抱怨，作为较温和的反差备选，不冒充凶猛哈气。与其他一般动作相比略降约3.7dB。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 1.26,
+              "level": 0.65,
+              "parts": [
+                {
+                  "source": "commons-46435510",
+                  "start": 0.364331,
+                  "length": 1.25,
+                  "at": 0,
+                  "level": 1,
+                  "label": "Chacha · 警告哈气"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "EA10",
+          "name": "轻抱怨式警告 · 备选",
+          "note": "不同录音的猫咪警戒方向；EA10较偏抱怨，作为较温和的反差备选，不冒充凶猛哈气。与其他一般动作相比略降约3.7dB。",
+          "reason": "",
+          "versions": [
+            {
+              "id": "original",
+              "name": "原速剪辑",
+              "duration": 1.26,
+              "level": 0.65,
+              "parts": [
+                {
+                  "source": "bsb-0658",
+                  "start": 0.094331,
+                  "length": 1.25,
+                  "at": 0,
+                  "level": 1,
+                  "label": "轻抱怨式警告 · 备选"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "multi": true
+    }
+  ],
+  "sources": {
+    "soldat-mp5": {
+      "pack": "soldat",
+      "name": "mp5-reload.wav",
+      "author": "OpenSoldat base contributors（原页未逐条列录音作者）",
+      "source": "https://github.com/opensoldat/base/tree/5b6e5bef23f5c0d58fb1d4d887b9b94ebcf799b4",
+      "license": "CC-BY-4.0",
+      "path": "flat/soldat-mp5.wav",
+      "sourceSha256": "214eb14fbb4db81e7f19b9dba7e8144804b8b73d209442629f78962a808b23e3",
+      "sourceDuration": 1.8845804988662131,
+      "member": "shared/sfx/mp5-reload.wav",
+      "downloadUrl": null,
+      "referenceLevel": 1
+    },
+    "soldat-ak74": {
+      "pack": "soldat",
+      "name": "ak74-reload.wav",
+      "author": "OpenSoldat base contributors（原页未逐条列录音作者）",
+      "source": "https://github.com/opensoldat/base/tree/5b6e5bef23f5c0d58fb1d4d887b9b94ebcf799b4",
+      "license": "CC-BY-4.0",
+      "path": "flat/soldat-ak74.wav",
+      "sourceSha256": "6897038367c5e9fdb8373ebd1db6f8e4b178306bd30e47b4f9b192012cf4f1df",
+      "sourceDuration": 2.555691609977324,
+      "member": "shared/sfx/ak74-reload.wav",
+      "downloadUrl": null,
+      "referenceLevel": 1
+    },
+    "soldat-steyraug": {
+      "pack": "soldat",
+      "name": "steyraug-reload.wav",
+      "author": "OpenSoldat base contributors（原页未逐条列录音作者）",
+      "source": "https://github.com/opensoldat/base/tree/5b6e5bef23f5c0d58fb1d4d887b9b94ebcf799b4",
+      "license": "CC-BY-4.0",
+      "path": "flat/soldat-steyraug.wav",
+      "sourceSha256": "dc72c4b87e1c716243abd9711e6acd99b228b3a727a488a2c6cbcf1e99bdf45a",
+      "sourceDuration": 1.9872562358276644,
+      "member": "shared/sfx/steyraug-reload.wav",
+      "downloadUrl": null,
+      "referenceLevel": 1
+    },
+    "soldat-colt1911": {
+      "pack": "soldat",
+      "name": "colt1911-reload.wav",
+      "author": "OpenSoldat base contributors（原页未逐条列录音作者）",
+      "source": "https://github.com/opensoldat/base/tree/5b6e5bef23f5c0d58fb1d4d887b9b94ebcf799b4",
+      "license": "CC-BY-4.0",
+      "path": "flat/soldat-colt1911.wav",
+      "sourceSha256": "17357fa66f9d36af136c1eb49e00b5cd9eef37453879819ad3e7e91712eec100",
+      "sourceDuration": 1.0430385487528344,
+      "member": "shared/sfx/colt1911-reload.wav",
+      "downloadUrl": null,
+      "referenceLevel": 1
+    },
+    "soldat-deserteagle": {
+      "pack": "soldat",
+      "name": "deserteagle-reload.wav",
+      "author": "OpenSoldat base contributors（原页未逐条列录音作者）",
+      "source": "https://github.com/opensoldat/base/tree/5b6e5bef23f5c0d58fb1d4d887b9b94ebcf799b4",
+      "license": "CC-BY-4.0",
+      "path": "flat/soldat-deserteagle.wav",
+      "sourceSha256": "6bcb17d1c53bacfa880239aa8cdc4133968f2f75ec16d40f77a905ea63f07c01",
+      "sourceDuration": 1.7210430839002269,
+      "member": "shared/sfx/deserteagle-reload.wav",
+      "downloadUrl": null,
+      "referenceLevel": 1
+    },
+    "soldat-barretm82": {
+      "pack": "soldat",
+      "name": "barretm82-reload.wav",
+      "author": "OpenSoldat base contributors（原页未逐条列录音作者）",
+      "source": "https://github.com/opensoldat/base/tree/5b6e5bef23f5c0d58fb1d4d887b9b94ebcf799b4",
+      "license": "CC-BY-4.0",
+      "path": "flat/soldat-barretm82.wav",
+      "sourceSha256": "6a06d0b56c1135b103ad390d40e7d56c2be00d5594d622931ab2e94bc190c50f",
+      "sourceDuration": 4.566893424036281,
+      "member": "shared/sfx/barretm82-reload.wav",
+      "downloadUrl": null,
+      "referenceLevel": 1
+    },
+    "soldat-ruger77": {
+      "pack": "soldat",
+      "name": "ruger77-reload.wav",
+      "author": "OpenSoldat base contributors（原页未逐条列录音作者）",
+      "source": "https://github.com/opensoldat/base/tree/5b6e5bef23f5c0d58fb1d4d887b9b94ebcf799b4",
+      "license": "CC-BY-4.0",
+      "path": "flat/soldat-ruger77.wav",
+      "sourceSha256": "416ee69c9b83655b7274820a9ecf23faa032c0c769498d5e76708869a98ec992",
+      "sourceDuration": 1.7076643990929705,
+      "member": "shared/sfx/ruger77-reload.wav",
+      "downloadUrl": null,
+      "referenceLevel": 1
+    },
+    "soldat-m249": {
+      "pack": "soldat",
+      "name": "m249-reload.wav",
+      "author": "OpenSoldat base contributors（原页未逐条列录音作者）",
+      "source": "https://github.com/opensoldat/base/tree/5b6e5bef23f5c0d58fb1d4d887b9b94ebcf799b4",
+      "license": "CC-BY-4.0",
+      "path": "flat/soldat-m249.wav",
+      "sourceSha256": "e6216a18d3127b544808d8c304b0a1c7617917e8cb765d7644b33c3f6ca49f9c",
+      "sourceDuration": 4.336462585034013,
+      "member": "shared/sfx/m249-reload.wav",
+      "downloadUrl": null,
+      "referenceLevel": 1
+    },
+    "soldat-m79": {
+      "pack": "soldat",
+      "name": "m79-reload.wav",
+      "author": "OpenSoldat base contributors（原页未逐条列录音作者）",
+      "source": "https://github.com/opensoldat/base/tree/5b6e5bef23f5c0d58fb1d4d887b9b94ebcf799b4",
+      "license": "CC-BY-4.0",
+      "path": "flat/soldat-m79.wav",
+      "sourceSha256": "495a15cb17b2cf7eee6cfd29714f56d730e591424d72852cc03b661288d9946b",
+      "sourceDuration": 3.00108843537415,
+      "member": "shared/sfx/m79-reload.wav",
+      "downloadUrl": null,
+      "referenceLevel": 1
+    },
+    "xonotic-reload": {
+      "pack": "xonotic",
+      "name": "reload.ogg",
+      "author": "Team Xonotic",
+      "source": "https://xonotic.org/",
+      "license": "GPL-3.0-or-later",
+      "path": "flat/xonotic-reload.ogg",
+      "sourceSha256": "5efa1b5c17d64a0259fdc2f1013496a9a4d60b2f8071f3c6399d9a49d41ac9c4",
+      "sourceDuration": 1.9440816326530612,
+      "member": "sound/weapons/reload.ogg",
+      "downloadUrl": null,
+      "referenceLevel": 1
+    },
+    "elk-0593128c73": {
+      "pack": "elk",
+      "name": "BACKPACK_MXL900 (D)_03.wav",
+      "author": "Audio Elk",
+      "source": "https://audioelk.itch.io/foley-sessions-vol-1",
+      "license": "CC-BY-SA-4.0",
+      "path": "flat/elk-0593128c73.wav",
+      "sourceSha256": "8a6dc3680fb7d8dc607227ef2c3f8fafc5e081b12cb4577fd4d1c41f426e4794",
+      "sourceDuration": 0.6484126984126984,
+      "member": "AudioElk Sound Library FOLEY SESSIONS VOL 1/SPLICED/BACKPACK/BACKPACK_MXL900 (D)_03.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.3
+    },
+    "elk-1bb0e9ddf0": {
+      "pack": "elk",
+      "name": "BACKPACK_MXL900 (D)_08.wav",
+      "author": "Audio Elk",
+      "source": "https://audioelk.itch.io/foley-sessions-vol-1",
+      "license": "CC-BY-SA-4.0",
+      "path": "flat/elk-1bb0e9ddf0.wav",
+      "sourceSha256": "01e7b5c52626786aef52bc0ebaf197f6ef4cecf31d5228b3b2d66b8fc1401bad",
+      "sourceDuration": 0.627482993197279,
+      "member": "AudioElk Sound Library FOLEY SESSIONS VOL 1/SPLICED/BACKPACK/BACKPACK_MXL900 (D)_08.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.3
+    },
+    "elk-777f22bf80": {
+      "pack": "elk",
+      "name": "MXL900_PAPER_HANDLING_02.wav",
+      "author": "Audio Elk",
+      "source": "https://audioelk.itch.io/foley-sessions-vol-1",
+      "license": "CC-BY-SA-4.0",
+      "path": "flat/elk-777f22bf80.wav",
+      "sourceSha256": "675248fbbbd3521205e1b0607103dd3ef46e23a5e18597fd9710413607c1fcd3",
+      "sourceDuration": 1.9740816326530612,
+      "member": "AudioElk Sound Library FOLEY SESSIONS VOL 1/SPLICED/PAPER/MXL900_PAPER_HANDLING_02.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.3
+    },
+    "elk-c20fac6028": {
+      "pack": "elk",
+      "name": "MXL900_PAPER_HANDLING_06.wav",
+      "author": "Audio Elk",
+      "source": "https://audioelk.itch.io/foley-sessions-vol-1",
+      "license": "CC-BY-SA-4.0",
+      "path": "flat/elk-c20fac6028.wav",
+      "sourceSha256": "fc47bb4d8bf6c619b343b8bd514492b9fa38b03c921c324041770a736a87dbd0",
+      "sourceDuration": 1.4864399092970522,
+      "member": "AudioElk Sound Library FOLEY SESSIONS VOL 1/SPLICED/PAPER/MXL900_PAPER_HANDLING_06.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.3
+    },
+    "ci-435f16b7ac": {
+      "pack": "ci",
+      "name": "clothing_1.wav",
+      "author": "Chequered Ink",
+      "source": "https://ci.itch.io/400-sounds-pack",
+      "license": "Chequered-Ink-permission",
+      "path": "flat/ci-435f16b7ac.wav",
+      "sourceSha256": "6feb9471d745c359b3d2d8e6ccb8d1615d650c5e1002d4cc0687d0dc35e911e8",
+      "sourceDuration": 1.2190476190476192,
+      "member": "Materials/clothing_1.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.3
+    },
+    "ci-26318316d2": {
+      "pack": "ci",
+      "name": "paper_move.wav",
+      "author": "Chequered Ink",
+      "source": "https://ci.itch.io/400-sounds-pack",
+      "license": "Chequered-Ink-permission",
+      "path": "flat/ci-26318316d2.wav",
+      "sourceSha256": "6f49ad3dbc577e1164ce0a4ce490a430511bbad46c7aa2da7ee4860c36e4600c",
+      "sourceDuration": 0.6501587301587302,
+      "member": "Materials/paper_move.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.3
+    },
+    "owl-cloth02": {
+      "pack": "owlish",
+      "name": "Cloth_02.wav",
+      "author": "OwlishMedia",
+      "source": "https://opengameart.org/content/202-more-sound-effects",
+      "license": "CC0-1.0",
+      "path": "flat/owl-cloth02.wav",
+      "sourceSha256": "dd738a581248f52e8c1a81ad41b7291c7b7ada740073c4791827760fe0b11768",
+      "sourceDuration": 1.503310657596372,
+      "member": "Cloth_02.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.3
+    },
+    "item-2": {
+      "pack": "item",
+      "name": "qubodupItemHandling2.wav",
+      "author": "Iwan ‘qubodup’ Gabovitch",
+      "source": "https://opengameart.org/content/item-handling",
+      "license": "CC-BY-3.0",
+      "path": "flat/item-2.wav",
+      "sourceSha256": "5ff987310999305d14c71396e9415e2a61319632624b73d53a801882a23a0cf1",
+      "sourceDuration": 0.7140816326530612,
+      "member": "qubodupItemHandling2.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.3
+    },
+    "fc-clothing-movement-6.wav": {
+      "pack": "filmcow",
+      "name": "clothing movement 6.wav",
+      "author": "Jason Steele / FilmCow",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "license": "FilmCow Royalty Free SFX License",
+      "path": "flat/fc-clothing-movement-6.wav.wav",
+      "sourceSha256": "5627f529567efd45f018b49d507fc25391d5724b9d3a4fd25949cd7977e572b4",
+      "sourceDuration": 1.9205215419501134,
+      "member": "FilmCow Recorded SFX/clothing movement 6.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.3
+    },
+    "fc-clothes-ruffle-1.wav": {
+      "pack": "filmcow",
+      "name": "clothes ruffle 1.wav",
+      "author": "Jason Steele / FilmCow",
+      "source": "https://filmcow.itch.io/filmcow-sfx",
+      "license": "FilmCow Royalty Free SFX License",
+      "path": "flat/fc-clothes-ruffle-1.wav.wav",
+      "sourceSha256": "70734e68dbda545e9afa0c84ff43978765a56a20d32b11bbcc9399a37e54aae4",
+      "sourceDuration": 2.1331065759637187,
+      "member": "FilmCow Recorded SFX/clothes ruffle 1.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.3
+    },
+    "bsb-1472": {
+      "pack": "bsb-1472",
+      "name": "Little meow of a cat #2",
+      "author": "Joseph SARDIN",
+      "source": "https://bigsoundbank.com/little-meow-of-a-cat-2-s1472.html",
+      "license": "CC0-1.0",
+      "path": "flat/bsb-1472.wav",
+      "sourceSha256": "f370e084bd6af5b6478a48429b8b3fe6cbb2f61d69444f198564b0775846c914",
+      "sourceDuration": 0.9766439909297052,
+      "member": "bsb-1472.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.5
+    },
+    "bsb-1473": {
+      "pack": "bsb-1473",
+      "name": "Little meow of a cat #3",
+      "author": "Joseph SARDIN",
+      "source": "https://bigsoundbank.com/little-meow-of-a-cat-3-s1473.html",
+      "license": "CC0-1.0",
+      "path": "flat/bsb-1473.wav",
+      "sourceSha256": "05b8c8f003963c000ace1f88d2dc11e5bc0267883cd6a7e73bd24073fca52422",
+      "sourceDuration": 0.9766213151927438,
+      "member": "bsb-1473.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.5
+    },
+    "bsb-1474": {
+      "pack": "bsb-1474",
+      "name": "Little meow of a cat #4",
+      "author": "Joseph SARDIN",
+      "source": "https://bigsoundbank.com/little-meow-of-a-cat-4-s1474.html",
+      "license": "CC0-1.0",
+      "path": "flat/bsb-1474.wav",
+      "sourceSha256": "68fbc2d5a4ecef098ddf9177aebd0a76e79fa57ffc2805d48d881cc56b39d591",
+      "sourceDuration": 0.9052607709750566,
+      "member": "bsb-1474.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.5
+    },
+    "bsb-1475": {
+      "pack": "bsb-1475",
+      "name": "Little meow of a cat #5",
+      "author": "Joseph SARDIN",
+      "source": "https://bigsoundbank.com/little-meow-of-a-cat-5-s1475.html",
+      "license": "CC0-1.0",
+      "path": "flat/bsb-1475.wav",
+      "sourceSha256": "94fd470165e370d08a09d49c4d5b01f2fdcad66af1efc1197eaf4164ed5b4ef0",
+      "sourceDuration": 0.9766439909297052,
+      "member": "bsb-1475.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.5
+    },
+    "bsb-1476": {
+      "pack": "bsb-1476",
+      "name": "Little meow of a cat #6",
+      "author": "Joseph SARDIN",
+      "source": "https://bigsoundbank.com/little-meow-of-a-cat-6-s1476.html",
+      "license": "CC0-1.0",
+      "path": "flat/bsb-1476.wav",
+      "sourceSha256": "ae7dc252e1bf650f28627a3975abd6157a1e1859d2482f99f8384cbd50fd0591",
+      "sourceDuration": 0.722562358276644,
+      "member": "bsb-1476.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.5
+    },
+    "sb-meowing": {
+      "pack": "sb-meowing",
+      "name": "Cat Meowing",
+      "author": "Mike Koenig",
+      "source": "https://soundbible.com/1290-Cat-Meowing.html",
+      "license": "CC-BY-3.0",
+      "path": "flat/sb-meowing.wav",
+      "sourceSha256": "96ce67f90f8236b8a8b3af06e28d4a73916dab1ad9d06fe5eab36054f741cb66",
+      "sourceDuration": 0.9102947845804988,
+      "member": "sb-meowing.wav",
+      "downloadUrl": "https://soundbible.com/grab.php?id=1290&type=wav",
+      "referenceLevel": 0.5
+    },
+    "sb-meow": {
+      "pack": "sb-meow",
+      "name": "Cat Meow 2",
+      "author": "Cat Stevens",
+      "source": "https://soundbible.com/1954-Cat-Meow-2.html",
+      "license": "CC-BY-3.0",
+      "path": "flat/sb-meow.wav",
+      "sourceSha256": "d0e921021f2bf4bd9844e15973bcfda094d770ce5403f3bc4af0f87e8fa3c80a",
+      "sourceDuration": 5.067777777777778,
+      "member": "sb-meow.wav",
+      "downloadUrl": "https://soundbible.com/grab.php?id=1954&type=wav",
+      "referenceLevel": 0.5
+    },
+    "commons-45227845": {
+      "pack": "commons-45227845",
+      "name": "2015-11-24.νιαούρισμα.Νιάου.noise reduced.flac",
+      "author": "Tsester",
+      "source": "https://commons.wikimedia.org/wiki/File:2015-11-24.%CE%BD%CE%B9%CE%B1%CE%BF%CF%8D%CF%81%CE%B9%CF%83%CE%BC%CE%B1.%CE%9D%CE%B9%CE%AC%CE%BF%CF%85.noise_reduced.flac",
+      "license": "CC0-1.0",
+      "path": "flat/commons-45227845.flac",
+      "sourceSha256": "5672d956e6eee58e4d5c54f645ed38df480e77693a95cd537b5464145c68fae0",
+      "sourceDuration": 1.1552154195011337,
+      "member": "commons-45227845.flac",
+      "downloadUrl": "https://upload.wikimedia.org/wikipedia/commons/7/74/2015-11-24.%CE%BD%CE%B9%CE%B1%CE%BF%CF%8D%CF%81%CE%B9%CF%83%CE%BC%CE%B1.%CE%9D%CE%B9%CE%AC%CE%BF%CF%85.noise_reduced.flac",
+      "referenceLevel": 0.5
+    },
+    "commons-31896202": {
+      "pack": "commons-31896202",
+      "name": "Meow of a Siamese cat - freemaster2.wav",
+      "author": "freemaster2",
+      "source": "https://commons.wikimedia.org/wiki/File:Meow_of_a_Siamese_cat_-_freemaster2.wav",
+      "license": "CC0-1.0",
+      "path": "flat/commons-31896202.wav",
+      "sourceSha256": "c5ae80383913b599b697bdb03481807dce908b44497f68583183530c6490f9d4",
+      "sourceDuration": 1.5166666666666666,
+      "member": "commons-31896202.wav",
+      "downloadUrl": "https://upload.wikimedia.org/wikipedia/commons/8/81/Meow_of_a_Siamese_cat_-_freemaster2.wav",
+      "referenceLevel": 0.5
+    },
+    "oga-meow": {
+      "pack": "oga-meow",
+      "name": "Meow.ogg",
+      "author": "IgnasD",
+      "source": "https://opengameart.org/content/meow",
+      "license": "CC0-1.0",
+      "path": "flat/oga-meow.ogg",
+      "sourceSha256": "ae35c578eb7e7bc33d1dc7b2532cf4cdc8dac27f8cf28c6d574fb3027be83d5f",
+      "sourceDuration": 0.5105442176870748,
+      "member": "oga-meow-Meow.ogg",
+      "downloadUrl": null,
+      "referenceLevel": 0.5
+    },
+    "bsb-1881": {
+      "pack": "bsb-1881",
+      "name": "Cat roar #1",
+      "author": "Joseph SARDIN",
+      "source": "https://bigsoundbank.com/cat-roar-1-s1881.html",
+      "license": "CC0-1.0",
+      "path": "flat/bsb-1881.wav",
+      "sourceSha256": "7fdebbb2cf3feb9fcbd90f662271f6ac69284642f67f21c6145d13de657385bd",
+      "sourceDuration": 1.2298185941043085,
+      "member": "bsb-1881.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.65
+    },
+    "bsb-1882": {
+      "pack": "bsb-1882",
+      "name": "Cat roar #2",
+      "author": "Joseph SARDIN",
+      "source": "https://bigsoundbank.com/cat-roar-2-s1882.html",
+      "license": "CC0-1.0",
+      "path": "flat/bsb-1882.wav",
+      "sourceSha256": "24d53fd6203f69d3f52bdbb29e4a8e028bc5cc17db2c9f5c4de26940268e467f",
+      "sourceDuration": 0.9301814058956916,
+      "member": "bsb-1882.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.65
+    },
+    "bsb-1883": {
+      "pack": "bsb-1883",
+      "name": "Cat roar #3",
+      "author": "Joseph SARDIN",
+      "source": "https://bigsoundbank.com/cat-roar-3-s1883.html",
+      "license": "CC0-1.0",
+      "path": "flat/bsb-1883.wav",
+      "sourceSha256": "d276f093b3afbe2b3afb8c233e306f81281844c311317cd9fbbbd3d5226bd24e",
+      "sourceDuration": 0.93,
+      "member": "bsb-1883.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.65
+    },
+    "bsb-1885": {
+      "pack": "bsb-1885",
+      "name": "Growling cat #1",
+      "author": "Joseph SARDIN",
+      "source": "https://bigsoundbank.com/growling-cat-1-s1885.html",
+      "license": "CC0-1.0",
+      "path": "flat/bsb-1885.wav",
+      "sourceSha256": "30bc17de38a2afdf9ff935b823bc8073b05e38afc6bc80ea9dac06fe31628e39",
+      "sourceDuration": 1.7724943310657597,
+      "member": "bsb-1885.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.65
+    },
+    "bsb-1886": {
+      "pack": "bsb-1886",
+      "name": "Growling cat #2",
+      "author": "Joseph SARDIN",
+      "source": "https://bigsoundbank.com/growling-cat-2-s1886.html",
+      "license": "CC0-1.0",
+      "path": "flat/bsb-1886.wav",
+      "sourceSha256": "d22c1f355c62a849f657e9bb71f880d1914187a6a9a4b40c4e4a330ec3599c9a",
+      "sourceDuration": 3.142312925170068,
+      "member": "bsb-1886.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.65
+    },
+    "bsb-1887": {
+      "pack": "bsb-1887",
+      "name": "Growling cat #3",
+      "author": "Joseph SARDIN",
+      "source": "https://bigsoundbank.com/growling-cat-3-s1887.html",
+      "license": "CC0-1.0",
+      "path": "flat/bsb-1887.wav",
+      "sourceSha256": "fa1e27e4470f8308e662921ce0b801f1f2ad2b7ddd9e42aae8241613e1ca4974",
+      "sourceDuration": 4.801269841269841,
+      "member": "bsb-1887.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.65
+    },
+    "bsb-1888": {
+      "pack": "bsb-1888",
+      "name": "Growling cat #4",
+      "author": "Joseph SARDIN",
+      "source": "https://bigsoundbank.com/growling-cat-4-s1888.html",
+      "license": "CC0-1.0",
+      "path": "flat/bsb-1888.wav",
+      "sourceSha256": "d97a600b311867dc6a6210c8becd50a35a30fccf5711fab9651147a3b9d049da",
+      "sourceDuration": 6.5239455782312925,
+      "member": "bsb-1888.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.65
+    },
+    "commons-31903363": {
+      "pack": "commons-31903363",
+      "name": "Cat hissing - Zabuhailo.wav",
+      "author": "Zabuhailo",
+      "source": "https://commons.wikimedia.org/wiki/File:Cat_hissing_-_Zabuhailo.wav",
+      "license": "CC0-1.0",
+      "path": "flat/commons-31903363.wav",
+      "sourceSha256": "ffbc639ecce3731c33f89da5b5fb6a829b7f8df916ce6ac7d628e79dd062d304",
+      "sourceDuration": 2.3120408163265305,
+      "member": "commons-31903363.wav",
+      "downloadUrl": "https://upload.wikimedia.org/wikipedia/commons/5/56/Cat_hissing_-_Zabuhailo.wav",
+      "referenceLevel": 0.65
+    },
+    "commons-46435510": {
+      "pack": "commons-46435510",
+      "name": "Gruñido gato (Chacha).ogg",
+      "author": "Luisalvaz",
+      "source": "https://commons.wikimedia.org/wiki/File:Gru%C3%B1ido_gato_(Chacha).ogg",
+      "license": "CC-BY-SA-4.0",
+      "path": "flat/commons-46435510.ogg",
+      "sourceSha256": "7302d784d7e50cdd9bb565da88bb215e25b2995d0018a04b995783c08ea8ae17",
+      "sourceDuration": 29.77106575963719,
+      "member": "commons-46435510.ogg",
+      "downloadUrl": "https://upload.wikimedia.org/wikipedia/commons/6/67/Gru%C3%B1ido_gato_%28Chacha%29.ogg",
+      "referenceLevel": 0.65
+    },
+    "bsb-0658": {
+      "pack": "bsb-0658",
+      "name": "Cat complaining",
+      "author": "Joseph SARDIN",
+      "source": "https://bigsoundbank.com/cat-complaining-s0658.html",
+      "license": "CC0-1.0",
+      "path": "flat/bsb-0658.wav",
+      "sourceSha256": "7911605e6a00df3b60cc4df7d8f017a2696f229939e20dd6933ebeeb5de00749",
+      "sourceDuration": 54.562766439909296,
+      "member": "bsb-0658.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.65
+    }
+  },
+  "sourcePacks": {
+    "soldat": {
+      "name": "OpenSoldat base · actual game reloads",
+      "author": "OpenSoldat base contributors（原页未逐条列录音作者）",
+      "url": "https://github.com/opensoldat/base/tree/5b6e5bef23f5c0d58fb1d4d887b9b94ebcf799b4",
+      "license": "CC-BY-4.0",
+      "evidence": "正式公开游戏的base资源；README明确CC BY 4.0。通过OpenSoldat官网/原始发布路线核对，非上一轮OGA包。只证明实际游戏使用，不以代码仓库star数冒充音频热度。",
+      "licenseSource": "https://raw.githubusercontent.com/opensoldat/base/5b6e5bef23f5c0d58fb1d4d887b9b94ebcf799b4/LICENSE.txt"
+    },
+    "xonotic": {
+      "name": "Xonotic · game reload",
+      "author": "Team Xonotic",
+      "url": "https://xonotic.org/",
+      "license": "GPL-3.0-or-later",
+      "evidence": "成熟开放FPS的实际资源；官方COPYING明确覆盖Team Xonotic的master数据分支，GPLv3+。原音和许可随试听发布。",
+      "licenseSource": "https://raw.githubusercontent.com/xonotic/xonotic/master/COPYING"
+    },
+    "elk": {
+      "name": "Foley Sessions Vol. 1",
+      "author": "Audio Elk",
+      "url": "https://audioelk.itch.io/foley-sessions-vol-1",
+      "license": "CC-BY-SA-4.0",
+      "evidence": "4.5/5、4评分，500独立动作双麦克风。热度不高，因素材动作吻合作为新作者补充；当前发行页明确CC BY-SA 4.0。",
+      "licenseNote": "包内PDF标题为另一旧库AUDIO ELK LEWD LIBRARY；本页保存并采用此Foley Sessions当前发行页明确授予的CC BY-SA 4.0。",
+      "archiveFile": "audioelk.zip",
+      "archiveSha256": "9639cbbfa9bb85926aeaa57c931cf59fa350d05f0d56c98e6cd2f234b93e202c"
+    },
+    "ci": {
+      "name": "400 Sounds Pack",
+      "author": "Chequered Ink",
+      "url": "https://ci.itch.io/400-sounds-pack",
+      "license": "Chequered-Ink-permission",
+      "evidence": "4.9/5、36评分；评论有Steam Tetrogue和浏览器Stackfall等采用。作者允许ANY and ALL uses包括商用，禁止把未改原件作为自己的素材售卖/分发。本页署名且不主张所有权。",
+      "archiveFile": "ci400.zip",
+      "archiveSha256": "e8bdac392d48e27936d7387198b8f803b37b8e2defc46afd4336cb0af1858a49"
+    },
+    "owlish": {
+      "name": "202 More Sound Effects",
+      "author": "OwlishMedia",
+      "url": "https://opengameart.org/content/202-more-sound-effects",
+      "license": "CC0-1.0",
+      "evidence": "5,353 次下载，49 收藏；包含录制的饮水、布料、魔术贴，评论有使用作品。",
+      "scope": ""
+    },
+    "filmcow": {
+      "name": "FilmCow Recorded SFX",
+      "author": "Jason Steele / FilmCow",
+      "url": "https://filmcow.itch.io/filmcow-sfx",
+      "license": "FilmCow Royalty Free SFX License",
+      "evidence": "4.9/5，134 条评分；本次 itch.io 免费音效热门页第 3；评论含多款已发布游戏链接。",
+      "scope": "布料、身体落地、拿动枪械、拉链、猫吃东西、饮水。"
+    },
+    "item": {
+      "name": "Item Handling",
+      "author": "Iwan ‘qubodup’ Gabovitch",
+      "url": "https://opengameart.org/content/item-handling",
+      "license": "CC-BY-3.0",
+      "evidence": "1,741 下载，17 收藏；为 Lips of Suna 录制。"
+    },
+    "bsb-1472": {
+      "name": "Little meow of a cat #2",
+      "author": "Joseph SARDIN",
+      "url": "https://bigsoundbank.com/little-meow-of-a-cat-2-s1472.html",
+      "license": "CC0-1.0",
+      "evidence": "原页CC0免费商用；本单条没有公开下载数，按动作吻合补充，不声称是已确认网红原梗。"
+    },
+    "bsb-1473": {
+      "name": "Little meow of a cat #3",
+      "author": "Joseph SARDIN",
+      "url": "https://bigsoundbank.com/little-meow-of-a-cat-3-s1473.html",
+      "license": "CC0-1.0",
+      "evidence": "原页CC0免费商用；本单条没有公开下载数，按动作吻合补充，不声称是已确认网红原梗。"
+    },
+    "bsb-1474": {
+      "name": "Little meow of a cat #4",
+      "author": "Joseph SARDIN",
+      "url": "https://bigsoundbank.com/little-meow-of-a-cat-4-s1474.html",
+      "license": "CC0-1.0",
+      "evidence": "原页CC0免费商用；本单条没有公开下载数，按动作吻合补充，不声称是已确认网红原梗。"
+    },
+    "bsb-1475": {
+      "name": "Little meow of a cat #5",
+      "author": "Joseph SARDIN",
+      "url": "https://bigsoundbank.com/little-meow-of-a-cat-5-s1475.html",
+      "license": "CC0-1.0",
+      "evidence": "原页CC0免费商用；本单条没有公开下载数，按动作吻合补充，不声称是已确认网红原梗。"
+    },
+    "bsb-1476": {
+      "name": "Little meow of a cat #6",
+      "author": "Joseph SARDIN",
+      "url": "https://bigsoundbank.com/little-meow-of-a-cat-6-s1476.html",
+      "license": "CC0-1.0",
+      "evidence": "原页CC0免费商用；本单条没有公开下载数，按动作吻合补充，不声称是已确认网红原梗。"
+    },
+    "sb-meowing": {
+      "name": "Cat Meowing",
+      "author": "Mike Koenig",
+      "url": "https://soundbible.com/1290-Cat-Meowing.html",
+      "license": "CC-BY-3.0",
+      "evidence": "原条目490,457次下载（不是游戏采用数）。"
+    },
+    "sb-meow": {
+      "name": "Cat Meow 2",
+      "author": "Cat Stevens",
+      "url": "https://soundbible.com/1954-Cat-Meow-2.html",
+      "license": "CC-BY-3.0",
+      "evidence": "原条目475,284次下载（不是游戏采用数）。"
+    },
+    "commons-45227845": {
+      "name": "2015-11-24.νιαούρισμα.Νιάου.noise reduced.flac",
+      "author": "Tsester",
+      "url": "https://commons.wikimedia.org/wiki/File:2015-11-24.%CE%BD%CE%B9%CE%B1%CE%BF%CF%8D%CF%81%CE%B9%CF%83%CE%BC%CE%B1.%CE%9D%CE%B9%CE%AC%CE%BF%CF%85.noise_reduced.flac",
+      "license": "CC0-1.0",
+      "evidence": "Wikimedia Commons原文件元数据明确作者与许可；不是搜索摘要授权。作为可用猫声补充，未确认是网红原梗。"
+    },
+    "commons-31896202": {
+      "name": "Meow of a Siamese cat - freemaster2.wav",
+      "author": "freemaster2",
+      "url": "https://commons.wikimedia.org/wiki/File:Meow_of_a_Siamese_cat_-_freemaster2.wav",
+      "license": "CC0-1.0",
+      "evidence": "Wikimedia Commons原文件元数据明确作者与许可；不是搜索摘要授权。作为可用猫声补充，未确认是网红原梗。"
+    },
+    "oga-meow": {
+      "name": "Meow",
+      "author": "IgnasD",
+      "url": "https://opengameart.org/content/meow",
+      "license": "CC0-1.0",
+      "evidence": "2,596下载、11收藏；多位开发者反馈用于GameJam、Simon和Mouse Tail。"
+    },
+    "bsb-1881": {
+      "name": "Cat roar #1",
+      "author": "Joseph SARDIN",
+      "url": "https://bigsoundbank.com/cat-roar-1-s1881.html",
+      "license": "CC0-1.0",
+      "evidence": "原页CC0免费商用；本单条没有公开下载数，按动作吻合补充，不声称是已确认网红原梗。"
+    },
+    "bsb-1882": {
+      "name": "Cat roar #2",
+      "author": "Joseph SARDIN",
+      "url": "https://bigsoundbank.com/cat-roar-2-s1882.html",
+      "license": "CC0-1.0",
+      "evidence": "原页CC0免费商用；本单条没有公开下载数，按动作吻合补充，不声称是已确认网红原梗。"
+    },
+    "bsb-1883": {
+      "name": "Cat roar #3",
+      "author": "Joseph SARDIN",
+      "url": "https://bigsoundbank.com/cat-roar-3-s1883.html",
+      "license": "CC0-1.0",
+      "evidence": "原页CC0免费商用；本单条没有公开下载数，按动作吻合补充，不声称是已确认网红原梗。"
+    },
+    "bsb-1885": {
+      "name": "Growling cat #1",
+      "author": "Joseph SARDIN",
+      "url": "https://bigsoundbank.com/growling-cat-1-s1885.html",
+      "license": "CC0-1.0",
+      "evidence": "原页CC0免费商用；本单条没有公开下载数，按动作吻合补充，不声称是已确认网红原梗。"
+    },
+    "bsb-1886": {
+      "name": "Growling cat #2",
+      "author": "Joseph SARDIN",
+      "url": "https://bigsoundbank.com/growling-cat-2-s1886.html",
+      "license": "CC0-1.0",
+      "evidence": "原页CC0免费商用；本单条没有公开下载数，按动作吻合补充，不声称是已确认网红原梗。"
+    },
+    "bsb-1887": {
+      "name": "Growling cat #3",
+      "author": "Joseph SARDIN",
+      "url": "https://bigsoundbank.com/growling-cat-3-s1887.html",
+      "license": "CC0-1.0",
+      "evidence": "原页CC0免费商用；本单条没有公开下载数，按动作吻合补充，不声称是已确认网红原梗。"
+    },
+    "bsb-1888": {
+      "name": "Growling cat #4",
+      "author": "Joseph SARDIN",
+      "url": "https://bigsoundbank.com/growling-cat-4-s1888.html",
+      "license": "CC0-1.0",
+      "evidence": "原页CC0免费商用；本单条没有公开下载数，按动作吻合补充，不声称是已确认网红原梗。"
+    },
+    "commons-31903363": {
+      "name": "Cat hissing - Zabuhailo.wav",
+      "author": "Zabuhailo",
+      "url": "https://commons.wikimedia.org/wiki/File:Cat_hissing_-_Zabuhailo.wav",
+      "license": "CC0-1.0",
+      "evidence": "Wikimedia Commons原文件元数据明确作者与许可；不是搜索摘要授权。作为可用猫声补充，未确认是网红原梗。"
+    },
+    "commons-46435510": {
+      "name": "Gruñido gato (Chacha).ogg",
+      "author": "Luisalvaz",
+      "url": "https://commons.wikimedia.org/wiki/File:Gru%C3%B1ido_gato_(Chacha).ogg",
+      "license": "CC-BY-SA-4.0",
+      "evidence": "Wikimedia Commons原文件元数据明确作者与许可；不是搜索摘要授权。作为可用猫声补充，未确认是网红原梗。"
+    },
+    "bsb-0658": {
+      "name": "Cat complaining",
+      "author": "Joseph SARDIN",
+      "url": "https://bigsoundbank.com/cat-complaining-s0658.html",
+      "license": "CC0-1.0",
+      "evidence": "原页CC0免费商用；本单条没有公开下载数，按动作吻合补充，不声称是已确认网红原梗。"
+    }
+  },
+  "research": [
+    {
+      "name": "开发者社区的新来源建议",
+      "url": "https://www.reddit.com/r/gamedev/comments/1i5xi9g/enhance_your_game_development_with_over_50_free/",
+      "note": "Brave索引出现SignatureSounds的社区分享与反馈；只作检索线索，不以分享帖代替具体音频授权。"
+    },
+    {
+      "name": "OpenSoldat官网",
+      "url": "https://opensoldat.com/",
+      "note": "从公开游戏成品资源而不是此前音效包路线检索；原base仓库固定版本，README明确CC BY4.0。"
+    },
+    {
+      "name": "Xonotic官网",
+      "url": "https://xonotic.org/",
+      "note": "另一开放游戏资源路线，官方COPYING覆盖master数据仓库，保留GPLv3+义务。"
+    },
+    {
+      "name": "热门猫叫听感参考",
+      "url": "https://tuna.voicemod.net/sound/96c677da-e61c-4bcb-8284-31ad3c856030",
+      "note": "页面显示5K及多个数千播放的推荐哈气声，但未核实允许随游戏与公开试听分发的原作者授权；不下载或托管。"
+    },
+    {
+      "name": "搜索和访问记录",
+      "url": "https://search.brave.com/",
+      "note": "本轮若干查询返回200后再返回429，停止继续使用；DuckDuckGo返回验证页，未继续。Wikimedia按服务提示使用真实研究User-Agent后正常返回元数据。"
+    },
+    {
+      "name": "其他比较与排除",
+      "url": "https://orangefreesounds.com/cat-hissing-sound/",
+      "note": "OrangeFreeSounds几个哈气条目为CC BY-NC4，不作为可商用方案；AssaultCube原版权表坦言部分音源未记录，未采用。Liblast当前资源未找到完整独立reload，不凑数。"
+    },
+    {
+      "name": "新Foley作者",
+      "url": "https://audioelk.itch.io/foley-sessions-vol-1",
+      "note": "当前页明确CC BY-SA4.0；附带PDF写另一旧LEWD库，保留当前公开授权页面和完整条款。"
+    }
+  ]
+}

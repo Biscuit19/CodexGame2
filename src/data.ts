@@ -306,7 +306,7 @@ export const foods: ItemDef[] = [
       heal: [12, 20, 30, 60][i],
       healOverTime: 0,
       healSeconds: 0,
-      useTime: [1, 1.4, 2, 1.2][i],
+      useTime: [1, 1.4, 2, 3][i],
       icon: ["fish", "tube", "can", "meal"][i],
       unlock: 0,
       desc: [
@@ -324,7 +324,7 @@ export const foods: ItemDef[] = [
         c1_9: [0, 22, 10, 1, 120],
         c1_10: [28, 0, 0, 1.8, 520],
         c3_1: [18, 0, 0, 1.2, 260],
-        c4_11: [24, 48, 16, 2.4, 1000],
+        c4_11: [24, 48, 16, 3, 1000],
         c4_8: [18, 28, 10, 1.8, 650],
       } as Record<string, number[]>
     )[id];

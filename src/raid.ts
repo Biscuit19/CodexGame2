@@ -898,12 +898,15 @@ export class Raid {
   selectWeapon(slot: "primary" | "secondary" | "melee") {
     const item = this.save.equipment[slot];
     if (!item) return false;
+    const changed = this.activeWeapon !== slot;
     this.syncLoaded();
     this.activeWeapon = slot;
     this.ammoTier =
       this.magazineTiers[item.uid] ?? item.loaded?.tier ?? this.ammoTier;
     this.reload = 0;
     this.sound.stopReload?.();
+    if (changed)
+      this.sound.play(slot === "melee" ? "switch-melee" : "switch-weapon");
     return true;
   }
   switchWeapon(direction = 1) {
@@ -1184,7 +1187,7 @@ export class Raid {
     this.meleeCooldown = MELEE_SWING_SECONDS;
     this.meleeSwing++;
     this.interrupt(true);
-    this.sound.play("melee");
+    this.sound.play("melee", 1, { swing: this.meleeSwing });
     this.combatFX.push({
       kind: "melee",
       x: this.p.x,
@@ -1373,6 +1376,7 @@ export class Raid {
     this.search = c;
     this.searchProgress = 0;
     this.stats.searches += c.open ? 0 : 1;
+    if (!c.open) this.sound.play("open", 1, { containerType: c.type });
     c.open = true;
     this.inventory = true;
     this.sound.play("search");
@@ -1442,7 +1446,7 @@ export class Raid {
     c.items.splice(index, 1);
     c.revealed--;
     persist(this.save);
-    this.sound.play("click");
+    this.sound.play("pack");
     this.onChange();
   }
   equipContainer(uid: string, requested?: keyof Save["equipment"]) {

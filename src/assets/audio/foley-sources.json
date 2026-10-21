@@ -1,23 +1,7 @@
 {
   "license": "CC0-1.0",
   "sampleRate": 44100,
-  "sources": {
-    "organic-Slash": {
-      "repository": "lavenderdotpet/CC0-Public-Domain-Sounds",
-      "revision": "f2b6264f9ab89fabc266914c3654685d68c5a39b",
-      "path": "Micro Pack - Organic Wooshes/Slash.wav",
-      "url": "https://raw.githubusercontent.com/lavenderdotpet/CC0-Public-Domain-Sounds/f2b6264f9ab89fabc266914c3654685d68c5a39b/Micro%20Pack%20-%20Organic%20Wooshes/Slash.wav",
-      "sha256": "7bad54c4fc2f16c88680946b305e886f5dcb5be1cc8b3939b273968bc6232222"
-    }
-  },
-  "tracks": {
-    "melee": {
-      "duration": 0.25,
-      "layers": [
-        "organic-Slash"
-      ],
-      "peakTarget": 0.5,
-      "sha256": "cb1f17a4e772349cb38f2fafa7e4021e05519a5bae0417b5b4941345206851eb"
-    }
-  }
+  "sources": {},
+  "tracks": {},
+  "superseded": "Legacy melee replaced by separately selected KN1/KN2 in approved-interactions.json"
 }

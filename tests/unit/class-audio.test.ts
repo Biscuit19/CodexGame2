@@ -31,7 +31,7 @@ function raid() {
   return { s, r, sound };
 }
 describe("按枪型的音效与可读参数", () => {
-  it("已选食物映射到各自音源，餐盒与薯四共用 F1，未选四级不被替换", () => {
+  it("已选食物映射到各自音源，餐盒与薯四共用纯脆嚼，四级食物共享三秒原声", () => {
     expect(foodSamples).toEqual({
       f1: "food-fish",
       f2: "food-paste",
@@ -41,6 +41,8 @@ describe("按枪型的音效与可读参数", () => {
       f3: "food-can",
       c1_10: "food-fries",
       c4_8: "food-fries",
+      f4: "food-tier4",
+      c4_11: "food-tier4",
     });
     for (const [foodId, key] of Object.entries(foodSamples)) {
       expect(sampleChoice("food", { foodId, seconds: 1.4 })).toMatchObject({
@@ -49,8 +51,8 @@ describe("按枪型的音效与可读参数", () => {
         food: true,
       });
     }
-    expect(sampleChoice("food", { foodId: "f4" })).toBeUndefined();
-    expect(sampleChoice("food", { foodId: "c4_11" })).toBeUndefined();
+    expect(sampleChoice("food", { foodId: "f4" })?.key).toBe("food-tier4");
+    expect(sampleChoice("food", { foodId: "c4_11" })?.key).toBe("food-tier4");
   });
   it("进食开始播放；非进食中断不停止，攻击/翻滚中断立即停止且不消耗物品", () => {
     const { s, r, sound } = raid();
@@ -152,8 +154,8 @@ describe("按枪型的音效与可读参数", () => {
     r.p.roll = 0;
     sound.play.mockClear();
     r.selectWeapon("melee");
-    expect(sound.play).not.toHaveBeenCalled();
+    expect(sound.play).toHaveBeenCalledWith("switch-melee");
     r.swingMelee();
-    expect(sound.play).toHaveBeenCalledWith("melee");
+    expect(sound.play).toHaveBeenCalledWith("melee", 1, { swing: 1 });
   });
 });

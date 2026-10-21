@@ -1,6 +1,6 @@
 # 当前动作音效更新
 
-已采用动作/进食的现状以 [AUDIO_APPROVED_ACTIONS.md](AUDIO_APPROVED_ACTIONS.md) 为准：T4、W4、A3、S4、L4、D5、C1、F1 已接入，其余新候选待用户选择。下方枪声设计保持适用；其中关于旧动作保留的历史说明已被该采用记录替代。
+当前采用状态以 [交互采用记录](AUDIO_APPROVED_INTERACTIONS.md) 与 [此前动作采用记录](AUDIO_APPROVED_ACTIONS.md) 为准：两刀、切换、容器、分级发现、入包、纯脆嚼和三秒四级进食已更新。新换弹、循环搜索和猫叫在 [40候选研究](AUDIO_RELOAD_SEARCH_CATS.md) 中待选。下方旧动作保留说明属于历史记录，已被最新明确选择取代。
 
 # 游戏当前音效接入
 

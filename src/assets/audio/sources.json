@@ -158,16 +158,7 @@
   },
   "retainedFoley": {
     "metadata": "foley-sources.json",
-    "tracks": {
-      "melee": {
-        "duration": 0.25,
-        "layers": [
-          "organic-Slash"
-        ],
-        "peakTarget": 0.5,
-        "sha256": "cb1f17a4e772349cb38f2fafa7e4021e05519a5bae0417b5b4941345206851eb"
-      }
-    }
+    "tracks": {}
   },
   "approvedActions": {
     "metadata": "approved-actions.json",
@@ -432,48 +423,505 @@
             "gain": 0.06529824822144781
           }
         ]
-      },
-      "food-fries": {
-        "file": "food-fries.flac",
-        "candidate": "F1",
-        "version": "fries",
-        "sourceFile": "audio/F1-fries-6609367953.flac",
-        "auditionSha256": "660936795398a5b58895446064dd01cd406263cb56eb2943346c82994666b598",
-        "sha256": "e4f4ad14f1aad16a0e9af036bd944f82df8adeebab86d48eedc345ed8129d456",
-        "duration": 1.8,
-        "gainDb": -3.3200000000000003,
-        "lufs": -29.98,
-        "truePeakDbfs": -9.07,
-        "license": "CC-BY-3.0 + CC0-1.0 + FilmCow Royalty Free SFX License",
+      }
+    }
+  },
+  "approvedInteractions": {
+    "metadata": "approved-interactions.json",
+    "tracks": {
+      "melee-first": {
+        "candidate": "KN1",
+        "sourceFile": "audio-review/interactions/audio/KN1-natural-750378d77e.flac",
+        "sourceHash": "750378d77ef4c0b343784ac221fb24e1b37ab7855ccef502ee3e73fae3c14804",
+        "license": "CC0-1.0",
         "parts": [
           {
-            "source": "fc-bag3",
-            "length": 0.25,
+            "source": "swish-c15fd21d-swish-2",
+            "start": 0.01093,
+            "length": 0.084898,
             "at": 0,
+            "level": 1,
+            "label": "短刀轻挥",
+            "gain": 0.22198675593750772
+          }
+        ],
+        "file": "melee-first.flac",
+        "sha256": "be737ecca461644cb1a64dab10efa9d1e262093277441fe8ad66f883428cea7a",
+        "duration": 0.094898,
+        "gainDb": 1.3500000000000014,
+        "lufs": -30.05,
+        "truePeakDbfs": -11.8,
+        "filters": ""
+      },
+      "melee-second": {
+        "candidate": "KN2",
+        "sourceFile": "audio-review/interactions/audio/KN2-natural-cbc3989a7f.flac",
+        "sourceHash": "cbc3989a7fd42804206dda554ac36b879e80730a81f2020e9cf9173a087e2a25",
+        "license": "CC0-1.0",
+        "parts": [
+          {
+            "source": "melee-c86c40b1-sword-sound",
+            "start": 0.02093,
+            "length": 0.4,
+            "at": 0,
+            "level": 1,
+            "label": "刀刃快速劈砍",
+            "gain": 0.2937347881099419
+          }
+        ],
+        "file": "melee-second.flac",
+        "sha256": "3a640cae48d67fc7147d1677f3c1df49cef0d9721c59ce8a1f22d2ed0bb16aa0",
+        "duration": 0.41,
+        "gainDb": 0.4499999999999993,
+        "lufs": -30.05,
+        "truePeakDbfs": -10.2,
+        "filters": ""
+      },
+      "switch-melee": {
+        "candidate": "KN3",
+        "sourceFile": "audio-review/interactions/audio/KN3-natural-6cb28c3356.flac",
+        "sourceHash": "6cb28c335637a8aa0388a3b5edd52a12eccbed60a3395303c07386534e33c6c9",
+        "license": "CC0-1.0",
+        "parts": [
+          {
+            "source": "starsword-6582cb31-sword.3",
+            "start": 0.03093,
+            "length": 0.4,
+            "at": 0,
+            "level": 1,
+            "label": "清楚的金属挥动",
+            "gain": 0.27531457612488686
+          }
+        ],
+        "file": "switch-melee.flac",
+        "sha256": "cd80cc2886d9972561ce8cbdf5d58d2b671e0750e71db28124f98d94b063046b",
+        "duration": 0.3,
+        "gainDb": -5.670000000000002,
+        "lufs": -30.03,
+        "truePeakDbfs": -14.32,
+        "filters": "asetrate=44100*1.3666666667,aresample=44100,apad=whole_dur=0.3,atrim=duration=0.3"
+      },
+      "open-box": {
+        "candidate": "BX1",
+        "sourceFile": "audio-review/interactions/audio/BX1-natural-1e08c85674.flac",
+        "sourceHash": "1e08c85674eaeb8e2b866327d2c461daebbf412e987acb0e575ba5d465dc8229",
+        "license": "FilmCow Royalty Free SFX License",
+        "parts": [
+          {
+            "source": "fc-cardboard-box-open-1",
+            "start": 0.31093,
+            "length": 1.1,
+            "at": 0,
+            "level": 1,
+            "label": "纸箱掀盖 · 干脆",
+            "gain": 0.45961018529806236
+          }
+        ],
+        "file": "open-box.flac",
+        "sha256": "728cf0efc6051eb24dfd261db2bdf43bbc2682a515e285188bfe88e801170247",
+        "duration": 1.11,
+        "gainDb": 1.2800000000000011,
+        "lufs": -29.98,
+        "truePeakDbfs": -8.79,
+        "filters": ""
+      },
+      "open-toolbox": {
+        "candidate": "TB2",
+        "sourceFile": "audio-review/interactions/audio/TB2-natural-540b3f84de.flac",
+        "sourceHash": "540b3f84de807048efdf422ed78d10f45a1fb56f2751bb6f39769b1b5abf306f",
+        "license": "CC0-1.0",
+        "parts": [
+          {
+            "source": "bsb-0053",
+            "start": 0.24093,
+            "length": 1.0,
+            "at": 0,
+            "level": 1,
+            "label": "薄金属盒盖",
+            "gain": 24.83163186979987
+          }
+        ],
+        "file": "open-toolbox.flac",
+        "sha256": "2f92ce31b14b874abd6fef4111c11a20a444631ec0505ff0b26402cc64a8d229",
+        "duration": 1.01,
+        "gainDb": 1.2699999999999996,
+        "lufs": -29.97,
+        "truePeakDbfs": -8.1,
+        "filters": ""
+      },
+      "open-cooler": {
+        "candidate": "TB1",
+        "sourceFile": "audio-review/interactions/audio/TB1-natural-6d42b52e6a.flac",
+        "sourceHash": "6d42b52e6af99a841e64dda997e39b46cb2e9770ab7b471e7a613d300463927f",
+        "license": "FilmCow Royalty Free SFX License",
+        "parts": [
+          {
+            "source": "fc-metal-latch-1",
+            "start": 0.06093,
+            "length": 0.65,
+            "at": 0,
+            "level": 1,
+            "label": "单扣掀开",
+            "gain": 0.6976878274153261
+          }
+        ],
+        "file": "open-cooler.flac",
+        "sha256": "7f0a2962a5a765e04ebf3a35275768ffc1df0a2d8aa492726609bb52d456fff6",
+        "duration": 0.66,
+        "gainDb": -2.0500000000000007,
+        "lufs": -30.02,
+        "truePeakDbfs": -9.85,
+        "filters": ""
+      },
+      "open-trashcan": {
+        "candidate": "GB1",
+        "sourceFile": "audio-review/interactions/audio/GB1-natural-fecdfab30f.flac",
+        "sourceHash": "fecdfab30fd00094c97271ee06b790b10f12758ba830507ad4e432564e7c0a8d",
+        "license": "FilmCow Royalty Free SFX License",
+        "parts": [
+          {
+            "source": "fc-plastic-panel-open-4",
+            "start": 0.17093,
+            "length": 0.357868,
+            "at": 0,
+            "level": 1,
+            "label": "空心塑料盖",
+            "gain": 0.5415859089306044
+          }
+        ],
+        "file": "open-trashcan.flac",
+        "sha256": "866917df76de4afc64e23f2a88e91b3f69f823adb1cf734f605175f8eff7a18e",
+        "duration": 0.367868,
+        "gainDb": -3.0500000000000007,
+        "lufs": -30.05,
+        "truePeakDbfs": -13.07,
+        "filters": ""
+      },
+      "open-basket": {
+        "candidate": "NW5",
+        "sourceFile": "audio-review/interactions/audio/NW5-natural-45c3703802.flac",
+        "sourceHash": "45c3703802ec64bbddce3dc3a8045b04bad7f265114c25ee16318070f0804bd8",
+        "license": "CC0-1.0",
+        "parts": [
+          {
+            "source": "rubbermetal-e2aca432-wood_cracking_01",
+            "start": 0.01093,
+            "length": 0.174036,
+            "at": 0,
+            "level": 1,
+            "label": "细枝轻折",
+            "gain": 0.7376550891901088
+          }
+        ],
+        "file": "open-basket.flac",
+        "sha256": "40a75237f75197de44e0e3199993933482ecef257742a98cc1aa6e609e14e569",
+        "duration": 0.184036,
+        "gainDb": 0.6499999999999986,
+        "lufs": -30.05,
+        "truePeakDbfs": -6.3,
+        "filters": ""
+      },
+      "open-litter": {
+        "candidate": "LT4",
+        "sourceFile": "audio-review/interactions/audio/LT4-natural-62a5773631.flac",
+        "sourceHash": "62a5773631bd127881b025c46164549cf2de466eb3b0a36a0cae2a0d17ea9ca9",
+        "license": "FilmCow Royalty Free SFX License",
+        "parts": [
+          {
+            "source": "fc-container-of-nuts-3",
+            "start": 0.05093,
+            "length": 0.755828,
+            "at": 0,
+            "level": 1,
+            "label": "细小干料桶",
+            "gain": 1.2466853980592403
+          }
+        ],
+        "file": "open-litter.flac",
+        "sha256": "c4e6a02c077d5a55f89c28f504fbcbd349e95367b450bbb3694855ddd6ae2f2b",
+        "duration": 0.765828,
+        "gainDb": -5.879999999999999,
+        "lufs": -29.99,
+        "truePeakDbfs": -14.38,
+        "filters": ""
+      },
+      "open-cabinet": {
+        "candidate": "CB5",
+        "sourceFile": "audio-review/interactions/audio/CB5-natural-12c08ab859.flac",
+        "sourceHash": "12c08ab859caa9b7a569eb22fc4e428f3cc9dc043dbf427ae973d45bddbf8ce2",
+        "license": "CC0-1.0",
+        "parts": [
+          {
+            "source": "bsb-1499",
+            "start": 0.15093,
+            "length": 0.977982,
+            "at": 0,
+            "level": 1,
+            "label": "木质工具抽屉",
+            "gain": 0.7220769961988988
+          }
+        ],
+        "file": "open-cabinet.flac",
+        "sha256": "d933131a4d0bd885245c152eccf1c0e0e9c2e8c2a68a011cae03fb3089de74d9",
+        "duration": 0.987982,
+        "gainDb": -2.91,
+        "lufs": -29.99,
+        "truePeakDbfs": -8.7,
+        "filters": ""
+      },
+      "open-medical": {
+        "candidate": "MD2",
+        "sourceFile": "audio-review/interactions/audio/MD2-natural-4286247069.flac",
+        "sourceHash": "4286247069eb77428f84a66552a2b3fd2c1d37b118e86c0dc9a0076c040d6dae",
+        "license": "CC0-1.0",
+        "parts": [
+          {
+            "source": "bsb-0270",
+            "start": 0.01093,
+            "length": 0.8,
+            "at": 0,
+            "level": 1,
+            "label": "细拉链开启",
+            "gain": 0.4167682527119321
+          }
+        ],
+        "file": "open-medical.flac",
+        "sha256": "48694ca0572fd5cc71e791df87d1b3eaa9a4b383e70147b1c8549a740313a4a0",
+        "duration": 0.81,
+        "gainDb": -7.969999999999999,
+        "lufs": -29.96,
+        "truePeakDbfs": -16.08,
+        "filters": ""
+      },
+      "open-weapon": {
+        "candidate": "WX4",
+        "sourceFile": "audio-review/interactions/audio/WX4-natural-7ba963f056.flac",
+        "sourceHash": "7ba963f056b5e7dfb59eccf5b8a4de64b9fd1991ea798b8003cc24877a53422f",
+        "license": "CC0-1.0",
+        "parts": [
+          {
+            "source": "rubberrpg-859ee492-lock_01",
+            "start": 0.03093,
+            "length": 0.380181,
+            "at": 0,
+            "level": 1,
+            "label": "箱锁开启",
+            "gain": 0.4310098526815864
+          }
+        ],
+        "file": "open-weapon.flac",
+        "sha256": "35db03d29fd8522b95d018bd6069e66816d4999e4e0639df72387f92462d1571",
+        "duration": 0.390181,
+        "gainDb": 1.0500000000000007,
+        "lufs": -30.05,
+        "truePeakDbfs": -6.18,
+        "filters": ""
+      },
+      "open-bed": {
+        "candidate": "BD1",
+        "sourceFile": "audio-review/interactions/audio/BD1-natural-8d98122899.flac",
+        "sourceHash": "8d98122899efa05dcef4189c2c21d935d1c18b7fb1033f7b876977f0035cc17c",
+        "license": "FilmCow Royalty Free SFX License",
+        "parts": [
+          {
+            "source": "fc-clothes-ruffle-3",
+            "start": 0.10093,
+            "length": 0.85,
+            "at": 0,
+            "level": 1,
+            "label": "窝布轻翻",
+            "gain": 2.380984367284716
+          }
+        ],
+        "file": "open-bed.flac",
+        "sha256": "86d17284327a8263cdadc773c47c501a273fedd4f78750a3ad2e320c5c3ad5d2",
+        "duration": 0.86,
+        "gainDb": -4.280000000000001,
+        "lufs": -30.02,
+        "truePeakDbfs": -14.56,
+        "filters": ""
+      },
+      "open-safe": {
+        "candidate": "SF5",
+        "sourceFile": "audio-review/interactions/audio/SF5-natural-80b245514a.flac",
+        "sourceHash": "80b245514aa77b4300724b1c4417841e3de1922bf35170e63901b373afd9bd7f",
+        "license": "FilmCow Royalty Free SFX License",
+        "parts": [
+          {
+            "source": "fc-wood-and-metal-cabinet-opened-4",
+            "start": 0.05093,
+            "length": 1.091519,
+            "at": 0,
+            "level": 1,
+            "label": "柜门缓开",
+            "gain": 0.4960657351817165
+          }
+        ],
+        "file": "open-safe.flac",
+        "sha256": "b7d125b0c31ed9cc2921e098f1f450f20e0c4bbd1a06652572bae1aa35999abb",
+        "duration": 1.101519,
+        "gainDb": -1.1099999999999994,
+        "lufs": -29.99,
+        "truePeakDbfs": -13.31,
+        "filters": ""
+      },
+      "open-corpse": {
+        "candidate": "BL2",
+        "sourceFile": "audio-review/interactions/audio/BL2-natural-f0b8b4648a.flac",
+        "sourceHash": "f0b8b4648a18eebecc47c0c76dbd82c358f4189b232f3cefd9c1806e9dd281ff",
+        "license": "CC0-1.0",
+        "parts": [
+          {
+            "source": "rubberrpg-83563b69-lock_03",
+            "start": 0.04093,
+            "length": 0.29932,
+            "at": 0,
+            "level": 1,
+            "label": "双重机械感锁扣",
+            "gain": 0.7507961639495389
+          }
+        ],
+        "file": "open-corpse.flac",
+        "sha256": "e0b01c2269738b89ee893286c12c896f030177b3d486043101752ed646618004",
+        "duration": 0.30932,
+        "gainDb": -0.879999999999999,
+        "lufs": -29.99,
+        "truePeakDbfs": -6.01,
+        "filters": ""
+      },
+      "discover-3": {
+        "candidate": "D12-1",
+        "sourceFile": "audio-review/interactions/audio/D12-1-natural-1dbf0c41cc.flac",
+        "sourceHash": "1dbf0c41cc4cff65972bf461e31a13bfe1ef271e02bfa5e433969996e95821e2",
+        "license": "CC0-1.0",
+        "parts": [
+          {
+            "source": "complete-1",
+            "start": 0.01093,
+            "length": 0.676576,
+            "at": 0,
+            "level": 1,
+            "label": "简短清亮发现",
+            "gain": 1.944589597117671
+          }
+        ],
+        "file": "discover-3.flac",
+        "sha256": "fe0270072d33418dca9f26c19803469df27b26db5d5bca1bad37e12837e32a41",
+        "duration": 0.686576,
+        "gainDb": -7.140000000000001,
+        "lufs": -29.96,
+        "truePeakDbfs": -18.09,
+        "filters": ""
+      },
+      "discover-4": {
+        "candidate": "D4-3",
+        "sourceFile": "audio-review/interactions/audio/D4-3-natural-55f18a1b2a.flac",
+        "sourceHash": "55f18a1b2a5af5a33664fc52f3f381d7beb85a751f72c4156b944076140a02af",
+        "license": "CC0-1.0",
+        "parts": [
+          {
+            "source": "wobble-4bee2f50-Rise03",
             "start": 0,
-            "level": 0.65,
-            "label": "拿出食物的包装声",
-            "gain": 1.7476338030534673
-          },
+            "length": 1.555737,
+            "at": 0,
+            "level": 1,
+            "label": "连续上扬奖励",
+            "gain": 0.650071575922884
+          }
+        ],
+        "file": "discover-4.flac",
+        "sha256": "087776fbef9702392d293b40b76b0f714c91d7cc596a4ed1c6b0062457556c9b",
+        "duration": 1.565737,
+        "gainDb": -5.989999999999998,
+        "lufs": -30.01,
+        "truePeakDbfs": -14.53,
+        "filters": ""
+      },
+      "discover-5": {
+        "candidate": "D5-3",
+        "sourceFile": "audio-review/interactions/audio/D5-3-natural-a25f71a6f8.flac",
+        "sourceHash": "a25f71a6f8e08bb10668e0e64b8d2dc0be6861b21ebbb4df049da253f179ed1f",
+        "license": "CC0-1.0",
+        "parts": [
+          {
+            "source": "wobble-02f4a3d5-Rise07",
+            "start": 0,
+            "length": 2.496145,
+            "at": 0,
+            "level": 1,
+            "label": "层层上扬发现",
+            "gain": 1.1306501234861182
+          }
+        ],
+        "file": "discover-5.flac",
+        "sha256": "dc6f24d952593c1b30f00c7a2ce527b26eac5683dc1f7c0e93befbda0ba6a916",
+        "duration": 2.506145,
+        "gainDb": -7.949999999999999,
+        "lufs": -30.01,
+        "truePeakDbfs": -18.54,
+        "filters": ""
+      },
+      "pack": {
+        "candidate": "PK4",
+        "sourceFile": "audio-review/interactions/audio/PK4-natural-40df4db158.flac",
+        "sourceHash": "40df4db158ad1568bd0bece09676f72f90fe3454f200d84c62044e8e2eb70d12",
+        "license": "CC-BY-3.0",
+        "parts": [
+          {
+            "source": "item4",
+            "start": 0.00093,
+            "length": 0.267551,
+            "at": 0,
+            "level": 1,
+            "label": "物件入包",
+            "gain": 0.4688289701580846
+          }
+        ],
+        "file": "pack.flac",
+        "sha256": "fe39f2c89f8bf729162d4cf311d528e4372a53616c2ee6a7e2fe58fbf1b3b871",
+        "duration": 0.277551,
+        "gainDb": -0.4200000000000017,
+        "lufs": -29.98,
+        "truePeakDbfs": -7.1,
+        "filters": ""
+      },
+      "food-fries": {
+        "candidate": "Eating Chips",
+        "sourceFile": "audio-review/actions/originals/sb-chips-8810fa4050.flac",
+        "sourceHash": "8810fa40508ac8dca00544f8a562e1f3efb688fa560889c1c8857d9c51d7979e",
+        "license": "CC-BY-3.0",
+        "parts": [
           {
             "source": "sb-chips",
-            "length": 1.26,
-            "at": 0.28,
-            "start": 0,
-            "level": 1,
-            "label": "薯条咀嚼",
-            "gain": 2.4320114807670876
-          },
-          {
-            "source": "rpg-bubble",
-            "length": 0.2,
-            "at": 1.6,
-            "start": 0.02,
-            "level": 0.24,
-            "label": "立即恢复完成提示",
-            "gain": 0.06754782527454213
+            "label": "Eating Chips"
           }
-        ]
+        ],
+        "file": "food-fries.flac",
+        "sha256": "d9953f99b8fd184a8ae7c0d127da69b906e66686dce6dd2d36b5e8558d049f7e",
+        "duration": 1.8,
+        "gainDb": 7.710000000000001,
+        "lufs": -30.01,
+        "truePeakDbfs": -6.19,
+        "filters": "atrim=start=0:end=1.8,asetpts=PTS-STARTPTS"
+      },
+      "food-tier4": {
+        "candidate": "mouth-noises-1",
+        "sourceFile": "audio-review/actions/originals/bsb-0352-409ef0ba12.flac",
+        "sourceHash": "409ef0ba12f512d4aa5205472fbab85bde677e0cde744b42e3a2a51743729c92",
+        "license": "CC0-1.0",
+        "parts": [
+          {
+            "source": "bsb-0352",
+            "label": "mouth-noises-1"
+          }
+        ],
+        "file": "food-tier4.flac",
+        "sha256": "6ae07e496a6d8b2589eba977b6398eecd942c56d56cd9d56ba95e901ce21c9e2",
+        "duration": 3.0,
+        "gainDb": -1.9699999999999989,
+        "lufs": -29.99,
+        "truePeakDbfs": -2.81,
+        "filters": "asetrate=44100*1.6108843333,aresample=44100,apad=whole_dur=3,atrim=duration=3"
       }
     }
   }

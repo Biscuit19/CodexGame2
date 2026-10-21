@@ -26,7 +26,8 @@ const files = (await walk("dist")).filter(
     // This optional research audition loads on demand. Opening the game must
     // not download its full set of raw recordings and unused candidates.
     !f.includes("/audio-review/actions/") &&
-    !f.includes("/audio-review/interactions/"),
+    !f.includes("/audio-review/interactions/") &&
+    !f.includes("/audio-review/reload-search-cats/"),
 );
 const hash = createHash("sha256");
 for (const f of files) hash.update(await readFile(f));

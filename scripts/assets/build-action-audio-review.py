@@ -88,7 +88,7 @@ def main():
         safety = min(1, .97 / max(float(np.max(np.abs(original))), 1e-9))
         entry.update(encode(original * safety, sid, 'originals'))
         entry['referenceSafetyGain'] = safety
-        entry['previewGain'] = active_gain(original * safety)
+        entry['previewGain'] = active_gain(original * safety) * source.get('referenceLevel', 1)
         arrays[sid] = original
         sources[sid] = entry
 
@@ -96,7 +96,7 @@ def main():
     for category in recipe['groups']:
         group = dict(category)
         group['candidates'] = []
-        assert len(category['candidates']) == 5
+        assert len(category['candidates']) == category.get('candidateCount', 5)
         for candidate in category['candidates']:
             item = dict(candidate)
             source_ids = {p['source'] for v in candidate['versions'] for p in v['parts']}

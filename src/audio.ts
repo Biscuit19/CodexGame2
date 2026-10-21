@@ -228,7 +228,7 @@ export class Sound {
   }
   play(name: string, tier = 1, options: SoundOptions = {}) {
     if (!this.ctx) return;
-    if (this.sample(name, options)) return;
+    if (this.sample(name, { ...options, tier })) return;
     if (name === "hit") {
       this.noise(0.05, 0.15, 900);
       this.note(160, 0.06, "sine", 0.1);

@@ -3,7 +3,7 @@ async function start(page: any) {
   await page.goto("/?test=1");
   await page.getByRole("button", { name: "临时测试入口", exact: true }).click();
 }
-test("已选进食原声按物品时长播放，攻击中断立即停止且未选四级保留", async ({
+test("已选进食原声按物品时长播放，攻击中断立即停止且四级统一三秒", async ({
   page,
 }) => {
   await start(page);
@@ -29,6 +29,8 @@ test("已选进食原声按物品时长播放，攻击中断立即停止且未�
       "f3",
       "c1_10",
       "c4_8",
+      "f4",
+      "c4_11",
     ]) {
       r.heal = 0;
       r.p.hp = 10;
@@ -70,13 +72,15 @@ test("已选进食原声按物品时长播放，攻击中断立即停止且未�
     "food-can",
     "food-fries",
     "food-fries",
+    "food-tier4",
+    "food-tier4",
   ]);
   for (const p of result.plans) {
     expect(p.seconds).toBeCloseTo(p.expected, 4);
     expect(p.untouched && p.cancelled).toBe(true);
     expect(p.qty).toBe(2);
   }
-  expect(result.tier4Voice).toBe(false);
+  expect(result.tier4Voice).toBe(true);
 });
 test("散布显示完整角度，近战详情显示真实伤害与攻速", async ({ page }) => {
   await start(page);
@@ -100,7 +104,7 @@ test("散布显示完整角度，近战详情显示真实伤害与攻速", async
     path: "test-results/chrome-melee-damage-attack-speed.png",
   });
 });
-test("Chrome实际解码19个本地音效、真实四类射击及换弹倍速、敌人减音和切枪取消", async ({
+test("Chrome实际解码38个本地音效、真实四类射击及换弹倍速、敌人减音和切枪取消", async ({
   page,
 }) => {
   test.setTimeout(60000);
@@ -139,7 +143,7 @@ test("Chrome实际解码19个本地音效、真实四类射击及换弹倍速、
   });
   expect(
     await page.evaluate(() => (window as any).__game.sound.buffers.size),
-  ).toBe(19);
+  ).toBe(38);
   const silence = await page.evaluate(() => {
     const g = (window as any).__game;
     return [...g.sound.buffers].map(([key, b]: any) => ({
