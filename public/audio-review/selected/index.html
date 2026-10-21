@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>三角猫行动 · 已选枪械音效试听</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #182e27;
+        --panel: #294737;
+        --ink: #f4f0dd;
+        --muted: #c6d0bd;
+        --gold: #efd29c;
+        --line: #a1b48c55;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: radial-gradient(ellipse at top, #37563f, var(--bg));
+        color: var(--ink);
+        font:
+          18px/1.65 system-ui,
+          "Microsoft YaHei",
+          sans-serif;
+      }
+      main {
+        max-width: 1200px;
+        margin: auto;
+        padding: 30px 24px 65px;
+      }
+      h1 {
+        font-size: 34px;
+        line-height: 1.3;
+        margin: 12px 0;
+      }
+      h2 {
+        font-size: 26px;
+        margin: 0;
+      }
+      h3 {
+        font-size: 20px;
+        margin: 0 0 8px;
+      }
+      p {
+        margin: 10px 0;
+      }
+      a {
+        color: var(--gold);
+        overflow-wrap: anywhere;
+      }
+      button,
+      select,
+      input {
+        font: inherit;
+      }
+      button,
+      select {
+        background: #365940;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px 14px;
+      }
+      button {
+        cursor: pointer;
+      }
+      button:hover {
+        border-color: var(--gold);
+      }
+      button:disabled {
+        cursor: wait;
+        opacity: 0.65;
+      }
+      button:focus-visible,
+      input:focus-visible,
+      select:focus-visible,
+      a:focus-visible,
+      summary:focus-visible {
+        outline: 3px solid var(--gold);
+        outline-offset: 3px;
+      }
+      .primary {
+        background: var(--gold);
+        color: #243c2d;
+        font-weight: 750;
+      }
+      .topline {
+        display: flex;
+        gap: 16px;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .tag {
+        border: 1px solid var(--line);
+        border-radius: 99px;
+        padding: 3px 10px;
+        color: var(--gold);
+        font-size: 15px;
+      }
+      .muted {
+        color: var(--muted);
+        font-size: 16px;
+      }
+      .panel,
+      .card,
+      details {
+        background: #254333;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      .controls {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background: #203c2f;
+      }
+      .toolbar {
+        display: flex;
+        gap: 14px 20px;
+        flex-wrap: wrap;
+        align-items: end;
+      }
+      .toolbar label {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        font-size: 16px;
+      }
+      .toolbar .volume {
+        flex-direction: row;
+        align-items: center;
+        padding-bottom: 10px;
+      }
+      .volume input {
+        width: 115px;
+        accent-color: var(--gold);
+      }
+      #rpm {
+        width: 112px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px;
+        background: #183427;
+        color: var(--ink);
+      }
+      #status {
+        min-height: 30px;
+        color: var(--gold);
+        margin: 12px 0 0;
+      }
+      #burst-progress {
+        width: 100%;
+        height: 7px;
+        accent-color: var(--gold);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+      }
+      .card {
+        margin: 0;
+        min-width: 0;
+        scroll-margin-top: 240px;
+      }
+      .card header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--line);
+      }
+      .track {
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .track:last-child {
+        border: 0;
+        padding-bottom: 0;
+      }
+      .source {
+        color: var(--muted);
+        font-size: 16px;
+        min-height: 52px;
+      }
+      .clip-note {
+        color: var(--muted);
+        font-size: 15px;
+      }
+      audio {
+        display: block;
+        width: 100%;
+        height: 44px;
+        margin: 12px 0;
+      }
+      .links {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        font-size: 15px;
+      }
+      .track details {
+        font-size: 15px;
+        margin: 12px 0;
+        padding: 10px 13px;
+      }
+      .active {
+        outline: 2px solid var(--gold);
+        outline-offset: 4px;
+        border-radius: 12px;
+      }
+      .notice {
+        border-left: 3px solid var(--gold);
+        padding-left: 14px;
+        color: var(--muted);
+      }
+      summary {
+        cursor: pointer;
+        font-weight: 650;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 16px;
+      }
+      th,
+      td {
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+        padding: 10px;
+      }
+      .table-wrap {
+        overflow: auto;
+      }
+      footer {
+        color: var(--muted);
+        font-size: 16px;
+        margin-top: 25px;
+      }
+      button[data-burst] {
+        font-size: 16px;
+      }
+      #status[data-state="error"] {
+        color: #ffbb9d;
+      }
+      @media (max-width: 650px) {
+        main {
+          padding: 20px 12px 45px;
+        }
+        h1 {
+          font-size: 28px;
+        }
+        .grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .panel,
+        .card,
+        details {
+          padding: 16px;
+        }
+        .controls {
+          position: static;
+        }
+        .toolbar {
+          gap: 12px;
+        }
+        .toolbar label {
+          flex: 1;
+        }
+        .toolbar .volume {
+          flex-basis: 100%;
+        }
+        .toolbar select {
+          max-width: 100%;
+        }
+        .topline > a {
+          font-size: 16px;
+        }
+        .card {
+          scroll-margin-top: 12px;
+        }
+        .source {
+          min-height: 0;
+        }
+        .card header {
+          align-items: start;
+        }
+        .card header button {
+          padding: 8px 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="topline">
+        <span class="tag">按你的选择制作 · 独立试听</span
+        ><a href="../index.html">查看原素材</a>
+      </div>
+      <h1>已选枪械音效 · 单发、换弹与连发</h1>
+      <p>
+        四种枪声都来自你选定的单发录音。换弹按指定先后拼接；各段先匹配音量，再统一八个成品的整体响度。
+      </p>
+      <p class="notice">
+        只做音量、剪切与顺序拼接，不加滤波、变调、混响、压缩或限幅效果。连发会重复同一个单发，完整保留枪声与尾音；翻滚、装备武器和装备护具暂不处理。
+      </p>
+      <section class="panel controls" aria-label="连发试听控制">
+        <div class="toolbar">
+          <label
+            >连发武器<select id="weapon" aria-label="连发武器"></select
+          ></label>
+          <label
+            >射速（发／分）<input
+              id="rpm"
+              type="number"
+              min="30"
+              max="1200"
+              step="1"
+              value="720"
+              aria-label="射速（发／分）"
+          /></label>
+          <label
+            >连续发数<select id="rounds" aria-label="连续发数">
+              <option value="3">3 发</option>
+              <option value="5">5 发</option>
+              <option value="10" selected>10 发</option>
+              <option value="20">20 发</option>
+            </select></label
+          >
+          <button id="play-burst" class="primary" disabled>连发试听</button
+          ><button id="stop">停止全部</button>
+          <label class="volume"
+            >音量<input
+              id="volume"
+              type="range"
+              min="0"
+              max="100"
+              value="100"
+              aria-label="试听音量"
+            /><output id="volume-value">100%</output></label
+          >
+        </div>
+        <p id="rate-note" class="muted">720 发／分 · 每秒 12 发</p>
+        <progress
+          id="burst-progress"
+          value="0"
+          max="1"
+          aria-label="连发播放进度"
+        ></progress>
+        <p id="status" role="status" aria-live="polite" data-state="idle">
+          正在加载……
+        </p>
+        <p class="clip-note">
+          可自行调整射速。连发中尾音自然重叠；若叠加后的峰值过高，只对这一段连发整体降低音量，避免破音，不改变单发本身。
+        </p>
+      </section>
+      <div id="weapons" class="grid"></div>
+      <details>
+        <summary>制作清单与来源</summary>
+        <div id="recipe" class="table-wrap"></div>
+        <p class="muted">
+          狙击枪截自原录音约 2.03 秒，包含第三次击发前约 20
+          毫秒，直至原文件结尾。两种组合换弹均依次播放，没有重叠、淡入淡出或额外间隔。换弹在此按制作后的原时长播放，暂不按游戏换弹速度加速。
+        </p>
+        <p>
+          <a href="manifest.json">剪切位置、音量与文件清单</a> ·
+          <a
+            href="https://github.com/Biscuit19/CodexGame2/blob/main/docs/AUDIO_SELECTED.md"
+            id="doc-link"
+            >制作说明</a
+          >
+          · <a href="../licenses/ATTRIBUTION.md">原始素材授权与署名</a>
+        </p>
+      </details>
+      <footer>
+        本页仅用于试听确认，尚未替换游戏内音效。可以单独反馈某把枪的单发、换弹或某个射速下的连发听感。原录音作者：SnakeF8、Mike
+        Koenig、RA The Sun
+        God；本页按指定做音量、剪切和拼接，授权及署名见上方链接。
+      </footer>
+    </main>
+    <script type="module">
+      import { makeBurst } from "./burst.js";
+      const $ = (s) => document.querySelector(s);
+      let data,
+        context,
+        master,
+        voice,
+        volume = 1,
+        generation = 0,
+        frame = 0;
+      const cache = new Map();
+      const players = () => [...document.querySelectorAll("audio")];
+      const esc = (s) =>
+        String(s).replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
+      function status(text, state = "idle") {
+        $("#status").textContent = text;
+        $("#status").dataset.state = state;
+      }
+      function stop(keep) {
+        generation++;
+        cancelAnimationFrame(frame);
+        if (voice) {
+          voice.onended = null;
+          try {
+            voice.stop();
+          } catch {}
+          voice.disconnect();
+          voice = null;
+        }
+        players().forEach((a) => {
+          if (a !== keep) a.pause();
+        });
+        document
+          .querySelectorAll(".active")
+          .forEach((x) => x.classList.remove("active"));
+        $("#play-burst").disabled = !data;
+        $("#burst-progress").value = 0;
+      }
+      async function setupContext() {
+        if (!context) {
+          context = new AudioContext();
+          master = context.createGain();
+          master.gain.value = volume;
+          master.connect(context.destination);
+        }
+        await context.resume();
+        return context;
+      }
+      async function loadTrack(key) {
+        if (cache.has(key)) return cache.get(key);
+        const task = (async () => {
+          const response = await fetch(data.tracks[key].url);
+          if (!response.ok) throw Error("音频加载失败");
+          return context.decodeAudioData(await response.arrayBuffer());
+        })();
+        cache.set(key, task);
+        try {
+          return await task;
+        } catch (error) {
+          cache.delete(key);
+          throw error;
+        }
+      }
+      function setRateNote() {
+        const rpm = Number($("#rpm").value);
+        $("#rate-note").textContent =
+          Number.isFinite(rpm) && rpm > 0
+            ? `${rpm} 发／分 · 每秒 ${(rpm / 60).toFixed(2).replace(/\.?0+$/, "")} 发`
+            : "请输入有效射速";
+      }
+      function chooseWeapon(id) {
+        $("#weapon").value = id;
+        const weapon = data.weapons.find((w) => w.id === id);
+        $("#rpm").value = weapon.rpm;
+        setRateNote();
+      }
+      async function burst() {
+        if (!data) return;
+        const rpm = Number($("#rpm").value),
+          rounds = Number($("#rounds").value),
+          weapon = data.weapons.find((w) => w.id === $("#weapon").value);
+        if (!Number.isInteger(rpm) || rpm < 30 || rpm > 1200) {
+          stop();
+          status("射速请输入 30–1200 之间的整数。", "error");
+          return;
+        }
+        stop();
+        const current = generation;
+        $("#play-burst").disabled = true;
+        status("正在准备 " + weapon.name + " 连发……", "loading");
+        try {
+          await setupContext();
+          if (current !== generation) return;
+          const single = await loadTrack("shot-" + weapon.id);
+          if (current !== generation) return;
+          const mix = makeBurst(context, single, rpm, rounds);
+          if (current !== generation) return;
+          const source = context.createBufferSource();
+          source.buffer = mix.buffer;
+          source.connect(master);
+          voice = source;
+          const start = context.currentTime + 0.03;
+          source.onended = () => {
+            if (current !== generation) return;
+            source.disconnect();
+            voice = null;
+            $("#play-burst").disabled = false;
+            $("#burst-progress").value = 1;
+            status(`${weapon.name} ${rounds} 发播放结束，尾音已完整播放。`);
+          };
+          source.start(start);
+          status(
+            `${weapon.name} · 连发 ${rounds} 发 · ${rpm} 发／分${mix.gain < 1 ? " · 已整体调整叠加音量" : ""}`,
+            "playing",
+          );
+          $("#card-" + weapon.id).classList.add("active");
+          const update = () => {
+            if (current !== generation || voice !== source) return;
+            $("#burst-progress").value = Math.max(
+              0,
+              Math.min(1, (context.currentTime - start) / mix.buffer.duration),
+            );
+            frame = requestAnimationFrame(update);
+          };
+          update();
+        } catch (error) {
+          if (current !== generation) return;
+          stop();
+          status("播放失败，请重试或下载音频试听。", "error");
+        }
+      }
+      function track(weapon, kind) {
+        const key = kind + "-" + weapon.id,
+          t = data.tracks[key],
+          title = kind === "shot" ? "单发枪声" : "换弹";
+        return `<div class="track" data-track="${key}"><h3>${title}</h3><p class="source">${esc(weapon[kind === "shot" ? "shotSource" : "reloadSource"])}</p><audio controls preload="metadata" src="${esc(t.url)}" aria-label="${esc(weapon.name + " " + title)}"></audio><p class="clip-note">${t.duration.toFixed(2)} 秒 · 立体声</p><div class="links"><a href="${esc(t.url)}" download>下载 WAV</a><a href="../index.html" target="_blank" rel="noopener">对照原素材</a></div></div>`;
+      }
+      async function init() {
+        try {
+          const response = await fetch("manifest.json", { cache: "no-cache" });
+          if (!response.ok) throw Error();
+          data = await response.json();
+          $("#weapon").innerHTML = data.weapons
+            .map((w) => `<option value="${w.id}">${w.name}</option>`)
+            .join("");
+          $("#weapons").innerHTML = data.weapons
+            .map(
+              (w) =>
+                `<section class="card" id="card-${w.id}"><header><h2>${w.name}</h2><button data-burst="${w.id}">以此武器连发</button></header>${track(w, "shot")}${track(w, "reload")}</section>`,
+            )
+            .join("");
+          $("#recipe").innerHTML =
+            `<table><thead><tr><th>枪型</th><th>单发</th><th>换弹（按顺序）</th></tr></thead><tbody>${data.weapons.map((w) => `<tr><td>${w.name}</td><td>${esc(w.shotSource)}</td><td>${esc(w.reloadSource)}</td></tr>`).join("")}</tbody></table>`;
+          players().forEach((a) => {
+            a.volume = volume;
+            a.addEventListener("play", () => {
+              stop(a);
+              a.closest(".card").classList.add("active");
+              status("正在试听：" + a.getAttribute("aria-label"), "playing");
+            });
+            a.addEventListener("ended", () => {
+              a.closest(".card")?.classList.remove("active");
+              status("播放结束。");
+            });
+            a.addEventListener("error", () =>
+              status("音频加载失败，请刷新或下载文件。", "error"),
+            );
+          });
+          chooseWeapon("smg");
+          $("#play-burst").disabled = false;
+          status("已加载你选定的四类枪声与换弹。");
+        } catch (error) {
+          status("试听清单加载失败，请刷新重试。", "error");
+        }
+      }
+      $("#play-burst").onclick = burst;
+      $("#stop").onclick = () => {
+        stop();
+        status("已停止全部。");
+      };
+      $("#volume").oninput = (e) => {
+        volume = Number(e.target.value) / 100;
+        $("#volume-value").value = e.target.value + "%";
+        players().forEach((a) => (a.volume = volume));
+        if (master) master.gain.value = volume;
+      };
+      $("#weapon").onchange = () => {
+        stop();
+        chooseWeapon($("#weapon").value);
+        status("已切换武器，点击连发试听。");
+      };
+      $("#rpm").oninput = () => {
+        stop();
+        setRateNote();
+        status("已更新射速，点击连发试听。");
+      };
+      $("#rounds").onchange = () => {
+        stop();
+        status("已更新发数，点击连发试听。");
+      };
+      $("#weapons").onclick = (e) => {
+        const button = e.target.closest("[data-burst]");
+        if (button) {
+          chooseWeapon(button.dataset.burst);
+          burst();
+        }
+      };
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) stop();
+      });
+      window.addEventListener("pagehide", () => stop());
+      init();
+    </script>
+  </body>
+</html>
