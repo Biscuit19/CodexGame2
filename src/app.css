@@ -787,6 +787,10 @@ select {
   font-size: 18px;
   width: 52px;
 }
+.settings-controls a {
+  color: var(--gold);
+  text-underline-offset: 3px;
+}
 .settings-controls input[type="color"] {
   width: 70px;
   height: 40px;

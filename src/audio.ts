@@ -5,7 +5,8 @@ import {
   type SampleKey,
   type SoundOptions,
 } from "./audio-samples";
-// CC0 combat/foley samples are bundled locally; existing music and unrelated UI cues remain synthesized.
+// Licensed gun/foley recordings are bundled locally; credits are linked from settings.
+// Existing music and unrelated UI cues remain synthesized.
 export class Sound {
   ctx?: AudioContext;
   master?: GainNode;

@@ -36,6 +36,28 @@ test("Chrome实际解码12个本地音效、真实四类射击及换弹倍速、
       if (/音效资源|decode/i.test(m.text())) errors.push(m.text());
   });
   await start(page);
+  await page.getByRole("button", { name: "设置", exact: true }).click();
+  await page
+    .locator("#base-menu")
+    .getByRole("button", { name: "设置", exact: true })
+    .click();
+  await expect(
+    page.getByRole("link", { name: "音效来源与许可", exact: true }),
+  ).toHaveAttribute("href", "./audio-credits.html");
+  await page.screenshot({
+    path: "test-results/chrome-audio-credits-settings.png",
+  });
+  const credits = await page.request.get("/audio-credits.html");
+  expect(credits.ok()).toBe(true);
+  expect(await credits.text()).toContain("Mike Koenig");
+  await page
+    .locator("#base-menu")
+    .getByRole("button", { name: "返回基地菜单", exact: true })
+    .click();
+  await page
+    .locator("#base-menu")
+    .getByRole("button", { name: "继续整备", exact: true })
+    .click();
   await page.evaluate(async () => {
     const g = (window as any).__game;
     await g.sound.prepare();
@@ -49,6 +71,7 @@ test("Chrome实际解码12个本地音效、真实四类射击及换弹倍速、
       key,
       length: b.length,
       rate: b.sampleRate,
+      duration: b.duration,
       peak: Math.max(
         ...b
           .getChannelData(0)
@@ -60,6 +83,16 @@ test("Chrome实际解码12个本地音效、真实四类射击及换弹倍速、
   expect(silence.every((x: any) => x.length > 1000 && x.peak > 0.01)).toBe(
     true,
   );
+  expect(
+    silence.find((x: any) => x.key === "reload-sniper").duration,
+  ).toBeCloseTo(2.0625, 3);
+  expect(silence.find((x: any) => x.key === "shot-rifle").duration).toBeCloseTo(
+    1,
+    3,
+  );
+  expect(
+    silence.find((x: any) => x.key === "shot-shotgun").duration,
+  ).toBeCloseTo(2, 3);
   await page.getByRole("button", { name: "进入地图一", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await expect(page.locator(".raid-hud")).toBeVisible();
@@ -169,7 +202,8 @@ test("Chrome实际解码12个本地音效、真实四类射击及换弹倍速、
     expect(plan.enemyGain).toBe(0.75);
     expect(plan.cancelled).toBe(true);
   }
-  expect(out.reloadPlans.at(-1).rate).toBeLessThan(1);
+  expect(out.reloadPlans.some((p: any) => p.rate < 1)).toBe(true);
+  expect(out.reloadPlans.some((p: any) => p.rate > 1)).toBe(true);
   await page.evaluate(() => {
     const s = (window as any).__game.sound;
     s.play("equip-gear");

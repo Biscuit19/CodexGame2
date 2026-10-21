@@ -1,9 +1,14 @@
 {
-  "version": 1,
-  "previewOnly": true,
+  "version": 2,
+  "previewOnly": false,
+  "installedToGame": true,
   "date": "2026-10-21",
-  "processing": "Only constant volume gain, exact cuts and sequential concatenation. No EQ, compressor, limiter, fades, reverb, pitch/tempo changes, or added silence.",
-  "format": "24-bit PCM WAV, stereo, 44.1kHz; H source sample rate conformed from 48kHz without duration/pitch change.",
+  "processing": "User-authorized gentle high-shelf cuts on rifle and shotgun shots only. Constant gain, exact cuts and sequential shotgun reload concatenation otherwise. Sniper reload: .308 only. No compressor, limiter, fades, reverb, pitch/tempo change, or added silence.",
+  "toneFilters": {
+    "shot-rifle": "highshelf=f=4200:g=-3:t=q:w=0.707",
+    "shot-shotgun": "highshelf=f=3500:g=-3.5:t=q:w=0.707"
+  },
+  "format": "24-bit PCM WAV, stereo, 44.1kHz. Game package uses sample-identical lossless FLAC.",
   "targetLufs": -28.4,
   "peakCeilingDbfs": -1.0,
   "weapons": [
@@ -18,7 +23,7 @@
       "id": "rifle",
       "name": "步枪",
       "rpm": 600,
-      "shotSource": "E · 7.62×54R 单发｜栓动步枪",
+      "shotSource": "E · 7.62×54R 单发｜栓动步枪（轻微柔化高频）",
       "reloadSource": "E · AR 完整换弹"
     },
     {
@@ -26,13 +31,13 @@
       "name": "狙击枪",
       "rpm": 45,
       "shotSource": "G · .416 Barrett：最后一次击发至原录音结尾，含弹壳尾声",
-      "reloadSource": "E · .308 栓动完整换弹 → H · Mossberg 590 泵动霰弹枪换弹"
+      "reloadSource": "E · .308 栓动完整换弹（已取消末尾 Mossberg 声）"
     },
     {
       "id": "shotgun",
       "name": "霰弹枪",
       "rpm": 70,
-      "shotSource": "G · 10 Gauge 霰弹枪｜立体声",
+      "shotSource": "G · 10 Gauge 霰弹枪｜立体声（轻微柔化高频）",
       "reloadSource": "G · 退出弹匣并换弹：前 1.8 秒 → E · 泵动霰弹枪完整换弹"
     }
   ],
@@ -54,19 +59,19 @@
       }
     },
     "shot-rifle": {
-      "url": "audio/shot-rifle-54d6920e19.wav",
-      "sha256": "54d6920e1908ed9a7f4654f5709b05eb64b0808fd3ce043f2d0fe0a92a0f7e9c",
+      "url": "audio/shot-rifle-8016ab7b0d.wav",
+      "sha256": "8016ab7b0d9355150315bc85954c7a06c45aebf4247513a5b11595899f2bdcf5",
       "duration": 1.0,
       "channels": 2,
       "sampleRate": 44100,
-      "gainDb": -9.2,
+      "gainDb": -8.6,
       "before": {
-        "lufs": -19.2,
-        "truePeakDbfs": -4.1
+        "lufs": -19.8,
+        "truePeakDbfs": -5.0
       },
       "after": {
         "lufs": -28.4,
-        "truePeakDbfs": -13.3
+        "truePeakDbfs": -13.6
       }
     },
     "shot-sniper": {
@@ -86,19 +91,19 @@
       }
     },
     "shot-shotgun": {
-      "url": "audio/shot-shotgun-d6704ad18a.wav",
-      "sha256": "d6704ad18a783a51d6476e0dc803ddac19d07f9638f4718592f8bdf3c01659ea",
+      "url": "audio/shot-shotgun-db7a26dddd.wav",
+      "sha256": "db7a26dddd16ee296e2780d8df188074aa91dced5e2f03a8818f22aee4eaa1e2",
       "duration": 2.0,
       "channels": 2,
       "sampleRate": 44100,
-      "gainDb": -14.3,
+      "gainDb": -14.0,
       "before": {
-        "lufs": -14.1,
-        "truePeakDbfs": -1.1
+        "lufs": -14.4,
+        "truePeakDbfs": -1.6
       },
       "after": {
         "lufs": -28.4,
-        "truePeakDbfs": -15.4
+        "truePeakDbfs": -15.6
       }
     },
     "reload-smg": {
@@ -134,19 +139,19 @@
       }
     },
     "reload-sniper": {
-      "url": "audio/reload-sniper-3e297f7251.wav",
-      "sha256": "3e297f72514972ca13c298179f30b67a6d90039b10c2e7a0d916c75ef16ea1e2",
-      "duration": 2.7228798185941043,
+      "url": "audio/reload-sniper-c7449ce715.wav",
+      "sha256": "c7449ce71560756a899c971df52cdf5c0bda1a8c873a118fd2360887d8f7cd0b",
+      "duration": 2.0624943310657597,
       "channels": 2,
       "sampleRate": 44100,
-      "gainDb": -6.3,
+      "gainDb": -4.2,
       "before": {
-        "lufs": -22.1,
-        "truePeakDbfs": -1.2
+        "lufs": -24.2,
+        "truePeakDbfs": -3.7
       },
       "after": {
         "lufs": -28.4,
-        "truePeakDbfs": -7.5
+        "truePeakDbfs": -7.9
       }
     },
     "reload-shotgun": {
@@ -167,40 +172,6 @@
     }
   },
   "joins": {
-    "sniper": {
-      "mode": "sequential; no overlap, crossfade or added gap",
-      "matchedTargetLufs": -21.7,
-      "segments": [
-        {
-          "sourcePart": "E-sniper-reload",
-          "offset": 0.0,
-          "duration": 2.0624943310657597,
-          "gainDb": 2.5,
-          "before": {
-            "lufs": -24.2,
-            "truePeakDbfs": -3.7
-          },
-          "matched": {
-            "lufs": -21.7,
-            "truePeakDbfs": -1.2
-          }
-        },
-        {
-          "sourcePart": "H-sbrapump",
-          "offset": 2.0624943310657597,
-          "duration": 0.6603854875283447,
-          "gainDb": -6.0,
-          "before": {
-            "lufs": -15.7,
-            "truePeakDbfs": 1.1
-          },
-          "matched": {
-            "lufs": -21.7,
-            "truePeakDbfs": -4.9
-          }
-        }
-      ]
-    },
     "shotgun": {
       "mode": "sequential; no overlap, crossfade or added gap",
       "matchedTargetLufs": -28.3,
@@ -279,11 +250,6 @@
       "url": "../audio/E-sniper-reload.mp3",
       "sha256": "79af08a15862d69dda20515e0528ca367ed6fe944574a3acd96bb5ebe5237d28",
       "originalSource": "https://f8studios.itch.io/snakes-authentic-gun-sounds"
-    },
-    "H-sbrapump": {
-      "url": "../audio/H-sbrapump.mp3",
-      "sha256": "187e89fc3463ec3691079504638da355d34b6dfb63127e2c94a4c0b07e147992",
-      "originalSource": "https://soundbible.com/1959-Shotgun-Reload-Pump.html"
     },
     "G-sbmkreload": {
       "url": "../audio/G-sbmkreload.mp3",

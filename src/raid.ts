@@ -896,7 +896,6 @@ export class Raid {
   selectWeapon(slot: "primary" | "secondary" | "melee") {
     const item = this.save.equipment[slot];
     if (!item) return false;
-    if (this.activeWeapon !== slot) this.sound.play("equip-weapon");
     this.syncLoaded();
     this.activeWeapon = slot;
     this.ammoTier =

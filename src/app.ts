@@ -378,7 +378,7 @@ function settingsContent(inRaid = false) {
     )
     .join(
       "",
-    )}<label><span>准星颜色</span><input aria-label="准星颜色" type="color" value="${s.settings.aim}" data-setting="aim"/></label><label><span>准星样式</span><select aria-label="准星样式" data-setting="crosshair"><option value="ring" ${s.settings.crosshair !== "cross" ? "selected" : ""}>圆环准星</option><option value="cross" ${s.settings.crosshair === "cross" ? "selected" : ""}>中空十字准星</option></select></label></div>${!inRaid && !title && !s.temporary ? `<div class="save-tools">${heading("存档管理")}<div class="button-row">${btn("导出存档", "export", "", "secondary")}<label class="button secondary">导入存档<input id="import-save" type="file" accept=".json,application/json" hidden/></label></div><p>存档保存在当前浏览器，可导出备份。</p>${btn("返回开始界面", "to-title", "", "secondary full")}</div>` : ""}`;
+    )}<label><span>准星颜色</span><input aria-label="准星颜色" type="color" value="${s.settings.aim}" data-setting="aim"/></label><label><span>准星样式</span><select aria-label="准星样式" data-setting="crosshair"><option value="ring" ${s.settings.crosshair !== "cross" ? "selected" : ""}>圆环准星</option><option value="cross" ${s.settings.crosshair === "cross" ? "selected" : ""}>中空十字准星</option></select></label><p><a href="./audio-credits.html" target="_blank" rel="noopener">音效来源与许可</a></p></div>${!inRaid && !title && !s.temporary ? `<div class="save-tools">${heading("存档管理")}<div class="button-row">${btn("导出存档", "export", "", "secondary")}<label class="button secondary">导入存档<input id="import-save" type="file" accept=".json,application/json" hidden/></label></div><p>存档保存在当前浏览器，可导出备份。</p>${btn("返回开始界面", "to-title", "", "secondary full")}</div>` : ""}`;
 }
 function guide() {
   return `${heading("操作指南")}<div class="guide-grid">${[

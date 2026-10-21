@@ -301,7 +301,7 @@
   <body>
     <main>
       <div class="topline">
-        <span class="tag">按你的选择制作 · 独立试听</span
+        <span class="tag">已接入游戏 · 同源试听</span
         ><a href="../index.html">查看原素材</a>
       </div>
       <h1>已选枪械音效 · 单发、换弹与连发</h1>
@@ -309,7 +309,8 @@
         四种枪声都来自你选定的单发录音。换弹按指定先后拼接；各段先匹配音量，再统一八个成品的整体响度。
       </p>
       <p class="notice">
-        只做音量、剪切与顺序拼接，不加滤波、变调、混响、压缩或限幅效果。连发会重复同一个单发，完整保留枪声与尾音；翻滚、装备武器和装备护具暂不处理。
+        本版轻微柔化步枪和霰弹枪枪声的刺耳高频；狙击枪换弹只保留 .308
+        原段。其余按指定做音量、剪切与拼接，不加变调、混响、压缩或限幅效果。翻滚和装备素材保留现状。
       </p>
       <section class="panel controls" aria-label="连发试听控制">
         <div class="toolbar">
@@ -367,7 +368,8 @@
         <div id="recipe" class="table-wrap"></div>
         <p class="muted">
           狙击枪截自原录音约 2.03 秒，包含第三次击发前约 20
-          毫秒，直至原文件结尾。两种组合换弹均依次播放，没有重叠、淡入淡出或额外间隔。换弹在此按制作后的原时长播放，暂不按游戏换弹速度加速。
+          毫秒，直至原文件结尾。霰弹枪组合换弹依次播放，没有重叠、淡入淡出或额外间隔。狙击枪换弹已取消末尾的
+          Mossberg 声。换弹在此按制作后的原时长播放，暂不按游戏换弹速度加速。
         </p>
         <p>
           <a href="manifest.json">剪切位置、音量与文件清单</a> ·
@@ -380,9 +382,8 @@
         </p>
       </details>
       <footer>
-        本页仅用于试听确认，尚未替换游戏内音效。可以单独反馈某把枪的单发、换弹或某个射速下的连发听感。原录音作者：SnakeF8、Mike
-        Koenig、RA The Sun
-        God；本页按指定做音量、剪切和拼接，授权及署名见上方链接。
+        本页与游戏使用同一批枪声与换弹音源；游戏中换弹随武器实际换弹时间匹配。翻滚、装备与其他声音保留现状。原录音作者：SnakeF8、Mike
+        Koenig；制作修改与授权见上方链接。
       </footer>
     </main>
     <script type="module">
@@ -534,7 +535,9 @@
       }
       async function init() {
         try {
-          const response = await fetch("manifest.json", { cache: "no-cache" });
+          const response = await fetch("manifest-v2.json", {
+            cache: "no-cache",
+          });
           if (!response.ok) throw Error();
           data = await response.json();
           $("#weapon").innerHTML = data.weapons

@@ -6,7 +6,7 @@ import {
   MELEE_SWING_SECONDS,
   makeItem,
 } from "../../src/data";
-import { sampleChoice } from "../../src/audio-samples";
+import { sampleBank, sampleChoice } from "../../src/audio-samples";
 import { newSave } from "../../src/store";
 import { Raid } from "../../src/raid";
 Object.assign(globalThis, {
@@ -46,6 +46,7 @@ describe("按枪型的音效与可读参数", () => {
       const player = sampleChoice("shot", { weaponClass })!,
         enemy = sampleChoice("shot", { weaponClass, enemy: true })!;
       expect(player.key).toBe(`shot-${weaponClass}`);
+      expect(sampleBank[player.key]).toContain(".flac");
       expect(enemy.key).toBe(player.key);
       expect(enemy.gain / player.gain).toBe(0.75);
       expect(
@@ -108,7 +109,9 @@ describe("按枪型的音效与可读参数", () => {
     r.roll(1, 0);
     expect(sound.play).toHaveBeenCalledWith("roll");
     r.p.roll = 0;
+    sound.play.mockClear();
     r.selectWeapon("melee");
+    expect(sound.play).not.toHaveBeenCalled();
     r.swingMelee();
     expect(sound.play).toHaveBeenCalledWith("melee");
   });

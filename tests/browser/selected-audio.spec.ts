@@ -74,7 +74,7 @@ test("已选音效八条可播放；连发重复单发、射速可调、停止�
   await expect(page.locator("#status")).toHaveAttribute("data-state", "error");
 
   const check = await page.evaluate(async () => {
-    const d = await (await fetch("manifest.json")).json(),
+    const d = await (await fetch("manifest-v2.json")).json(),
       ctx = new AudioContext();
     let decoded = 0;
     for (const t of Object.values(d.tracks) as any[]) {
@@ -110,6 +110,9 @@ test("已选音效八条可播放；连发重复单发、射速可调、停止�
       peak,
       gain: result.gain,
       deferred: d.previewOnly,
+      sniperReload: d.tracks["reload-sniper"].duration,
+      removedTail: !d.sources["H-sbrapump"] && !d.joins.sniper,
+      softened: Object.keys(d.toneFilters).sort(),
     };
   });
   expect(check.decoded).toBe(8);
@@ -118,7 +121,10 @@ test("已选音效八条可播放；连发重复单发、射速可调、停止�
   expect(check.prefixCut).toBe(1.8);
   expect(check.peak).toBeLessThanOrEqual(10 ** (-1 / 20) + 0.000001);
   expect(check.gain).toBeLessThan(1);
-  expect(check.deferred).toBe(true);
+  expect(check.deferred).toBe(false);
+  expect(check.sniperReload).toBeCloseTo(2.0625, 3);
+  expect(check.removedTail).toBe(true);
+  expect(check.softened).toEqual(["shot-rifle", "shot-shotgun"]);
   expect(
     await page.evaluate(() =>
       Object.keys(localStorage).filter((k) => k.startsWith("tricat.")),

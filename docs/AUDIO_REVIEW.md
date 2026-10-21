@@ -2,9 +2,9 @@
 
 试听地址：https://biscuit19.github.io/CodexGame2/audio-review/
 
-**已按用户选择制作新的枪声／换弹／连发试听：** https://biscuit19.github.io/CodexGame2/audio-review/selected/index.html ，精确选段和处理见 [AUDIO_SELECTED.md](AUDIO_SELECTED.md)。旧候选页保留作原音对照，当前仍未接入游戏。
+**已按用户选择制作新的枪声／换弹／连发试听：** https://biscuit19.github.io/CodexGame2/audio-review/selected/index.html ，精确选段和处理见 [AUDIO_SELECTED.md](AUDIO_SELECTED.md)。旧候选页保留作原音对照；最新授权修订已将选定枪声与换弹接入游戏，现用细节见上述文档。
 
-用户否决上一轮 A/B/C/D，**仅保留旧 A 冲锋枪作为参考**。其他旧候选、原版合成参考、ZIP 与原合成生成逻辑已从试听内容移除。本轮只更新试听，不替换游戏音效，等待用户选择；不把“保留参考”说成正式采用批准。
+用户否决上一轮 A/B/C/D，**仅保留旧 A 冲锋枪作为参考**。其他旧候选、原版合成参考、ZIP 与原合成生成逻辑已从试听内容移除。以下是此前原声选材阶段的记录，当时只更新试听、等待选择；不把“保留参考”说成正式采用批准。
 
 ## 五组候选，作者互不相同
 

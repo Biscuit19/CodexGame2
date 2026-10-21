@@ -1,267 +1,200 @@
 {
-  "license": "CC0-1.0",
+  "license": "Mixed CC0-1.0 and CC-BY-3.0; see README.md and licenses",
+  "version": 2,
   "sampleRate": 44100,
-  "sources": {
-    "war-machinegun_fire": {
-      "repository": "TeamForbiddenLLC/warfork-free-soundpacks",
-      "revision": "8005f47869cbac20608f1d606621e4b8fcdec574",
-      "path": "cc0/sounds/weapons/machinegun_fire.ogg",
-      "url": "https://raw.githubusercontent.com/TeamForbiddenLLC/warfork-free-soundpacks/8005f47869cbac20608f1d606621e4b8fcdec574/cc0/sounds/weapons/machinegun_fire.ogg",
-      "sha256": "7db5165891ff2011aa36fe297d0f7e9a165e5c8e81b8671c00d4f1a5dac39851"
-    },
-    "war-riotgun_fire_strong": {
-      "repository": "TeamForbiddenLLC/warfork-free-soundpacks",
-      "revision": "8005f47869cbac20608f1d606621e4b8fcdec574",
-      "path": "cc0/sounds/weapons/riotgun_fire_strong.ogg",
-      "url": "https://raw.githubusercontent.com/TeamForbiddenLLC/warfork-free-soundpacks/8005f47869cbac20608f1d606621e4b8fcdec574/cc0/sounds/weapons/riotgun_fire_strong.ogg",
-      "sha256": "ffb1c32a3cab6e0f2ed46f326483f5897c28fbd69f82fff5afce5130a778e9eb"
-    },
-    "war-instagun_strong": {
-      "repository": "TeamForbiddenLLC/warfork-free-soundpacks",
-      "revision": "8005f47869cbac20608f1d606621e4b8fcdec574",
-      "path": "cc0/sounds/weapons/instagun_strong.ogg",
-      "url": "https://raw.githubusercontent.com/TeamForbiddenLLC/warfork-free-soundpacks/8005f47869cbac20608f1d606621e4b8fcdec574/cc0/sounds/weapons/instagun_strong.ogg",
-      "sha256": "d7e43cfd7302bce2d5e7eb41cb50fbe554ea3728b939c099ee6e446fe6fb4ab9"
-    },
-    "war-weapon_switch": {
-      "repository": "TeamForbiddenLLC/warfork-free-soundpacks",
-      "revision": "8005f47869cbac20608f1d606621e4b8fcdec574",
-      "path": "cc0/sounds/weapons/weapon_switch.ogg",
-      "url": "https://raw.githubusercontent.com/TeamForbiddenLLC/warfork-free-soundpacks/8005f47869cbac20608f1d606621e4b8fcdec574/cc0/sounds/weapons/weapon_switch.ogg",
-      "sha256": "9f4444e55c0b3b3c9f517f2686543c5f374ba665a5cab45eeb267db050b71981"
-    },
-    "rpg-metalClick": {
-      "repository": "lavenderdotpet/CC0-Public-Domain-Sounds",
-      "revision": "f2b6264f9ab89fabc266914c3654685d68c5a39b",
-      "path": "kenney_rpgaudio/Audio/metalClick.ogg",
-      "url": "https://raw.githubusercontent.com/lavenderdotpet/CC0-Public-Domain-Sounds/f2b6264f9ab89fabc266914c3654685d68c5a39b/kenney_rpgaudio/Audio/metalClick.ogg",
-      "sha256": "9851a69d0c613e13bceef08060ecc4148f098ef487927cbebe270d642398a3b3"
-    },
-    "rpg-metalLatch": {
-      "repository": "lavenderdotpet/CC0-Public-Domain-Sounds",
-      "revision": "f2b6264f9ab89fabc266914c3654685d68c5a39b",
-      "path": "kenney_rpgaudio/Audio/metalLatch.ogg",
-      "url": "https://raw.githubusercontent.com/lavenderdotpet/CC0-Public-Domain-Sounds/f2b6264f9ab89fabc266914c3654685d68c5a39b/kenney_rpgaudio/Audio/metalLatch.ogg",
-      "sha256": "ba9ba60b172b3ebc131a940f25793cd2e207aca7af73dc80d637277f060f1708"
-    },
-    "rpg-cloth1": {
-      "repository": "lavenderdotpet/CC0-Public-Domain-Sounds",
-      "revision": "f2b6264f9ab89fabc266914c3654685d68c5a39b",
-      "path": "kenney_rpgaudio/Audio/cloth1.ogg",
-      "url": "https://raw.githubusercontent.com/lavenderdotpet/CC0-Public-Domain-Sounds/f2b6264f9ab89fabc266914c3654685d68c5a39b/kenney_rpgaudio/Audio/cloth1.ogg",
-      "sha256": "ddb93a3671233f95da0e0b10367f082f7eb42fa6caaddcf776410aa8833c747d"
-    },
-    "rpg-cloth4": {
-      "repository": "lavenderdotpet/CC0-Public-Domain-Sounds",
-      "revision": "f2b6264f9ab89fabc266914c3654685d68c5a39b",
-      "path": "kenney_rpgaudio/Audio/cloth4.ogg",
-      "url": "https://raw.githubusercontent.com/lavenderdotpet/CC0-Public-Domain-Sounds/f2b6264f9ab89fabc266914c3654685d68c5a39b/kenney_rpgaudio/Audio/cloth4.ogg",
-      "sha256": "e7ab9a6c4466dea874196c61f59bf1da05cfe58748f42fadd695d441a154a99b"
-    },
-    "rpg-clothBelt2": {
-      "repository": "lavenderdotpet/CC0-Public-Domain-Sounds",
-      "revision": "f2b6264f9ab89fabc266914c3654685d68c5a39b",
-      "path": "kenney_rpgaudio/Audio/clothBelt2.ogg",
-      "url": "https://raw.githubusercontent.com/lavenderdotpet/CC0-Public-Domain-Sounds/f2b6264f9ab89fabc266914c3654685d68c5a39b/kenney_rpgaudio/Audio/clothBelt2.ogg",
-      "sha256": "d545b1d9f20e6188140aaf551a96f1e82fe0d15f7ca066fac8b065e1231e0038"
-    },
-    "rpg-beltHandle1": {
-      "repository": "lavenderdotpet/CC0-Public-Domain-Sounds",
-      "revision": "f2b6264f9ab89fabc266914c3654685d68c5a39b",
-      "path": "kenney_rpgaudio/Audio/beltHandle1.ogg",
-      "url": "https://raw.githubusercontent.com/lavenderdotpet/CC0-Public-Domain-Sounds/f2b6264f9ab89fabc266914c3654685d68c5a39b/kenney_rpgaudio/Audio/beltHandle1.ogg",
-      "sha256": "2ef665bd8b65dbe669f4560be38a6d8f04a162e618b15a49e3e71b58e558aab0"
-    },
-    "rpg-handleSmallLeather": {
-      "repository": "lavenderdotpet/CC0-Public-Domain-Sounds",
-      "revision": "f2b6264f9ab89fabc266914c3654685d68c5a39b",
-      "path": "kenney_rpgaudio/Audio/handleSmallLeather.ogg",
-      "url": "https://raw.githubusercontent.com/lavenderdotpet/CC0-Public-Domain-Sounds/f2b6264f9ab89fabc266914c3654685d68c5a39b/kenney_rpgaudio/Audio/handleSmallLeather.ogg",
-      "sha256": "ae3cbf695aa0a8b98b5a80a835be5a3ccbd5446a24db2235cd4c3cd6fc92ed96"
-    },
-    "rpg-dropLeather": {
-      "repository": "lavenderdotpet/CC0-Public-Domain-Sounds",
-      "revision": "f2b6264f9ab89fabc266914c3654685d68c5a39b",
-      "path": "kenney_rpgaudio/Audio/dropLeather.ogg",
-      "url": "https://raw.githubusercontent.com/lavenderdotpet/CC0-Public-Domain-Sounds/f2b6264f9ab89fabc266914c3654685d68c5a39b/kenney_rpgaudio/Audio/dropLeather.ogg",
-      "sha256": "097e1d3b74949b0145fda0519d40b7e0773ab82ec4858727f95be830927e1a45"
-    },
-    "rpg-drawKnife1": {
-      "repository": "lavenderdotpet/CC0-Public-Domain-Sounds",
-      "revision": "f2b6264f9ab89fabc266914c3654685d68c5a39b",
-      "path": "kenney_rpgaudio/Audio/drawKnife1.ogg",
-      "url": "https://raw.githubusercontent.com/lavenderdotpet/CC0-Public-Domain-Sounds/f2b6264f9ab89fabc266914c3654685d68c5a39b/kenney_rpgaudio/Audio/drawKnife1.ogg",
-      "sha256": "276403e72c3b71c47bc24db3083970c23f8e5551ffa78f436f83483c56f3f0bb"
-    },
-    "rpg-drawKnife2": {
-      "repository": "lavenderdotpet/CC0-Public-Domain-Sounds",
-      "revision": "f2b6264f9ab89fabc266914c3654685d68c5a39b",
-      "path": "kenney_rpgaudio/Audio/drawKnife2.ogg",
-      "url": "https://raw.githubusercontent.com/lavenderdotpet/CC0-Public-Domain-Sounds/f2b6264f9ab89fabc266914c3654685d68c5a39b/kenney_rpgaudio/Audio/drawKnife2.ogg",
-      "sha256": "d5df6a4130cbb016f97b4883769a418917b9629cb4c21717030b186e0c73281a"
-    },
-    "organic-Gentle Swish": {
-      "repository": "lavenderdotpet/CC0-Public-Domain-Sounds",
-      "revision": "f2b6264f9ab89fabc266914c3654685d68c5a39b",
-      "path": "Micro Pack - Organic Wooshes/Gentle Swish.wav",
-      "url": "https://raw.githubusercontent.com/lavenderdotpet/CC0-Public-Domain-Sounds/f2b6264f9ab89fabc266914c3654685d68c5a39b/Micro%20Pack%20-%20Organic%20Wooshes/Gentle%20Swish.wav",
-      "sha256": "11d39fa96334ef67edd9ba8c09880b4eae1fb1d4bbfd978bf9a845bebffc5885"
-    },
-    "organic-Classic Swish 1": {
-      "repository": "lavenderdotpet/CC0-Public-Domain-Sounds",
-      "revision": "f2b6264f9ab89fabc266914c3654685d68c5a39b",
-      "path": "Micro Pack - Organic Wooshes/Classic Swish 1.wav",
-      "url": "https://raw.githubusercontent.com/lavenderdotpet/CC0-Public-Domain-Sounds/f2b6264f9ab89fabc266914c3654685d68c5a39b/Micro%20Pack%20-%20Organic%20Wooshes/Classic%20Swish%201.wav",
-      "sha256": "672db5f3decc2c6de750ac8d8d9095f9868c37d64af2ae518d0377c915ead1bd"
-    },
-    "organic-Slash": {
-      "repository": "lavenderdotpet/CC0-Public-Domain-Sounds",
-      "revision": "f2b6264f9ab89fabc266914c3654685d68c5a39b",
-      "path": "Micro Pack - Organic Wooshes/Slash.wav",
-      "url": "https://raw.githubusercontent.com/lavenderdotpet/CC0-Public-Domain-Sounds/f2b6264f9ab89fabc266914c3654685d68c5a39b/Micro%20Pack%20-%20Organic%20Wooshes/Slash.wav",
-      "sha256": "7bad54c4fc2f16c88680946b305e886f5dcb5be1cc8b3939b273968bc6232222"
-    },
-    "organic-Thunk 1": {
-      "repository": "lavenderdotpet/CC0-Public-Domain-Sounds",
-      "revision": "f2b6264f9ab89fabc266914c3654685d68c5a39b",
-      "path": "Micro Pack - Organic Wooshes/Thunk 1.wav",
-      "url": "https://raw.githubusercontent.com/lavenderdotpet/CC0-Public-Domain-Sounds/f2b6264f9ab89fabc266914c3654685d68c5a39b/Micro%20Pack%20-%20Organic%20Wooshes/Thunk%201.wav",
-      "sha256": "a6713f91a31aeaf62a6539740b2b1b627c0345afbfc2bdac48c4e8bf8f62668e"
-    },
-    "impact-impact_soft_heavy_000": {
-      "repository": "Boyquotes/kenney-impact-sounds-for-godot",
-      "revision": "999dd1684873f8b020a3aa5b26e713da21688924",
-      "path": "addons/kenney impact sounds/impact_soft_heavy_000.ogg",
-      "url": "https://raw.githubusercontent.com/Boyquotes/kenney-impact-sounds-for-godot/999dd1684873f8b020a3aa5b26e713da21688924/addons/kenney%20impact%20sounds/impact_soft_heavy_000.ogg",
-      "sha256": "49e7ca88743fca974bb8676ea138b751cfd8f9033b5e7af8736c2a215d6edbc1"
-    },
-    "impact-impact_metal_light_000": {
-      "repository": "Boyquotes/kenney-impact-sounds-for-godot",
-      "revision": "999dd1684873f8b020a3aa5b26e713da21688924",
-      "path": "addons/kenney impact sounds/impact_metal_light_000.ogg",
-      "url": "https://raw.githubusercontent.com/Boyquotes/kenney-impact-sounds-for-godot/999dd1684873f8b020a3aa5b26e713da21688924/addons/kenney%20impact%20sounds/impact_metal_light_000.ogg",
-      "sha256": "33b5e6e37c6e9d54e07bf5a89b12c76e879f40c1ea83cdd82714df1d6f9fec6d"
-    }
-  },
-  "tracks": {
+  "gunSounds": {
     "shot-smg": {
-      "duration": 0.22,
-      "layers": [
-        "war-machinegun_fire"
-      ],
-      "peakTarget": 0.6,
-      "sha256": "d9ef950be756017c7cda3fdaea9ef6fe380f02d65c020b0b5926ce17d51dc284"
+      "file": "shot-smg.flac",
+      "sha256": "ed5f17efe1ec2e2ef17c00c209c4947b909882eba452a240709c1e41a498c0c3",
+      "auditionSha256": "b5bed7bc76d88bcb1e40f65f442d2f1ee7867c4da182e9af0b193d69ce4af6e6",
+      "duration": 2.0,
+      "lufs": -28.4
     },
     "shot-rifle": {
-      "duration": 0.36,
-      "layers": [
-        "war-machinegun_fire",
-        "impact-impact_metal_light_000"
-      ],
-      "peakTarget": 0.73,
-      "sha256": "d8f4f12250ec27ace2b01e4909306fd6c169b73f425da83dd4f59c93ab2beaf7"
+      "file": "shot-rifle.flac",
+      "sha256": "b8d853800c61ea16bcd98efcfd349b1f3dde124d8c8c167610908ae9618d6ab4",
+      "auditionSha256": "8016ab7b0d9355150315bc85954c7a06c45aebf4247513a5b11595899f2bdcf5",
+      "duration": 1.0,
+      "lufs": -28.4
     },
     "shot-sniper": {
-      "duration": 0.74,
-      "layers": [
-        "war-instagun_strong",
-        "organic-Thunk 1"
-      ],
-      "peakTarget": 0.85,
-      "sha256": "62f61d450c9581e1cc0683e8ca098086f0bcbfca93fc82ae9275bb7ac4307d42"
+      "file": "shot-sniper.flac",
+      "sha256": "ff586d68b4a281469cfe8a4079e71829ed0fb57e0b7835a07c72d548b050ec5e",
+      "auditionSha256": "2f827c3d404a98d982353cf86241b23a3accfdf439cb35695d4246f2e1e91bbf",
+      "duration": 2.4986621315192745,
+      "lufs": -28.4
     },
     "shot-shotgun": {
-      "duration": 0.68,
-      "layers": [
-        "war-riotgun_fire_strong",
-        "organic-Thunk 1"
-      ],
-      "peakTarget": 0.9,
-      "sha256": "8f86ec165fbd44ae7ffa07c41f1a45f9e87d7d602bb22429f76ff7931511c8d4"
+      "file": "shot-shotgun.flac",
+      "sha256": "dbada86957cd304f2979321612f67b8cf00237c5c7970dc8bad17599daa4a241",
+      "auditionSha256": "db7a26dddd16ee296e2780d8df188074aa91dced5e2f03a8818f22aee4eaa1e2",
+      "duration": 2.0,
+      "lufs": -28.4
     },
     "reload-smg": {
-      "duration": 1.7,
-      "layers": [
-        "rpg-metalClick",
-        "rpg-handleSmallLeather",
-        "rpg-metalLatch",
-        "rpg-metalClick"
-      ],
-      "peakTarget": 0.6,
-      "sha256": "645dada2740bf15c368c2bcc6023a961f20d95c0b843c9ae620cf50cefa0fa9f"
+      "file": "reload-smg.flac",
+      "sha256": "04ecdfad03fa71ec60227739458761e18c260c4343350bb8a5394d104e2c6835",
+      "auditionSha256": "4d8514214fd5e070c1104780eb16683a97c2b2ce6d5b830bf3adb86394dd2ba1",
+      "duration": 2.6250113378684805,
+      "lufs": -28.4
     },
     "reload-rifle": {
-      "duration": 2.1,
-      "layers": [
-        "rpg-metalLatch",
-        "rpg-cloth4",
-        "rpg-metalClick",
-        "rpg-metalLatch"
-      ],
-      "peakTarget": 0.66,
-      "sha256": "cc76fd7b5a07ec61ba6b97cbe94f161a6e24532bd0377643b17ea57a4f1ccb49"
+      "file": "reload-rifle.flac",
+      "sha256": "04ecdfad03fa71ec60227739458761e18c260c4343350bb8a5394d104e2c6835",
+      "auditionSha256": "4d8514214fd5e070c1104780eb16683a97c2b2ce6d5b830bf3adb86394dd2ba1",
+      "duration": 2.6250113378684805,
+      "lufs": -28.4
     },
     "reload-sniper": {
-      "duration": 2.8,
-      "layers": [
-        "rpg-drawKnife2",
-        "rpg-metalLatch",
-        "rpg-handleSmallLeather",
-        "rpg-metalClick",
-        "rpg-metalLatch"
-      ],
-      "peakTarget": 0.68,
-      "sha256": "94a3022be83a9b402452690597640292d8a93c8ad7ba92caf68c1c94b52c1864"
+      "file": "reload-sniper.flac",
+      "sha256": "458c465c25899c8ea2f698a6c42f2f5fcb246d8d54040d042e94660ea1ccedf1",
+      "auditionSha256": "c7449ce71560756a899c971df52cdf5c0bda1a8c873a118fd2360887d8f7cd0b",
+      "duration": 2.0624943310657597,
+      "lufs": -28.4
     },
     "reload-shotgun": {
-      "duration": 2.8,
-      "layers": [
-        "rpg-metalClick",
-        "rpg-metalLatch",
-        "rpg-metalLatch",
-        "rpg-metalLatch",
-        "rpg-metalLatch",
-        "rpg-drawKnife1",
-        "rpg-metalClick"
-      ],
-      "peakTarget": 0.68,
-      "sha256": "cbe4c047dc3944504678086f14b29da4aa4c8658da091af490da15f0ed9b269c"
+      "file": "reload-shotgun.flac",
+      "sha256": "6f45095262df4aba2ccd5a639b8c55a6063c66cb509bf7e395feb143ffaad555",
+      "auditionSha256": "12e60eb007fa8b5792670c2e38d6087ebcfedbe8dd4a941ac4c150d1ab5dc995",
+      "duration": 2.6750113378684808,
+      "lufs": -28.4
+    }
+  },
+  "sources": {
+    "E-9mm": {
+      "url": "../audio/E-9mm.mp3",
+      "sha256": "70ae8b49c219425d119a747330f2a34287af93499ec7efe9bbe5a498e43a8280",
+      "originalSource": "https://f8studios.itch.io/snakes-second-authentic-gun-sounds-pack"
     },
-    "equip-weapon": {
-      "duration": 0.34,
-      "layers": [
-        "war-weapon_switch",
-        "rpg-metalLatch"
-      ],
-      "peakTarget": 0.58,
-      "sha256": "33b206857a3ee91d0a5212f3589f000440695ec995d524b94b8c1050ac8cfa75"
+    "E-762": {
+      "url": "../audio/E-762.mp3",
+      "sha256": "98e08ea50a896c84116e406e09a1ea5c8ca786448d02021211782ef894d086fb",
+      "originalSource": "https://f8studios.itch.io/snakes-authentic-gun-sounds"
     },
-    "equip-gear": {
-      "duration": 0.46,
-      "layers": [
-        "rpg-clothBelt2",
-        "rpg-beltHandle1"
-      ],
-      "peakTarget": 0.55,
-      "sha256": "2b18bcbee0c0f0546428d2b1b628aa0068257b7c0b15721da634d2fc7989add6"
+    "G-sbmksniper": {
+      "url": "../audio/G-sbmksniper.mp3",
+      "sha256": "8524baab1a928765cf3b6e7fe9b8fc5bec9d76af1c50b2a5447bc020f02e7783",
+      "originalSource": "https://soundbible.com/1880-416-Barrett-Sniper-3x.html"
     },
-    "roll": {
-      "duration": 0.35,
-      "layers": [
-        "organic-Gentle Swish",
-        "rpg-cloth4",
-        "impact-impact_soft_heavy_000"
-      ],
-      "peakTarget": 0.58,
-      "sha256": "29e6ff189dfe3f688955fb4630af2f30ede44ed707178f58668ef7ed97950dd9"
+    "G-sbshotgun": {
+      "url": "../audio/G-sbshotgun.mp3",
+      "sha256": "3b4e1b3972d9f80155ba27bd2762d0e36a76e45d154d9def80f89338c8c955a6",
+      "originalSource": "https://soundbible.com/1262-10-Guage-Shotgun.html"
     },
-    "melee": {
-      "duration": 0.25,
-      "layers": [
-        "organic-Slash"
-      ],
-      "peakTarget": 0.5,
-      "sha256": "cb1f17a4e772349cb38f2fafa7e4021e05519a5bae0417b5b4941345206851eb"
+    "E-ar-reload": {
+      "url": "../audio/E-ar-reload.mp3",
+      "sha256": "ea0e4d3372012ced1dc425037360eb3963101afb9b00e679fb5ca95c217e637e",
+      "originalSource": "https://f8studios.itch.io/snakes-authentic-gun-sounds"
+    },
+    "E-sniper-reload": {
+      "url": "../audio/E-sniper-reload.mp3",
+      "sha256": "79af08a15862d69dda20515e0528ca367ed6fe944574a3acd96bb5ebe5237d28",
+      "originalSource": "https://f8studios.itch.io/snakes-authentic-gun-sounds"
+    },
+    "G-sbmkreload": {
+      "url": "../audio/G-sbmkreload.mp3",
+      "sha256": "fe08eb8b6724155bd62b4ffa74bcadb236a0f963e6c4178dc7c9072a970b976b",
+      "originalSource": "https://soundbible.com/414-Eject-Clip-And-Re-Load.html"
+    },
+    "E-pump-reload": {
+      "url": "../audio/E-pump-reload.mp3",
+      "sha256": "da984546316700ac5a6c883ea47b9116f9689d6f7197c8825d49f6a7a971c660",
+      "originalSource": "https://f8studios.itch.io/snakes-authentic-gun-sounds"
+    }
+  },
+  "processing": "User-authorized gentle high-shelf cuts on rifle and shotgun shots only. Constant gain, exact cuts and sequential shotgun reload concatenation otherwise. Sniper reload: .308 only. No compressor, limiter, fades, reverb, pitch/tempo change, or added silence.",
+  "toneFilters": {
+    "shot-rifle": "highshelf=f=4200:g=-3:t=q:w=0.707",
+    "shot-shotgun": "highshelf=f=3500:g=-3.5:t=q:w=0.707"
+  },
+  "cuts": {
+    "shot-sniper": {
+      "source": "G-sbmksniper",
+      "start": 2.03,
+      "end": 4.528662131519274,
+      "note": "Third and final shot onset at ~2.05s. Starts 20ms before attack and preserves every remaining sample, including casing tail."
+    },
+    "reload-shotgun-first": {
+      "source": "G-sbmkreload",
+      "start": 0,
+      "end": 1.8
+    }
+  },
+  "joins": {
+    "shotgun": {
+      "mode": "sequential; no overlap, crossfade or added gap",
+      "matchedTargetLufs": -28.3,
+      "segments": [
+        {
+          "sourcePart": "G-sbmkreload-first18",
+          "offset": 0.0,
+          "duration": 1.8,
+          "gainDb": 9.1,
+          "before": {
+            "lufs": -37.4,
+            "truePeakDbfs": -10.3
+          },
+          "matched": {
+            "lufs": -28.3,
+            "truePeakDbfs": -1.2
+          }
+        },
+        {
+          "sourcePart": "E-pump-reload",
+          "offset": 1.8,
+          "duration": 0.8750113378684807,
+          "gainDb": -16.7,
+          "before": {
+            "lufs": -11.6,
+            "truePeakDbfs": -3.4
+          },
+          "matched": {
+            "lufs": -28.3,
+            "truePeakDbfs": -20.1
+          }
+        }
+      ]
+    }
+  },
+  "retainedFoley": {
+    "metadata": "foley-sources.json",
+    "tracks": {
+      "equip-weapon": {
+        "duration": 0.34,
+        "layers": [
+          "war-weapon_switch",
+          "rpg-metalLatch"
+        ],
+        "peakTarget": 0.58,
+        "sha256": "33b206857a3ee91d0a5212f3589f000440695ec995d524b94b8c1050ac8cfa75"
+      },
+      "equip-gear": {
+        "duration": 0.46,
+        "layers": [
+          "rpg-clothBelt2",
+          "rpg-beltHandle1"
+        ],
+        "peakTarget": 0.55,
+        "sha256": "2b18bcbee0c0f0546428d2b1b628aa0068257b7c0b15721da634d2fc7989add6"
+      },
+      "roll": {
+        "duration": 0.35,
+        "layers": [
+          "organic-Gentle Swish",
+          "rpg-cloth4",
+          "impact-impact_soft_heavy_000"
+        ],
+        "peakTarget": 0.58,
+        "sha256": "29e6ff189dfe3f688955fb4630af2f30ede44ed707178f58668ef7ed97950dd9"
+      },
+      "melee": {
+        "duration": 0.25,
+        "layers": [
+          "organic-Slash"
+        ],
+        "peakTarget": 0.5,
+        "sha256": "cb1f17a4e772349cb38f2fafa7e4021e05519a5bae0417b5b4941345206851eb"
+      }
     }
   }
 }
