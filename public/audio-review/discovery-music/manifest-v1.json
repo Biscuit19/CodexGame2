@@ -1,0 +1,978 @@
+{
+  "version": 1,
+  "date": "2026-10-22 Asia/Shanghai",
+  "previewOnly": true,
+  "installedToGame": false,
+  "processing": "20 new candidates, original files copied byte-identical. Playback gain only; no editing, pitch, filters, layering or generated sounds. Complete music, no excerpts.",
+  "sources": {
+    "shimmer-glitter-magic": {
+      "pack": "shimmer-glitter-magic",
+      "name": "sfx-shimmer-glitter-magic--shimmer_1.flac",
+      "author": "The Berklee College of Music",
+      "source": "https://opengameart.org/content/shimmer-glitter-magic",
+      "license": "CC-BY-3.0",
+      "path": "flat/shimmer-glitter-magic.flac",
+      "sourceSha256": "b6802e6ef22189058a4406ae5c7bda9a54c47e908fad3fd6212650c1aa0170af",
+      "sourceDuration": 0.658367,
+      "downloadUrl": "https://opengameart.org/sites/default/files/shimmer_1.flac",
+      "whole": false,
+      "url": "audio/shimmer-glitter-magic-b6802e6ef2.flac",
+      "sha256": "b6802e6ef22189058a4406ae5c7bda9a54c47e908fad3fd6212650c1aa0170af",
+      "bytes": 46885,
+      "duration": 0.658367,
+      "previewGain": 0.49659232145033616,
+      "playbackGainDb": -6.079999999999998
+    },
+    "life-pickup-yo-frankie": {
+      "pack": "life-pickup-yo-frankie",
+      "name": "sfx-life-pickup-yo-frankie--life_pickup.flac",
+      "author": "Blender Foundation",
+      "source": "https://opengameart.org/content/life-pickup-yo-frankie",
+      "license": "CC-BY-3.0",
+      "path": "flat/life-pickup-yo-frankie.flac",
+      "sourceSha256": "b04ef03ff55c69e55adcc0df4ff9480c53b9c24f48e8f180768b7ac7adc98362",
+      "sourceDuration": 0.384626,
+      "downloadUrl": "https://opengameart.org/sites/default/files/life_pickup.flac",
+      "whole": false,
+      "url": "audio/life-pickup-yo-frankie-b04ef03ff5.flac",
+      "sha256": "b04ef03ff55c69e55adcc0df4ff9480c53b9c24f48e8f180768b7ac7adc98362",
+      "bytes": 19609,
+      "duration": 0.384626,
+      "previewGain": 1.0162486928706957,
+      "playbackGainDb": 0.14000000000000057
+    },
+    "bell-dingschimes": {
+      "pack": "bell-dingschimes",
+      "name": "sfx-bell-dingschimes--bell_ding1.wav",
+      "author": "PWL",
+      "source": "https://opengameart.org/content/bell-dingschimes",
+      "license": "CC0-1.0",
+      "path": "flat/bell-dingschimes.wav",
+      "sourceSha256": "8ce40f49cd211125303df59db0da4fe911e8b2f34d3847011b15137c6b5850de",
+      "sourceDuration": 2.078186,
+      "downloadUrl": "https://opengameart.org/sites/default/files/bell_ding1.wav",
+      "whole": false,
+      "url": "audio/bell-dingschimes-8ce40f49cd.wav",
+      "sha256": "8ce40f49cd211125303df59db0da4fe911e8b2f34d3847011b15137c6b5850de",
+      "bytes": 366660,
+      "duration": 2.078186,
+      "previewGain": 0.9088662990655879,
+      "playbackGainDb": -0.83
+    },
+    "glass-bell-sounds": {
+      "pack": "glass-bell-sounds",
+      "name": "sfx-glass-bell-sounds--hjm-glass_bell_2.wav",
+      "author": "Hansjörg Malthaner / Varkalandar",
+      "source": "https://opengameart.org/content/glass-bell-sounds",
+      "license": "CC-BY-3.0",
+      "path": "flat/glass-bell-sounds.wav",
+      "sourceSha256": "4439d6ea10666b5b1f4054efa5ca4a0f4e5694523802cb817e05c3483c0b370e",
+      "sourceDuration": 4.098322,
+      "downloadUrl": "https://opengameart.org/sites/default/files/hjm-glass_bell_2.wav",
+      "whole": false,
+      "url": "audio/glass-bell-sounds-4439d6ea10.wav",
+      "sha256": "4439d6ea10666b5b1f4054efa5ca4a0f4e5694523802cb817e05c3483c0b370e",
+      "bytes": 361636,
+      "duration": 4.098322,
+      "previewGain": 3.5645113342624417,
+      "playbackGainDb": 11.04
+    },
+    "ui-sound-effects-button-clicks-user-feedback-notifications": {
+      "pack": "ui-sound-effects-button-clicks-user-feedback-notifications",
+      "name": "chimes.wav",
+      "author": "Robin Lamb",
+      "source": "https://opengameart.org/content/ui-sound-effects-button-clicks-user-feedback-notifications",
+      "license": "CC0-1.0",
+      "path": "flat/ui-sound-effects-button-clicks-user-feedback-notifications.wav",
+      "sourceSha256": "8d2a772df3931b0b341e6f2a956becf1699a7607ad5b6919e06e33b475626083",
+      "sourceDuration": 2.004807,
+      "downloadUrl": null,
+      "whole": false,
+      "archiveUrl": "https://opengameart.org/sites/default/files/ui_ogg.zip",
+      "archiveSha256": "9e24099c1625f34077d890ed09e5351afb8025e51d80871e3c40e991c5fd991b",
+      "member": "ui_wav/chimes.wav",
+      "url": "audio/ui-sound-effects-button-clicks-user-feedback-notifications-8d2a772df3.wav",
+      "sha256": "8d2a772df3931b0b341e6f2a956becf1699a7607ad5b6919e06e33b475626083",
+      "bytes": 353692,
+      "duration": 2.004807,
+      "previewGain": 0.8521185113792298,
+      "playbackGainDb": -1.3900000000000006
+    },
+    "picked-coin-echo": {
+      "pack": "picked-coin-echo",
+      "name": "sfx-picked-coin-echo--Picked Coin Echo.wav",
+      "author": "NenadSimic",
+      "source": "https://opengameart.org/content/picked-coin-echo",
+      "license": "CC-BY-3.0",
+      "path": "flat/picked-coin-echo.wav",
+      "sourceSha256": "edda8c33a6877bc6e371aba5a84e19b2fda71b3ba199e60638d8c0cc940e0cda",
+      "sourceDuration": 1.732154,
+      "downloadUrl": "https://opengameart.org/sites/default/files/Picked%20Coin%20Echo.wav",
+      "whole": false,
+      "url": "audio/picked-coin-echo-edda8c33a6.wav",
+      "sha256": "edda8c33a6877bc6e371aba5a84e19b2fda71b3ba199e60638d8c0cc940e0cda",
+      "bytes": 458472,
+      "duration": 1.732154,
+      "previewGain": 0.7516228940182055,
+      "playbackGainDb": -2.4800000000000004
+    },
+    "10-8bit-coin-sounds": {
+      "pack": "10-8bit-coin-sounds",
+      "name": "coin1.wav",
+      "author": "Luke.RUSTLTD",
+      "source": "https://opengameart.org/content/10-8bit-coin-sounds",
+      "license": "CC0-1.0",
+      "path": "flat/10-8bit-coin-sounds.wav",
+      "sourceSha256": "240e2c6f6979d628859f0bc67e92b3868c40bf09a50bcec530d552b3a2bf8ece",
+      "sourceDuration": 0.35542,
+      "downloadUrl": null,
+      "whole": false,
+      "archiveUrl": "https://opengameart.org/sites/default/files/coin_sounds.zip",
+      "archiveSha256": "11be4d249389fa61523702140b205046bd13774c8a37e84f156fb44421129921",
+      "member": "coin1.wav",
+      "url": "audio/10-8bit-coin-sounds-240e2c6f69.wav",
+      "sha256": "240e2c6f6979d628859f0bc67e92b3868c40bf09a50bcec530d552b3a2bf8ece",
+      "bytes": 31392,
+      "duration": 0.35542,
+      "previewGain": 0.7211074791828996,
+      "playbackGainDb": -2.84
+    },
+    "card-game-sounds": {
+      "pack": "card-game-sounds",
+      "name": "Passturn.wav",
+      "author": "HaelDB",
+      "source": "https://opengameart.org/content/card-game-sounds",
+      "license": "CC0-1.0",
+      "path": "flat/card-game-sounds.wav",
+      "sourceSha256": "31510e1af4652b0549ae609f3264378faf3e5ba07c931879d9aabc45e9afc1db",
+      "sourceDuration": 0.585011,
+      "downloadUrl": null,
+      "whole": false,
+      "archiveUrl": "https://opengameart.org/sites/default/files/Cardsounds.zip",
+      "archiveSha256": "0c01b7807909119a4d93364fa3661f7c4be1421721e65da8a816edd71cf3f899",
+      "member": "cockatrice/Passturn.wav",
+      "url": "audio/card-game-sounds-31510e1af4.wav",
+      "sha256": "31510e1af4652b0549ae609f3264378faf3e5ba07c931879d9aabc45e9afc1db",
+      "bytes": 65536,
+      "duration": 0.585011,
+      "previewGain": 1.5066070661867417,
+      "playbackGainDb": 3.5599999999999987
+    },
+    "dings-0": {
+      "pack": "dings-0",
+      "name": "sfx-dings-0--ding_soft_03.ogg",
+      "author": "Wandering Door Games",
+      "source": "https://opengameart.org/content/dings-0",
+      "license": "CC-BY-SA-4.0",
+      "path": "flat/dings-0.ogg",
+      "sourceSha256": "f15d3fbe803ef521cd1e34dab5dc55c66350fcf049d0d973b77879db9619da2b",
+      "sourceDuration": 0.758833,
+      "downloadUrl": "https://opengameart.org/sites/default/files/ding_soft_03.ogg",
+      "whole": false,
+      "url": "audio/dings-0-f15d3fbe80.ogg",
+      "sha256": "f15d3fbe803ef521cd1e34dab5dc55c66350fcf049d0d973b77879db9619da2b",
+      "bytes": 23452,
+      "duration": 0.758833,
+      "previewGain": 3.1224824062232717,
+      "playbackGainDb": 9.89
+    },
+    "plingy-coin": {
+      "pack": "plingy-coin",
+      "name": "sfx-plingy-coin--coin.wav",
+      "author": "Fupi",
+      "source": "https://opengameart.org/content/plingy-coin",
+      "license": "CC0-1.0",
+      "path": "flat/plingy-coin.wav",
+      "sourceSha256": "d0a0a830ec4e2ed70d58d065edf7136ef5db45f0f977238be3b0ba8cf9fdc3f8",
+      "sourceDuration": 0.90449,
+      "downloadUrl": "https://opengameart.org/sites/default/files/coin.wav",
+      "whole": false,
+      "url": "audio/plingy-coin-d0a0a830ec.wav",
+      "sha256": "d0a0a830ec4e2ed70d58d065edf7136ef5db45f0f977238be3b0ba8cf9fdc3f8",
+      "bytes": 159596,
+      "duration": 0.90449,
+      "previewGain": 4.102041029866067,
+      "playbackGainDb": 12.259999999999998
+    },
+    "apple-cider": {
+      "pack": "apple-cider",
+      "name": "music-apple-cider--apple_cider.ogg",
+      "author": "Zane Little Music",
+      "source": "https://opengameart.org/content/apple-cider",
+      "license": "CC0-1.0",
+      "path": "flat/apple-cider.ogg",
+      "sourceSha256": "29dfe7f2491fa2cabd159db70db868445be253e395db5f75b30b3113f798f4ca",
+      "sourceDuration": 199.837506,
+      "downloadUrl": "https://opengameart.org/sites/default/files/apple_cider.ogg",
+      "whole": true,
+      "url": "audio/apple-cider-29dfe7f249.ogg",
+      "sha256": "29dfe7f2491fa2cabd159db70db868445be253e395db5f75b30b3113f798f4ca",
+      "bytes": 3240559,
+      "duration": 199.837506,
+      "previewGain": 0.3463378846082794,
+      "playbackGainDb": -9.21
+    },
+    "meadow-thoughts": {
+      "pack": "meadow-thoughts",
+      "name": "music-meadow-thoughts--Meadow Thoughts.ogg",
+      "author": "Écrivain",
+      "source": "https://opengameart.org/content/meadow-thoughts",
+      "license": "CC0-1.0",
+      "path": "flat/meadow-thoughts.ogg",
+      "sourceSha256": "9c55cfadb5acca6ef9ca81bf89d343b13f2b09984d45ae520cf877f1f9ad4404",
+      "sourceDuration": 149.743991,
+      "downloadUrl": "https://opengameart.org/sites/default/files/Meadow%20Thoughts.ogg",
+      "whole": true,
+      "url": "audio/meadow-thoughts-9c55cfadb5.ogg",
+      "sha256": "9c55cfadb5acca6ef9ca81bf89d343b13f2b09984d45ae520cf877f1f9ad4404",
+      "bytes": 2396007,
+      "duration": 149.743991,
+      "previewGain": 0.3463378846082794,
+      "playbackGainDb": -9.21
+    },
+    "where-was-i": {
+      "pack": "where-was-i",
+      "name": "music-where-was-i--WereWasI_0.ogg",
+      "author": "yd",
+      "source": "https://opengameart.org/content/where-was-i",
+      "license": "CC0-1.0",
+      "path": "flat/where-was-i.ogg",
+      "sourceSha256": "cb52cc2226123233303bb7ea5f49857d818b8d70cddfb76331bf48ca2c39374e",
+      "sourceDuration": 68.230431,
+      "downloadUrl": "https://opengameart.org/sites/default/files/WereWasI_0.ogg",
+      "whole": true,
+      "url": "audio/where-was-i-cb52cc2226.ogg",
+      "sha256": "cb52cc2226123233303bb7ea5f49857d818b8d70cddfb76331bf48ca2c39374e",
+      "bytes": 615936,
+      "duration": 68.230431,
+      "previewGain": 0.5629891173942434,
+      "playbackGainDb": -4.989999999999998
+    },
+    "jrpg-piano": {
+      "pack": "jrpg-piano",
+      "name": "music-jrpg-piano--JRPG Piano.mp3",
+      "author": "Joth",
+      "source": "https://opengameart.org/content/jrpg-piano",
+      "license": "CC0-1.0",
+      "path": "flat/jrpg-piano.mp3",
+      "sourceSha256": "87a99f62e901b8365f1b868cd53bc015d2bf9f887e4c8a89a4fad11a36a62c16",
+      "sourceDuration": 24.8947,
+      "downloadUrl": "https://opengameart.org/sites/default/files/JRPG%20Piano.mp3",
+      "whole": true,
+      "url": "audio/jrpg-piano-87a99f62e9.mp3",
+      "sha256": "87a99f62e901b8365f1b868cd53bc015d2bf9f887e4c8a89a4fad11a36a62c16",
+      "bytes": 501990,
+      "duration": 24.8947,
+      "previewGain": 0.9099132726322515,
+      "playbackGainDb": -0.8200000000000003
+    },
+    "a-small-fire-will-do-calming-loop": {
+      "pack": "a-small-fire-will-do-calming-loop",
+      "name": "music-a-small-fire-will-do-calming-loop--a_small_fire_will_do.wav",
+      "author": "Cal McEachern / Trex0n",
+      "source": "https://opengameart.org/content/a-small-fire-will-do-calming-loop",
+      "license": "CC0-1.0",
+      "path": "flat/a-small-fire-will-do-calming-loop.wav",
+      "sourceSha256": "1cb42057e724224d6047f651b95598f5c094caaaba47f6430dd5d540c09c4414",
+      "sourceDuration": 64.0,
+      "downloadUrl": "https://opengameart.org/sites/default/files/a_small_fire_will_do.wav",
+      "whole": true,
+      "url": "audio/a-small-fire-will-do-calming-loop-1cb42057e7.wav",
+      "sha256": "1cb42057e724224d6047f651b95598f5c094caaaba47f6430dd5d540c09c4414",
+      "bytes": 16934546,
+      "duration": 64.0,
+      "previewGain": 0.8156427871327874,
+      "playbackGainDb": -1.7699999999999996
+    },
+    "honey-bear": {
+      "pack": "honey-bear",
+      "name": "music-honey-bear--honey-bear-loop.mp3",
+      "author": "TinyWorlds",
+      "source": "https://opengameart.org/content/honey-bear",
+      "license": "CC0-1.0",
+      "path": "flat/honey-bear.mp3",
+      "sourceSha256": "d63aa26aa54c640e85d1b3c832883ff4583b0ffa6e6fdf674c2bdb2f1552be52",
+      "sourceDuration": 79.986939,
+      "downloadUrl": "https://opengameart.org/sites/default/files/honey-bear-loop.mp3",
+      "whole": true,
+      "url": "audio/honey-bear-d63aa26aa5.mp3",
+      "sha256": "d63aa26aa54c640e85d1b3c832883ff4583b0ffa6e6fdf674c2bdb2f1552be52",
+      "bytes": 1280340,
+      "duration": 79.986939,
+      "previewGain": 0.5176068319505678,
+      "playbackGainDb": -5.719999999999999
+    },
+    "medieval-the-bards-tale": {
+      "pack": "medieval-the-bards-tale",
+      "name": "music-medieval-the-bards-tale--The_Bards_Tale.mp3",
+      "author": "RandomMind",
+      "source": "https://opengameart.org/content/medieval-the-bards-tale",
+      "license": "CC0-1.0",
+      "path": "flat/medieval-the-bards-tale.mp3",
+      "sourceSha256": "6e93e8e8215bea17a209c321c182111058e024c53e3ad775ce1481ca1d1fcfc2",
+      "sourceDuration": 158.589375,
+      "downloadUrl": "https://opengameart.org/sites/default/files/The_Bards_Tale.mp3",
+      "whole": true,
+      "url": "audio/medieval-the-bards-tale-6e93e8e821.mp3",
+      "sha256": "6e93e8e8215bea17a209c321c182111058e024c53e3ad775ce1481ca1d1fcfc2",
+      "bytes": 3810344,
+      "duration": 158.589375,
+      "previewGain": 0.4786300923226384,
+      "playbackGainDb": -6.399999999999999
+    },
+    "lost-in-the-meadows": {
+      "pack": "lost-in-the-meadows",
+      "name": "music-lost-in-the-meadows--lost in the meadows_0.flac",
+      "author": "Augmentality",
+      "source": "https://opengameart.org/content/lost-in-the-meadows",
+      "license": "CC0-1.0",
+      "path": "flat/lost-in-the-meadows.flac",
+      "sourceSha256": "1b11acb81dc34b0cfa73739c268fcf8ef14f425319ac288f741d4541455846aa",
+      "sourceDuration": 108.068571,
+      "downloadUrl": "https://opengameart.org/sites/default/files/lost%20in%20the%20meadows_0.flac",
+      "whole": true,
+      "url": "audio/lost-in-the-meadows-1b11acb81d.flac",
+      "sha256": "1b11acb81dc34b0cfa73739c268fcf8ef14f425319ac288f741d4541455846aa",
+      "bytes": 4912831,
+      "duration": 108.068571,
+      "previewGain": 2.113489039836647,
+      "playbackGainDb": 6.5
+    },
+    "happy-go-lucky-puzzle": {
+      "pack": "happy-go-lucky-puzzle",
+      "name": "music-happy-go-lucky-puzzle--periwinkle_0.mp3",
+      "author": "axtoncrolley",
+      "source": "https://opengameart.org/content/happy-go-lucky-puzzle",
+      "license": "CC-BY-SA-3.0",
+      "path": "flat/happy-go-lucky-puzzle.mp3",
+      "sourceSha256": "70d5e86cc41666393628a79d2fe4222adc0541594b456a3ae61aec7f38be0e52",
+      "sourceDuration": 107.650625,
+      "downloadUrl": "https://opengameart.org/sites/default/files/periwinkle_0.mp3",
+      "whole": true,
+      "url": "audio/happy-go-lucky-puzzle-70d5e86cc4.mp3",
+      "sha256": "70d5e86cc41666393628a79d2fe4222adc0541594b456a3ae61aec7f38be0e52",
+      "bytes": 2587711,
+      "duration": 107.650625,
+      "previewGain": 0.37540495447208405,
+      "playbackGainDb": -8.51
+    },
+    "sylvan-waltz-standard-looped-version": {
+      "pack": "sylvan-waltz-standard-looped-version",
+      "name": "music-sylvan-waltz-standard-looped-version--Otto Halmén - Sylvan Waltz_1.mp3",
+      "author": "Otto Halmén",
+      "source": "https://opengameart.org/content/sylvan-waltz-standard-looped-version",
+      "license": "CC-BY-3.0",
+      "path": "flat/sylvan-waltz-standard-looped-version.mp3",
+      "sourceSha256": "edb48ef506d6f535f3de3e047867ae0d60d4c056591d0b8ead27a4891683d9ec",
+      "sourceDuration": 122.827775,
+      "downloadUrl": "https://opengameart.org/sites/default/files/Otto%20Halm%C3%A9n%20-%20Sylvan%20Waltz_1.mp3",
+      "whole": true,
+      "url": "audio/sylvan-waltz-standard-looped-version-edb48ef506.mp3",
+      "sha256": "edb48ef506d6f535f3de3e047867ae0d60d4c056591d0b8ead27a4891683d9ec",
+      "bytes": 4917207,
+      "duration": 122.827775,
+      "previewGain": 0.3832657404000346,
+      "playbackGainDb": -8.33
+    }
+  },
+  "sourcePacks": {
+    "shimmer-glitter-magic": {
+      "name": "shimmer-glitter-magic",
+      "author": "The Berklee College of Music",
+      "url": "https://opengameart.org/content/shimmer-glitter-magic",
+      "license": "CC-BY-3.0",
+      "evidence": "原页文件下载数 3893；收藏 21。不是游戏采用数。"
+    },
+    "life-pickup-yo-frankie": {
+      "name": "life-pickup-yo-frankie",
+      "author": "Blender Foundation",
+      "url": "https://opengameart.org/content/life-pickup-yo-frankie",
+      "license": "CC-BY-3.0",
+      "evidence": "原页文件下载数 3127；收藏 13。不是游戏采用数。"
+    },
+    "bell-dingschimes": {
+      "name": "bell-dingschimes",
+      "author": "PWL",
+      "url": "https://opengameart.org/content/bell-dingschimes",
+      "license": "CC0-1.0",
+      "evidence": "原页文件下载数 784, 687, 582, 608；收藏 3。不是游戏采用数。"
+    },
+    "glass-bell-sounds": {
+      "name": "glass-bell-sounds",
+      "author": "Hansjörg Malthaner / Varkalandar",
+      "url": "https://opengameart.org/content/glass-bell-sounds",
+      "license": "CC-BY-3.0",
+      "evidence": "原页文件下载数 878, 456, 376, 342, 343, 342, 413；收藏 6。不是游戏采用数。"
+    },
+    "ui-sound-effects-button-clicks-user-feedback-notifications": {
+      "name": "ui-sound-effects-button-clicks-user-feedback-notifications",
+      "author": "Robin Lamb",
+      "url": "https://opengameart.org/content/ui-sound-effects-button-clicks-user-feedback-notifications",
+      "license": "CC0-1.0",
+      "evidence": "原页文件下载数 809, 1119；收藏 11。不是游戏采用数。"
+    },
+    "picked-coin-echo": {
+      "name": "picked-coin-echo",
+      "author": "NenadSimic",
+      "url": "https://opengameart.org/content/picked-coin-echo",
+      "license": "CC-BY-3.0",
+      "evidence": "原页文件下载数 7893；收藏 32。不是游戏采用数。"
+    },
+    "10-8bit-coin-sounds": {
+      "name": "10-8bit-coin-sounds",
+      "author": "Luke.RUSTLTD",
+      "url": "https://opengameart.org/content/10-8bit-coin-sounds",
+      "license": "CC0-1.0",
+      "evidence": "原页文件下载数 18611；收藏 63。不是游戏采用数。"
+    },
+    "card-game-sounds": {
+      "name": "card-game-sounds",
+      "author": "HaelDB",
+      "url": "https://opengameart.org/content/card-game-sounds",
+      "license": "CC0-1.0",
+      "evidence": "原页文件下载数 5159；收藏 30。不是游戏采用数。"
+    },
+    "dings-0": {
+      "name": "dings-0",
+      "author": "Wandering Door Games",
+      "url": "https://opengameart.org/content/dings-0",
+      "license": "CC-BY-SA-4.0",
+      "evidence": "原页文件下载数 82, 91, 29, 23, 19, 11, 18, 9, 10, 12, 8, 13, 16；收藏 1。不是游戏采用数。 新作者低热度补充。"
+    },
+    "plingy-coin": {
+      "name": "plingy-coin",
+      "author": "Fupi",
+      "url": "https://opengameart.org/content/plingy-coin",
+      "license": "CC0-1.0",
+      "evidence": "原页文件下载数 5466；收藏 10。不是游戏采用数。"
+    },
+    "apple-cider": {
+      "name": "apple-cider",
+      "author": "Zane Little Music",
+      "url": "https://opengameart.org/content/apple-cider",
+      "license": "CC0-1.0",
+      "evidence": "原页文件下载数 823, 783；收藏 27。不是游戏采用数。"
+    },
+    "meadow-thoughts": {
+      "name": "meadow-thoughts",
+      "author": "Écrivain",
+      "url": "https://opengameart.org/content/meadow-thoughts",
+      "license": "CC0-1.0",
+      "evidence": "原页文件下载数 1450；收藏 31。不是游戏采用数。"
+    },
+    "where-was-i": {
+      "name": "where-was-i",
+      "author": "yd",
+      "url": "https://opengameart.org/content/where-was-i",
+      "license": "CC0-1.0",
+      "evidence": "原页文件下载数 1760, 631；收藏 42。不是游戏采用数。"
+    },
+    "jrpg-piano": {
+      "name": "jrpg-piano",
+      "author": "Joth",
+      "url": "https://opengameart.org/content/jrpg-piano",
+      "license": "CC0-1.0",
+      "evidence": "原页文件下载数 1274；收藏 29。不是游戏采用数。"
+    },
+    "a-small-fire-will-do-calming-loop": {
+      "name": "a-small-fire-will-do-calming-loop",
+      "author": "Cal McEachern / Trex0n",
+      "url": "https://opengameart.org/content/a-small-fire-will-do-calming-loop",
+      "license": "CC0-1.0",
+      "evidence": "原页文件下载数 483；收藏 9。不是游戏采用数。"
+    },
+    "honey-bear": {
+      "name": "honey-bear",
+      "author": "TinyWorlds",
+      "url": "https://opengameart.org/content/honey-bear",
+      "license": "CC0-1.0",
+      "evidence": "原页文件下载数 302, 404；收藏 14。不是游戏采用数。"
+    },
+    "medieval-the-bards-tale": {
+      "name": "medieval-the-bards-tale",
+      "author": "RandomMind",
+      "url": "https://opengameart.org/content/medieval-the-bards-tale",
+      "license": "CC0-1.0",
+      "evidence": "原页文件下载数 2180, 1380；收藏 58。不是游戏采用数。"
+    },
+    "lost-in-the-meadows": {
+      "name": "lost-in-the-meadows",
+      "author": "Augmentality",
+      "url": "https://opengameart.org/content/lost-in-the-meadows",
+      "license": "CC0-1.0",
+      "evidence": "原页文件下载数 1425；收藏 46。不是游戏采用数。"
+    },
+    "happy-go-lucky-puzzle": {
+      "name": "happy-go-lucky-puzzle",
+      "author": "axtoncrolley",
+      "url": "https://opengameart.org/content/happy-go-lucky-puzzle",
+      "license": "CC-BY-SA-3.0",
+      "evidence": "原页文件下载数 795；收藏 24。不是游戏采用数。"
+    },
+    "sylvan-waltz-standard-looped-version": {
+      "name": "sylvan-waltz-standard-looped-version",
+      "author": "Otto Halmén",
+      "url": "https://opengameart.org/content/sylvan-waltz-standard-looped-version",
+      "license": "CC-BY-3.0",
+      "evidence": "原页文件下载数 423, 710, 493, 461；收藏 27。不是游戏采用数。"
+    }
+  },
+  "groups": [
+    {
+      "id": "discovery",
+      "title": "发现奖励 · 10个新候选",
+      "description": "短促、清亮、自然衰减；避开连续阶梯上扬。十位不同作者，均为之前未使用的来源页。",
+      "multi": true,
+      "candidates": [
+        {
+          "id": "ND1",
+          "name": "闪亮短发现",
+          "source": "shimmer-glitter-magic",
+          "author": "The Berklee College of Music",
+          "sourceUrl": "https://opengameart.org/content/shimmer-glitter-magic",
+          "license": "CC-BY-3.0",
+          "style": "短促闪光",
+          "note": "闪烁质感的一次短提示，保留自然尾声。 原文件不剪切，只匹配播放响度。",
+          "versions": [
+            {
+              "id": "natural",
+              "name": "完整发现原声",
+              "url": "audio/shimmer-glitter-magic-b6802e6ef2.flac",
+              "sha256": "b6802e6ef22189058a4406ae5c7bda9a54c47e908fad3fd6212650c1aa0170af",
+              "duration": 0.658367,
+              "bytes": 46885,
+              "gain": 0.49659232145033616,
+              "whole": false
+            }
+          ]
+        },
+        {
+          "id": "ND2",
+          "name": "柔亮生命拾取",
+          "source": "life-pickup-yo-frankie",
+          "author": "Blender Foundation",
+          "sourceUrl": "https://opengameart.org/content/life-pickup-yo-frankie",
+          "license": "CC-BY-3.0",
+          "style": "游戏拾取",
+          "note": "Yo Frankie!原游戏生命拾取，短促收束，不是升级长旋律。 原文件不剪切，只匹配播放响度。",
+          "versions": [
+            {
+              "id": "natural",
+              "name": "完整发现原声",
+              "url": "audio/life-pickup-yo-frankie-b04ef03ff5.flac",
+              "sha256": "b04ef03ff55c69e55adcc0df4ff9480c53b9c24f48e8f180768b7ac7adc98362",
+              "duration": 0.384626,
+              "bytes": 19609,
+              "gain": 1.0162486928706957,
+              "whole": false
+            }
+          ]
+        },
+        {
+          "id": "ND3",
+          "name": "清透小铃奖励",
+          "source": "bell-dingschimes",
+          "author": "PWL",
+          "sourceUrl": "https://opengameart.org/content/bell-dingschimes",
+          "license": "CC0-1.0",
+          "style": "单次铃音",
+          "note": "一次清亮铃击与衰减尾声，不叠上扬旋律。 原文件不剪切，只匹配播放响度。",
+          "versions": [
+            {
+              "id": "natural",
+              "name": "完整发现原声",
+              "url": "audio/bell-dingschimes-8ce40f49cd.wav",
+              "sha256": "8ce40f49cd211125303df59db0da4fe911e8b2f34d3847011b15137c6b5850de",
+              "duration": 2.078186,
+              "bytes": 366660,
+              "gain": 0.9088662990655879,
+              "whole": false
+            }
+          ]
+        },
+        {
+          "id": "ND4",
+          "name": "轻敲玻璃铃",
+          "source": "glass-bell-sounds",
+          "author": "Hansjörg Malthaner / Varkalandar",
+          "sourceUrl": "https://opengameart.org/content/glass-bell-sounds",
+          "license": "CC-BY-3.0",
+          "style": "玻璃铃",
+          "note": "柔和玻璃铃自然余音；与旧D3-4来源不同。 原文件不剪切，只匹配播放响度。",
+          "versions": [
+            {
+              "id": "natural",
+              "name": "完整发现原声",
+              "url": "audio/glass-bell-sounds-4439d6ea10.wav",
+              "sha256": "4439d6ea10666b5b1f4054efa5ca4a0f4e5694523802cb817e05c3483c0b370e",
+              "duration": 4.098322,
+              "bytes": 361636,
+              "gain": 3.5645113342624417,
+              "whole": false
+            }
+          ]
+        },
+        {
+          "id": "ND5",
+          "name": "清亮和声提示",
+          "source": "ui-sound-effects-button-clicks-user-feedback-notifications",
+          "author": "Robin Lamb",
+          "sourceUrl": "https://opengameart.org/content/ui-sound-effects-button-clicks-user-feedback-notifications",
+          "license": "CC0-1.0",
+          "style": "和声铃音",
+          "note": "原包chimes，单次触发后自然衰减，不采用警报或上扬成功段。 原文件不剪切，只匹配播放响度。",
+          "versions": [
+            {
+              "id": "natural",
+              "name": "完整发现原声",
+              "url": "audio/ui-sound-effects-button-clicks-user-feedback-notifications-8d2a772df3.wav",
+              "sha256": "8d2a772df3931b0b341e6f2a956becf1699a7607ad5b6919e06e33b475626083",
+              "duration": 2.004807,
+              "bytes": 353692,
+              "gain": 0.8521185113792298,
+              "whole": false
+            }
+          ]
+        },
+        {
+          "id": "ND6",
+          "name": "回响宝物轻响",
+          "source": "picked-coin-echo",
+          "author": "NenadSimic",
+          "sourceUrl": "https://opengameart.org/content/picked-coin-echo",
+          "license": "CC-BY-3.0",
+          "style": "拾取回响",
+          "note": "作者已完成的物品拾取提示，短打击后的回响，不另加递进层。 原文件不剪切，只匹配播放响度。",
+          "versions": [
+            {
+              "id": "natural",
+              "name": "完整发现原声",
+              "url": "audio/picked-coin-echo-edda8c33a6.wav",
+              "sha256": "edda8c33a6877bc6e371aba5a84e19b2fda71b3ba199e60638d8c0cc940e0cda",
+              "duration": 1.732154,
+              "bytes": 458472,
+              "gain": 0.7516228940182055,
+              "whole": false
+            }
+          ]
+        },
+        {
+          "id": "ND7",
+          "name": "像素单铃拾取",
+          "source": "10-8bit-coin-sounds",
+          "author": "Luke.RUSTLTD",
+          "sourceUrl": "https://opengameart.org/content/10-8bit-coin-sounds",
+          "license": "CC0-1.0",
+          "style": "像素短音",
+          "note": "包中coin1，选相对平稳的短音，避开包中明显升高的其他变体。 原文件不剪切，只匹配播放响度。",
+          "versions": [
+            {
+              "id": "natural",
+              "name": "完整发现原声",
+              "url": "audio/10-8bit-coin-sounds-240e2c6f69.wav",
+              "sha256": "240e2c6f6979d628859f0bc67e92b3868c40bf09a50bcec530d552b3a2bf8ece",
+              "duration": 0.35542,
+              "bytes": 31392,
+              "gain": 0.7211074791828996,
+              "whole": false
+            }
+          ]
+        },
+        {
+          "id": "ND8",
+          "name": "纸牌游戏轻确认",
+          "source": "card-game-sounds",
+          "author": "HaelDB",
+          "sourceUrl": "https://opengameart.org/content/card-game-sounds",
+          "license": "CC0-1.0",
+          "style": "轻确认",
+          "note": "Cockatrice游戏资源中的轻确认音，持续单音色作较克制的发现候选。 原文件不剪切，只匹配播放响度。",
+          "versions": [
+            {
+              "id": "natural",
+              "name": "完整发现原声",
+              "url": "audio/card-game-sounds-31510e1af4.wav",
+              "sha256": "31510e1af4652b0549ae609f3264378faf3e5ba07c931879d9aabc45e9afc1db",
+              "duration": 0.585011,
+              "bytes": 65536,
+              "gain": 1.5066070661867417,
+              "whole": false
+            }
+          ]
+        },
+        {
+          "id": "ND9",
+          "name": "柔亮小铃余音",
+          "source": "dings-0",
+          "author": "Wandering Door Games",
+          "sourceUrl": "https://opengameart.org/content/dings-0",
+          "license": "CC-BY-SA-4.0",
+          "style": "柔铃",
+          "note": "原包soft系列的一次铃响；新作者低热度补充，不宣称热门。 原文件不剪切，只匹配播放响度。",
+          "versions": [
+            {
+              "id": "natural",
+              "name": "完整发现原声",
+              "url": "audio/dings-0-f15d3fbe80.ogg",
+              "sha256": "f15d3fbe803ef521cd1e34dab5dc55c66350fcf049d0d973b77879db9619da2b",
+              "duration": 0.758833,
+              "bytes": 23452,
+              "gain": 3.1224824062232717,
+              "whole": false
+            }
+          ]
+        },
+        {
+          "id": "ND10",
+          "name": "轻巧硬币叮声",
+          "source": "plingy-coin",
+          "author": "Fupi",
+          "sourceUrl": "https://opengameart.org/content/plingy-coin",
+          "license": "CC0-1.0",
+          "style": "短拾取",
+          "note": "极短的双音拾取方向，没有连续阶梯式上扬或长铺垫。 原文件不剪切，只匹配播放响度。",
+          "versions": [
+            {
+              "id": "natural",
+              "name": "完整发现原声",
+              "url": "audio/plingy-coin-d0a0a830ec.wav",
+              "sha256": "d0a0a830ec4e2ed70d58d065edf7136ef5db45f0f977238be3b0ba8cf9fdc3f8",
+              "duration": 0.90449,
+              "bytes": 159596,
+              "gain": 4.102041029866067,
+              "whole": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "music",
+      "title": "轻松背景音乐 · 10首完整新曲",
+      "description": "祥和、安静、舒适的乡村/钢琴/木吉他方向；完整原文件，不截取。十位不同作者。",
+      "multi": true,
+      "candidates": [
+        {
+          "id": "NB1",
+          "name": "苹果酒 · Apple Cider",
+          "source": "apple-cider",
+          "author": "Zane Little Music",
+          "sourceUrl": "https://opengameart.org/content/apple-cider",
+          "license": "CC0-1.0",
+          "style": "秋日乡村",
+          "note": "原作者标注Animal Crossing、Harvest Moon与Stardew Valley方向，木吉他、口哨与柔和复古音色。 完整原曲，不截取。",
+          "versions": [
+            {
+              "id": "whole",
+              "name": "完整原曲",
+              "url": "audio/apple-cider-29dfe7f249.ogg",
+              "sha256": "29dfe7f2491fa2cabd159db70db868445be253e395db5f75b30b3113f798f4ca",
+              "duration": 199.837506,
+              "bytes": 3240559,
+              "gain": 0.3463378846082794,
+              "whole": true
+            }
+          ]
+        },
+        {
+          "id": "NB2",
+          "name": "草甸心绪 · Meadow Thoughts",
+          "source": "meadow-thoughts",
+          "author": "Écrivain",
+          "sourceUrl": "https://opengameart.org/content/meadow-thoughts",
+          "license": "CC0-1.0",
+          "style": "竖琴草地",
+          "note": "草甸与篝火意象的轻柔竖琴，适合安静探索。 完整原曲，不截取。",
+          "versions": [
+            {
+              "id": "whole",
+              "name": "完整原曲",
+              "url": "audio/meadow-thoughts-9c55cfadb5.ogg",
+              "sha256": "9c55cfadb5acca6ef9ca81bf89d343b13f2b09984d45ae520cf877f1f9ad4404",
+              "duration": 149.743991,
+              "bytes": 2396007,
+              "gain": 0.3463378846082794,
+              "whole": true
+            }
+          ]
+        },
+        {
+          "id": "NB3",
+          "name": "慢慢想起 · Where Was I?",
+          "source": "where-was-i",
+          "author": "yd",
+          "sourceUrl": "https://opengameart.org/content/where-was-i",
+          "license": "CC0-1.0",
+          "style": "舒缓背景",
+          "note": "低压力背景循环方向，保留完整作者成品。 完整原曲，不截取。",
+          "versions": [
+            {
+              "id": "whole",
+              "name": "完整原曲",
+              "url": "audio/where-was-i-cb52cc2226.ogg",
+              "sha256": "cb52cc2226123233303bb7ea5f49857d818b8d70cddfb76331bf48ca2c39374e",
+              "duration": 68.230431,
+              "bytes": 615936,
+              "gain": 0.5629891173942434,
+              "whole": true
+            }
+          ]
+        },
+        {
+          "id": "NB4",
+          "name": "小镇钢琴 · JRPG Piano",
+          "source": "jrpg-piano",
+          "author": "Joth",
+          "sourceUrl": "https://opengameart.org/content/jrpg-piano",
+          "license": "CC0-1.0",
+          "style": "慢钢琴",
+          "note": "原作者明确的calm、slow RPG钢琴，较简洁安静。 完整原曲，不截取。",
+          "versions": [
+            {
+              "id": "whole",
+              "name": "完整原曲",
+              "url": "audio/jrpg-piano-87a99f62e9.mp3",
+              "sha256": "87a99f62e901b8365f1b868cd53bc015d2bf9f887e4c8a89a4fad11a36a62c16",
+              "duration": 24.8947,
+              "bytes": 501990,
+              "gain": 0.9099132726322515,
+              "whole": true
+            }
+          ]
+        },
+        {
+          "id": "NB5",
+          "name": "小小篝火 · A Small Fire Will Do",
+          "source": "a-small-fire-will-do-calming-loop",
+          "author": "Cal McEachern / Trex0n",
+          "sourceUrl": "https://opengameart.org/content/a-small-fire-will-do-calming-loop",
+          "license": "CC0-1.0",
+          "style": "木吉他休憩",
+          "note": "作者的calming guitar loop，适合村落、营火、休息区；保留完整原循环。 完整原曲，不截取。",
+          "versions": [
+            {
+              "id": "whole",
+              "name": "完整原曲",
+              "url": "audio/a-small-fire-will-do-calming-loop-1cb42057e7.wav",
+              "sha256": "1cb42057e724224d6047f651b95598f5c094caaaba47f6430dd5d540c09c4414",
+              "duration": 64.0,
+              "bytes": 16934546,
+              "gain": 0.8156427871327874,
+              "whole": true
+            }
+          ]
+        },
+        {
+          "id": "NB6",
+          "name": "蜂蜜小熊 · Honey Bear",
+          "source": "honey-bear",
+          "author": "TinyWorlds",
+          "sourceUrl": "https://opengameart.org/content/honey-bear",
+          "license": "CC0-1.0",
+          "style": "柔和休闲",
+          "note": "平滑柔软的舒缓小曲，保留作者完整loop版本。 完整原曲，不截取。",
+          "versions": [
+            {
+              "id": "whole",
+              "name": "完整原曲",
+              "url": "audio/honey-bear-d63aa26aa5.mp3",
+              "sha256": "d63aa26aa54c640e85d1b3c832883ff4583b0ffa6e6fdf674c2bdb2f1552be52",
+              "duration": 79.986939,
+              "bytes": 1280340,
+              "gain": 0.5176068319505678,
+              "whole": true
+            }
+          ]
+        },
+        {
+          "id": "NB7",
+          "name": "吟游诗人的故事 · The Bard’s Tale",
+          "source": "medieval-the-bards-tale",
+          "author": "RandomMind",
+          "sourceUrl": "https://opengameart.org/content/medieval-the-bards-tale",
+          "license": "CC0-1.0",
+          "style": "乡村民谣",
+          "note": "鲁特琴与笛类的平和民谣方向，原作者标注peaceful、positive。 完整原曲，不截取。",
+          "versions": [
+            {
+              "id": "whole",
+              "name": "完整原曲",
+              "url": "audio/medieval-the-bards-tale-6e93e8e821.mp3",
+              "sha256": "6e93e8e8215bea17a209c321c182111058e024c53e3ad775ce1481ca1d1fcfc2",
+              "duration": 158.589375,
+              "bytes": 3810344,
+              "gain": 0.4786300923226384,
+              "whole": true
+            }
+          ]
+        },
+        {
+          "id": "NB8",
+          "name": "迷失草甸 · Lost in the Meadows",
+          "source": "lost-in-the-meadows",
+          "author": "Augmentality",
+          "sourceUrl": "https://opengameart.org/content/lost-in-the-meadows",
+          "license": "CC0-1.0",
+          "style": "柔和草甸",
+          "note": "作者描述为very mellow、较自由的背景音乐，比节奏明确的曲目更散淡。 完整原曲，不截取。",
+          "versions": [
+            {
+              "id": "whole",
+              "name": "完整原曲",
+              "url": "audio/lost-in-the-meadows-1b11acb81d.flac",
+              "sha256": "1b11acb81dc34b0cfa73739c268fcf8ef14f425319ac288f741d4541455846aa",
+              "duration": 108.068571,
+              "bytes": 4912831,
+              "gain": 2.113489039836647,
+              "whole": true
+            }
+          ]
+        },
+        {
+          "id": "NB9",
+          "name": "悠闲小谜题 · Happy-Go-Lucky Puzzle",
+          "source": "happy-go-lucky-puzzle",
+          "author": "axtoncrolley",
+          "sourceUrl": "https://opengameart.org/content/happy-go-lucky-puzzle",
+          "license": "CC-BY-SA-3.0",
+          "style": "轻快钢琴",
+          "note": "简单旋律与较轻的复古鼓点，比其他候选稍活泼。 完整原曲，不截取。",
+          "versions": [
+            {
+              "id": "whole",
+              "name": "完整原曲",
+              "url": "audio/happy-go-lucky-puzzle-70d5e86cc4.mp3",
+              "sha256": "70d5e86cc41666393628a79d2fe4222adc0541594b456a3ae61aec7f38be0e52",
+              "duration": 107.650625,
+              "bytes": 2587711,
+              "gain": 0.37540495447208405,
+              "whole": true
+            }
+          ]
+        },
+        {
+          "id": "NB10",
+          "name": "森林圆舞曲 · Sylvan Waltz",
+          "source": "sylvan-waltz-standard-looped-version",
+          "author": "Otto Halmén",
+          "sourceUrl": "https://opengameart.org/content/sylvan-waltz-standard-looped-version",
+          "license": "CC-BY-3.0",
+          "style": "柔和圆舞曲",
+          "note": "完整standard版本，三拍子森林民谣；不是单独的循环intro/main片段。 完整原曲，不截取。",
+          "versions": [
+            {
+              "id": "whole",
+              "name": "完整原曲",
+              "url": "audio/sylvan-waltz-standard-looped-version-edb48ef506.mp3",
+              "sha256": "edb48ef506d6f535f3de3e047867ae0d60d4c056591d0b8ead27a4891683d9ec",
+              "duration": 122.827775,
+              "bytes": 4917207,
+              "gain": 0.3832657404000346,
+              "whole": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

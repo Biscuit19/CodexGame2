@@ -145,16 +145,18 @@ export function sampleChoice(name: string, options: SoundOptions = {}) {
     gain:
       (name === "shot" || name === "enemy") &&
       (options.enemy || name === "enemy")
-        ? 0.5
-        : name === "loot"
-          ? 1.2
-          : name === "hurt"
-            ? 0.5
-            : name === "enemy-alert"
-              ? 0.65
-              : options.enemy
-                ? 0.75
-                : 1,
+        ? 0.35
+        : name === "shot" || name === "enemy"
+          ? 0.7
+          : name === "loot"
+            ? 1.2
+            : name === "hurt"
+              ? 0.5
+              : name === "enemy-alert"
+                ? 0.65
+                : options.enemy
+                  ? 0.75
+                  : 1,
     seconds: name === "reload" || name === "food" ? options.seconds : undefined,
     reload: name === "reload" && !options.enemy,
     food: name === "food",

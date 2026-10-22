@@ -6,7 +6,8 @@ import {
   type SoundOptions,
 } from "./audio-samples";
 // Licensed gun/foley recordings are bundled locally; credits are linked from settings.
-// Existing music and unrelated UI cues remain synthesized.
+// Whole licensed music streams locally; unrelated UI cues remain synthesized.
+import { musicTracks, type MusicTrack } from "./music";
 export class Sound {
   ctx?: AudioContext;
   master?: GainNode;
@@ -174,8 +175,68 @@ export class Sound {
     else void this.loadSample(choice.key).then(play);
     return true;
   }
-  timer?: number;
-  step = 0;
+  private musicElement?: HTMLAudioElement;
+  private trackGain?: GainNode;
+  private musicKey?: MusicTrack;
+  private musicSelection = "";
+  private musicRequest = 0;
+  private musicFailed = false;
+  get currentMusic() {
+    return this.musicKey;
+  }
+  private syncMusic() {
+    if (!this.ctx || !this.musicBus) return;
+    const picked = this.settings.musicTrack ?? "BG5";
+    const mode = this.settings.musicMode ?? "loop";
+    const signature = `${picked}:${mode}`;
+    if (!this.musicElement) {
+      this.musicElement = new Audio();
+      this.musicElement.preload = "none";
+      this.trackGain = this.ctx.createGain();
+      this.ctx
+        .createMediaElementSource(this.musicElement)
+        .connect(this.trackGain);
+      this.trackGain.connect(this.musicBus);
+      this.musicElement.addEventListener("ended", () => {
+        if (this.settings.musicMode === "random") this.nextMusic();
+      });
+      document.addEventListener("visibilitychange", () => this.syncMusic());
+    }
+    if (signature !== this.musicSelection) {
+      this.musicSelection = signature;
+      this.musicFailed = false;
+      this.setMusic(picked in musicTracks ? picked : "BG5");
+    }
+    this.musicElement.loop = mode === "loop";
+    if (!this.settings.master || !this.settings.music || document.hidden) {
+      this.musicRequest++;
+      this.musicElement.pause();
+    } else if (this.musicElement.paused && !this.musicFailed) {
+      const request = ++this.musicRequest;
+      void this.musicElement.play().catch((error) => {
+        if (request !== this.musicRequest) return;
+        if (error.name !== "NotAllowedError" && error.name !== "AbortError") {
+          this.musicFailed = true;
+          console.warn("背景音乐暂时不可用", error);
+        }
+      });
+    }
+  }
+  private setMusic(key: MusicTrack) {
+    const audio = this.musicElement!;
+    this.musicRequest++;
+    audio.pause();
+    this.musicKey = key;
+    this.trackGain!.gain.value = musicTracks[key].gain;
+    audio.src = musicTracks[key].url;
+  }
+  private nextMusic() {
+    const keys = (Object.keys(musicTracks) as MusicTrack[]).filter(
+      (k) => k !== this.musicKey,
+    );
+    this.setMusic(keys[Math.floor(Math.random() * keys.length)]);
+    this.syncMusic();
+  }
   constructor(settings: Settings) {
     this.settings = settings;
   }
@@ -189,16 +250,17 @@ export class Sound {
       this.effects = this.ctx.createGain();
       this.effects.connect(this.master);
       this.apply();
-      this.timer = window.setInterval(() => this.score(), 320);
     }
     void this.ctx.resume().catch(() => {});
     void this.prepare();
+    this.syncMusic();
   }
   apply() {
     if (this.master) {
-      this.master.gain.value = this.settings.master;
+      this.master.gain.value = this.settings.master * 1.3;
       this.musicBus!.gain.value = this.settings.music * 0.35;
       this.effects!.gain.value = this.settings.sfx * 0.5;
+      this.syncMusic();
     }
   }
   note(
@@ -283,25 +345,5 @@ export class Sound {
         this.note(f, 0.2, "sine", 0.15, i * 0.1),
       );
     }
-  }
-  score() {
-    if (document.hidden || !this.ctx) return;
-    const n = this.step++,
-      base = this.mode === "base",
-      boss = this.mode === "boss";
-    const chordRoots = [130.81, 110, 146.83, 98],
-      root = chordRoots[Math.floor(n / 16) % 4];
-    if (n % 8 === 0)
-      [1, 1.25, 1.5, 2].forEach((x, i) =>
-        this.note(root * x, 2.8, "sine", base ? 0.13 : 0.07, i * 0.04, true),
-      );
-    if (n % 4 === 0) this.note(root / 2, 0.75, "triangle", 0.16, 0, true);
-    const motif = [
-      2, 0, 2.5, 3, 0, 2.25, 2, 1.5, 0, 2.5, 3, 3.75, 0, 3, 2.5, 2,
-    ];
-    const m = motif[(n + (Math.floor(n / 64) % 3) * 3) % 16];
-    if (m && (base || n % 2 === 0))
-      this.note(root * m, 0.55, "sine", base ? 0.13 : 0.07, 0, true);
-    if (boss && n % 2 === 0) this.note(65, 0.12, "triangle", 0.18, 0, true);
   }
 }

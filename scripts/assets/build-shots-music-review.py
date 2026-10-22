@@ -35,7 +35,9 @@ def main():
     fixed=gain(clip);clip*=fixed;v=encode(clip,c['id'],'audio');v.update(id='shot',name='单次射击片段',gain=1,whole=False,start=start/SR,end=end/SR,fixedGain=fixed)
    c['versions']=[v]
  assert len({c['source'] for g in m['groups'][:2] for c in g['candidates']})==20
- m['previewOnly']=True;m['installedToGame']=False;(out/'manifest-v1.json').write_text(json.dumps(m,ensure_ascii=False,indent=2,allow_nan=False)+'\n');used={s['url'] for s in m['sources'].values()}|{v['url'] for g in m['groups'] for c in g['candidates'] for v in c['versions']}
+ m['previewOnly']=True;m['installedToGame']=(R/'src/assets/audio/approved-music.json').exists();
+ if m['installedToGame']:m['installedSelections']={'SM1':'rifle shot','BG3':'music settings','BG5':'default loop music','BG6':'music settings','BG10':'music settings'}
+ (out/'manifest-v1.json').write_text(json.dumps(m,ensure_ascii=False,indent=2,allow_nan=False)+'\n');used={s['url'] for s in m['sources'].values()}|{v['url'] for g in m['groups'] for c in g['candidates'] for v in c['versions']}
  for folder in ['audio','originals']:
   for p in (out/folder).iterdir():
    if p.is_file() and folder+'/'+p.name not in used:p.unlink()

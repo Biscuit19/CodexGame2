@@ -27,6 +27,8 @@ export type Equipment = {
 export interface Settings {
   master: number;
   music: number;
+  musicTrack?: "BG3" | "BG5" | "BG6" | "BG10";
+  musicMode?: "loop" | "random";
   sfx: number;
   shake: number;
   aim: string;
@@ -88,6 +90,8 @@ export interface Result {
 export const defaults: Settings = {
   master: 0.65,
   music: 0.25,
+  musicTrack: "BG5",
+  musicMode: "loop",
   sfx: 0.7,
   shake: 0.35,
   aim: "#edd39a",
@@ -362,6 +366,16 @@ export function validateSave(data: unknown): Save {
     !["ring", "cross"].includes(s.settings.crosshair)
   )
     throw Error("准星样式无效");
+  if (
+    s.settings.musicTrack !== undefined &&
+    !["BG3", "BG5", "BG6", "BG10"].includes(s.settings.musicTrack)
+  )
+    throw Error("背景音乐无效");
+  if (
+    s.settings.musicMode !== undefined &&
+    !["loop", "random"].includes(s.settings.musicMode)
+  )
+    throw Error("音乐播放方式无效");
   if (!/^#[0-9a-f]{6}$/i.test(s.settings.aim)) throw Error("瞄准色无效");
   if (s.loadedRounds) {
     if (!Array.isArray(s.loadedRounds) || s.loadedRounds.length > 2)

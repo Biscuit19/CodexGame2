@@ -113,3 +113,5 @@ npm run preview         # 验证生产构建
 新一轮声音：[已采用交互音效](docs/AUDIO_APPROVED_INTERACTIONS.md) · [换弹/搜索/猫叫40候选](docs/AUDIO_RELOAD_SEARCH_CATS.md) · [在线试听](https://biscuit19.github.io/CodexGame2/audio-review/reload-search-cats/index.html)。
 
 声音最新状态：[已采用换弹/猫叫/发现](docs/AUDIO_APPROVED_FEEDBACK.md) · [新枪声及完整BGM 30候选](docs/AUDIO_SHOTS_MUSIC_REVIEW.md) · [在线试听](https://biscuit19.github.io/CodexGame2/audio-review/shots-music/index.html)。
+
+最新声音：[已采用步枪/四级发现/四首BGM设置](docs/AUDIO_APPROVED_MUSIC.md) · [新发现与完整音乐20候选](docs/AUDIO_DISCOVERY_MUSIC_REVIEW.md) · [在线试听](https://biscuit19.github.io/CodexGame2/audio-review/discovery-music/index.html)。

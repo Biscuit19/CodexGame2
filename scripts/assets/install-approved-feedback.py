@@ -33,3 +33,6 @@ prior['superseded']='pack/discovery and reload/cat choices now in approved-feedb
 p=G/'sources.json';main=json.loads(p.read_text());main['approvedFeedback']={'metadata':'approved-feedback.json','tracks':tracks};main['approvedInteractions']={'metadata':'approved-interactions.json','tracks':prior['tracks']}
 for key in ['reload-smg','reload-rifle','reload-sniper']:main['gunSounds'][key]=tracks[key]
 p.write_text(json.dumps(main,ensure_ascii=False,indent=2)+'\n');print('Installed',len(tracks),'latest selections. Four shot files and shotgun reload unchanged.')
+
+if (G/"approved-music.json").exists():
+ subprocess.run(["python",str(R/"scripts/assets/install-approved-music.py")],check=True)

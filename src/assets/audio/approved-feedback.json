@@ -232,29 +232,6 @@
         }
       ]
     },
-    "discover-4": {
-      "candidate": "D4-1",
-      "file": "discover-4.flac",
-      "sourceFile": "audio-review/interactions/audio/D4-1-natural-bce8f88620.flac",
-      "sourceHash": "bce8f88620d114436f0c14ae7c0de095e88d0b7ed7f0a27dd4e7cab708a3913e",
-      "sha256": "0a0a7e3639be70c36a1142f6ff2cf364cf3842c0acb1977bea9b3b75044943f6",
-      "duration": 3.572653,
-      "gainDb": -6.489999999999998,
-      "lufs": -30.0,
-      "truePeakDbfs": -15.31,
-      "license": "CC-BY-3.0",
-      "parts": [
-        {
-          "source": "fantasy-36d9cd2a-Jingle_Achievement_00",
-          "start": 0,
-          "length": 3.562653,
-          "at": 0,
-          "level": 1,
-          "label": "成就式发现",
-          "gain": 0.36394657037241296
-        }
-      ]
-    },
     "discover-5": {
       "candidate": "D5-2",
       "file": "discover-5.flac",
@@ -602,5 +579,6 @@
     "enemy-alert-2",
     "enemy-alert-3",
     "enemy-alert-4"
-  ]
+  ],
+  "supersededDiscovery4": "D3-4 now in approved-music.json"
 }

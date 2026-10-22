@@ -1,5 +1,7 @@
 # 新枪声与完整背景音乐试听（2026-10-22）
 
+> 后续明确选择已覆盖部分条目，以[最新采用记录](AUDIO_APPROVED_MUSIC.md)为准。
+
 [在线试听](https://biscuit19.github.io/CodexGame2/audio-review/shots-music/index.html)。30个候选尚未接入游戏；已确认枪声与游戏原配乐不变。
 
 冲锋枪、步枪各10个候选，20条的来源页与作者均不重复。十首音乐也是不同作者。先查开发者推荐，再检查作品原页、许可和实际文件；并非仅搜索GitHub。参考 [开发者免费音源指南](https://superdevresources.com/free-music-sound-effects-games/)、OpenGameArt原生搜索、itch.io素材分类及Free Music Archive作品页。热门库的知名度不等于单条作品的使用量，下面保留实际下载/收藏依据；其中少数是风格补充，不能称为热门单品。

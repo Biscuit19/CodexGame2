@@ -2,7 +2,7 @@
   "version": 1,
   "date": "2026-10-22 Asia/Shanghai",
   "previewOnly": true,
-  "installedToGame": false,
+  "installedToGame": true,
   "processing": "Twenty new shooting sources/authors, cuts only where disclosed, fixed gain and 4ms cut-edge ramps. No new synthesis, filtering, pitch, reverb or compression. Ten complete original music files copied byte-identical; loudness adjustment only at playback. No new candidates installed.",
   "sources": {
     "futuristic-smg": {
@@ -1621,5 +1621,12 @@
         }
       ]
     }
-  ]
+  ],
+  "installedSelections": {
+    "SM1": "rifle shot",
+    "BG3": "music settings",
+    "BG5": "default loop music",
+    "BG6": "music settings",
+    "BG10": "music settings"
+  }
 }

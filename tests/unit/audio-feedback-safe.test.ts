@@ -84,11 +84,11 @@ it("玩家受击用PH10，敌人警戒只在四个所选声音中取值，增益
       gain: 0.65,
     });
   for (const weaponClass of ["smg", "rifle", "sniper", "shotgun"] as const) {
-    expect(sampleChoice("shot", { weaponClass, enemy: true })?.gain).toBe(0.5);
+    expect(sampleChoice("shot", { weaponClass, enemy: true })?.gain).toBe(0.35);
     expect(sampleChoice("reload", { weaponClass, enemy: true })?.gain).toBe(
       0.75,
     );
-    expect(sampleChoice("shot", { weaponClass })?.gain).toBe(1);
+    expect(sampleChoice("shot", { weaponClass })?.gain).toBe(0.7);
   }
   for (const tier of [3, 4, 5])
     expect(sampleChoice("loot", { tier })?.gain).toBe(1.2);

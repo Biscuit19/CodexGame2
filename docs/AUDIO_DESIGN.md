@@ -1,3 +1,7 @@
+# 最新声音与音乐设置
+
+以[最新采用记录](AUDIO_APPROVED_MUSIC.md)为准：步枪SM1、四级发现D3-4、四首完整BGM及播放设置已接入；整体1.3、枪声另乘0.7。新20候选见[研究表](AUDIO_DISCOVERY_MUSIC_REVIEW.md)，尚待选择。下方为先前记录。
+
 # 最新状态（2026-10-22）
 
 以[最新采用记录](AUDIO_APPROVED_FEEDBACK.md)为准：三类换弹、受击、警戒、入包和高级发现已更新；敌人射击50%、换弹75%，发现增益1.2。新枪声与完整音乐见[30候选](AUDIO_SHOTS_MUSIC_REVIEW.md)，未接入。以下旧方案为历史说明。

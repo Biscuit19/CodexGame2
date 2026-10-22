@@ -166,7 +166,7 @@ test("Chrome实际解码43个本地音效、真实四类射击及换弹倍速、
     silence.find((x: any) => x.key === "reload-sniper").duration,
   ).toBeCloseTo(2.561361, 3);
   expect(silence.find((x: any) => x.key === "shot-rifle").duration).toBeCloseTo(
-    1,
+    0.158458,
     3,
   );
   expect(
@@ -270,7 +270,9 @@ test("Chrome实际解码43个本地音效、真实四类射击及换弹倍速、
   });
   for (const type of ["smg", "rifle", "sniper", "shotgun"]) {
     const records = out.logs.filter((x: any) => x.key === `shot-${type}`);
-    expect(records.map((x: any) => x.gain)).toEqual([1, 0.5]);
+    expect(records).toHaveLength(2);
+    expect(records[0].gain).toBeCloseTo(0.7, 5);
+    expect(records[1].gain).toBeCloseTo(0.35, 5);
   }
   const reload = out.logs.find((x: any) => x.key === "reload-smg");
   expect(reload.duration / reload.rate).toBeCloseTo(out.expected, 4);

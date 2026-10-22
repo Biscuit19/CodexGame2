@@ -30,3 +30,6 @@
 
 - 2026-10-22最新选择见 `docs/AUDIO_APPROVED_FEEDBACK.md`：换弹NR1/NR3/NR2、受击PH10、警戒EA5/6/7/10、入包D12-3、发现D3-2/D4-1/D5-2。发现增益1.2，敌人射击改为玩家50%（覆盖旧75%射击约定），换弹仍75%。每局每个保险箱保留首次题目/选项，不因重开刷新。
 - 新枪声/完整BGM共30候选在 `public/audio-review/shots-music/`，见 `docs/AUDIO_SHOTS_MUSIC_REVIEW.md`，尚未采用；禁止提前替换现用枪声/配乐，禁止游戏离线预缓存试听库。
+
+- 最新明确采用见`docs/AUDIO_APPROVED_MUSIC.md`：SM1用于步枪（不是冲锋枪），四级发现为跨组D3-4；BG3/BG5/BG6/BG10完整原曲进设置，默认BG5循环，可四首随机。整体主增益1.3，枪声再0.7，敌人/玩家仍0.5。旧存档缺字段回退默认，不反复改写音量滑块。
+- 新发现/BGM各10个在`public/audio-review/discovery-music/`，见`docs/AUDIO_DISCOVERY_MUSIC_REVIEW.md`。全部待选，原文件不剪切，别让离线缓存打包未选试听库。
