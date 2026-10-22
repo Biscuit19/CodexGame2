@@ -44,3 +44,6 @@ actions=json.loads((G/'approved-actions.json').read_text());actions['tracks'].po
 legacy=json.loads((G/'foley-sources.json').read_text());legacy['tracks']={};legacy['sources']={};legacy['superseded']='Legacy melee replaced by separately selected KN1/KN2 in approved-interactions.json';(G/'foley-sources.json').write_text(json.dumps(legacy,ensure_ascii=False,indent=2)+'\n');(G/'melee.ogg').unlink(missing_ok=True)
 main=json.loads((G/'sources.json').read_text());main['approvedActions']={'metadata':'approved-actions.json','tracks':actions['tracks']};main['approvedInteractions']={'metadata':'approved-interactions.json','tracks':tracks};main['retainedFoley']={'metadata':'foley-sources.json','tracks':{}};(G/'sources.json').write_text(json.dumps(main,ensure_ascii=False,indent=2)+'\n')
 print('Installed',len(tracks),'explicitly selected tracks, matched -30 LUFS. Gunshots/reloads unchanged.')
+
+if (G/'approved-feedback.json').exists():
+ subprocess.run(['python',str(R/'scripts/assets/install-approved-feedback.py')],check=True)

@@ -102,6 +102,7 @@ export interface Enemy {
 export interface Container {
   region?: string;
   bossLoot?: boolean;
+  question?: ReturnType<typeof mathQuestion>;
   x: number;
   y: number;
   name: string;
@@ -1236,6 +1237,7 @@ export class Raid {
     e.alert = 8;
     e.target = { x: this.p.x, y: this.p.y };
     if (!initial) return;
+    if (!e.turret && e.hp > 0) this.sound.play("enemy-alert");
     for (const ally of this.enemies) {
       if (ally === e) continue;
       if (
@@ -1328,7 +1330,7 @@ export class Raid {
       }
       if (c.locked) {
         this.puzzleContainer = c;
-        this.puzzle = mathQuestion(this.random);
+        this.puzzle = c.question ??= mathQuestion(this.random);
       } else this.startSearch(c);
       this.onChange();
       return;

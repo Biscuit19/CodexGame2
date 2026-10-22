@@ -1,0 +1,895 @@
+{
+  "version": 1,
+  "date": "2026-10-22 Asia/Shanghai",
+  "previewOnly": true,
+  "installedToGame": false,
+  "processing": "Twenty new shooting sources/authors, cuts only where disclosed, fixed gain and 4ms cut-edge ramps. No new synthesis, filtering, pitch, reverb or compression. Ten complete original music files copied byte-identical; loudness adjustment only at playback. No new candidates installed.",
+  "sources": {
+    "futuristic-smg": {
+      "pack": "futuristic-smg",
+      "name": "Futuristic SMG Single Shot.wav",
+      "author": "Michael Klier",
+      "source": "https://opengameart.org/content/futuristic-smg",
+      "license": "CC-BY-SA-3.0",
+      "path": "flat/futuristic-smg.wav",
+      "sourceSha256": "eb88c720567aee68a89be561622a118e31d950d2f91a558f6dc954dda96ea97a",
+      "sourceDuration": 0.158458,
+      "member": null,
+      "downloadUrl": "https://opengameart.org/sites/default/files/Futuristic%20SMG%20Single%20Shot.wav"
+    },
+    "chaingun-pistol-rifle-shotgun-shots": {
+      "pack": "chaingun-pistol-rifle-shotgun-shots",
+      "name": "cg1.wav",
+      "author": "Michel Baradari (Submitted by qubodup )",
+      "source": "https://opengameart.org/content/chaingun-pistol-rifle-shotgun-shots",
+      "license": "CC-BY-3.0",
+      "path": "flat/chaingun-pistol-rifle-shotgun-shots.wav",
+      "sourceSha256": "a01e0fcb10f0df3620b862832c3fa4d42fd1003aef63b775d37edbb5b3adbc55",
+      "sourceDuration": 0.577687,
+      "member": "shots/cg1.wav",
+      "downloadUrl": null,
+      "archiveFile": "chaingun-pistol-rifle-shotgun-shots--shots.7z",
+      "archiveSha256": "4a5d78c7520396a4a1da7617d56c456031ac0041c77cb90a019fd75918bfb618",
+      "archiveUrl": "https://opengameart.org/sites/default/files/shots.7z"
+    },
+    "fps-placeholder-sounds": {
+      "pack": "fps-placeholder-sounds",
+      "name": "gun_machine_01.wav",
+      "author": "Jack Menhorn (Submitted by jackmenhorn )",
+      "source": "https://opengameart.org/content/fps-placeholder-sounds",
+      "license": "CC-BY-3.0",
+      "path": "flat/fps-placeholder-sounds.wav",
+      "sourceSha256": "a550a20e7b27e7d60f5faabb4a65369658c00dd0340effd5ac735f594b9561b4",
+      "sourceDuration": 0.06034,
+      "member": "Jack Menhorn FPS Placeholder/gun_machine_01.wav",
+      "downloadUrl": null,
+      "archiveFile": "fps-placeholder-sounds--Jack Menhorn FPS Placeholder.7z",
+      "archiveSha256": "e47dfbf9d2cc225ef18b878cd4a7514a29a3fb3e907f6a95ffdd0e12ad451651",
+      "archiveUrl": "https://opengameart.org/sites/default/files/Jack%20Menhorn%20FPS%20Placeholder.7z"
+    },
+    "superpowers-assets-sound-effects": {
+      "pack": "superpowers-assets-sound-effects",
+      "name": "machinegun.wav",
+      "author": "Pixel-boy / Sparklin Labs（MedicineStorm转载）",
+      "source": "https://opengameart.org/content/superpowers-assets-sound-effects",
+      "license": "CC0-1.0",
+      "path": "flat/superpowers-assets-sound-effects.wav",
+      "sourceSha256": "932d24d161ca4b919cdd5871a7fbf5f394429fe20a1e255da2ed48bdec1a460e",
+      "sourceDuration": 11.378027,
+      "member": "sound effects/western-fps-2d/machinegun.wav",
+      "downloadUrl": null,
+      "archiveFile": "superpowers-assets-sound-effects--superpowers-asset-packs-soundeffects_2.zip",
+      "archiveSha256": "fb2fba63118f2ed96aaadda36c881dc3df0c378deba27681f6a357298988a71f",
+      "archiveUrl": "https://opengameart.org/sites/default/files/superpowers-asset-packs-soundeffects_2.zip"
+    },
+    "tactical-weapons-and-tactics-sound-pack": {
+      "pack": "tactical-weapons-and-tactics-sound-pack",
+      "name": "ROBOGUN.ogg",
+      "author": "XCVG / XCVG Systems",
+      "source": "https://opengameart.org/content/tactical-weapons-and-tactics-sound-pack",
+      "license": "CC-BY-3.0",
+      "path": "flat/tactical-weapons-and-tactics-sound-pack.ogg",
+      "sourceSha256": "af5d3097e212f9644a151b5d1d5af925091bb4b2bdc08e2077abfa5a67479faf",
+      "sourceDuration": 0.917188,
+      "member": "sfx/ROBOGUN.ogg",
+      "downloadUrl": null,
+      "archiveFile": "tactical-weapons-and-tactics-sound-pack--twat_sfx.zip",
+      "archiveSha256": "e6007ac9fa4e98290fb79d826609fe233d3041277c14cc008267e2c2c0d60b33",
+      "archiveUrl": "https://opengameart.org/sites/default/files/twat_sfx.zip"
+    },
+    "gunloop-8bit": {
+      "pack": "gunloop-8bit",
+      "name": "8bit_gunloop_explosion.wav",
+      "author": "Luke.RUSTLTD",
+      "source": "https://opengameart.org/content/gunloop-8bit",
+      "license": "CC0-1.0",
+      "path": "flat/gunloop-8bit.wav",
+      "sourceSha256": "242476523d1d98a13751664878ec144cc47c00ce6a123f8bd27dbce15085db2b",
+      "sourceDuration": 0.18195,
+      "member": null,
+      "downloadUrl": "https://opengameart.org/sites/default/files/8bit_gunloop_explosion.wav"
+    },
+    "action-shooter-soundset-wwvi": {
+      "pack": "action-shooter-soundset-wwvi",
+      "name": "synthetic_gunshot_2.ogg",
+      "author": "Stephen M. Cameron (Submitted by qubodup )",
+      "source": "https://opengameart.org/content/action-shooter-soundset-wwvi",
+      "license": "CC-BY-SA-3.0",
+      "path": "flat/action-shooter-soundset-wwvi.ogg",
+      "sourceSha256": "36c3296acc0b4f70a81fc8bd6e40fdd46883123f26a6e483de2b78e5755138eb",
+      "sourceDuration": 0.840272,
+      "member": "smc-wwviRetroActionSounds/synthetic_gunshot_2.ogg",
+      "downloadUrl": null,
+      "archiveFile": "action-shooter-soundset-wwvi--smc-wwviRetroActionSounds.7z",
+      "archiveSha256": "74e20ea83a7b6a108b06885ce8114bb17f8acbbe5b5d1c1a10f81efdd21d1f1c",
+      "archiveUrl": "https://opengameart.org/sites/default/files/smc-wwviRetroActionSounds.7z"
+    },
+    "shots": {
+      "pack": "shots",
+      "name": "laser2_1.wav",
+      "author": "Gumichan01",
+      "source": "https://opengameart.org/content/shots",
+      "license": "CC-BY-SA-3.0",
+      "path": "flat/shots.wav",
+      "sourceSha256": "45785b9d4a0c7ee653fc6734e7d09393f8b084def7d2e1b3b42b0eb08de6ad64",
+      "sourceDuration": 0.524762,
+      "member": null,
+      "downloadUrl": "https://opengameart.org/sites/default/files/laser2_1.wav"
+    },
+    "space-shoot-sounds": {
+      "pack": "space-shoot-sounds",
+      "name": "alienshoot2.wav",
+      "author": "Robin Lamb",
+      "source": "https://opengameart.org/content/space-shoot-sounds",
+      "license": "CC0-1.0",
+      "path": "flat/space-shoot-sounds.wav",
+      "sourceSha256": "af7965962b7decd13b7ff1ffd8ac26b251a3f8cabb0f361ba1044fe7f87df5e7",
+      "sourceDuration": 0.616508,
+      "member": null,
+      "downloadUrl": "https://opengameart.org/sites/default/files/alienshoot2.wav"
+    },
+    "100-plus-game-sound-effects-wavoggm4a": {
+      "pack": "100-plus-game-sound-effects-wavoggm4a",
+      "name": "Laser_Shoot9.wav",
+      "author": "Damaged Panda",
+      "source": "https://opengameart.org/content/100-plus-game-sound-effects-wavoggm4a",
+      "license": "CC-BY-3.0",
+      "path": "flat/100-plus-game-sound-effects-wavoggm4a.wav",
+      "sourceSha256": "37299825789983a2517e69a6986a90036f0e3332a82afa5a0ba031aa00197f00",
+      "sourceDuration": 0.395624,
+      "member": "GAME SOUND FX PACK WAV OGG M4A/Laser_Shoot9.wav",
+      "downloadUrl": null,
+      "archiveFile": "100-plus-game-sound-effects-wavoggm4a--GAME SOUND FX PACK WAV OGG M4A_0.zip",
+      "archiveSha256": "a1550b2acbd5ba1b840aac773e1880de2de6c4bab17100e6c15532572a2faeec",
+      "archiveUrl": "https://opengameart.org/sites/default/files/GAME%20SOUND%20FX%20PACK%20WAV%20OGG%20M4A_0.zip"
+    },
+    "vintage-scifi-sfx-vol-1": {
+      "pack": "vintage-scifi-sfx-vol-1",
+      "name": "laser_gun_2.wav",
+      "author": "Zander Noriega",
+      "source": "https://opengameart.org/content/vintage-scifi-sfx-vol-1",
+      "license": "CC-BY-3.0",
+      "path": "flat/vintage-scifi-sfx-vol-1.wav",
+      "sourceSha256": "316ba2427a7dfc08746f96322d9af64300dd05beb87a08201fb4a12d1b69b5a8",
+      "sourceDuration": 0.152063,
+      "member": "zander-noriega-scifi-vol-1/laser_gun_2.wav",
+      "downloadUrl": null,
+      "archiveFile": "vintage-scifi-sfx-vol-1--zander-noriega-scifi-vol-1.tar.gz",
+      "archiveSha256": "bf113567ab3903a01590f3a9040aa7c28250126e1226e50ecc27e1438d5b7f96",
+      "archiveUrl": "https://opengameart.org/sites/default/files/zander-noriega-scifi-vol-1.tar.gz"
+    },
+    "hollywood-style-pistol-silencer-sound-effect": {
+      "pack": "hollywood-style-pistol-silencer-sound-effect",
+      "name": "silencer.wav",
+      "author": "bart",
+      "source": "https://opengameart.org/content/hollywood-style-pistol-silencer-sound-effect",
+      "license": "CC0-1.0",
+      "path": "flat/hollywood-style-pistol-silencer-sound-effect.wav",
+      "sourceSha256": "e851d01faf5674f80d1f881ed9299edcdecfeff1cca512a014ff8e694349059c",
+      "sourceDuration": 1.718753,
+      "member": null,
+      "downloadUrl": "https://opengameart.org/sites/default/files/silencer.wav"
+    },
+    "50-cc0-retro-synth-sfx": {
+      "pack": "50-cc0-retro-synth-sfx",
+      "name": "shot_01.ogg",
+      "author": "rubberduck",
+      "source": "https://opengameart.org/content/50-cc0-retro-synth-sfx",
+      "license": "CC0-1.0",
+      "path": "flat/50-cc0-retro-synth-sfx.ogg",
+      "sourceSha256": "96a28730061b18633adefc5f8b18cb8221b07587bc06bcaefbf96de41663fcff",
+      "sourceDuration": 0.194376,
+      "member": "shot_01.ogg",
+      "downloadUrl": null,
+      "archiveFile": "50-cc0-retro-synth-sfx--50-CC0-retro-synth-SFX.zip",
+      "archiveSha256": "db9370bfbe228d1fc3912ec455ad358129eeec593169fc02701ff48d888db9cb",
+      "archiveUrl": "https://opengameart.org/sites/default/files/50-CC0-retro-synth-SFX.zip"
+    },
+    "laser-fire": {
+      "pack": "laser-fire",
+      "name": "laser5.wav",
+      "author": "dklon",
+      "source": "https://opengameart.org/content/laser-fire",
+      "license": "CC-BY-3.0",
+      "path": "flat/laser-fire.wav",
+      "sourceSha256": "c276696c1528f1f66dac928afecd13ec8eeee018a2eba986fc78aae429c7245b",
+      "sourceDuration": 0.326508,
+      "member": null,
+      "downloadUrl": "https://opengameart.org/sites/default/files/laser5.wav"
+    },
+    "laser-rifle": {
+      "pack": "laser-rifle",
+      "name": "Rifleprimary2.ogg",
+      "author": "Skorpio (Submitted by Skorpio )",
+      "source": "https://opengameart.org/content/laser-rifle",
+      "license": "CC-BY-SA-3.0",
+      "path": "flat/laser-rifle.ogg",
+      "sourceSha256": "8217afbeedc565b9c3efbc393480f216786cd6558bec00dfe54454369960bd42",
+      "sourceDuration": 2.03127,
+      "member": null,
+      "downloadUrl": "https://opengameart.org/sites/default/files/Rifleprimary2.ogg"
+    },
+    "space-battle-game-sounds-astromenace": {
+      "pack": "space-battle-game-sounds-astromenace",
+      "name": "weaponfire5.wav",
+      "author": "Michael Kurinnoy (Submitted by qubodup )",
+      "source": "https://opengameart.org/content/space-battle-game-sounds-astromenace",
+      "license": "GPL-3.0",
+      "path": "flat/space-battle-game-sounds-astromenace.wav",
+      "sourceSha256": "4170fc37aed8e09f2d4c012c941e011f5fa0f316e8ab14d6fbd9b29510e287e9",
+      "sourceDuration": 0.53458,
+      "member": "SourceSound/sfx/weaponfire5.wav",
+      "downloadUrl": null,
+      "archiveFile": "space-battle-game-sounds-astromenace--AstroMenace-SFX.7z",
+      "archiveSha256": "afa0c168c1817478b0c9b88cfbd8a53da75d7967ce689c64014c35ce54918084",
+      "archiveUrl": "https://opengameart.org/sites/default/files/AstroMenace-SFX.7z"
+    },
+    "laser-shot-0": {
+      "pack": "laser-shot-0",
+      "name": "Laser Shot.wav",
+      "author": "Mobeyee Sounds",
+      "source": "https://opengameart.org/content/laser-shot-0",
+      "license": "CC-BY-4.0",
+      "path": "flat/laser-shot-0.wav",
+      "sourceSha256": "fcf21a60e88a3e8dc9d01f8e3a3d47f14f807bbd50a78372a22112ca46f72c9d",
+      "sourceDuration": 0.937506,
+      "member": null,
+      "downloadUrl": "https://opengameart.org/sites/default/files/Laser%20Shot.wav"
+    },
+    "collaboration-sound-effects-shooting-sounds-001": {
+      "pack": "collaboration-sound-effects-shooting-sounds-001",
+      "name": "SHOOT002.mp3",
+      "author": "jalastram",
+      "source": "https://opengameart.org/content/collaboration-sound-effects-shooting-sounds-001",
+      "license": "CC-BY-3.0",
+      "path": "flat/collaboration-sound-effects-shooting-sounds-001.mp3",
+      "sourceSha256": "f2ed13f688beeaca6bab0fd424f6af5a91085d1b87c33650985ccbc458603049",
+      "sourceDuration": 1.12325,
+      "member": "Sound Effects Shooting sounds 001/SHOOT002.mp3",
+      "downloadUrl": null,
+      "archiveFile": "collaboration-sound-effects-shooting-sounds-001--Sound Effects Shooting sounds 001_0.zip",
+      "archiveSha256": "cbe84d50cbc1a49e57246d0594f7598c9ae1bcb7c7315590db0f1ba3c3eb81a0",
+      "archiveUrl": "https://opengameart.org/sites/default/files/Sound%20Effects%20Shooting%20sounds%20001_0.zip"
+    },
+    "flatshot-complete-sfx-pack": {
+      "pack": "flatshot-complete-sfx-pack",
+      "name": "shoot.wav",
+      "author": "Rosalila",
+      "source": "https://opengameart.org/content/flatshot-complete-sfx-pack",
+      "license": "CC-BY-SA-3.0",
+      "path": "flat/flatshot-complete-sfx-pack.wav",
+      "sourceSha256": "d19c96393ba13a7edef75812f7f5869ea5555cf8629fde87e774da6e329fd0bc",
+      "sourceDuration": 0.352222,
+      "member": "SFX/Player/shoot.wav",
+      "downloadUrl": null,
+      "archiveFile": "flatshot-complete-sfx-pack--SFX_2.zip",
+      "archiveSha256": "58073cc1ace8127e5de960376ea49b60c61b63942c870fd0399e2df865b3a426",
+      "archiveUrl": "https://opengameart.org/sites/default/files/SFX_2.zip"
+    },
+    "game-sound-effects": {
+      "pack": "game-sound-effects",
+      "name": "Shoot.wav",
+      "author": "KASTLE Knight",
+      "source": "https://opengameart.org/content/game-sound-effects",
+      "license": "CC0-1.0",
+      "path": "flat/game-sound-effects.wav",
+      "sourceSha256": "1de7dd7611f99bbd0e8318eed5547bc52d445fc6462487b8dd2933e66801ded9",
+      "sourceDuration": 0.408866,
+      "member": "Shoot.wav",
+      "downloadUrl": null,
+      "archiveFile": "game-sound-effects--Sounds(ZW).zip",
+      "archiveSha256": "28390577ce34b9bb37f1d384ec92695f60c199aeb5652f368a14c3957c92d2e1",
+      "archiveUrl": "https://opengameart.org/sites/default/files/Sounds%28ZW%29.zip"
+    },
+    "town-theme-rpg": {
+      "pack": "town-theme-rpg",
+      "name": "music-town-theme-rpg--TownTheme.mp3",
+      "author": "cynicmusic",
+      "source": "https://opengameart.org/content/town-theme-rpg",
+      "license": "CC0-1.0",
+      "path": "flat/town-theme-rpg.mp3",
+      "sourceSha256": "2657861d5107d4a3c01ef81cb6a4d61ddd5e7a054b6da57e658373d79d0c3466",
+      "sourceDuration": 97.48898,
+      "member": null,
+      "downloadUrl": "https://opengameart.org/sites/default/files/TownTheme.mp3",
+      "whole": true
+    },
+    "pleasant-creek": {
+      "pack": "pleasant-creek",
+      "name": "Pleasant Creek.mp3",
+      "author": "Matthew Pablo",
+      "source": "https://opengameart.org/content/pleasant-creek",
+      "license": "CC-BY-3.0",
+      "path": "flat/pleasant-creek.mp3",
+      "sourceSha256": "c360ba2a39d5157942bcd5494a3f960d3b680eabd07580f4d86e7db25b012f03",
+      "sourceDuration": 117.733875,
+      "member": "Pleasant Creek Pack/Pleasant Creek.mp3",
+      "downloadUrl": "https://opengameart.org/sites/default/files/Pleasant%20Creek%20Pack.zip",
+      "whole": true,
+      "archiveFile": "music-pleasant-creek--Pleasant Creek Pack.zip",
+      "archiveSha256": "88158f9c541979b831a0034bffd902458bbe1ba051630e7996791844393e6174"
+    },
+    "calm-bgm": {
+      "pack": "calm-bgm",
+      "name": "music-calm-bgm--041415calmbgm_0.ogg",
+      "author": "syncopika",
+      "source": "https://opengameart.org/content/calm-bgm",
+      "license": "CC-BY-3.0",
+      "path": "flat/calm-bgm.ogg",
+      "sourceSha256": "864a9445c6043d9adb7676c77dcb1069fa9ce53486d9fd6f808dfb37f1d5a147",
+      "sourceDuration": 78.982676,
+      "member": null,
+      "downloadUrl": "https://opengameart.org/sites/default/files/041415calmbgm_0.ogg",
+      "whole": true
+    },
+    "bossa-nova": {
+      "pack": "bossa-nova",
+      "name": "music-bossa-nova--8bit Bossa.mp3",
+      "author": "Joth",
+      "source": "https://opengameart.org/content/bossa-nova",
+      "license": "CC0-1.0",
+      "path": "flat/bossa-nova.mp3",
+      "sourceSha256": "0ee835fd279ac5fa15f9346744cbafc2ba800c1c0671b78ca9abe2b4353402f7",
+      "sourceDuration": 59.61145,
+      "member": null,
+      "downloadUrl": "https://opengameart.org/sites/default/files/8bit%20Bossa.mp3",
+      "whole": true
+    },
+    "blueberries": {
+      "pack": "blueberries",
+      "name": "music-blueberries--Viktor Kraus - Blueberries.mp3",
+      "author": "Viktor Kraus",
+      "source": "https://opengameart.org/content/blueberries",
+      "license": "CC-BY-3.0",
+      "path": "flat/blueberries.mp3",
+      "sourceSha256": "8024e90470f74d735d0fc86beb2fb6d9c2ef48da95d79454b66c2f9459659022",
+      "sourceDuration": 370.02449,
+      "member": null,
+      "downloadUrl": "https://opengameart.org/sites/default/files/Viktor%20Kraus%20-%20Blueberries.mp3",
+      "whole": true
+    },
+    "peaceful-place": {
+      "pack": "peaceful-place",
+      "name": "music-peaceful-place--Peaceful Place.mp3",
+      "author": "Alexandr Zhelanov",
+      "source": "https://opengameart.org/content/peaceful-place",
+      "license": "CC-BY-3.0",
+      "path": "flat/peaceful-place.mp3",
+      "sourceSha256": "8153dd6aa82ea839de281bd563e454fb01fd63a2ed1d8bc40a16e157bbde5e55",
+      "sourceDuration": 95.9697,
+      "member": null,
+      "downloadUrl": "https://opengameart.org/sites/default/files/Peaceful%20Place.mp3",
+      "whole": true
+    },
+    "winter-village": {
+      "pack": "winter-village",
+      "name": "music-winter-village.mp3",
+      "author": "Visager",
+      "source": "https://freemusicarchive.org/music/Visager/Songs_From_An_Unmade_World_2/Visager_-_Songs_From_An_Unmade_World_2_-_08_Winter_Village/",
+      "license": "CC-BY-4.0",
+      "path": "flat/winter-village.mp3",
+      "sourceSha256": "e57fcf6389c8d4df8c4e2d5ec765fb540d11a48faa412fefe518a77b523bef5b",
+      "sourceDuration": 63.294694,
+      "member": null,
+      "downloadUrl": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Visager/Songs_From_An_Unmade_World_2/Visager_-_08_-_Winter_Village.mp3",
+      "whole": true
+    },
+    "cliff-road-chill": {
+      "pack": "cliff-road-chill",
+      "name": "music-cliff-road-chill.mp3",
+      "author": "Komiku",
+      "source": "https://freemusicarchive.org/music/Komiku/Helice_Awesome_Dance_Adventure_/cliff-road-chill/",
+      "license": "CC0-1.0",
+      "path": "flat/cliff-road-chill.mp3",
+      "sourceSha256": "951fa99da7736c9a9204d9c47611718d971be43030bdf3db2ade797417cace42",
+      "sourceDuration": 88.032653,
+      "member": null,
+      "downloadUrl": "https://files.freemusicarchive.org/storage-freemusicarchive-org/tracks/RkgeLGj2Fu1O0GItYpqGT1PnGgbQDAu3a2uZo3De.mp3",
+      "whole": true
+    },
+    "at-home-orchestral": {
+      "pack": "at-home-orchestral",
+      "name": "music-at-home-orchestral--cinematic-calm.wav",
+      "author": "Wolfgang_",
+      "source": "https://opengameart.org/content/at-home-orchestral",
+      "license": "CC0-1.0",
+      "path": "flat/at-home-orchestral.wav",
+      "sourceSha256": "2977b4e410edc2d21269406b0d464f3602c4678fbd81d81d6b8b36e30963360f",
+      "sourceDuration": 74.318118,
+      "member": null,
+      "downloadUrl": "https://opengameart.org/sites/default/files/cinematic-calm.wav",
+      "whole": true
+    },
+    "peaceful-village": {
+      "pack": "peaceful-village",
+      "name": "music-peaceful-village--Creative Commons Music Peaceful Village Stefan Grossmann.flac",
+      "author": "Stefan_Composer",
+      "source": "https://opengameart.org/content/peaceful-village",
+      "license": "CC-BY-3.0",
+      "path": "flat/peaceful-village.flac",
+      "sourceSha256": "85bb1a0a8bc43e5ffeba5c77657f969cfd658117b8e365e6a62629e81e22b29d",
+      "sourceDuration": 140.125011,
+      "member": null,
+      "downloadUrl": "https://opengameart.org/sites/default/files/Creative%20Commons%20Music%20Peaceful%20Village%20Stefan%20Grossmann.flac",
+      "whole": true
+    }
+  },
+  "sourcePacks": {
+    "futuristic-smg": {
+      "name": "Futuristic SMG",
+      "author": "Michael Klier",
+      "url": "https://opengameart.org/content/futuristic-smg",
+      "license": "CC-BY-SA-3.0",
+      "evidence": "原页各文件下载数 1737；收藏 6。数值为具体原页快照，不是游戏采用数。"
+    },
+    "chaingun-pistol-rifle-shotgun-shots": {
+      "name": "Chaingun, pistol, rifle, shotgun shots",
+      "author": "Michel Baradari (Submitted by qubodup )",
+      "url": "https://opengameart.org/content/chaingun-pistol-rifle-shotgun-shots",
+      "license": "CC-BY-3.0",
+      "evidence": "原页各文件下载数 15080；收藏 102。数值为具体原页快照，不是游戏采用数。"
+    },
+    "fps-placeholder-sounds": {
+      "name": "FPS Placeholder Sounds",
+      "author": "Jack Menhorn (Submitted by jackmenhorn )",
+      "url": "https://opengameart.org/content/fps-placeholder-sounds",
+      "license": "CC-BY-3.0",
+      "evidence": "原页各文件下载数 1878, 926, 895, 789；收藏 67。数值为具体原页快照，不是游戏采用数。"
+    },
+    "superpowers-assets-sound-effects": {
+      "name": "Superpowers assets sound effects",
+      "author": "Pixel-boy / Sparklin Labs（MedicineStorm转载）",
+      "url": "https://opengameart.org/content/superpowers-assets-sound-effects",
+      "license": "CC0-1.0",
+      "evidence": "原页各文件下载数 4752；收藏 39。数值为具体原页快照，不是游戏采用数。"
+    },
+    "tactical-weapons-and-tactics-sound-pack": {
+      "name": "Tactical Weapons And Tactics Sound Pack",
+      "author": "XCVG / XCVG Systems",
+      "url": "https://opengameart.org/content/tactical-weapons-and-tactics-sound-pack",
+      "license": "CC-BY-3.0",
+      "evidence": "原页各文件下载数 762；收藏 3。数值为具体原页快照，不是游戏采用数。"
+    },
+    "gunloop-8bit": {
+      "name": "gunloop 8bit",
+      "author": "Luke.RUSTLTD",
+      "url": "https://opengameart.org/content/gunloop-8bit",
+      "license": "CC0-1.0",
+      "evidence": "原页各文件下载数 4091；收藏 16。数值为具体原页快照，不是游戏采用数。"
+    },
+    "action-shooter-soundset-wwvi": {
+      "name": "Action Shooter Soundset (WWVi)",
+      "author": "Stephen M. Cameron (Submitted by qubodup )",
+      "url": "https://opengameart.org/content/action-shooter-soundset-wwvi",
+      "license": "CC-BY-SA-3.0",
+      "evidence": "原页各文件下载数 3457；收藏 27。数值为具体原页快照，不是游戏采用数。"
+    },
+    "shots": {
+      "name": "Shots",
+      "author": "Gumichan01",
+      "url": "https://opengameart.org/content/shots",
+      "license": "CC-BY-SA-3.0",
+      "evidence": "原页各文件下载数 2958, 1890；收藏 7。数值为具体原页快照，不是游戏采用数。"
+    },
+    "space-shoot-sounds": {
+      "name": "Space Shoot Sounds",
+      "author": "Robin Lamb",
+      "url": "https://opengameart.org/content/space-shoot-sounds",
+      "license": "CC0-1.0",
+      "evidence": "原页各文件下载数 2304, 1179, 970, 686；收藏 9。数值为具体原页快照，不是游戏采用数。"
+    },
+    "100-plus-game-sound-effects-wavoggm4a": {
+      "name": "100 plus game sound effects WAV,OGG,M4A",
+      "author": "Damaged Panda",
+      "url": "https://opengameart.org/content/100-plus-game-sound-effects-wavoggm4a",
+      "license": "CC-BY-3.0",
+      "evidence": "原页各文件下载数 17304；收藏 37。数值为具体原页快照，不是游戏采用数。"
+    },
+    "vintage-scifi-sfx-vol-1": {
+      "name": "Vintage SciFi SFX Vol 1",
+      "author": "Zander Noriega",
+      "url": "https://opengameart.org/content/vintage-scifi-sfx-vol-1",
+      "license": "CC-BY-3.0",
+      "evidence": "原页各文件下载数 2385；收藏 23。数值为具体原页快照，不是游戏采用数。"
+    },
+    "hollywood-style-pistol-silencer-sound-effect": {
+      "name": "Hollywood-style pistol silencer sound effect",
+      "author": "bart",
+      "url": "https://opengameart.org/content/hollywood-style-pistol-silencer-sound-effect",
+      "license": "CC0-1.0",
+      "evidence": "原页各文件下载数 1463；收藏 13。数值为具体原页快照，不是游戏采用数。"
+    },
+    "50-cc0-retro-synth-sfx": {
+      "name": "50 CC0 retro / synth SFX",
+      "author": "rubberduck",
+      "url": "https://opengameart.org/content/50-cc0-retro-synth-sfx",
+      "license": "CC0-1.0",
+      "evidence": "原页各文件下载数 5555；收藏 53。数值为具体原页快照，不是游戏采用数。"
+    },
+    "laser-fire": {
+      "name": "Laser Fire",
+      "author": "dklon",
+      "url": "https://opengameart.org/content/laser-fire",
+      "license": "CC-BY-3.0",
+      "evidence": "原页各文件下载数 7947, 2097, 2134, 2746；收藏 44。数值为具体原页快照，不是游戏采用数。"
+    },
+    "laser-rifle": {
+      "name": "Laser rifle",
+      "author": "Skorpio (Submitted by Skorpio )",
+      "url": "https://opengameart.org/content/laser-rifle",
+      "license": "CC-BY-SA-3.0",
+      "evidence": "原页各文件下载数 2654；收藏 19。数值为具体原页快照，不是游戏采用数。"
+    },
+    "space-battle-game-sounds-astromenace": {
+      "name": "Space Battle Game Sounds (AstroMenace)",
+      "author": "Michael Kurinnoy (Submitted by qubodup )",
+      "url": "https://opengameart.org/content/space-battle-game-sounds-astromenace",
+      "license": "GPL-3.0",
+      "evidence": "原页各文件下载数 3484；收藏 17。数值为具体原页快照，不是游戏采用数。"
+    },
+    "laser-shot-0": {
+      "name": "Laser Shot",
+      "author": "Mobeyee Sounds",
+      "url": "https://opengameart.org/content/laser-shot-0",
+      "license": "CC-BY-4.0",
+      "evidence": "原页各文件下载数 1724；收藏 6。数值为具体原页快照，不是游戏采用数。"
+    },
+    "collaboration-sound-effects-shooting-sounds-001": {
+      "name": "Collaboration / Sound Effects Shooting sounds 001",
+      "author": "jalastram",
+      "url": "https://opengameart.org/content/collaboration-sound-effects-shooting-sounds-001",
+      "license": "CC-BY-3.0",
+      "evidence": "原页各文件下载数 1181；收藏 7。数值为具体原页快照，不是游戏采用数。"
+    },
+    "flatshot-complete-sfx-pack": {
+      "name": "Flatshot Complete SFX Pack",
+      "author": "Rosalila",
+      "url": "https://opengameart.org/content/flatshot-complete-sfx-pack",
+      "license": "CC-BY-SA-3.0",
+      "evidence": "原页各文件下载数 679；收藏 4。数值为具体原页快照，不是游戏采用数。"
+    },
+    "game-sound-effects": {
+      "name": "Game Sound Effects",
+      "author": "KASTLE Knight",
+      "url": "https://opengameart.org/content/game-sound-effects",
+      "license": "CC0-1.0",
+      "evidence": "原页各文件下载数 1832；收藏 6。数值为具体原页快照，不是游戏采用数。"
+    },
+    "town-theme-rpg": {
+      "name": "Town Theme RPG",
+      "author": "cynicmusic",
+      "url": "https://opengameart.org/content/town-theme-rpg",
+      "license": "CC0-1.0",
+      "evidence": "原页各文件下载数 15737；收藏 267。数值为具体原页快照，不是游戏采用数。"
+    },
+    "pleasant-creek": {
+      "name": "Pleasant Creek",
+      "author": "Matthew Pablo",
+      "url": "https://opengameart.org/content/pleasant-creek",
+      "license": "CC-BY-3.0",
+      "evidence": "原页各文件下载数 3542；收藏 91。数值为具体原页快照，不是游戏采用数。"
+    },
+    "calm-bgm": {
+      "name": "calm bgm",
+      "author": "syncopika",
+      "url": "https://opengameart.org/content/calm-bgm",
+      "license": "CC-BY-3.0",
+      "evidence": "原页各文件下载数 1543, 1138；收藏 64。数值为具体原页快照，不是游戏采用数。"
+    },
+    "bossa-nova": {
+      "name": "Bossa Nova",
+      "author": "Joth",
+      "url": "https://opengameart.org/content/bossa-nova",
+      "license": "CC0-1.0",
+      "evidence": "原页各文件下载数 7264；收藏 144。数值为具体原页快照，不是游戏采用数。"
+    },
+    "blueberries": {
+      "name": "Blueberries",
+      "author": "Viktor Kraus",
+      "url": "https://opengameart.org/content/blueberries",
+      "license": "CC-BY-3.0",
+      "evidence": "原页各文件下载数 814, 263；收藏 39。数值为具体原页快照，不是游戏采用数。"
+    },
+    "peaceful-place": {
+      "name": "Peaceful Place",
+      "author": "Alexandr Zhelanov",
+      "url": "https://opengameart.org/content/peaceful-place",
+      "license": "CC-BY-3.0",
+      "evidence": "原页各文件下载数 928, 538；收藏 37。数值为具体原页快照，不是游戏采用数。"
+    },
+    "winter-village": {
+      "name": "winter-village",
+      "author": "Visager",
+      "url": "https://freemusicarchive.org/music/Visager/Songs_From_An_Unmade_World_2/Visager_-_Songs_From_An_Unmade_World_2_-_08_Winter_Village/",
+      "license": "CC-BY-4.0",
+      "evidence": "原曲6.6K播放、944下载；作者页621K播放不作为本曲播放数。"
+    },
+    "cliff-road-chill": {
+      "name": "cliff-road-chill",
+      "author": "Komiku",
+      "url": "https://freemusicarchive.org/music/Komiku/Helice_Awesome_Dance_Adventure_/cliff-road-chill/",
+      "license": "CC0-1.0",
+      "evidence": "原曲3.9K播放、200下载；本曲CC0且作者官网提供免费音乐。"
+    },
+    "at-home-orchestral": {
+      "name": "At Home - Orchestral",
+      "author": "Wolfgang_",
+      "url": "https://opengameart.org/content/at-home-orchestral",
+      "license": "CC0-1.0",
+      "evidence": "原页各文件下载数 533；收藏 15。数值为具体原页快照，不是游戏采用数。"
+    },
+    "peaceful-village": {
+      "name": "Peaceful Village",
+      "author": "Stefan_Composer",
+      "url": "https://opengameart.org/content/peaceful-village",
+      "license": "CC-BY-3.0",
+      "evidence": "原页各文件下载数 220；收藏 3。数值为具体原页快照，不是游戏采用数。"
+    }
+  },
+  "groups": [
+    {
+      "id": "smg",
+      "title": "冲锋枪 · 10个不同来源",
+      "description": "每条来自不同作者/游戏团队；同样的素材按冲锋枪节奏连发比较，不把电子枪声称作实枪。",
+      "rps": 10,
+      "candidates": [
+        {
+          "id": "SM1",
+          "name": "未来短机枪",
+          "source": "futuristic-smg",
+          "style": "游戏机械",
+          "note": "作者明确的单发SMG，紧凑短尾。",
+          "cut": null
+        },
+        {
+          "id": "SM2",
+          "name": "游戏式机枪",
+          "source": "chaingun-pistol-rifle-shotgun-shots",
+          "style": "游戏枪声",
+          "note": "作者机枪原音，只取第一段射击，完整原声保留。",
+          "cut": 0.45
+        },
+        {
+          "id": "SM3",
+          "name": "人声卡通机关枪",
+          "source": "fps-placeholder-sounds",
+          "style": "人声拟枪",
+          "note": "Jack Menhorn用人声拟枪的实验方向，不是实枪录音。",
+          "cut": null
+        },
+        {
+          "id": "SM4",
+          "name": "Superpowers 轻机枪",
+          "source": "superpowers-assets-sound-effects",
+          "style": "卡通游戏",
+          "note": "来自Superpowers公开游戏资产；保留短发声段。",
+          "cut": 0.45
+        },
+        {
+          "id": "SM5",
+          "name": "恶搞战术游戏 · 机器人枪",
+          "source": "tactical-weapons-and-tactics-sound-pack",
+          "style": "游戏机械",
+          "note": "来自Tactical Weapons And Tactics的作者原作机枪音，截第一声。",
+          "cut": 0.35
+        },
+        {
+          "id": "SM6",
+          "name": "像素短脉冲",
+          "source": "gunloop-8bit",
+          "style": "8-bit街机",
+          "note": "原作是短循环8-bit枪音；取约0.09秒脉冲作为单次节奏比较，原循环可展开。",
+          "cut": 0.09
+        },
+        {
+          "id": "SM7",
+          "name": "WordWarVi 合成机枪",
+          "source": "action-shooter-soundset-wwvi",
+          "style": "复古街机",
+          "note": "真实公开游戏的设计枪声，不是我重新合成。",
+          "cut": null
+        },
+        {
+          "id": "SM8",
+          "name": "Target Xplosion 轻射击",
+          "source": "shots",
+          "style": "弹幕街机",
+          "note": "原作者射击游戏中的射击声；以SMG节奏比较。",
+          "cut": null
+        },
+        {
+          "id": "SM9",
+          "name": "异星短能量弹",
+          "source": "space-shoot-sounds",
+          "style": "轻科幻",
+          "note": "原作者是飞船射击设计，作为科幻机枪方向，不冒充机械实枪。",
+          "cut": null
+        },
+        {
+          "id": "SM10",
+          "name": "轻快激光点射",
+          "source": "100-plus-game-sound-effects-wavoggm4a",
+          "style": "卡通电子",
+          "note": "Damaged Panda游戏素材中的激光发射，比较短发音与连发节奏。",
+          "cut": null
+        }
+      ]
+    },
+    {
+      "id": "rifle",
+      "title": "步枪 · 10个不同来源",
+      "description": "另10位作者/来源，不复用冲锋枪组。混合游戏机械、科幻与街机方向，完整原声可展开。",
+      "rps": 7,
+      "candidates": [
+        {
+          "id": "AR1",
+          "name": "复古科幻步枪",
+          "source": "vintage-scifi-sfx-vol-1",
+          "style": "复古科幻",
+          "note": "作者FM风格设计激光枪，保留原作音色。",
+          "cut": null
+        },
+        {
+          "id": "AR2",
+          "name": "电影式消音点射",
+          "source": "hollywood-style-pistol-silencer-sound-effect",
+          "style": "轻机械",
+          "note": "原名是电影式消音手枪，作为低噪点射方向；不把原件改称实录步枪。",
+          "cut": 0.8
+        },
+        {
+          "id": "AR3",
+          "name": "模拟街机枪击",
+          "source": "50-cc0-retro-synth-sfx",
+          "style": "模拟街机",
+          "note": "作者LMMS/ZynAddSubFX完成的射击音，保留原素材。",
+          "cut": null
+        },
+        {
+          "id": "AR4",
+          "name": "短激光步枪",
+          "source": "laser-fire",
+          "style": "卡通激光",
+          "note": "dklon原作激光发射，按步枪射速比较。",
+          "cut": null
+        },
+        {
+          "id": "AR5",
+          "name": "Skorpio 设计步枪",
+          "source": "laser-rifle",
+          "style": "游戏科幻",
+          "note": "作者为Red Eclipse单独设计的激光步枪发行；此前未使用这条枪声。",
+          "cut": null
+        },
+        {
+          "id": "AR6",
+          "name": "AstroMenace 能量射击",
+          "source": "space-battle-game-sounds-astromenace",
+          "style": "科幻街机",
+          "note": "GPL公开游戏AstroMenace的原始武器音；原件和许可随页保留。",
+          "cut": null
+        },
+        {
+          "id": "AR7",
+          "name": "柔尾能量步枪",
+          "source": "laser-shot-0",
+          "style": "科幻电子",
+          "note": "Mobeyee原作的游戏激光单发，保留自然尾声。",
+          "cut": null
+        },
+        {
+          "id": "AR8",
+          "name": "Jesús Lastra 设计射击",
+          "source": "collaboration-sound-effects-shooting-sounds-001",
+          "style": "游戏设计",
+          "note": "十条设计射击中的一条，不再用实枪现场整段连发录音。",
+          "cut": null
+        },
+        {
+          "id": "AR9",
+          "name": "Flatshot 像素步枪",
+          "source": "flatshot-complete-sfx-pack",
+          "style": "8-bit街机",
+          "note": "原作实际极简射击游戏的玩家射击素材。",
+          "cut": null
+        },
+        {
+          "id": "AR10",
+          "name": "轻像素点射",
+          "source": "game-sound-effects",
+          "style": "轻街机",
+          "note": "KASTLE Knight的游戏射击原件，短而清楚的像素方向。",
+          "cut": null
+        }
+      ]
+    },
+    {
+      "id": "music",
+      "title": "背景音乐 · 10首完整曲目",
+      "description": "十位不同作者，保留完整原曲，可拖动进度、多选与循环，不截成短预览。",
+      "multi": true,
+      "candidates": [
+        {
+          "id": "BG1",
+          "name": "乡间小镇 · Town Theme RPG",
+          "source": "town-theme-rpg",
+          "style": "完整BGM",
+          "note": "竖琴、笛类的安静村落主题。 保留完整原曲，不截取、不拼接。",
+          "cut": null
+        },
+        {
+          "id": "BG2",
+          "name": "晴朗溪边 · Pleasant Creek",
+          "source": "pleasant-creek",
+          "style": "完整BGM",
+          "note": "明亮、温和的钢琴与弦乐休闲配乐。 保留完整原曲，不截取、不拼接。",
+          "cut": null
+        },
+        {
+          "id": "BG3",
+          "name": "静静的小镇 · Calm BGM",
+          "source": "calm-bgm",
+          "style": "完整BGM",
+          "note": "钢琴与吉他的轻柔小镇方向。 保留完整原曲，不截取、不拼接。",
+          "cut": null
+        },
+        {
+          "id": "BG4",
+          "name": "轻松小爵士 · Bossa Nova",
+          "source": "bossa-nova",
+          "style": "完整BGM",
+          "note": "8-bit轻爵士，节奏轻快，是十首里较活泼的方向。 保留完整原曲，不截取、不拼接。",
+          "cut": null
+        },
+        {
+          "id": "BG5",
+          "name": "蓝莓 · Blueberries",
+          "source": "blueberries",
+          "style": "完整BGM",
+          "note": "温和的旋律型背景音乐。 保留完整原曲，不截取、不拼接。",
+          "cut": null
+        },
+        {
+          "id": "BG6",
+          "name": "安静角落 · Peaceful Place",
+          "source": "peaceful-place",
+          "style": "完整BGM",
+          "note": "平静、适合慢探索的氛围方向。 保留完整原曲，不截取、不拼接。",
+          "cut": null
+        },
+        {
+          "id": "BG7",
+          "name": "冬日村落 · Winter Village",
+          "source": "winter-village",
+          "style": "完整BGM",
+          "note": "Visager完整曲目，轻柔的游戏村落方向。 保留完整原曲，不截取、不拼接。",
+          "cut": null
+        },
+        {
+          "id": "BG8",
+          "name": "小路休憩 · Cliff Road Chill",
+          "source": "cliff-road-chill",
+          "style": "完整BGM",
+          "note": "Komiku完整休闲游戏配乐，较有轻松行走感。 保留完整原曲，不截取、不拼接。",
+          "cut": null
+        },
+        {
+          "id": "BG9",
+          "name": "回到家 · At Home",
+          "source": "at-home-orchestral",
+          "style": "完整BGM",
+          "note": "安静短篇管弦配乐，较舒缓；原作者也标有轻微感伤。 保留完整原曲，不截取、不拼接。",
+          "cut": null
+        },
+        {
+          "id": "BG10",
+          "name": "祥和村庄 · Peaceful Village",
+          "source": "peaceful-village",
+          "style": "完整BGM",
+          "note": "Stefan Grossmann的低压村庄氛围。 保留完整原曲，不截取、不拼接。",
+          "cut": null
+        }
+      ]
+    }
+  ]
+}

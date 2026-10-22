@@ -362,102 +362,6 @@
       "truePeakDbfs": -6.01,
       "filters": ""
     },
-    "discover-3": {
-      "candidate": "D12-1",
-      "sourceFile": "audio-review/interactions/audio/D12-1-natural-1dbf0c41cc.flac",
-      "sourceHash": "1dbf0c41cc4cff65972bf461e31a13bfe1ef271e02bfa5e433969996e95821e2",
-      "license": "CC0-1.0",
-      "parts": [
-        {
-          "source": "complete-1",
-          "start": 0.01093,
-          "length": 0.676576,
-          "at": 0,
-          "level": 1,
-          "label": "简短清亮发现",
-          "gain": 1.944589597117671
-        }
-      ],
-      "file": "discover-3.flac",
-      "sha256": "fe0270072d33418dca9f26c19803469df27b26db5d5bca1bad37e12837e32a41",
-      "duration": 0.686576,
-      "gainDb": -7.140000000000001,
-      "lufs": -29.96,
-      "truePeakDbfs": -18.09,
-      "filters": ""
-    },
-    "discover-4": {
-      "candidate": "D4-3",
-      "sourceFile": "audio-review/interactions/audio/D4-3-natural-55f18a1b2a.flac",
-      "sourceHash": "55f18a1b2a5af5a33664fc52f3f381d7beb85a751f72c4156b944076140a02af",
-      "license": "CC0-1.0",
-      "parts": [
-        {
-          "source": "wobble-4bee2f50-Rise03",
-          "start": 0,
-          "length": 1.555737,
-          "at": 0,
-          "level": 1,
-          "label": "连续上扬奖励",
-          "gain": 0.650071575922884
-        }
-      ],
-      "file": "discover-4.flac",
-      "sha256": "087776fbef9702392d293b40b76b0f714c91d7cc596a4ed1c6b0062457556c9b",
-      "duration": 1.565737,
-      "gainDb": -5.989999999999998,
-      "lufs": -30.01,
-      "truePeakDbfs": -14.53,
-      "filters": ""
-    },
-    "discover-5": {
-      "candidate": "D5-3",
-      "sourceFile": "audio-review/interactions/audio/D5-3-natural-a25f71a6f8.flac",
-      "sourceHash": "a25f71a6f8e08bb10668e0e64b8d2dc0be6861b21ebbb4df049da253f179ed1f",
-      "license": "CC0-1.0",
-      "parts": [
-        {
-          "source": "wobble-02f4a3d5-Rise07",
-          "start": 0,
-          "length": 2.496145,
-          "at": 0,
-          "level": 1,
-          "label": "层层上扬发现",
-          "gain": 1.1306501234861182
-        }
-      ],
-      "file": "discover-5.flac",
-      "sha256": "dc6f24d952593c1b30f00c7a2ce527b26eac5683dc1f7c0e93befbda0ba6a916",
-      "duration": 2.506145,
-      "gainDb": -7.949999999999999,
-      "lufs": -30.01,
-      "truePeakDbfs": -18.54,
-      "filters": ""
-    },
-    "pack": {
-      "candidate": "PK4",
-      "sourceFile": "audio-review/interactions/audio/PK4-natural-40df4db158.flac",
-      "sourceHash": "40df4db158ad1568bd0bece09676f72f90fe3454f200d84c62044e8e2eb70d12",
-      "license": "CC-BY-3.0",
-      "parts": [
-        {
-          "source": "item4",
-          "start": 0.00093,
-          "length": 0.267551,
-          "at": 0,
-          "level": 1,
-          "label": "物件入包",
-          "gain": 0.4688289701580846
-        }
-      ],
-      "file": "pack.flac",
-      "sha256": "fe39f2c89f8bf729162d4cf311d528e4372a53616c2ee6a7e2fe58fbf1b3b871",
-      "duration": 0.277551,
-      "gainDb": -0.4200000000000017,
-      "lufs": -29.98,
-      "truePeakDbfs": -7.1,
-      "filters": ""
-    },
     "food-fries": {
       "candidate": "Eating Chips",
       "sourceFile": "audio-review/actions/originals/sb-chips-8810fa4050.flac",
@@ -1034,5 +938,6 @@
     "corpse": "open-corpse"
   },
   "processing": "Fixed gain to -30 LUFS (within 0.75 LU on short gated clips), true peak <= -1 dBTP; no compression, EQ or new layering. KN3 speeds to 0.3 s, full mouth-noises-1 speeds to 3 s as requested. Eating Chips cut to current 1.8 s food action, no wrapper. KN1/KN2 separate alternating swings. Rarity 1/2 and guns/reloads unchanged.",
-  "retained": "T4/W4/A3/S4/L4/D5/C1 and all eight shot/reload files byte-identical; new reload/search/cat candidates not installed."
+  "retained": "T4/W4/A3/S4/L4/D5/C1 and all eight shot/reload files byte-identical; new reload/search/cat candidates not installed.",
+  "superseded": "pack/discovery and reload/cat choices now in approved-feedback.json"
 }

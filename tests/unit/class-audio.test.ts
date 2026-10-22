@@ -84,14 +84,14 @@ describe("按枪型的音效与可读参数", () => {
     expect(weaponSpreadDegrees(weapons[16])).toBe(20.9);
     expect(60 / melee.rpm!).toBeCloseTo(MELEE_SWING_SECONDS);
   });
-  it("四类枪声与换弹独立，敌人使用相同素材但音量恰为75%", () => {
+  it("四类枪声与换弹独立，敌人使用相同素材但射击音量恰为50%", () => {
     for (const weaponClass of ["smg", "rifle", "sniper", "shotgun"] as const) {
       const player = sampleChoice("shot", { weaponClass })!,
         enemy = sampleChoice("shot", { weaponClass, enemy: true })!;
       expect(player.key).toBe(`shot-${weaponClass}`);
       expect(sampleBank[player.key]).toContain(".flac");
       expect(enemy.key).toBe(player.key);
-      expect(enemy.gain / player.gain).toBe(0.75);
+      expect(enemy.gain / player.gain).toBe(0.5);
       expect(
         sampleChoice("reload", { weaponClass, seconds: 1.5 }),
       ).toMatchObject({

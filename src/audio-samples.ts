@@ -38,7 +38,17 @@ import discover3 from "./assets/audio/discover-3.flac?url";
 import discover4 from "./assets/audio/discover-4.flac?url";
 import discover5 from "./assets/audio/discover-5.flac?url";
 import pack from "./assets/audio/pack.flac?url";
+import hurt from "./assets/audio/hurt.flac?url";
+import enemyAlert1 from "./assets/audio/enemy-alert-1.flac?url";
+import enemyAlert2 from "./assets/audio/enemy-alert-2.flac?url";
+import enemyAlert3 from "./assets/audio/enemy-alert-3.flac?url";
+import enemyAlert4 from "./assets/audio/enemy-alert-4.flac?url";
 export const sampleBank = {
+  hurt,
+  "enemy-alert-1": enemyAlert1,
+  "enemy-alert-2": enemyAlert2,
+  "enemy-alert-3": enemyAlert3,
+  "enemy-alert-4": enemyAlert4,
   "shot-smg": smg,
   "shot-rifle": rifle,
   "shot-sniper": sniper,
@@ -99,33 +109,52 @@ export type SoundOptions = {
   containerType?: string;
   swing?: number;
   tier?: number;
+  variant?: number;
 };
 export function sampleChoice(name: string, options: SoundOptions = {}) {
   const kind = options.weaponClass ?? "rifle";
+  const alertVariant =
+    name === "enemy-alert"
+      ? Math.floor(options.variant ?? Math.random() * 4) % 4
+      : 0;
   const key =
-    name === "shot" || name === "enemy"
-      ? `shot-${kind}`
-      : name === "food"
-        ? foodSamples[options.foodId ?? ""]
-        : name === "reload"
-          ? `reload-${kind}`
-          : name === "melee"
-            ? (options.swing ?? 1) % 2 === 1
-              ? "melee-first"
-              : "melee-second"
-            : name === "switch-weapon"
-              ? "equip-weapon"
-              : name === "open"
-                ? `open-${options.containerType}`
-                : name === "loot"
-                  ? (options.tier ?? 1) >= 3
-                    ? `discover-${Math.min(5, options.tier!)}`
-                    : undefined
-                  : name;
+    name === "enemy-alert"
+      ? `enemy-alert-${alertVariant + 1}`
+      : name === "shot" || name === "enemy"
+        ? `shot-${kind}`
+        : name === "food"
+          ? foodSamples[options.foodId ?? ""]
+          : name === "reload"
+            ? `reload-${kind}`
+            : name === "melee"
+              ? (options.swing ?? 1) % 2 === 1
+                ? "melee-first"
+                : "melee-second"
+              : name === "switch-weapon"
+                ? "equip-weapon"
+                : name === "open"
+                  ? `open-${options.containerType}`
+                  : name === "loot"
+                    ? (options.tier ?? 1) >= 3
+                      ? `discover-${Math.min(5, options.tier!)}`
+                      : undefined
+                    : name;
   if (!key || !(key in sampleBank)) return;
   return {
     key: key as SampleKey,
-    gain: options.enemy || name === "enemy" ? 0.75 : 1,
+    gain:
+      (name === "shot" || name === "enemy") &&
+      (options.enemy || name === "enemy")
+        ? 0.5
+        : name === "loot"
+          ? 1.2
+          : name === "hurt"
+            ? 0.5
+            : name === "enemy-alert"
+              ? 0.65
+              : options.enemy
+                ? 0.75
+                : 1,
     seconds: name === "reload" || name === "food" ? options.seconds : undefined,
     reload: name === "reload" && !options.enemy,
     food: name === "food",

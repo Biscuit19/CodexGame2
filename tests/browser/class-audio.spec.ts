@@ -104,7 +104,7 @@ test("散布显示完整角度，近战详情显示真实伤害与攻速", async
     path: "test-results/chrome-melee-damage-attack-speed.png",
   });
 });
-test("Chrome实际解码38个本地音效、真实四类射击及换弹倍速、敌人减音和切枪取消", async ({
+test("Chrome实际解码43个本地音效、真实四类射击及换弹倍速、敌人减音和切枪取消", async ({
   page,
 }) => {
   test.setTimeout(60000);
@@ -143,7 +143,7 @@ test("Chrome实际解码38个本地音效、真实四类射击及换弹倍速、
   });
   expect(
     await page.evaluate(() => (window as any).__game.sound.buffers.size),
-  ).toBe(38);
+  ).toBe(43);
   const silence = await page.evaluate(() => {
     const g = (window as any).__game;
     return [...g.sound.buffers].map(([key, b]: any) => ({
@@ -164,7 +164,7 @@ test("Chrome实际解码38个本地音效、真实四类射击及换弹倍速、
   );
   expect(
     silence.find((x: any) => x.key === "reload-sniper").duration,
-  ).toBeCloseTo(2.0625, 3);
+  ).toBeCloseTo(2.561361, 3);
   expect(silence.find((x: any) => x.key === "shot-rifle").duration).toBeCloseTo(
     1,
     3,
@@ -270,7 +270,7 @@ test("Chrome实际解码38个本地音效、真实四类射击及换弹倍速、
   });
   for (const type of ["smg", "rifle", "sniper", "shotgun"]) {
     const records = out.logs.filter((x: any) => x.key === `shot-${type}`);
-    expect(records.map((x: any) => x.gain)).toEqual([1, 0.75]);
+    expect(records.map((x: any) => x.gain)).toEqual([1, 0.5]);
   }
   const reload = out.logs.find((x: any) => x.key === "reload-smg");
   expect(reload.duration / reload.rate).toBeCloseTo(out.expected, 4);

@@ -27,3 +27,6 @@
 
 - 2026-10-22最新明确选择覆盖旧音效约定，见 `docs/AUDIO_APPROVED_INTERACTIONS.md`：KN1/KN2交替挥刀、KN3加速0.3秒切刀；切枪现在明确使用W4。容器、高级发现和装包按用户跨类别最终编号，勿强制限制所属组。薯四/餐盒纯Eating Chips无包装，四级食物完整mouth-noises-1加速3秒且动作也3秒。不要让旧构建脚本恢复被替换版本。
 - 新40候选页 `public/audio-review/reload-search-cats/`：4类各10个，玩家受击/敌人警戒多选随机试听，搜索低声循环；详见 `docs/AUDIO_RELOAD_SEARCH_CATS.md`。新候选未接入，不把授权不明网红截音、其他游戏闭源音轨或普通猫声宣称为“老吴”原梗。保留各原作者及许可，不预缓存候选给普通玩家。
+
+- 2026-10-22最新选择见 `docs/AUDIO_APPROVED_FEEDBACK.md`：换弹NR1/NR3/NR2、受击PH10、警戒EA5/6/7/10、入包D12-3、发现D3-2/D4-1/D5-2。发现增益1.2，敌人射击改为玩家50%（覆盖旧75%射击约定），换弹仍75%。每局每个保险箱保留首次题目/选项，不因重开刷新。
+- 新枪声/完整BGM共30候选在 `public/audio-review/shots-music/`，见 `docs/AUDIO_SHOTS_MUSIC_REVIEW.md`，尚未采用；禁止提前替换现用枪声/配乐，禁止游戏离线预缓存试听库。

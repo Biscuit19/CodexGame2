@@ -32,25 +32,73 @@
       "lufs": -28.4
     },
     "reload-smg": {
+      "candidate": "NR1",
       "file": "reload-smg.flac",
-      "sha256": "04ecdfad03fa71ec60227739458761e18c260c4343350bb8a5394d104e2c6835",
-      "auditionSha256": "4d8514214fd5e070c1104780eb16683a97c2b2ce6d5b830bf3adb86394dd2ba1",
-      "duration": 2.6250113378684805,
-      "lufs": -28.4
+      "sourceFile": "audio-review/reload-search-cats/audio/NR1-original-8530955972.flac",
+      "sourceHash": "8530955972aed87dd7a53d3c84cf14dbbd5ff7f727f9839e4e27f28a4bacdb5f",
+      "sha256": "79c20a14f2b965e26b9b4a705cd8bfc5d938eab2b23b58c263891293c24173ab",
+      "duration": 1.89458,
+      "gainDb": -7.850000000000001,
+      "lufs": -29.99,
+      "truePeakDbfs": -16.41,
+      "license": "CC-BY-4.0",
+      "parts": [
+        {
+          "source": "soldat-mp5",
+          "start": 0,
+          "length": 1.88458,
+          "at": 0,
+          "level": 1,
+          "label": "MP5 · 紧凑换弹",
+          "gain": 0.3124223727756947
+        }
+      ]
     },
     "reload-rifle": {
+      "candidate": "NR3",
       "file": "reload-rifle.flac",
-      "sha256": "04ecdfad03fa71ec60227739458761e18c260c4343350bb8a5394d104e2c6835",
-      "auditionSha256": "4d8514214fd5e070c1104780eb16683a97c2b2ce6d5b830bf3adb86394dd2ba1",
-      "duration": 2.6250113378684805,
-      "lufs": -28.4
+      "sourceFile": "audio-review/reload-search-cats/audio/NR3-original-002d3b381f.flac",
+      "sourceHash": "002d3b381f74965a76e215eae0cc768f6ec6f5e82d1f2037436c33472f797863",
+      "sha256": "31b2ab735205014df8cbdcffafba87ae541810dcddaeaa0d9672e3eb42bc37cb",
+      "duration": 1.997256,
+      "gainDb": -4.579999999999998,
+      "lufs": -30.0,
+      "truePeakDbfs": -14.15,
+      "license": "CC-BY-4.0",
+      "parts": [
+        {
+          "source": "soldat-steyraug",
+          "start": 0,
+          "length": 1.987256,
+          "at": 0,
+          "level": 1,
+          "label": "AUG · 利落换弹",
+          "gain": 0.4256908802347134
+        }
+      ]
     },
     "reload-sniper": {
+      "candidate": "NR2",
       "file": "reload-sniper.flac",
-      "sha256": "458c465c25899c8ea2f698a6c42f2f5fcb246d8d54040d042e94660ea1ccedf1",
-      "auditionSha256": "c7449ce71560756a899c971df52cdf5c0bda1a8c873a118fd2360887d8f7cd0b",
-      "duration": 2.0624943310657597,
-      "lufs": -28.4
+      "sourceFile": "audio-review/reload-search-cats/audio/NR2-original-3ede1849a9.flac",
+      "sourceHash": "3ede1849a98e2b49b8384ca14025c1967981521973e8d8ac0fd4c309cdc557ad",
+      "sha256": "ad9f61b7c498e6cf5bf548a6e0ee95ba91bd983d5255e7bc28028066cfbb5042",
+      "duration": 2.561361,
+      "gainDb": -5.48,
+      "lufs": -30.01,
+      "truePeakDbfs": -13.51,
+      "license": "CC-BY-4.0",
+      "parts": [
+        {
+          "source": "soldat-ak74",
+          "start": 0.004331,
+          "length": 2.551361,
+          "at": 0,
+          "level": 1,
+          "label": "AK74 · 弹匣与机件",
+          "gain": 0.6688482043149923
+        }
+      ]
     },
     "reload-shotgun": {
       "file": "reload-shotgun.flac",
@@ -789,102 +837,6 @@
         "truePeakDbfs": -6.01,
         "filters": ""
       },
-      "discover-3": {
-        "candidate": "D12-1",
-        "sourceFile": "audio-review/interactions/audio/D12-1-natural-1dbf0c41cc.flac",
-        "sourceHash": "1dbf0c41cc4cff65972bf461e31a13bfe1ef271e02bfa5e433969996e95821e2",
-        "license": "CC0-1.0",
-        "parts": [
-          {
-            "source": "complete-1",
-            "start": 0.01093,
-            "length": 0.676576,
-            "at": 0,
-            "level": 1,
-            "label": "简短清亮发现",
-            "gain": 1.944589597117671
-          }
-        ],
-        "file": "discover-3.flac",
-        "sha256": "fe0270072d33418dca9f26c19803469df27b26db5d5bca1bad37e12837e32a41",
-        "duration": 0.686576,
-        "gainDb": -7.140000000000001,
-        "lufs": -29.96,
-        "truePeakDbfs": -18.09,
-        "filters": ""
-      },
-      "discover-4": {
-        "candidate": "D4-3",
-        "sourceFile": "audio-review/interactions/audio/D4-3-natural-55f18a1b2a.flac",
-        "sourceHash": "55f18a1b2a5af5a33664fc52f3f381d7beb85a751f72c4156b944076140a02af",
-        "license": "CC0-1.0",
-        "parts": [
-          {
-            "source": "wobble-4bee2f50-Rise03",
-            "start": 0,
-            "length": 1.555737,
-            "at": 0,
-            "level": 1,
-            "label": "连续上扬奖励",
-            "gain": 0.650071575922884
-          }
-        ],
-        "file": "discover-4.flac",
-        "sha256": "087776fbef9702392d293b40b76b0f714c91d7cc596a4ed1c6b0062457556c9b",
-        "duration": 1.565737,
-        "gainDb": -5.989999999999998,
-        "lufs": -30.01,
-        "truePeakDbfs": -14.53,
-        "filters": ""
-      },
-      "discover-5": {
-        "candidate": "D5-3",
-        "sourceFile": "audio-review/interactions/audio/D5-3-natural-a25f71a6f8.flac",
-        "sourceHash": "a25f71a6f8e08bb10668e0e64b8d2dc0be6861b21ebbb4df049da253f179ed1f",
-        "license": "CC0-1.0",
-        "parts": [
-          {
-            "source": "wobble-02f4a3d5-Rise07",
-            "start": 0,
-            "length": 2.496145,
-            "at": 0,
-            "level": 1,
-            "label": "层层上扬发现",
-            "gain": 1.1306501234861182
-          }
-        ],
-        "file": "discover-5.flac",
-        "sha256": "dc6f24d952593c1b30f00c7a2ce527b26eac5683dc1f7c0e93befbda0ba6a916",
-        "duration": 2.506145,
-        "gainDb": -7.949999999999999,
-        "lufs": -30.01,
-        "truePeakDbfs": -18.54,
-        "filters": ""
-      },
-      "pack": {
-        "candidate": "PK4",
-        "sourceFile": "audio-review/interactions/audio/PK4-natural-40df4db158.flac",
-        "sourceHash": "40df4db158ad1568bd0bece09676f72f90fe3454f200d84c62044e8e2eb70d12",
-        "license": "CC-BY-3.0",
-        "parts": [
-          {
-            "source": "item4",
-            "start": 0.00093,
-            "length": 0.267551,
-            "at": 0,
-            "level": 1,
-            "label": "物件入包",
-            "gain": 0.4688289701580846
-          }
-        ],
-        "file": "pack.flac",
-        "sha256": "fe39f2c89f8bf729162d4cf311d528e4372a53616c2ee6a7e2fe58fbf1b3b871",
-        "duration": 0.277551,
-        "gainDb": -0.4200000000000017,
-        "lufs": -29.98,
-        "truePeakDbfs": -7.1,
-        "filters": ""
-      },
       "food-fries": {
         "candidate": "Eating Chips",
         "sourceFile": "audio-review/actions/originals/sb-chips-8810fa4050.flac",
@@ -922,6 +874,287 @@
         "lufs": -29.99,
         "truePeakDbfs": -2.81,
         "filters": "asetrate=44100*1.6108843333,aresample=44100,apad=whole_dur=3,atrim=duration=3"
+      }
+    }
+  },
+  "approvedFeedback": {
+    "metadata": "approved-feedback.json",
+    "tracks": {
+      "reload-smg": {
+        "candidate": "NR1",
+        "file": "reload-smg.flac",
+        "sourceFile": "audio-review/reload-search-cats/audio/NR1-original-8530955972.flac",
+        "sourceHash": "8530955972aed87dd7a53d3c84cf14dbbd5ff7f727f9839e4e27f28a4bacdb5f",
+        "sha256": "79c20a14f2b965e26b9b4a705cd8bfc5d938eab2b23b58c263891293c24173ab",
+        "duration": 1.89458,
+        "gainDb": -7.850000000000001,
+        "lufs": -29.99,
+        "truePeakDbfs": -16.41,
+        "license": "CC-BY-4.0",
+        "parts": [
+          {
+            "source": "soldat-mp5",
+            "start": 0,
+            "length": 1.88458,
+            "at": 0,
+            "level": 1,
+            "label": "MP5 · 紧凑换弹",
+            "gain": 0.3124223727756947
+          }
+        ]
+      },
+      "reload-rifle": {
+        "candidate": "NR3",
+        "file": "reload-rifle.flac",
+        "sourceFile": "audio-review/reload-search-cats/audio/NR3-original-002d3b381f.flac",
+        "sourceHash": "002d3b381f74965a76e215eae0cc768f6ec6f5e82d1f2037436c33472f797863",
+        "sha256": "31b2ab735205014df8cbdcffafba87ae541810dcddaeaa0d9672e3eb42bc37cb",
+        "duration": 1.997256,
+        "gainDb": -4.579999999999998,
+        "lufs": -30.0,
+        "truePeakDbfs": -14.15,
+        "license": "CC-BY-4.0",
+        "parts": [
+          {
+            "source": "soldat-steyraug",
+            "start": 0,
+            "length": 1.987256,
+            "at": 0,
+            "level": 1,
+            "label": "AUG · 利落换弹",
+            "gain": 0.4256908802347134
+          }
+        ]
+      },
+      "reload-sniper": {
+        "candidate": "NR2",
+        "file": "reload-sniper.flac",
+        "sourceFile": "audio-review/reload-search-cats/audio/NR2-original-3ede1849a9.flac",
+        "sourceHash": "3ede1849a98e2b49b8384ca14025c1967981521973e8d8ac0fd4c309cdc557ad",
+        "sha256": "ad9f61b7c498e6cf5bf548a6e0ee95ba91bd983d5255e7bc28028066cfbb5042",
+        "duration": 2.561361,
+        "gainDb": -5.48,
+        "lufs": -30.01,
+        "truePeakDbfs": -13.51,
+        "license": "CC-BY-4.0",
+        "parts": [
+          {
+            "source": "soldat-ak74",
+            "start": 0.004331,
+            "length": 2.551361,
+            "at": 0,
+            "level": 1,
+            "label": "AK74 · 弹匣与机件",
+            "gain": 0.6688482043149923
+          }
+        ]
+      },
+      "hurt": {
+        "candidate": "PH10",
+        "file": "hurt.flac",
+        "sourceFile": "audio-review/reload-search-cats/audio/PH10-original-ebf279c3dc.flac",
+        "sourceHash": "ebf279c3dc9ac7199d26970d629724d86e08e7fa446a199131935ea107623869",
+        "sha256": "7418f6b06b19a04adaeb27a8d347c7f580a148fed496da9e5d81cf6a72a308f2",
+        "duration": 0.516213,
+        "gainDb": 0.2699999999999996,
+        "lufs": -29.97,
+        "truePeakDbfs": -15.55,
+        "license": "CC0-1.0",
+        "parts": [
+          {
+            "source": "oga-meow",
+            "start": 0.004331,
+            "length": 0.506213,
+            "at": 0,
+            "level": 1,
+            "label": "轻巧卡通喵",
+            "gain": 0.8061687204789986
+          }
+        ]
+      },
+      "enemy-alert-1": {
+        "candidate": "EA5",
+        "file": "enemy-alert-1.flac",
+        "sourceFile": "audio-review/reload-search-cats/audio/EA5-original-7834d6af4a.flac",
+        "sourceHash": "7834d6af4a83e9a8cecb32ee02373eab007344b972834fd78f1250202a461e5c",
+        "sha256": "8df93fefe6a06e14c77221794d0de071298bd707449bcd7a2f43f7a76c81e6ea",
+        "duration": 1.26,
+        "gainDb": -4.579999999999998,
+        "lufs": -30.0,
+        "truePeakDbfs": -23.72,
+        "license": "CC0-1.0",
+        "parts": [
+          {
+            "source": "bsb-1886",
+            "start": 0.164331,
+            "length": 1.25,
+            "at": 0,
+            "level": 1,
+            "label": "低声威吓 · 5",
+            "gain": 0.2721549516674472
+          }
+        ]
+      },
+      "enemy-alert-2": {
+        "candidate": "EA6",
+        "file": "enemy-alert-2.flac",
+        "sourceFile": "audio-review/reload-search-cats/audio/EA6-original-8a2a8f5c59.flac",
+        "sourceHash": "8a2a8f5c59a39d322bab5ac7362da7b46eabada25d5df2a572cdfcfab4fde689",
+        "sha256": "0ff9e8954645a77ec1f6c728b2c6902b500d5721505d691e917a63cba20406cc",
+        "duration": 1.26,
+        "gainDb": -4.420000000000002,
+        "lufs": -29.99,
+        "truePeakDbfs": -22.79,
+        "license": "CC0-1.0",
+        "parts": [
+          {
+            "source": "bsb-1887",
+            "start": 0.184331,
+            "length": 1.25,
+            "at": 0,
+            "level": 1,
+            "label": "低声威吓 · 6",
+            "gain": 0.4774913249594654
+          }
+        ]
+      },
+      "enemy-alert-3": {
+        "candidate": "EA7",
+        "file": "enemy-alert-3.flac",
+        "sourceFile": "audio-review/reload-search-cats/audio/EA7-original-1996bbfc81.flac",
+        "sourceHash": "1996bbfc81846c963d997381b36b8d0fb7dec02296c6eaa0bc7de2d3c8beff08",
+        "sha256": "d31267acf4967ae9a3d048c16e5b4e18a69887164315cbd9ae1044e9aecfe369",
+        "duration": 1.26,
+        "gainDb": -3.8500000000000014,
+        "lufs": -30.02,
+        "truePeakDbfs": -22.87,
+        "license": "CC0-1.0",
+        "parts": [
+          {
+            "source": "bsb-1888",
+            "start": 0.124331,
+            "length": 1.25,
+            "at": 0,
+            "level": 1,
+            "label": "低声威吓 · 7",
+            "gain": 0.28913999719349526
+          }
+        ]
+      },
+      "enemy-alert-4": {
+        "candidate": "EA10",
+        "file": "enemy-alert-4.flac",
+        "sourceFile": "audio-review/reload-search-cats/audio/EA10-original-9d81960183.flac",
+        "sourceHash": "9d81960183481ca6bbe17008d9d77037021fab8c1bb868951fb030b6d4729ce0",
+        "sha256": "152b08a0d2113ac2dd1db6a5b9fc1fe33c71fc010ca1d99de73128bcd67124fa",
+        "duration": 1.26,
+        "gainDb": -3.530000000000001,
+        "lufs": -30.0,
+        "truePeakDbfs": -19.48,
+        "license": "CC0-1.0",
+        "parts": [
+          {
+            "source": "bsb-0658",
+            "start": 0.094331,
+            "length": 1.25,
+            "at": 0,
+            "level": 1,
+            "label": "轻抱怨式警告 · 备选",
+            "gain": 2.114308649016957
+          }
+        ]
+      },
+      "pack": {
+        "candidate": "D12-3",
+        "file": "pack.flac",
+        "sourceFile": "audio-review/interactions/audio/D12-3-natural-618d322e08.flac",
+        "sourceHash": "618d322e08ad96dd740fca0882f3343f378226100af83a185457aadad02eb82e",
+        "sha256": "d9c87f0fab2493c532a3e6be4507e7bbfd074a15eb087181620e5559c5ec0749",
+        "duration": 0.147755,
+        "gainDb": 0.14999999999999858,
+        "lufs": -29.95,
+        "truePeakDbfs": -9.25,
+        "license": "CC-BY-3.0",
+        "parts": [
+          {
+            "source": "fantasy-2f698341-Menu_Select_00",
+            "start": 0.00093,
+            "length": 0.137755,
+            "at": 0,
+            "level": 1,
+            "label": "轻触确认",
+            "gain": 0.4721627632015194
+          }
+        ]
+      },
+      "discover-3": {
+        "candidate": "D3-2",
+        "file": "discover-3.flac",
+        "sourceFile": "audio-review/interactions/audio/D3-2-natural-ceb3fab959.flac",
+        "sourceHash": "ceb3fab959a229bab67da4b1aac1f0dabef1fcb34e9c783be323983140bb59c5",
+        "sha256": "60381f8107f2b9dcaf9ccd6a3079dea56b7a9ce895c35e174d068f6151d31256",
+        "duration": 2.353696,
+        "gainDb": -4.399999999999999,
+        "lufs": -30.0,
+        "truePeakDbfs": -15.13,
+        "license": "CC-BY-3.0",
+        "parts": [
+          {
+            "source": "virix-0088358f-Item2A",
+            "start": 0.04093,
+            "length": 2.343696,
+            "at": 0,
+            "level": 1,
+            "label": "明亮物品奖励",
+            "gain": 0.34801442646995234
+          }
+        ]
+      },
+      "discover-4": {
+        "candidate": "D4-1",
+        "file": "discover-4.flac",
+        "sourceFile": "audio-review/interactions/audio/D4-1-natural-bce8f88620.flac",
+        "sourceHash": "bce8f88620d114436f0c14ae7c0de095e88d0b7ed7f0a27dd4e7cab708a3913e",
+        "sha256": "0a0a7e3639be70c36a1142f6ff2cf364cf3842c0acb1977bea9b3b75044943f6",
+        "duration": 3.572653,
+        "gainDb": -6.489999999999998,
+        "lufs": -30.0,
+        "truePeakDbfs": -15.31,
+        "license": "CC-BY-3.0",
+        "parts": [
+          {
+            "source": "fantasy-36d9cd2a-Jingle_Achievement_00",
+            "start": 0,
+            "length": 3.562653,
+            "at": 0,
+            "level": 1,
+            "label": "成就式发现",
+            "gain": 0.36394657037241296
+          }
+        ]
+      },
+      "discover-5": {
+        "candidate": "D5-2",
+        "file": "discover-5.flac",
+        "sourceFile": "audio-review/interactions/audio/D5-2-natural-bd0eb90f20.flac",
+        "sourceHash": "bd0eb90f201486871c4a9e1d97fe06489fcb35c196c75af3b6e918176be12a28",
+        "sha256": "03566dbabe446f992a9fb6714f4044e70c18af440efef8fcdce6da16a4ece019",
+        "duration": 5.941519,
+        "gainDb": -7.640000000000001,
+        "lufs": -29.99,
+        "truePeakDbfs": -18.55,
+        "license": "CC-BY-3.0",
+        "parts": [
+          {
+            "source": "scifi-4d85a414-Jingle_Win_01",
+            "start": 0,
+            "length": 5.931519,
+            "at": 0,
+            "level": 1,
+            "label": "华彩完成感",
+            "gain": 0.2880551682712706
+          }
+        ]
       }
     }
   }

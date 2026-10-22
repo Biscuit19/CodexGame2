@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>新枪声与完整BGM试听 · 猫尾乡野</title>
+    <link rel="stylesheet" href="review.css" />
+  </head>
+  <body>
+    <main>
+      <header class="intro">
+        <div class="eyebrow">猫尾乡野 · 新一轮音效选材</div>
+        <h1>轻松一点，也能打得响亮。</h1>
+        <p>
+          冲锋枪与步枪各 10 个，<strong>20 个不同来源、不同作者</strong
+          >；另有十位作者的 10 首完整
+          BGM。这里全部是待选候选，<strong>尚未接入游戏</strong>。
+        </p>
+        <div class="links">
+          <a href="../reload-search-cats/index.html">上一轮换弹与猫叫</a
+          ><a href="../interactions/index.html">开箱与发现原声</a
+          ><a href="#research">选材依据与授权</a>
+        </div>
+      </header>
+      <section class="desk" aria-label="试听控制">
+        <div class="desk-row">
+          <label class="volume"
+            >试听音量
+            <input
+              id="volume"
+              type="range"
+              min="0"
+              max="100"
+              value="100"
+            /><output id="volume-label">100%</output></label
+          ><button id="stop" class="quiet">停止全部</button
+          ><button id="sequence">连听本组</button
+          ><button id="export" class="quiet">复制我的选择</button>
+        </div>
+        <p id="status" role="status" aria-live="polite">正在载入候选清单…</p>
+      </section>
+      <nav id="categories" aria-label="音效类别"></nav>
+      <section class="category-header">
+        <div class="eyebrow" id="category-count"></div>
+        <h2 id="category-title"></h2>
+        <p id="category-description"></p>
+        <div class="options" id="gun-controls">
+          <label
+            >连发射速
+            <input id="rps" type="range" min="2" max="15" value="10" /><output
+              id="rps-label"
+              >10 发/秒</output
+            ></label
+          ><label
+            >连发时长
+            <select id="burst-seconds">
+              <option value="1">1 秒</option>
+              <option value="2" selected>2 秒</option>
+              <option value="3">3 秒</option>
+              <option value="5">5 秒</option>
+            </select></label
+          >
+        </div>
+        <p class="small" id="context-note"></p>
+      </section>
+      <section id="candidates" aria-label="本类候选"></section>
+      <section class="selection panel">
+        <h2>已选 <span id="selection-count">0</span> 项</h2>
+        <p>
+          枪声每类选一个；BGM
+          可以多选。选择只保存在当前页面，不写游戏存档，离开前可复制清单。
+        </p>
+        <pre id="selection-text">还没有选择。</pre>
+      </section>
+      <section class="panel" id="research">
+        <h2>来源、完整原声与比较依据</h2>
+        <p>
+          先查询开发者推荐和公开游戏/音乐资源，再逐项核对原作者、具体文件及授权。20条新射击来自20个来源和作者；没有用同一段变调、倍速凑数。卡通电子、人声拟枪、科幻和街机都如实标注，不把激光或拟声称作实枪录音。
+        </p>
+        <p>
+          枪声只做已说明的剪切、固定音量和剪切边缘4毫秒防咔哒；没有新滤波、混响、动态压缩或我自创的合成声。连发按原速重复，整段只在必要时固定衰减防止重叠削波，最后一发保留尾声。
+        </p>
+        <p>
+          十首音乐均保留完整原文件，未截取、拼接或重新编码。仅播放器使用固定增益匹配试听响度；完整原曲可拖动进度、单独循环。较短的原作也按其原始长度保留，不循环拼长。
+        </p>
+        <p>
+          下载量是原条目的下载量，不能换算为游戏采用数；少数风格独特的条目热度较低，明确作为补充。数字为2026-10-22核验快照。
+        </p>
+        <details>
+          <summary>全部作者、热度证据与许可</summary>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>作品 / 作者</th>
+                  <th>使用依据</th>
+                  <th>授权</th>
+                </tr>
+              </thead>
+              <tbody id="source-table"></tbody>
+            </table>
+          </div>
+        </details>
+        <p><a href="licenses/index.html">许可全文、原作者声明和处理说明</a></p>
+        <p class="small">
+          Scott
+          Buckley站点本轮返回406，Incompetech返回503，未绕过限制或把未取得的曲目算入候选；PeriTune当前规则限制完整音乐选集式分发，本轮未托管其曲目。Free
+          Music Archive按每首作品的实际许可核验。
+        </p>
+      </section>
+      <footer>只更新独立试听页 · 新枪声与BGM尚未接入游戏</footer>
+    </main>
+    <dialog id="copy-dialog">
+      <h2>把下面这段发给我即可</h2>
+      <textarea id="copy-text" readonly aria-label="音效选择清单"></textarea
+      ><button id="close-copy">关闭</button>
+    </dialog>
+    <script type="module" src="review.js"></script>
+  </body>
+</html>

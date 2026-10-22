@@ -111,3 +111,5 @@ npm run preview         # 验证生产构建
 最新整备调整：设置支持圆环／中空十字准星，瞄准时隐藏系统鼠标；食物使用小号类别标注。容器描边感应距离增加60%，金边更醒目；新增旧藤筐、生锈工具盒替换部分纸箱。全部撤离点常驻开放，付费点按E付款；五分钟警告仅保留文字。战斗背包显示本局收入并可按类型、价值整理，仓库批量出售仅出售珍贵及以下收藏且需要确认。农庄新增两座小建筑及8个容器，木材和草垛等硬物增加避开道路的中心碰撞。
 
 新一轮声音：[已采用交互音效](docs/AUDIO_APPROVED_INTERACTIONS.md) · [换弹/搜索/猫叫40候选](docs/AUDIO_RELOAD_SEARCH_CATS.md) · [在线试听](https://biscuit19.github.io/CodexGame2/audio-review/reload-search-cats/index.html)。
+
+声音最新状态：[已采用换弹/猫叫/发现](docs/AUDIO_APPROVED_FEEDBACK.md) · [新枪声及完整BGM 30候选](docs/AUDIO_SHOTS_MUSIC_REVIEW.md) · [在线试听](https://biscuit19.github.io/CodexGame2/audio-review/shots-music/index.html)。

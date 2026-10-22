@@ -1,3 +1,7 @@
+# 最新状态（2026-10-22）
+
+以[最新采用记录](AUDIO_APPROVED_FEEDBACK.md)为准：三类换弹、受击、警戒、入包和高级发现已更新；敌人射击50%、换弹75%，发现增益1.2。新枪声与完整音乐见[30候选](AUDIO_SHOTS_MUSIC_REVIEW.md)，未接入。以下旧方案为历史说明。
+
 # 当前动作音效更新
 
 当前采用状态以 [交互采用记录](AUDIO_APPROVED_INTERACTIONS.md) 与 [此前动作采用记录](AUDIO_APPROVED_ACTIONS.md) 为准：两刀、切换、容器、分级发现、入包、纯脆嚼和三秒四级进食已更新。新换弹、循环搜索和猫叫在 [40候选研究](AUDIO_RELOAD_SEARCH_CATS.md) 中待选。下方旧动作保留说明属于历史记录，已被最新明确选择取代。

@@ -100,7 +100,9 @@ def install_game(manifest):
         interactions = json.loads((game / 'approved-interactions.json').read_text())
         data['approvedInteractions'] = {'metadata':'approved-interactions.json', 'tracks':interactions['tracks']}
     (game / 'sources.json').write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n')
-    print('Installed 8 lossless FLAC gun sounds; existing approved actions and retained Foley untouched.')
+    if (game / 'approved-feedback.json').exists():
+        subprocess.run(['python', str(ROOT / 'scripts/assets/install-approved-feedback.py')], check=True)
+    print('Installed gun bank; preserved later explicit feedback/reload selections.')
 
 
 def main(install=False):

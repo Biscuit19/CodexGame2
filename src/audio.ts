@@ -29,6 +29,8 @@ export class Sound {
   private generation = 0;
   private reloadGeneration = 0;
   private foodGeneration = 0;
+  private callTimes = new Map<string, number>();
+  private callVoices = new Map<string, AudioBufferSourceNode>();
   async prepare() {
     if (!this.ctx) return;
     await Promise.all(
@@ -81,6 +83,8 @@ export class Sound {
       }
     }
     this.voices.clear();
+    this.callTimes.clear();
+    this.callVoices.clear();
   }
   stopFood() {
     this.foodGeneration++;
@@ -94,6 +98,13 @@ export class Sound {
   private sample(name: string, options: SoundOptions) {
     const choice = sampleChoice(name, options);
     if (!choice || !this.ctx) return false;
+    const isCall = name === "hurt" || name === "enemy-alert";
+    if (isCall) {
+      const last = this.callTimes.get(name) ?? -Infinity;
+      if (this.ctx.currentTime - last < (name === "hurt" ? 0.35 : 0.7))
+        return true;
+      this.callTimes.set(name, this.ctx.currentTime);
+    }
     if (choice.reload) this.stopReload();
     if (choice.food) this.stopFood();
     const generation = this.generation,
@@ -112,6 +123,12 @@ export class Sound {
       const age = this.ctx.currentTime - requested;
       // Don't release a burst of old gunshots after asynchronous first-use decoding.
       if ((name === "shot" || name === "enemy") && age > 0.12) return;
+      if (isCall && age > 0.4) return;
+      if (isCall) {
+        try {
+          this.callVoices.get(name)?.stop();
+        } catch {}
+      }
       const source = this.ctx.createBufferSource(),
         gain = this.ctx.createGain();
       source.buffer = buffer;
@@ -132,12 +149,14 @@ export class Sound {
       this.voices.add(source);
       if (choice.reload) this.reloadVoice = source;
       if (choice.food) this.foodVoice = source;
+      if (isCall) this.callVoices.set(name, source);
       source.onended = () => {
         this.voices.delete(source);
         source.disconnect();
         gain.disconnect();
         if (this.reloadVoice === source) this.reloadVoice = undefined;
         if (this.foodVoice === source) this.foodVoice = undefined;
+        if (this.callVoices.get(name) === source) this.callVoices.delete(name);
       };
       const offset = choice.seconds ? age * rate : 0;
       if (offset >= buffer.duration) {
@@ -238,7 +257,7 @@ export class Sound {
     } else if (name === "search") {
       this.noise(0.05, 0.06, 1800);
     } else if (name === "loot") {
-      if (tier < 3) this.note(tier === 1 ? 420 : 560, 0.12, "sine", 0.1);
+      if (tier < 3) this.note(tier === 1 ? 420 : 560, 0.12, "sine", 0.12);
       else {
         const notes =
           tier === 3
@@ -246,7 +265,7 @@ export class Sound {
             : tier === 4
               ? [587, 740, 880, 1174]
               : [523, 659, 784, 1046, 1318, 1568];
-        notes.forEach((f, i) => this.note(f, 0.5, "sine", 0.18, i * 0.09));
+        notes.forEach((f, i) => this.note(f, 0.5, "sine", 0.216, i * 0.09));
       }
     } else if (name === "alert") {
       [0, 0.22, 0.44].forEach((t) => this.note(700, 0.14, "triangle", 0.16, t));

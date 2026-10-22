@@ -1,0 +1,606 @@
+{
+  "version": 1,
+  "date": "2026-10-22 Asia/Shanghai",
+  "tracks": {
+    "reload-smg": {
+      "candidate": "NR1",
+      "file": "reload-smg.flac",
+      "sourceFile": "audio-review/reload-search-cats/audio/NR1-original-8530955972.flac",
+      "sourceHash": "8530955972aed87dd7a53d3c84cf14dbbd5ff7f727f9839e4e27f28a4bacdb5f",
+      "sha256": "79c20a14f2b965e26b9b4a705cd8bfc5d938eab2b23b58c263891293c24173ab",
+      "duration": 1.89458,
+      "gainDb": -7.850000000000001,
+      "lufs": -29.99,
+      "truePeakDbfs": -16.41,
+      "license": "CC-BY-4.0",
+      "parts": [
+        {
+          "source": "soldat-mp5",
+          "start": 0,
+          "length": 1.88458,
+          "at": 0,
+          "level": 1,
+          "label": "MP5 · 紧凑换弹",
+          "gain": 0.3124223727756947
+        }
+      ]
+    },
+    "reload-rifle": {
+      "candidate": "NR3",
+      "file": "reload-rifle.flac",
+      "sourceFile": "audio-review/reload-search-cats/audio/NR3-original-002d3b381f.flac",
+      "sourceHash": "002d3b381f74965a76e215eae0cc768f6ec6f5e82d1f2037436c33472f797863",
+      "sha256": "31b2ab735205014df8cbdcffafba87ae541810dcddaeaa0d9672e3eb42bc37cb",
+      "duration": 1.997256,
+      "gainDb": -4.579999999999998,
+      "lufs": -30.0,
+      "truePeakDbfs": -14.15,
+      "license": "CC-BY-4.0",
+      "parts": [
+        {
+          "source": "soldat-steyraug",
+          "start": 0,
+          "length": 1.987256,
+          "at": 0,
+          "level": 1,
+          "label": "AUG · 利落换弹",
+          "gain": 0.4256908802347134
+        }
+      ]
+    },
+    "reload-sniper": {
+      "candidate": "NR2",
+      "file": "reload-sniper.flac",
+      "sourceFile": "audio-review/reload-search-cats/audio/NR2-original-3ede1849a9.flac",
+      "sourceHash": "3ede1849a98e2b49b8384ca14025c1967981521973e8d8ac0fd4c309cdc557ad",
+      "sha256": "ad9f61b7c498e6cf5bf548a6e0ee95ba91bd983d5255e7bc28028066cfbb5042",
+      "duration": 2.561361,
+      "gainDb": -5.48,
+      "lufs": -30.01,
+      "truePeakDbfs": -13.51,
+      "license": "CC-BY-4.0",
+      "parts": [
+        {
+          "source": "soldat-ak74",
+          "start": 0.004331,
+          "length": 2.551361,
+          "at": 0,
+          "level": 1,
+          "label": "AK74 · 弹匣与机件",
+          "gain": 0.6688482043149923
+        }
+      ]
+    },
+    "hurt": {
+      "candidate": "PH10",
+      "file": "hurt.flac",
+      "sourceFile": "audio-review/reload-search-cats/audio/PH10-original-ebf279c3dc.flac",
+      "sourceHash": "ebf279c3dc9ac7199d26970d629724d86e08e7fa446a199131935ea107623869",
+      "sha256": "7418f6b06b19a04adaeb27a8d347c7f580a148fed496da9e5d81cf6a72a308f2",
+      "duration": 0.516213,
+      "gainDb": 0.2699999999999996,
+      "lufs": -29.97,
+      "truePeakDbfs": -15.55,
+      "license": "CC0-1.0",
+      "parts": [
+        {
+          "source": "oga-meow",
+          "start": 0.004331,
+          "length": 0.506213,
+          "at": 0,
+          "level": 1,
+          "label": "轻巧卡通喵",
+          "gain": 0.8061687204789986
+        }
+      ]
+    },
+    "enemy-alert-1": {
+      "candidate": "EA5",
+      "file": "enemy-alert-1.flac",
+      "sourceFile": "audio-review/reload-search-cats/audio/EA5-original-7834d6af4a.flac",
+      "sourceHash": "7834d6af4a83e9a8cecb32ee02373eab007344b972834fd78f1250202a461e5c",
+      "sha256": "8df93fefe6a06e14c77221794d0de071298bd707449bcd7a2f43f7a76c81e6ea",
+      "duration": 1.26,
+      "gainDb": -4.579999999999998,
+      "lufs": -30.0,
+      "truePeakDbfs": -23.72,
+      "license": "CC0-1.0",
+      "parts": [
+        {
+          "source": "bsb-1886",
+          "start": 0.164331,
+          "length": 1.25,
+          "at": 0,
+          "level": 1,
+          "label": "低声威吓 · 5",
+          "gain": 0.2721549516674472
+        }
+      ]
+    },
+    "enemy-alert-2": {
+      "candidate": "EA6",
+      "file": "enemy-alert-2.flac",
+      "sourceFile": "audio-review/reload-search-cats/audio/EA6-original-8a2a8f5c59.flac",
+      "sourceHash": "8a2a8f5c59a39d322bab5ac7362da7b46eabada25d5df2a572cdfcfab4fde689",
+      "sha256": "0ff9e8954645a77ec1f6c728b2c6902b500d5721505d691e917a63cba20406cc",
+      "duration": 1.26,
+      "gainDb": -4.420000000000002,
+      "lufs": -29.99,
+      "truePeakDbfs": -22.79,
+      "license": "CC0-1.0",
+      "parts": [
+        {
+          "source": "bsb-1887",
+          "start": 0.184331,
+          "length": 1.25,
+          "at": 0,
+          "level": 1,
+          "label": "低声威吓 · 6",
+          "gain": 0.4774913249594654
+        }
+      ]
+    },
+    "enemy-alert-3": {
+      "candidate": "EA7",
+      "file": "enemy-alert-3.flac",
+      "sourceFile": "audio-review/reload-search-cats/audio/EA7-original-1996bbfc81.flac",
+      "sourceHash": "1996bbfc81846c963d997381b36b8d0fb7dec02296c6eaa0bc7de2d3c8beff08",
+      "sha256": "d31267acf4967ae9a3d048c16e5b4e18a69887164315cbd9ae1044e9aecfe369",
+      "duration": 1.26,
+      "gainDb": -3.8500000000000014,
+      "lufs": -30.02,
+      "truePeakDbfs": -22.87,
+      "license": "CC0-1.0",
+      "parts": [
+        {
+          "source": "bsb-1888",
+          "start": 0.124331,
+          "length": 1.25,
+          "at": 0,
+          "level": 1,
+          "label": "低声威吓 · 7",
+          "gain": 0.28913999719349526
+        }
+      ]
+    },
+    "enemy-alert-4": {
+      "candidate": "EA10",
+      "file": "enemy-alert-4.flac",
+      "sourceFile": "audio-review/reload-search-cats/audio/EA10-original-9d81960183.flac",
+      "sourceHash": "9d81960183481ca6bbe17008d9d77037021fab8c1bb868951fb030b6d4729ce0",
+      "sha256": "152b08a0d2113ac2dd1db6a5b9fc1fe33c71fc010ca1d99de73128bcd67124fa",
+      "duration": 1.26,
+      "gainDb": -3.530000000000001,
+      "lufs": -30.0,
+      "truePeakDbfs": -19.48,
+      "license": "CC0-1.0",
+      "parts": [
+        {
+          "source": "bsb-0658",
+          "start": 0.094331,
+          "length": 1.25,
+          "at": 0,
+          "level": 1,
+          "label": "轻抱怨式警告 · 备选",
+          "gain": 2.114308649016957
+        }
+      ]
+    },
+    "pack": {
+      "candidate": "D12-3",
+      "file": "pack.flac",
+      "sourceFile": "audio-review/interactions/audio/D12-3-natural-618d322e08.flac",
+      "sourceHash": "618d322e08ad96dd740fca0882f3343f378226100af83a185457aadad02eb82e",
+      "sha256": "d9c87f0fab2493c532a3e6be4507e7bbfd074a15eb087181620e5559c5ec0749",
+      "duration": 0.147755,
+      "gainDb": 0.14999999999999858,
+      "lufs": -29.95,
+      "truePeakDbfs": -9.25,
+      "license": "CC-BY-3.0",
+      "parts": [
+        {
+          "source": "fantasy-2f698341-Menu_Select_00",
+          "start": 0.00093,
+          "length": 0.137755,
+          "at": 0,
+          "level": 1,
+          "label": "轻触确认",
+          "gain": 0.4721627632015194
+        }
+      ]
+    },
+    "discover-3": {
+      "candidate": "D3-2",
+      "file": "discover-3.flac",
+      "sourceFile": "audio-review/interactions/audio/D3-2-natural-ceb3fab959.flac",
+      "sourceHash": "ceb3fab959a229bab67da4b1aac1f0dabef1fcb34e9c783be323983140bb59c5",
+      "sha256": "60381f8107f2b9dcaf9ccd6a3079dea56b7a9ce895c35e174d068f6151d31256",
+      "duration": 2.353696,
+      "gainDb": -4.399999999999999,
+      "lufs": -30.0,
+      "truePeakDbfs": -15.13,
+      "license": "CC-BY-3.0",
+      "parts": [
+        {
+          "source": "virix-0088358f-Item2A",
+          "start": 0.04093,
+          "length": 2.343696,
+          "at": 0,
+          "level": 1,
+          "label": "明亮物品奖励",
+          "gain": 0.34801442646995234
+        }
+      ]
+    },
+    "discover-4": {
+      "candidate": "D4-1",
+      "file": "discover-4.flac",
+      "sourceFile": "audio-review/interactions/audio/D4-1-natural-bce8f88620.flac",
+      "sourceHash": "bce8f88620d114436f0c14ae7c0de095e88d0b7ed7f0a27dd4e7cab708a3913e",
+      "sha256": "0a0a7e3639be70c36a1142f6ff2cf364cf3842c0acb1977bea9b3b75044943f6",
+      "duration": 3.572653,
+      "gainDb": -6.489999999999998,
+      "lufs": -30.0,
+      "truePeakDbfs": -15.31,
+      "license": "CC-BY-3.0",
+      "parts": [
+        {
+          "source": "fantasy-36d9cd2a-Jingle_Achievement_00",
+          "start": 0,
+          "length": 3.562653,
+          "at": 0,
+          "level": 1,
+          "label": "成就式发现",
+          "gain": 0.36394657037241296
+        }
+      ]
+    },
+    "discover-5": {
+      "candidate": "D5-2",
+      "file": "discover-5.flac",
+      "sourceFile": "audio-review/interactions/audio/D5-2-natural-bd0eb90f20.flac",
+      "sourceHash": "bd0eb90f201486871c4a9e1d97fe06489fcb35c196c75af3b6e918176be12a28",
+      "sha256": "03566dbabe446f992a9fb6714f4044e70c18af440efef8fcdce6da16a4ece019",
+      "duration": 5.941519,
+      "gainDb": -7.640000000000001,
+      "lufs": -29.99,
+      "truePeakDbfs": -18.55,
+      "license": "CC-BY-3.0",
+      "parts": [
+        {
+          "source": "scifi-4d85a414-Jingle_Win_01",
+          "start": 0,
+          "length": 5.931519,
+          "at": 0,
+          "level": 1,
+          "label": "华彩完成感",
+          "gain": 0.2880551682712706
+        }
+      ]
+    }
+  },
+  "sources": {
+    "latest:soldat-mp5": {
+      "pack": "soldat",
+      "name": "mp5-reload.wav",
+      "author": "OpenSoldat base contributors（原页未逐条列录音作者）",
+      "source": "https://github.com/opensoldat/base/tree/5b6e5bef23f5c0d58fb1d4d887b9b94ebcf799b4",
+      "license": "CC-BY-4.0",
+      "path": "flat/soldat-mp5.wav",
+      "sourceSha256": "214eb14fbb4db81e7f19b9dba7e8144804b8b73d209442629f78962a808b23e3",
+      "sourceDuration": 1.8845804988662131,
+      "member": "shared/sfx/mp5-reload.wav",
+      "downloadUrl": null,
+      "referenceLevel": 1,
+      "url": "originals/soldat-mp5-4af05df88c.flac",
+      "sha256": "4af05df88c12d66481b2c0704f3d1f1bc4889adb4f70cf0acc37ca268365cb7c",
+      "bytes": 138901,
+      "duration": 1.88458,
+      "peak": 0.97,
+      "referenceSafetyGain": 0.811822264400481,
+      "previewGain": 0.38480874977361346
+    },
+    "latest:soldat-steyraug": {
+      "pack": "soldat",
+      "name": "steyraug-reload.wav",
+      "author": "OpenSoldat base contributors（原页未逐条列录音作者）",
+      "source": "https://github.com/opensoldat/base/tree/5b6e5bef23f5c0d58fb1d4d887b9b94ebcf799b4",
+      "license": "CC-BY-4.0",
+      "path": "flat/soldat-steyraug.wav",
+      "sourceSha256": "dc72c4b87e1c716243abd9711e6acd99b228b3a727a488a2c6cbcf1e99bdf45a",
+      "sourceDuration": 1.9872562358276644,
+      "member": "shared/sfx/steyraug-reload.wav",
+      "downloadUrl": null,
+      "referenceLevel": 1,
+      "url": "originals/soldat-steyraug-83de9ebe71.flac",
+      "sha256": "83de9ebe7186d340b2b78b597c253a19be2136bd612b2a39dec08be72a6237e6",
+      "bytes": 94702,
+      "duration": 1.987256,
+      "peak": 0.770808,
+      "referenceSafetyGain": 1,
+      "previewGain": 0.421696409987708
+    },
+    "latest:soldat-ak74": {
+      "pack": "soldat",
+      "name": "ak74-reload.wav",
+      "author": "OpenSoldat base contributors（原页未逐条列录音作者）",
+      "source": "https://github.com/opensoldat/base/tree/5b6e5bef23f5c0d58fb1d4d887b9b94ebcf799b4",
+      "license": "CC-BY-4.0",
+      "path": "flat/soldat-ak74.wav",
+      "sourceSha256": "6897038367c5e9fdb8373ebd1db6f8e4b178306bd30e47b4f9b192012cf4f1df",
+      "sourceDuration": 2.555691609977324,
+      "member": "shared/sfx/ak74-reload.wav",
+      "downloadUrl": null,
+      "referenceLevel": 1,
+      "url": "originals/soldat-ak74-7a8b4f4008.flac",
+      "sha256": "7a8b4f4008aa524118e6dfc26161c77b7ec1bee5317ecb3692f47a21f1971d4a",
+      "bytes": 131698,
+      "duration": 2.555692,
+      "peak": 0.57002,
+      "referenceSafetyGain": 1,
+      "previewGain": 0.6688482043149923
+    },
+    "latest:oga-meow": {
+      "pack": "oga-meow",
+      "name": "Meow.ogg",
+      "author": "IgnasD",
+      "source": "https://opengameart.org/content/meow",
+      "license": "CC0-1.0",
+      "path": "flat/oga-meow.ogg",
+      "sourceSha256": "ae35c578eb7e7bc33d1dc7b2532cf4cdc8dac27f8cf28c6d574fb3027be83d5f",
+      "sourceDuration": 0.5105442176870748,
+      "member": "oga-meow-Meow.ogg",
+      "downloadUrl": null,
+      "referenceLevel": 0.5,
+      "url": "originals/oga-meow-5a912b18bd.flac",
+      "sha256": "5a912b18bde5eec1a5f41b6a964914996a2f9e14dc9f67db3db6e259e20e6b89",
+      "bytes": 53295,
+      "duration": 0.510544,
+      "peak": 0.3975,
+      "referenceSafetyGain": 1,
+      "previewGain": 0.4030843602394993
+    },
+    "latest:bsb-1886": {
+      "pack": "bsb-1886",
+      "name": "Growling cat #2",
+      "author": "Joseph SARDIN",
+      "source": "https://bigsoundbank.com/growling-cat-2-s1886.html",
+      "license": "CC0-1.0",
+      "path": "flat/bsb-1886.wav",
+      "sourceSha256": "d22c1f355c62a849f657e9bb71f880d1914187a6a9a4b40c4e4a330ec3599c9a",
+      "sourceDuration": 3.142312925170068,
+      "member": "bsb-1886.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.65,
+      "url": "originals/bsb-1886-a4ba5d0d28.flac",
+      "sha256": "a4ba5d0d2828f539e8eebe6844e73d648413e2a7c2134a35cea6b00618e23a6d",
+      "bytes": 278148,
+      "duration": 3.142313,
+      "peak": 0.69775,
+      "referenceSafetyGain": 1,
+      "previewGain": 0.1746057001887788
+    },
+    "latest:bsb-1887": {
+      "pack": "bsb-1887",
+      "name": "Growling cat #3",
+      "author": "Joseph SARDIN",
+      "source": "https://bigsoundbank.com/growling-cat-3-s1887.html",
+      "license": "CC0-1.0",
+      "path": "flat/bsb-1887.wav",
+      "sourceSha256": "fa1e27e4470f8308e662921ce0b801f1f2ad2b7ddd9e42aae8241613e1ca4974",
+      "sourceDuration": 4.801269841269841,
+      "member": "bsb-1887.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.65,
+      "url": "originals/bsb-1887-6cd2ec26e5.flac",
+      "sha256": "6cd2ec26e5dbb58ca8fd1c6635cd61cf6e90c4e6bf7bfc8dfee722ef394134a7",
+      "bytes": 424762,
+      "duration": 4.80127,
+      "peak": 0.696338,
+      "referenceSafetyGain": 1,
+      "previewGain": 0.26087366392333783
+    },
+    "latest:bsb-1888": {
+      "pack": "bsb-1888",
+      "name": "Growling cat #4",
+      "author": "Joseph SARDIN",
+      "source": "https://bigsoundbank.com/growling-cat-4-s1888.html",
+      "license": "CC0-1.0",
+      "path": "flat/bsb-1888.wav",
+      "sourceSha256": "d97a600b311867dc6a6210c8becd50a35a30fccf5711fab9651147a3b9d049da",
+      "sourceDuration": 6.5239455782312925,
+      "member": "bsb-1888.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.65,
+      "url": "originals/bsb-1888-9641f717ce.flac",
+      "sha256": "9641f717cebeea4d559e44df27ca16268dd6267fe69ce041cb27a296d7d63a3c",
+      "bytes": 579385,
+      "duration": 6.523946,
+      "peak": 0.703717,
+      "referenceSafetyGain": 1,
+      "previewGain": 0.16440089112273884
+    },
+    "latest:bsb-0658": {
+      "pack": "bsb-0658",
+      "name": "Cat complaining",
+      "author": "Joseph SARDIN",
+      "source": "https://bigsoundbank.com/cat-complaining-s0658.html",
+      "license": "CC0-1.0",
+      "path": "flat/bsb-0658.wav",
+      "sourceSha256": "7911605e6a00df3b60cc4df7d8f017a2696f229939e20dd6933ebeeb5de00749",
+      "sourceDuration": 54.562766439909296,
+      "member": "bsb-0658.wav",
+      "downloadUrl": null,
+      "referenceLevel": 0.65,
+      "url": "originals/bsb-0658-901d52adfd.flac",
+      "sha256": "901d52adfd29aa80f33d0b4d07cfa10227086bedb1e6a48c31f9a0591566e025",
+      "bytes": 3787147,
+      "duration": 54.562766,
+      "peak": 0.225773,
+      "referenceSafetyGain": 1,
+      "previewGain": 1.0352715733950841
+    },
+    "interactions:fantasy-2f698341-Menu_Select_00": {
+      "pack": "fantasy",
+      "name": "Menu_Select_00.wav",
+      "author": "Little Robot Sound Factory",
+      "source": "https://opengameart.org/content/fantasy-sound-effects-library",
+      "license": "CC-BY-3.0",
+      "path": "flat/fantasy-2f698341-Menu_Select_00.wav",
+      "sourceSha256": "780f10073ddd8d74325f71ac8bfa26337c6564bc9aeded0befd1cae09d719705",
+      "sourceDuration": 0.13868480725623583,
+      "member": "Fantasy Sound Library/Wav/Menu_Select_00.wav",
+      "note": "",
+      "url": "originals/fantasy-2f698341-Menu_Select_00-c3cd637dc8.flac",
+      "sha256": "c3cd637dc80b0de0fab6a2c005bf387bd88c5beffae67611d3e8bd1698c2e945",
+      "bytes": 20230,
+      "duration": 0.138685,
+      "peak": 0.717811,
+      "referenceSafetyGain": 1,
+      "previewGain": 0.4721627632015194
+    },
+    "interactions:virix-0088358f-Item2A": {
+      "pack": "virix",
+      "name": "Item2A.wav",
+      "author": "ViRiX Dreamcore / soundcloud.com/virix",
+      "source": "https://opengameart.org/content/ui-and-item-sound-effect-jingles-sample-2",
+      "license": "CC-BY-3.0",
+      "path": "flat/virix-0088358f-Item2A.wav",
+      "sourceSha256": "ba66008b3cf08b5b30a0d33ed865d29fb5a6889b2afb6224636bdced6123a414",
+      "sourceDuration": 2.384625850340136,
+      "member": "Item2A.wav",
+      "note": "",
+      "url": "originals/virix-0088358f-Item2A-d0540bcea8.flac",
+      "sha256": "d0540bcea87db0c74c6b405a33774afc80bd1ad35a46cde14d3d23e1ca80b3bb",
+      "bytes": 207809,
+      "duration": 2.384626,
+      "peak": 0.83374,
+      "referenceSafetyGain": 1,
+      "previewGain": 0.34801442646995234
+    },
+    "interactions:fantasy-36d9cd2a-Jingle_Achievement_00": {
+      "pack": "fantasy",
+      "name": "Jingle_Achievement_00.wav",
+      "author": "Little Robot Sound Factory",
+      "source": "https://opengameart.org/content/fantasy-sound-effects-library",
+      "license": "CC-BY-3.0",
+      "path": "flat/fantasy-36d9cd2a-Jingle_Achievement_00.wav",
+      "sourceSha256": "8938c62e9343987da0747b6baefd67d61a76af08c18bdf4037667100c0474587",
+      "sourceDuration": 3.56265306122449,
+      "member": "Fantasy Sound Library/Wav/Jingle_Achievement_00.wav",
+      "note": "",
+      "url": "originals/fantasy-36d9cd2a-Jingle_Achievement_00-d28ee0349b.flac",
+      "sha256": "d28ee0349b07ce3c5cf6b147aabd7a64ebd3122d99c7518cc647c99a9ead0692",
+      "bytes": 540794,
+      "duration": 3.562653,
+      "peak": 0.97,
+      "referenceSafetyGain": 0.9781772395492351,
+      "previewGain": 0.3720205643100346
+    },
+    "interactions:scifi-4d85a414-Jingle_Win_01": {
+      "pack": "scifi",
+      "name": "Jingle_Win_01.wav",
+      "author": "Little Robot Sound Factory",
+      "source": "https://opengameart.org/content/sci-fi-sound-effects-library",
+      "license": "CC-BY-3.0",
+      "path": "flat/scifi-4d85a414-Jingle_Win_01.wav",
+      "sourceSha256": "1190bbbe71a12cc4978fb9197a91448a53be92b6e27855fd86df9661877a4a40",
+      "sourceDuration": 5.931519274376417,
+      "member": "Sci-Fi Sound Library/Wav/Jingle_Win_01.wav",
+      "note": "",
+      "url": "originals/scifi-4d85a414-Jingle_Win_01-1792e4bd32.flac",
+      "sha256": "1792e4bd32349af89605545ee49cafaffa16d11b1253f55f7ef0545347f05bce",
+      "bytes": 817049,
+      "duration": 5.931519,
+      "peak": 0.97,
+      "referenceSafetyGain": 0.9813118762745857,
+      "previewGain": 0.2935626087717291
+    }
+  },
+  "sourcePacks": {
+    "latest:soldat": {
+      "name": "OpenSoldat base · actual game reloads",
+      "author": "OpenSoldat base contributors（原页未逐条列录音作者）",
+      "url": "https://github.com/opensoldat/base/tree/5b6e5bef23f5c0d58fb1d4d887b9b94ebcf799b4",
+      "license": "CC-BY-4.0",
+      "evidence": "正式公开游戏的base资源；README明确CC BY 4.0。通过OpenSoldat官网/原始发布路线核对，非上一轮OGA包。只证明实际游戏使用，不以代码仓库star数冒充音频热度。",
+      "licenseSource": "https://raw.githubusercontent.com/opensoldat/base/5b6e5bef23f5c0d58fb1d4d887b9b94ebcf799b4/LICENSE.txt"
+    },
+    "latest:oga-meow": {
+      "name": "Meow",
+      "author": "IgnasD",
+      "url": "https://opengameart.org/content/meow",
+      "license": "CC0-1.0",
+      "evidence": "2,596下载、11收藏；多位开发者反馈用于GameJam、Simon和Mouse Tail。"
+    },
+    "latest:bsb-1886": {
+      "name": "Growling cat #2",
+      "author": "Joseph SARDIN",
+      "url": "https://bigsoundbank.com/growling-cat-2-s1886.html",
+      "license": "CC0-1.0",
+      "evidence": "原页CC0免费商用；本单条没有公开下载数，按动作吻合补充，不声称是已确认网红原梗。"
+    },
+    "latest:bsb-1887": {
+      "name": "Growling cat #3",
+      "author": "Joseph SARDIN",
+      "url": "https://bigsoundbank.com/growling-cat-3-s1887.html",
+      "license": "CC0-1.0",
+      "evidence": "原页CC0免费商用；本单条没有公开下载数，按动作吻合补充，不声称是已确认网红原梗。"
+    },
+    "latest:bsb-1888": {
+      "name": "Growling cat #4",
+      "author": "Joseph SARDIN",
+      "url": "https://bigsoundbank.com/growling-cat-4-s1888.html",
+      "license": "CC0-1.0",
+      "evidence": "原页CC0免费商用；本单条没有公开下载数，按动作吻合补充，不声称是已确认网红原梗。"
+    },
+    "latest:bsb-0658": {
+      "name": "Cat complaining",
+      "author": "Joseph SARDIN",
+      "url": "https://bigsoundbank.com/cat-complaining-s0658.html",
+      "license": "CC0-1.0",
+      "evidence": "原页CC0免费商用；本单条没有公开下载数，按动作吻合补充，不声称是已确认网红原梗。"
+    },
+    "interactions:fantasy": {
+      "name": "Fantasy Sound Effects Library",
+      "author": "Little Robot Sound Factory",
+      "url": "https://opengameart.org/content/fantasy-sound-effects-library",
+      "license": "CC-BY-3.0",
+      "evidence": "14,901 下载，131 收藏；Steam 游戏 Tatsu 等开发者在原页说明使用。",
+      "archiveFile": "fantasy.zip",
+      "archiveSha256": "5649523e6be5180f81141bc00f9a1597a1297f193896b7295e6ffebaeb41bb53"
+    },
+    "interactions:virix": {
+      "name": "UI & Item Jingles Sample 2",
+      "author": "ViRiX Dreamcore / soundcloud.com/virix",
+      "url": "https://opengameart.org/content/ui-and-item-sound-effect-jingles-sample-2",
+      "license": "CC-BY-3.0",
+      "evidence": "6,500 下载，48 收藏；有 Android/iOS 游戏和 Unity 商店使用反馈。",
+      "archiveFile": "ui-and-item-sound-effect-jingles-sample-2-Menu%20and%20Item%20Jingles%20Sampe%202_0.zip",
+      "archiveSha256": "a488d2a4f82312dc7c3001e016b9749a2a799e603672b0d4a5d175caa0eb869f"
+    },
+    "interactions:scifi": {
+      "name": "Sci-Fi Sound Effects Library",
+      "author": "Little Robot Sound Factory",
+      "url": "https://opengameart.org/content/sci-fi-sound-effects-library",
+      "license": "CC-BY-3.0",
+      "evidence": "7,339 下载，71 收藏，有游戏采用反馈。",
+      "archiveFile": "scifi.zip",
+      "archiveSha256": "85ac292e2f6785c2b5a22c0d5d0e7dd10b9f1db72ec62ce8ade75edb44d0c277"
+    }
+  },
+  "runtimeGains": {
+    "enemyShot": 0.5,
+    "enemyReload": 0.75,
+    "discovery": 1.2,
+    "hurt": 0.5,
+    "enemyAlert": 0.65
+  },
+  "processing": "Constant gain only, no pitch/filter/compression or new layering. Base -30 LUFS; <400ms clips measured with analysis-only silence pad. Discovery runtime x1.2; hurt and warning kept quiet. Three reloads synchronize with actual weapon duration as before. Shotgun reload and all four shots unchanged.",
+  "enemyAlerts": [
+    "enemy-alert-1",
+    "enemy-alert-2",
+    "enemy-alert-3",
+    "enemy-alert-4"
+  ]
+}
