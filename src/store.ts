@@ -1,3 +1,4 @@
+import { musicNames, type MusicTrack } from "./music-catalog";
 import {
   db,
   makeItem,
@@ -27,7 +28,7 @@ export type Equipment = {
 export interface Settings {
   master: number;
   music: number;
-  musicTrack?: "BG3" | "BG5" | "BG6" | "BG10";
+  musicTrack?: MusicTrack;
   musicMode?: "loop" | "random";
   sfx: number;
   shake: number;
@@ -368,7 +369,7 @@ export function validateSave(data: unknown): Save {
     throw Error("准星样式无效");
   if (
     s.settings.musicTrack !== undefined &&
-    !["BG3", "BG5", "BG6", "BG10"].includes(s.settings.musicTrack)
+    !Object.hasOwn(musicNames, s.settings.musicTrack)
   )
     throw Error("背景音乐无效");
   if (

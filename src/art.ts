@@ -1,3 +1,4 @@
+import { reloadPose } from "./reload-motion";
 import { db, colors, type Item } from "./data";
 import { equipmentSprite, drawEquipment } from "./equipment-art";
 const shapes: Record<string, string> = {
@@ -206,6 +207,8 @@ export interface CatArt {
   hit?: number;
   breed?: number;
   weaponId?: string;
+  reloadRemaining?: number;
+  reloadTotal?: number;
 }
 export function cat(c: Ctx, x: number, y: number, o: CatArt = {}) {
   const t = o.walk || 0,
@@ -351,12 +354,32 @@ export function cat(c: Ctx, x: number, y: number, o: CatArt = {}) {
   const angle = o.angle ?? 0.3;
   c.save();
   c.translate(3, -20);
-  c.rotate(angle);
+  const reload = reloadPose(o.reloadRemaining ?? 0, o.reloadTotal ?? 1);
+  c.rotate(angle + reload.hold * 0.15);
+  c.save();
+  if (reload.active) {
+    c.beginPath();
+    c.rect(-100, -100, 200, 200);
+    c.rect(10, -1, 10, 20);
+    c.clip("evenodd");
+  }
   if (!o.weaponId || !drawEquipment(c, o.weaponId, -14, -19, 72, 42)) {
     round(c, 2, -4, 35, 8, 2, "#303d37");
     round(c, 7, -5, 19, 7, 2, "#657561");
     round(c, 31, -2, 16, 4, 1, "#23302c");
     round(c, 12, 2, 7, 9, 1, "#31443b");
+  }
+  c.restore();
+  if (reload.active) {
+    const mx = 12 + 10 * reload.detached,
+      my = 2 + 13 * reload.detached;
+    c.save();
+    c.translate(mx, my);
+    c.rotate(-0.3 * reload.detached);
+    round(c, 0, 0, 6, 12, 1.5, "#f3dea3");
+    round(c, 0, 9, 6, 3, 1, "#183b45");
+    c.restore();
+    ellipse(c, mx + 6, my + 7, 5, 4, fur);
   }
   c.restore();
   ellipse(c, Math.cos(angle) * 10, -20 + Math.sin(angle) * 10, 6, 5, fur);

@@ -20,13 +20,24 @@ export class Sound {
   }
   set mode(value: string) {
     if (value === "base" && this.currentMode !== "base") this.stopSamples();
+    const changedArea = (this.currentMode === "base") !== (value === "base");
     this.currentMode = value;
+    if (changedArea) this.syncMusic();
   }
   buffers = new Map<SampleKey, AudioBuffer>();
   private loading = new Map<SampleKey, Promise<AudioBuffer | undefined>>();
   private voices = new Set<AudioBufferSourceNode>();
   private reloadVoice?: AudioBufferSourceNode;
   private foodVoice?: AudioBufferSourceNode;
+  private discoveryVoice?: AudioBufferSourceNode;
+  private discoveryGeneration = 0;
+  stopDiscovery() {
+    this.discoveryGeneration++;
+    try {
+      this.discoveryVoice?.stop();
+    } catch {}
+    this.discoveryVoice = undefined;
+  }
   private generation = 0;
   private reloadGeneration = 0;
   private foodGeneration = 0;
@@ -76,6 +87,7 @@ export class Sound {
     this.generation++;
     this.stopReload();
     this.stopFood();
+    this.stopDiscovery();
     for (const voice of this.voices) {
       try {
         voice.stop();
@@ -100,6 +112,9 @@ export class Sound {
     const choice = sampleChoice(name, options);
     if (!choice || !this.ctx) return false;
     const isCall = name === "hurt" || name === "enemy-alert";
+    const isDiscovery = name === "loot" || name === "unlock";
+    if (isDiscovery) this.stopDiscovery();
+    const discoveryGeneration = this.discoveryGeneration;
     if (isCall) {
       const last = this.callTimes.get(name) ?? -Infinity;
       if (this.ctx.currentTime - last < (name === "hurt" ? 0.35 : 0.7))
@@ -117,6 +132,7 @@ export class Sound {
         !buffer ||
         !this.ctx ||
         generation !== this.generation ||
+        (isDiscovery && discoveryGeneration !== this.discoveryGeneration) ||
         (choice.reload && reloadGeneration !== this.reloadGeneration) ||
         (choice.food && foodGeneration !== this.foodGeneration)
       )
@@ -150,6 +166,7 @@ export class Sound {
       this.voices.add(source);
       if (choice.reload) this.reloadVoice = source;
       if (choice.food) this.foodVoice = source;
+      if (isDiscovery) this.discoveryVoice = source;
       if (isCall) this.callVoices.set(name, source);
       source.onended = () => {
         this.voices.delete(source);
@@ -157,12 +174,14 @@ export class Sound {
         gain.disconnect();
         if (this.reloadVoice === source) this.reloadVoice = undefined;
         if (this.foodVoice === source) this.foodVoice = undefined;
+        if (this.discoveryVoice === source) this.discoveryVoice = undefined;
         if (this.callVoices.get(name) === source) this.callVoices.delete(name);
       };
       const offset = choice.seconds ? age * rate : 0;
       if (offset >= buffer.duration) {
         if (this.reloadVoice === source) this.reloadVoice = undefined;
         if (this.foodVoice === source) this.foodVoice = undefined;
+        if (this.discoveryVoice === source) this.discoveryVoice = undefined;
         this.voices.delete(source);
         source.disconnect();
         gain.disconnect();
@@ -186,9 +205,11 @@ export class Sound {
   }
   private syncMusic() {
     if (!this.ctx || !this.musicBus) return;
-    const picked = this.settings.musicTrack ?? "BG5";
-    const mode = this.settings.musicMode ?? "loop";
-    const signature = `${picked}:${mode}`;
+    const picked =
+      this.mode === "base" ? "ORIGINAL" : (this.settings.musicTrack ?? "BG5");
+    const mode =
+      this.mode === "base" ? "loop" : (this.settings.musicMode ?? "loop");
+    const signature = `${this.mode === "base" ? "base" : "raid"}:${picked}:${mode}`;
     if (!this.musicElement) {
       this.musicElement = new Audio();
       this.musicElement.preload = "none";
@@ -198,7 +219,8 @@ export class Sound {
         .connect(this.trackGain);
       this.trackGain.connect(this.musicBus);
       this.musicElement.addEventListener("ended", () => {
-        if (this.settings.musicMode === "random") this.nextMusic();
+        if (this.mode !== "base" && this.settings.musicMode === "random")
+          this.nextMusic();
       });
       document.addEventListener("visibilitychange", () => this.syncMusic());
     }
@@ -258,7 +280,7 @@ export class Sound {
   apply() {
     if (this.master) {
       this.master.gain.value = this.settings.master * 1.3;
-      this.musicBus!.gain.value = this.settings.music * 0.35;
+      this.musicBus!.gain.value = this.settings.music * 0.35 * 0.8;
       this.effects!.gain.value = this.settings.sfx * 0.5;
       this.syncMusic();
     }
@@ -317,7 +339,15 @@ export class Sound {
       this.note(110, 0.2, "sawtooth", 0.08);
       this.noise(0.12, 0.1, 500);
     } else if (name === "search") {
-      this.noise(0.05, 0.06, 1800);
+      this.noise(
+        0.05,
+        0.06 *
+          1.3 *
+          (["safe", "weapon", "bed"].includes(options.containerType ?? "")
+            ? 1.2
+            : 1),
+        1800,
+      );
     } else if (name === "loot") {
       if (tier < 3) this.note(tier === 1 ? 420 : 560, 0.12, "sine", 0.12);
       else {

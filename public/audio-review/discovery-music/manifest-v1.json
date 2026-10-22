@@ -2,7 +2,7 @@
   "version": 1,
   "date": "2026-10-22 Asia/Shanghai",
   "previewOnly": true,
-  "installedToGame": false,
+  "installedToGame": true,
   "processing": "20 new candidates, original files copied byte-identical. Playback gain only; no editing, pitch, filters, layering or generated sounds. Complete music, no excerpts.",
   "sources": {
     "shimmer-glitter-magic": {
@@ -974,5 +974,12 @@
         }
       ]
     }
-  ]
+  ],
+  "installedSelections": {
+    "NB2": "battle music settings",
+    "NB3": "battle music settings",
+    "NB5": "battle music settings",
+    "NB6": "battle music settings",
+    "NB10": "battle music settings"
+  }
 }

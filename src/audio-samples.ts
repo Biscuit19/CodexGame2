@@ -43,7 +43,15 @@ import enemyAlert1 from "./assets/audio/enemy-alert-1.flac?url";
 import enemyAlert2 from "./assets/audio/enemy-alert-2.flac?url";
 import enemyAlert3 from "./assets/audio/enemy-alert-3.flac?url";
 import enemyAlert4 from "./assets/audio/enemy-alert-4.flac?url";
+import discover1 from "./assets/audio/discover-1.flac?url";
+import discover2 from "./assets/audio/discover-2.flac?url";
+import unlock4 from "./assets/audio/unlock-4.flac?url";
+import unlock5 from "./assets/audio/unlock-5.flac?url";
 export const sampleBank = {
+  "discover-1": discover1,
+  "discover-2": discover2,
+  "unlock-4": unlock4,
+  "unlock-5": unlock5,
   hurt,
   "enemy-alert-1": enemyAlert1,
   "enemy-alert-2": enemyAlert2,
@@ -135,10 +143,10 @@ export function sampleChoice(name: string, options: SoundOptions = {}) {
                 : name === "open"
                   ? `open-${options.containerType}`
                   : name === "loot"
-                    ? (options.tier ?? 1) >= 3
-                      ? `discover-${Math.min(5, options.tier!)}`
-                      : undefined
-                    : name;
+                    ? `discover-${Math.max(1, Math.min(5, options.tier ?? 1))}`
+                    : name === "unlock"
+                      ? `unlock-${options.tier}`
+                      : name;
   if (!key || !(key in sampleBank)) return;
   return {
     key: key as SampleKey,
@@ -148,15 +156,24 @@ export function sampleChoice(name: string, options: SoundOptions = {}) {
         ? 0.35
         : name === "shot" || name === "enemy"
           ? 0.7
-          : name === "loot"
-            ? 1.2
-            : name === "hurt"
-              ? 0.5
-              : name === "enemy-alert"
-                ? 0.65
-                : options.enemy
-                  ? 0.75
-                  : 1,
+          : name === "loot" || name === "unlock"
+            ? 1.38
+            : name === "melee" && (options.swing ?? 1) % 2 === 1
+              ? 1.2
+              : name === "open"
+                ? 1.3 *
+                  (["safe", "weapon", "bed"].includes(
+                    options.containerType ?? "",
+                  )
+                    ? 1.2
+                    : 1)
+                : name === "hurt"
+                  ? 0.5
+                  : name === "enemy-alert"
+                    ? 0.65
+                    : options.enemy
+                      ? 0.75
+                      : 1,
     seconds: name === "reload" || name === "food" ? options.seconds : undefined,
     reload: name === "reload" && !options.enemy,
     food: name === "food",

@@ -15,29 +15,6 @@
       "sourceUrl": "https://opengameart.org/content/futuristic-smg",
       "parts": null
     },
-    "discover-4": {
-      "candidate": "D3-4",
-      "file": "discover-4.flac",
-      "sha256": "35401e46048ea8153517272b03793d9ea68c36cb02fbf18173524bafe952f085",
-      "sourceFile": "audio-review/interactions/audio/D3-4-natural-ec87a0c1c7.flac",
-      "sourceHash": "ec87a0c1c7c907dee8fc82a1d7de0d6bffe29befd4163786935faef002a5e648",
-      "gainDb": -7.34,
-      "duration": 2.394626,
-      "license": "CC-BY-3.0",
-      "author": "Bart Kelsey（Will Corwin 委托）",
-      "sourceUrl": "https://opengameart.org/content/level-up-sound-effects",
-      "parts": [
-        {
-          "source": "bart-496d9330-glassbell",
-          "start": 0,
-          "length": 2.384626,
-          "at": 0,
-          "level": 1,
-          "label": "玻璃铃奖励",
-          "gain": 0.8034684771222701
-        }
-      ]
-    },
     "BG3": {
       "candidate": "BG3",
       "file": "music-bg3.ogg",
@@ -249,5 +226,6 @@
       "evidence": "原页各文件下载数 220；收藏 3。数值为具体原页快照，不是游戏采用数。"
     }
   },
-  "processing": "SM1 rifle and D3-4 constant gain only; complete BGM original bytes unchanged, playback gain only. Overall master x1.3, gunshots x0.7, discovery still x1.2, enemy shots still x0.5 of player. Defaults BG5 loop."
+  "processing": "SM1 rifle and D3-4 constant gain only; complete BGM original bytes unchanged, playback gain only. Overall master x1.3, gunshots x0.7, discovery still x1.2, enemy shots still x0.5 of player. Defaults BG5 loop.",
+  "newestDiscoveryAndMusic": "approved-raid-audio.json"
 }

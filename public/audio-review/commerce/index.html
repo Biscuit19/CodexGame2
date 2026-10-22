@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>购买、售卖、丢弃与点击试听 · 猫尾乡野</title>
+    <link rel="stylesheet" href="review.css" />
+  </head>
+  <body>
+    <main>
+      <header class="intro">
+        <div class="eyebrow">猫尾乡野 · 新一轮音效选材</div>
+        <h1>交易、物品与界面的声音。</h1>
+        <p>
+          购买、售卖、丢弃、UI点击各10个候选，共40个。每类十位不同作者，全部<strong>待选，尚未接入游戏</strong>。
+        </p>
+        <div class="links">
+          <a href="../reload-search-cats/index.html">此前换弹与猫叫</a
+          ><a href="../shots-music/index.html">此前枪声与音乐</a
+          ><a href="#research">选材依据与授权</a>
+        </div>
+      </header>
+      <section class="desk" aria-label="试听控制">
+        <div class="desk-row">
+          <label class="volume"
+            >试听音量
+            <input
+              id="volume"
+              type="range"
+              min="0"
+              max="100"
+              value="100"
+            /><output id="volume-label">100%</output></label
+          ><button id="stop" class="quiet">停止全部</button
+          ><button id="sequence">连听本组</button
+          ><button id="export" class="quiet">复制我的选择</button>
+        </div>
+        <p id="status" role="status" aria-live="polite">正在载入候选清单…</p>
+      </section>
+      <nav id="categories" aria-label="音效类别"></nav>
+      <section class="category-header">
+        <div class="eyebrow" id="category-count"></div>
+        <h2 id="category-title"></h2>
+        <p id="category-description"></p>
+        <div class="options" id="gun-controls">
+          <label
+            >连发射速
+            <input id="rps" type="range" min="2" max="15" value="10" /><output
+              id="rps-label"
+              >10 发/秒</output
+            ></label
+          ><label
+            >连发时长
+            <select id="burst-seconds">
+              <option value="1">1 秒</option>
+              <option value="2" selected>2 秒</option>
+              <option value="3">3 秒</option>
+              <option value="5">5 秒</option>
+            </select></label
+          >
+        </div>
+        <p class="small" id="context-note"></p>
+      </section>
+      <section id="candidates" aria-label="本类候选"></section>
+      <section class="selection panel">
+        <h2>已选 <span id="selection-count">0</span> 项</h2>
+        <p>
+          四类均可多选对比。选择只保存在当前页面，不写游戏存档，离开前可复制清单。
+        </p>
+        <pre id="selection-text">还没有选择。</pre>
+      </section>
+      <section class="panel" id="research">
+        <h2>来源、完整原声与比较依据</h2>
+        <p>
+          先查开发者资源指南和推荐，再核对Kenney官网、OpenGameArt原作者发行页、许可及真实作品使用反馈。不是只搜索GitHub。每类十位不同作者，40个不同原声，不用变调或同一声音凑编号。
+        </p>
+        <p>
+          购买与售卖比较钱币交付、收入和游戏式确认；丢弃比较软物离手、物件落下及删除提示；点击比较短点击和轻确认。明确标注原始用途，不把普通布料声伪称为完整丢弃动作。
+        </p>
+        <p>
+          只匹配固定音量，裁去过多静音；卡片明示的几条取单次动作，完整原声另列。剪口用3毫秒防咔哒；不加滤波、变调、压缩、层叠或自创新音。下载数字为2026-10-23原页快照，不换算为实际游戏采用数。
+        </p>
+
+        <details>
+          <summary>全部作者、热度证据与许可</summary>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>作品 / 作者</th>
+                  <th>使用依据</th>
+                  <th>授权</th>
+                </tr>
+              </thead>
+              <tbody id="source-table"></tbody>
+            </table>
+          </div>
+        </details>
+        <p><a href="licenses/index.html">许可全文、原作者声明和处理说明</a></p>
+        <p class="small">
+          Scott
+          Buckley站点本轮返回406，Incompetech返回503，未绕过限制或把未取得的曲目算入候选；PeriTune当前规则限制完整音乐选集式分发，本轮未托管其曲目。Free
+          Music Archive按每首作品的实际许可核验。
+        </p>
+      </section>
+      <footer>只更新独立试听页 · 新枪声与BGM尚未接入游戏</footer>
+    </main>
+    <dialog id="copy-dialog">
+      <h2>把下面这段发给我即可</h2>
+      <textarea id="copy-text" readonly aria-label="音效选择清单"></textarea
+      ><button id="close-copy">关闭</button>
+    </dialog>
+    <script type="module" src="review.js"></script>
+  </body>
+</html>

@@ -96,7 +96,7 @@ describe("真实战区逻辑", () => {
     advance(r, 0.1);
     expect(r.p.walk).toBe(0);
   });
-  it("小角辅助适用左右上下与斜向，薄墙及翻滚不会穿透", () => {
+  it("小角辅助适用左右上下与斜向，翻滚也绕过小角且不穿透薄墙", () => {
     for (const angle of [0, Math.PI / 2, Math.PI, -Math.PI / 2, Math.PI / 4]) {
       const { r } = start(1),
         ux = Math.cos(angle),
@@ -125,8 +125,9 @@ describe("真实战区逻辑", () => {
     Object.assign(r.p, { x: 500, y: 500, roll: 0.3 });
     r.walls = [{ x: 540, y: 500, w: 20, h: 20, z: 30, color: "#444" }];
     r.moveActor(r.p, 200, 0);
-    expect(r.p.x).toBeLessThanOrEqual(515);
-    expect(r.p.y).toBe(500);
+    expect(r.p.x).toBeGreaterThan(580);
+    expect(Math.abs(r.p.y - 500)).toBeGreaterThan(20);
+    expect(r.blocked(r.p.x, r.p.y)).toBe(false);
   });
   it("原地顶墙及整个翻滚过程中都不产生脚印", () => {
     const { r } = start();

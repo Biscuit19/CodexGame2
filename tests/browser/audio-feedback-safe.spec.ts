@@ -97,7 +97,7 @@ test("保险箱本局复开和答错不换题；猫叫触发与发现增益真�
     s.play("loot", 2);
     return { log, low, bank: s.buffers.size };
   });
-  expect(data.bank).toBe(43);
+  expect(data.bank).toBe(47);
   expect(data.log.filter((x: any) => x.key === "hurt")).toEqual([
     { key: "hurt", gain: 0.5 },
   ]);
@@ -108,7 +108,7 @@ test("保险箱本局复开和答错不换题；猫叫触发与发现增益真�
   const discoveries = data.log.filter((x: any) =>
     x.key?.startsWith("discover-"),
   );
-  expect(discoveries).toHaveLength(3);
-  for (const item of discoveries) expect(item.gain).toBeCloseTo(1.2, 6);
-  expect(data.low.map((a: any) => a[3])).toEqual([0.12, 0.12]);
+  expect(discoveries).toHaveLength(5);
+  for (const item of discoveries) expect(item.gain).toBeCloseTo(1.38, 6);
+  expect(data.low).toEqual([]);
 });

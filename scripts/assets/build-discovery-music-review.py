@@ -15,6 +15,8 @@ def main():
   assert len(g['candidates'])==10 and len({c['author'] for c in g['candidates']})==10
   for c in g['candidates']:
    s=m['sources'][c['source']];c['versions']=[dict(id='whole' if s['whole'] else 'natural',name='完整原曲' if s['whole'] else '完整发现原声',url=s['url'],sha256=s['sha256'],duration=s['duration'],bytes=s['bytes'],gain=s['previewGain'],whole=s['whole'])]
+ m['installedToGame']=(R/'src/assets/audio/approved-raid-audio.json').exists()
+ if m['installedToGame']:m['installedSelections']={k:'battle music settings' for k in ['NB2','NB3','NB5','NB6','NB10']}
  (out/'manifest-v1.json').write_text(json.dumps(m,ensure_ascii=False,indent=2,allow_nan=False)+'\n')
  used={s['url'] for s in m['sources'].values()}
  for p in (out/'audio').iterdir():

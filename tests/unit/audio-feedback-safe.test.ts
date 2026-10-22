@@ -91,7 +91,7 @@ it("玩家受击用PH10，敌人警戒只在四个所选声音中取值，增益
     expect(sampleChoice("shot", { weaponClass })?.gain).toBe(0.7);
   }
   for (const tier of [3, 4, 5])
-    expect(sampleChoice("loot", { tier })?.gain).toBe(1.2);
+    expect(sampleChoice("loot", { tier })?.gain).toBe(1.38);
 });
 it("警戒只在进入战斗时触发一次，持续瞄准不每帧重复；炮塔不叫", () => {
   const { r, sound } = raid();

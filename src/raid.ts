@@ -713,9 +713,9 @@ export class Raid {
       if (!this.blocked(actor.x, actor.y + sy)) actor.y += sy;
       const progress =
         ((actor.x - ox) * sx + (actor.y - oy) * sy) / (sx * sx + sy * sy);
-      // Only the walking player gets a small corner assist. No automatic wall
-      // following, crossing water, skipping collisions or assistance during rolls.
-      if (actor !== this.p || this.p.roll > 0 || progress > 0.25) continue;
+      // Player walking and rolling share the same bounded, collision-checked corner assist.
+      // It never follows full walls or crosses water.
+      if (actor !== this.p || progress > 0.25) continue;
       const length = distance / steps,
         ux = dx / distance,
         uy = dy / distance;
@@ -900,14 +900,18 @@ export class Raid {
     const item = this.save.equipment[slot];
     if (!item) return false;
     const changed = this.activeWeapon !== slot;
+    if (!changed) return true;
     this.syncLoaded();
     this.activeWeapon = slot;
     this.ammoTier =
       this.magazineTiers[item.uid] ?? item.loaded?.tier ?? this.ammoTier;
     this.reload = 0;
     this.sound.stopReload?.();
-    if (changed)
+    if (changed) {
       this.sound.play(slot === "melee" ? "switch-melee" : "switch-weapon");
+      if (slot !== "melee" && this.mag === 0 && this.reserve > 0)
+        this.loadMagazine();
+    }
     return true;
   }
   switchWeapon(direction = 1) {
@@ -1381,7 +1385,7 @@ export class Raid {
     if (!c.open) this.sound.play("open", 1, { containerType: c.type });
     c.open = true;
     this.inventory = true;
-    this.sound.play("search");
+    this.sound.play("search", 1, { containerType: c.type });
   }
   discover(item: Item) {
     if (db[item.id].kind !== "collectible") return false;
@@ -1395,7 +1399,10 @@ export class Raid {
     if (fresh) {
       known.push(item.id);
       if (this.onDiscover) this.onDiscover(item);
-      else this.notify(`首次发现 · ${db[item.id].name}`);
+      else {
+        this.notify(`首次发现 · ${db[item.id].name}`);
+        if (db[item.id].tier >= 4) this.sound.play("unlock", db[item.id].tier);
+      }
       persist(this.save);
     }
     return fresh;
@@ -1823,8 +1830,9 @@ export class Raid {
           const item = c.items[c.revealed];
           c.revealed++;
           this.searchProgress = 0;
-          this.sound.play("loot", db[item.id].tier);
-          this.discover(item);
+          const fresh = this.discover(item);
+          if (!(fresh && db[item.id].tier >= 4))
+            this.sound.play("loot", db[item.id].tier);
           if (db[item.id].kind === "collectible" && db[item.id].tier >= 3) {
             this.emit(c.x, c.y - 20, 25, colors[db[item.id].tier]);
           }

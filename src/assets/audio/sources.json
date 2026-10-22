@@ -1092,52 +1092,6 @@
             "gain": 0.4721627632015194
           }
         ]
-      },
-      "discover-3": {
-        "candidate": "D3-2",
-        "file": "discover-3.flac",
-        "sourceFile": "audio-review/interactions/audio/D3-2-natural-ceb3fab959.flac",
-        "sourceHash": "ceb3fab959a229bab67da4b1aac1f0dabef1fcb34e9c783be323983140bb59c5",
-        "sha256": "60381f8107f2b9dcaf9ccd6a3079dea56b7a9ce895c35e174d068f6151d31256",
-        "duration": 2.353696,
-        "gainDb": -4.399999999999999,
-        "lufs": -30.0,
-        "truePeakDbfs": -15.13,
-        "license": "CC-BY-3.0",
-        "parts": [
-          {
-            "source": "virix-0088358f-Item2A",
-            "start": 0.04093,
-            "length": 2.343696,
-            "at": 0,
-            "level": 1,
-            "label": "明亮物品奖励",
-            "gain": 0.34801442646995234
-          }
-        ]
-      },
-      "discover-5": {
-        "candidate": "D5-2",
-        "file": "discover-5.flac",
-        "sourceFile": "audio-review/interactions/audio/D5-2-natural-bd0eb90f20.flac",
-        "sourceHash": "bd0eb90f201486871c4a9e1d97fe06489fcb35c196c75af3b6e918176be12a28",
-        "sha256": "03566dbabe446f992a9fb6714f4044e70c18af440efef8fcdce6da16a4ece019",
-        "duration": 5.941519,
-        "gainDb": -7.640000000000001,
-        "lufs": -29.99,
-        "truePeakDbfs": -18.55,
-        "license": "CC-BY-3.0",
-        "parts": [
-          {
-            "source": "scifi-4d85a414-Jingle_Win_01",
-            "start": 0,
-            "length": 5.931519,
-            "at": 0,
-            "level": 1,
-            "label": "华彩完成感",
-            "gain": 0.2880551682712706
-          }
-        ]
       }
     }
   },
@@ -1156,29 +1110,6 @@
         "author": "Michael Klier",
         "sourceUrl": "https://opengameart.org/content/futuristic-smg",
         "parts": null
-      },
-      "discover-4": {
-        "candidate": "D3-4",
-        "file": "discover-4.flac",
-        "sha256": "35401e46048ea8153517272b03793d9ea68c36cb02fbf18173524bafe952f085",
-        "sourceFile": "audio-review/interactions/audio/D3-4-natural-ec87a0c1c7.flac",
-        "sourceHash": "ec87a0c1c7c907dee8fc82a1d7de0d6bffe29befd4163786935faef002a5e648",
-        "gainDb": -7.34,
-        "duration": 2.394626,
-        "license": "CC-BY-3.0",
-        "author": "Bart Kelsey（Will Corwin 委托）",
-        "sourceUrl": "https://opengameart.org/content/level-up-sound-effects",
-        "parts": [
-          {
-            "source": "bart-496d9330-glassbell",
-            "start": 0,
-            "length": 2.384626,
-            "at": 0,
-            "level": 1,
-            "label": "玻璃铃奖励",
-            "gain": 0.8034684771222701
-          }
-        ]
       },
       "BG3": {
         "candidate": "BG3",
@@ -1227,6 +1158,290 @@
         "author": "Stefan_Composer",
         "sourceUrl": "https://opengameart.org/content/peaceful-village",
         "name": "祥和村庄 · Peaceful Village"
+      }
+    }
+  },
+  "approvedRaidAudio": {
+    "metadata": "approved-raid-audio.json",
+    "tracks": {
+      "discover-3": {
+        "candidate": "D12-1",
+        "file": "discover-3.flac",
+        "sha256": "fe0270072d33418dca9f26c19803469df27b26db5d5bca1bad37e12837e32a41",
+        "sourceFile": "audio-review/interactions/audio/D12-1-natural-1dbf0c41cc.flac",
+        "sourceHash": "1dbf0c41cc4cff65972bf461e31a13bfe1ef271e02bfa5e433969996e95821e2",
+        "gainDb": -7.140000000000001,
+        "lufs": -29.96,
+        "duration": 0.686576,
+        "license": "CC0-1.0",
+        "parts": [
+          {
+            "source": "complete-1",
+            "start": 0.01093,
+            "length": 0.676576,
+            "at": 0,
+            "level": 1,
+            "label": "简短清亮发现",
+            "gain": 1.944589597117671
+          }
+        ]
+      },
+      "discover-4": {
+        "candidate": "D3-2",
+        "file": "discover-4.flac",
+        "sha256": "60381f8107f2b9dcaf9ccd6a3079dea56b7a9ce895c35e174d068f6151d31256",
+        "sourceFile": "audio-review/interactions/audio/D3-2-natural-ceb3fab959.flac",
+        "sourceHash": "ceb3fab959a229bab67da4b1aac1f0dabef1fcb34e9c783be323983140bb59c5",
+        "gainDb": -4.399999999999999,
+        "lufs": -30.0,
+        "duration": 2.353696,
+        "license": "CC-BY-3.0",
+        "parts": [
+          {
+            "source": "virix-0088358f-Item2A",
+            "start": 0.04093,
+            "length": 2.343696,
+            "at": 0,
+            "level": 1,
+            "label": "明亮物品奖励",
+            "gain": 0.34801442646995234
+          }
+        ]
+      },
+      "discover-5": {
+        "candidate": "D5-4",
+        "file": "discover-5.flac",
+        "sha256": "0acecb41ed6ceadecaf35e7164c728b2348549683bc94ab44774d6273ec2d893",
+        "sourceFile": "audio-review/interactions/audio/D5-4-natural-4ee623a1b6.flac",
+        "sourceHash": "4ee623a1b60f65b40bff27b143f150bd91c33d372a0734221371f13702a18286",
+        "gainDb": -8.04,
+        "lufs": -29.96,
+        "duration": 1.860952,
+        "license": "CC-BY-3.0",
+        "parts": [
+          {
+            "source": "bart-f5ab34cd-orchestra",
+            "start": 0,
+            "length": 1.850952,
+            "at": 0,
+            "level": 1,
+            "label": "管弦乐大惊喜",
+            "gain": 0.7126394096926253
+          }
+        ]
+      },
+      "unlock-4": {
+        "candidate": "D4-1",
+        "file": "unlock-4.flac",
+        "sha256": "0a0a7e3639be70c36a1142f6ff2cf364cf3842c0acb1977bea9b3b75044943f6",
+        "sourceFile": "audio-review/interactions/audio/D4-1-natural-bce8f88620.flac",
+        "sourceHash": "bce8f88620d114436f0c14ae7c0de095e88d0b7ed7f0a27dd4e7cab708a3913e",
+        "gainDb": -6.489999999999998,
+        "lufs": -30.0,
+        "duration": 3.572653,
+        "license": "CC-BY-3.0",
+        "parts": [
+          {
+            "source": "fantasy-36d9cd2a-Jingle_Achievement_00",
+            "start": 0,
+            "length": 3.562653,
+            "at": 0,
+            "level": 1,
+            "label": "成就式发现",
+            "gain": 0.36394657037241296
+          }
+        ]
+      },
+      "unlock-5": {
+        "candidate": "D5-2",
+        "file": "unlock-5.flac",
+        "sha256": "03566dbabe446f992a9fb6714f4044e70c18af440efef8fcdce6da16a4ece019",
+        "sourceFile": "audio-review/interactions/audio/D5-2-natural-bd0eb90f20.flac",
+        "sourceHash": "bd0eb90f201486871c4a9e1d97fe06489fcb35c196c75af3b6e918176be12a28",
+        "gainDb": -7.640000000000001,
+        "lufs": -29.99,
+        "duration": 5.941519,
+        "license": "CC-BY-3.0",
+        "parts": [
+          {
+            "source": "scifi-4d85a414-Jingle_Win_01",
+            "start": 0,
+            "length": 5.931519,
+            "at": 0,
+            "level": 1,
+            "label": "华彩完成感",
+            "gain": 0.2880551682712706
+          }
+        ]
+      },
+      "ORIGINAL": {
+        "file": "music-original.flac",
+        "sha256": "9381074f21ba8190288ce74b24f2d62b68df508fa640702abcf7b1ee25433c68",
+        "sourceHash": "8e23c6b639b95ae171b4093087ec99dba39a4bff3a2fc680de4bedb7c381c25a",
+        "name": "暖窝基地 · 原始配乐",
+        "duration": 61.44,
+        "license": "Project-original",
+        "author": "三角猫行动原始配乐",
+        "sourceUrl": "https://github.com/Biscuit19/CodexGame2/blob/2ed2bb4/src/audio.ts",
+        "inputLufs": -23.69,
+        "inputPeak": -7.43,
+        "targetLufs": -24,
+        "playbackGain": 0.9649393118055822
+      },
+      "discover-1": {
+        "file": "discover-1.flac",
+        "sha256": "5892053f6ed31768287905fb3b4a5e9b28ff6dce1220aa60801b73d6ba0040cc",
+        "sourceHash": "6fb9d0abecb67defdf147e54e5ae9b88a2ce239c2ac6ea850942c61727789781",
+        "gainDb": 6.649999999999999,
+        "lufs": -29.95,
+        "duration": 0.13,
+        "license": "Project-original",
+        "author": "原游戏420/560Hz发现提示"
+      },
+      "discover-2": {
+        "file": "discover-2.flac",
+        "sha256": "d25bcf5f5fe19eaa3ab8871421f7e0a4651c66fa37e329ec6c1b3beefd87097d",
+        "sourceHash": "a7428f19cc042b381d8f27822b0f74fbcfbaf1f346459ce661f8a3c1c7c5f6ef",
+        "gainDb": 6.549999999999997,
+        "lufs": -29.95,
+        "duration": 0.13,
+        "license": "Project-original",
+        "author": "原游戏420/560Hz发现提示"
+      },
+      "BG3": {
+        "candidate": "BG3",
+        "file": "music-bg3.ogg",
+        "sha256": "864a9445c6043d9adb7676c77dcb1069fa9ce53486d9fd6f808dfb37f1d5a147",
+        "sourceHash": "864a9445c6043d9adb7676c77dcb1069fa9ce53486d9fd6f808dfb37f1d5a147",
+        "duration": 78.982676,
+        "playbackGain": 1.7701089583174212,
+        "license": "CC-BY-3.0",
+        "author": "syncopika",
+        "sourceUrl": "https://opengameart.org/content/calm-bgm",
+        "name": "静静的小镇 · Calm BGM",
+        "inputLufs": -28.96,
+        "inputPeak": -13.32,
+        "targetLufs": -24
+      },
+      "BG5": {
+        "candidate": "BG5",
+        "file": "music-bg5.mp3",
+        "sha256": "8024e90470f74d735d0fc86beb2fb6d9c2ef48da95d79454b66c2f9459659022",
+        "sourceHash": "8024e90470f74d735d0fc86beb2fb6d9c2ef48da95d79454b66c2f9459659022",
+        "duration": 370.02449,
+        "playbackGain": 0.2633297943675514,
+        "license": "CC-BY-3.0",
+        "author": "Viktor Kraus",
+        "sourceUrl": "https://opengameart.org/content/blueberries",
+        "name": "蓝莓 · Blueberries",
+        "inputLufs": -12.41,
+        "inputPeak": -0.79,
+        "targetLufs": -24
+      },
+      "BG6": {
+        "candidate": "BG6",
+        "file": "music-bg6.mp3",
+        "sha256": "8153dd6aa82ea839de281bd563e454fb01fd63a2ed1d8bc40a16e157bbde5e55",
+        "sourceHash": "8153dd6aa82ea839de281bd563e454fb01fd63a2ed1d8bc40a16e157bbde5e55",
+        "duration": 95.9697,
+        "playbackGain": 0.5388898453732868,
+        "license": "CC-BY-3.0",
+        "author": "Alexandr Zhelanov",
+        "sourceUrl": "https://opengameart.org/content/peaceful-place",
+        "name": "安静角落 · Peaceful Place",
+        "inputLufs": -18.63,
+        "inputPeak": -3.89,
+        "targetLufs": -24
+      },
+      "BG10": {
+        "candidate": "BG10",
+        "file": "music-bg10.flac",
+        "sha256": "85bb1a0a8bc43e5ffeba5c77657f969cfd658117b8e365e6a62629e81e22b29d",
+        "sourceHash": "85bb1a0a8bc43e5ffeba5c77657f969cfd658117b8e365e6a62629e81e22b29d",
+        "duration": 140.125011,
+        "playbackGain": 3.5933539675538984,
+        "license": "CC-BY-3.0",
+        "author": "Stefan_Composer",
+        "sourceUrl": "https://opengameart.org/content/peaceful-village",
+        "name": "祥和村庄 · Peaceful Village",
+        "inputLufs": -35.11,
+        "inputPeak": -20.95,
+        "targetLufs": -24
+      },
+      "NB2": {
+        "candidate": "NB2",
+        "file": "music-nb2.ogg",
+        "sha256": "9c55cfadb5acca6ef9ca81bf89d343b13f2b09984d45ae520cf877f1f9ad4404",
+        "sourceHash": "9c55cfadb5acca6ef9ca81bf89d343b13f2b09984d45ae520cf877f1f9ad4404",
+        "duration": 149.743991,
+        "name": "草甸心绪 · Meadow Thoughts",
+        "author": "Écrivain",
+        "sourceUrl": "https://opengameart.org/content/meadow-thoughts",
+        "license": "CC0-1.0",
+        "inputLufs": -14.79,
+        "inputPeak": -0.02,
+        "targetLufs": -24,
+        "playbackGain": 0.3463378846082794
+      },
+      "NB3": {
+        "candidate": "NB3",
+        "file": "music-nb3.ogg",
+        "sha256": "cb52cc2226123233303bb7ea5f49857d818b8d70cddfb76331bf48ca2c39374e",
+        "sourceHash": "cb52cc2226123233303bb7ea5f49857d818b8d70cddfb76331bf48ca2c39374e",
+        "duration": 68.230431,
+        "name": "慢慢想起 · Where Was I?",
+        "author": "yd",
+        "sourceUrl": "https://opengameart.org/content/where-was-i",
+        "license": "CC0-1.0",
+        "inputLufs": -19.01,
+        "inputPeak": -4.37,
+        "targetLufs": -24,
+        "playbackGain": 0.5629891173942434
+      },
+      "NB5": {
+        "candidate": "NB5",
+        "file": "music-nb5.wav",
+        "sha256": "1cb42057e724224d6047f651b95598f5c094caaaba47f6430dd5d540c09c4414",
+        "sourceHash": "1cb42057e724224d6047f651b95598f5c094caaaba47f6430dd5d540c09c4414",
+        "duration": 64.0,
+        "name": "小小篝火 · A Small Fire Will Do",
+        "author": "Cal McEachern / Trex0n",
+        "sourceUrl": "https://opengameart.org/content/a-small-fire-will-do-calming-loop",
+        "license": "CC0-1.0",
+        "inputLufs": -22.23,
+        "inputPeak": -7.35,
+        "targetLufs": -24,
+        "playbackGain": 0.8156427871327874
+      },
+      "NB6": {
+        "candidate": "NB6",
+        "file": "music-nb6.mp3",
+        "sha256": "d63aa26aa54c640e85d1b3c832883ff4583b0ffa6e6fdf674c2bdb2f1552be52",
+        "sourceHash": "d63aa26aa54c640e85d1b3c832883ff4583b0ffa6e6fdf674c2bdb2f1552be52",
+        "duration": 79.986939,
+        "name": "蜂蜜小熊 · Honey Bear",
+        "author": "TinyWorlds",
+        "sourceUrl": "https://opengameart.org/content/honey-bear",
+        "license": "CC0-1.0",
+        "inputLufs": -18.28,
+        "inputPeak": -0.55,
+        "targetLufs": -24,
+        "playbackGain": 0.5176068319505678
+      },
+      "NB10": {
+        "candidate": "NB10",
+        "file": "music-nb10.mp3",
+        "sha256": "edb48ef506d6f535f3de3e047867ae0d60d4c056591d0b8ead27a4891683d9ec",
+        "sourceHash": "edb48ef506d6f535f3de3e047867ae0d60d4c056591d0b8ead27a4891683d9ec",
+        "duration": 122.827775,
+        "name": "森林圆舞曲 · Sylvan Waltz",
+        "author": "Otto Halmén",
+        "sourceUrl": "https://opengameart.org/content/sylvan-waltz-standard-looped-version",
+        "license": "CC-BY-3.0",
+        "inputLufs": -15.67,
+        "inputPeak": -0.21,
+        "targetLufs": -24,
+        "playbackGain": 0.3832657404000346
       }
     }
   }

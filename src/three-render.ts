@@ -1,3 +1,4 @@
+import { animateReload } from "./reload-motion";
 import { animateKnifeHold } from "./knife-motion";
 import {
   containerHighlighted,
@@ -215,7 +216,16 @@ function weaponModel(g: THREE.Group, id: string) {
     long ? 30 : 16,
   ).rotation.x = Math.PI / 2;
   block(g, ink, 0, 5, len + 10, 3, 5, 3, 0.5);
-  if (!shotgun) block(g, cream, 0, -10, 12, 5, 15, 8, 1.5).rotation.x = -0.23;
+  const magazine = new THREE.Group();
+  magazine.name = "reload-magazine";
+  magazine.position.set(0, -10, 12);
+  g.add(magazine);
+  if (!shotgun && index !== 2)
+    block(magazine, cream, 0, 0, 0, 5, 15, 8, 1.5).rotation.x = -0.23;
+  if (shotgun && index !== 19) {
+    block(magazine, ink, 0, 3, 0, 6, 8, 10, 1.5);
+    block(magazine, accent, 0, 2, 0, 6.5, 2, 10.5, 0.6);
+  }
   if (long) {
     block(g, ink, 0, 8, 7, 4, 5, 11, 1);
     cylinder(g, body, 0, 12, 8, 4, 4, 20).rotation.x = Math.PI / 2;
@@ -268,8 +278,16 @@ function weaponModel(g: THREE.Group, id: string) {
       ear(5, 7, 18);
       break;
     case 2:
-      cylinder(g, accent, 0, -11, 11, 9, 9, 9).rotation.z = Math.PI / 2;
-      ring(-11, 11, cream, 4);
+      magazine.userData.reloadDrop = 2;
+      cylinder(magazine, accent, 0, -1, -1, 9, 9, 9).rotation.z = Math.PI / 2;
+      mesh(
+        magazine,
+        new THREE.TorusGeometry(4, 1.7, 6, 16),
+        cream,
+        0,
+        -1,
+        -1,
+      ).rotation.y = Math.PI / 2;
       break;
     case 3:
       for (const n of [-1, 0, 1]) {
@@ -373,7 +391,9 @@ function weaponModel(g: THREE.Group, id: string) {
     case 19:
       for (const n of [-2, -1, 0, 1, 2])
         ear(n * 3, n * 4, -13, accent, 8).rotation.x = -Math.PI / 2;
-      cylinder(g, accent, 0, -11, 9, 10, 10, 10).rotation.z = Math.PI / 2;
+      magazine.userData.reloadDrop = 2;
+      cylinder(magazine, accent, 0, -1, -3, 10, 10, 10).rotation.z =
+        Math.PI / 2;
       break;
   }
   batchStatic(g);
@@ -774,6 +794,12 @@ export class ThreeRenderer {
       player.player!.arms[0],
       r.meleeCooldown,
       r.meleeSwing,
+    );
+    animateReload(
+      player.gun,
+      player.player!.arms,
+      player.gun.visible && !r.p.roll ? r.reload : 0,
+      r.weapon?.reload ?? 1,
     );
     const ids = new Set(["player"]);
     for (const e of r.enemies) {

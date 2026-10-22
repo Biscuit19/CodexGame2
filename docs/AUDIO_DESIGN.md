@@ -1,3 +1,7 @@
+# 当前状态（2026-10-23）
+
+以[最新记录](AUDIO_RAID_MUSIC_DISCOVERY.md)为准：十首音乐、原基地音乐恢复、发现与解锁替代、搜索音量以及换弹动作。新40候选见[研究表](AUDIO_COMMERCE_REVIEW.md)。以下为历史方案。
+
 # 最新声音与音乐设置
 
 以[最新采用记录](AUDIO_APPROVED_MUSIC.md)为准：步枪SM1、四级发现D3-4、四首完整BGM及播放设置已接入；整体1.3、枪声另乘0.7。新20候选见[研究表](AUDIO_DISCOVERY_MUSIC_REVIEW.md)，尚待选择。下方为先前记录。

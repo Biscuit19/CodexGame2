@@ -121,6 +121,8 @@ test("所选交互声音：真实开盖、逐件揭示、入包与两刀交替�
   ]);
   expect(result.reveals).toBe(5);
   expect(result.records.filter((x) => x.startsWith("discover-"))).toEqual([
+    "discover-1",
+    "discover-2",
     "discover-3",
     "discover-4",
     "discover-5",

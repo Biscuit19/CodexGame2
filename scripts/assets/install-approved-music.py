@@ -32,3 +32,6 @@ print('Installed rifle SM1, D3-4 and four complete original music tracks.')
 # Remove superseded current choice from earlier metadata, while preserving history in docs.
 p=G/'approved-feedback.json';prior=json.loads(p.read_text());prior['tracks'].pop('discover-4',None);prior['supersededDiscovery4']='D3-4 now in approved-music.json';p.write_text(json.dumps(prior,ensure_ascii=False,indent=2)+'\n')
 p=G/'sources.json';main=json.loads(p.read_text());main['approvedFeedback']={'metadata':'approved-feedback.json','tracks':prior['tracks']};p.write_text(json.dumps(main,ensure_ascii=False,indent=2)+'\n')
+
+if (G/"approved-raid-audio.json").exists():
+ subprocess.run(["python",str(R/"scripts/assets/install-approved-raid-audio.py")],check=True)

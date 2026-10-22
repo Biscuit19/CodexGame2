@@ -33,3 +33,6 @@
 
 - 最新明确采用见`docs/AUDIO_APPROVED_MUSIC.md`：SM1用于步枪（不是冲锋枪），四级发现为跨组D3-4；BG3/BG5/BG6/BG10完整原曲进设置，默认BG5循环，可四首随机。整体主增益1.3，枪声再0.7，敌人/玩家仍0.5。旧存档缺字段回退默认，不反复改写音量滑块。
 - 新发现/BGM各10个在`public/audio-review/discovery-music/`，见`docs/AUDIO_DISCOVERY_MUSIC_REVIEW.md`。全部待选，原文件不剪切，别让离线缓存打包未选试听库。
+
+- 2026-10-23最新采用见`docs/AUDIO_RAID_MUSIC_DISCOVERY.md`：基地强制原始配乐循环，战区选曲10首含原始配乐及NB2/3/5/6/10，BGM总线0.8；普通发现D12-1/D3-2/D5-4，首次4/5级用D4-1/D5-2替代，必须在实际提示显示时响且不叠加普通发现。发现统一基线、增益1.38（含1/2级原提示），首刀1.2，搜索1.3且safe/weapon/bed再1.2。
+- 空枪切换有备弹即自动换弹；动作弹匣独立、按真实时长、切枪中断复位。翻滚共享受碰撞验证的小凸角避让，长墙/水域不能穿透。新交易/UI各10候选在`public/audio-review/commerce/`，全部待选、不预缓存，见`docs/AUDIO_COMMERCE_REVIEW.md`。

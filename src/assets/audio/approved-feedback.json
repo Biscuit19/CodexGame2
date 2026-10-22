@@ -208,52 +208,6 @@
           "gain": 0.4721627632015194
         }
       ]
-    },
-    "discover-3": {
-      "candidate": "D3-2",
-      "file": "discover-3.flac",
-      "sourceFile": "audio-review/interactions/audio/D3-2-natural-ceb3fab959.flac",
-      "sourceHash": "ceb3fab959a229bab67da4b1aac1f0dabef1fcb34e9c783be323983140bb59c5",
-      "sha256": "60381f8107f2b9dcaf9ccd6a3079dea56b7a9ce895c35e174d068f6151d31256",
-      "duration": 2.353696,
-      "gainDb": -4.399999999999999,
-      "lufs": -30.0,
-      "truePeakDbfs": -15.13,
-      "license": "CC-BY-3.0",
-      "parts": [
-        {
-          "source": "virix-0088358f-Item2A",
-          "start": 0.04093,
-          "length": 2.343696,
-          "at": 0,
-          "level": 1,
-          "label": "明亮物品奖励",
-          "gain": 0.34801442646995234
-        }
-      ]
-    },
-    "discover-5": {
-      "candidate": "D5-2",
-      "file": "discover-5.flac",
-      "sourceFile": "audio-review/interactions/audio/D5-2-natural-bd0eb90f20.flac",
-      "sourceHash": "bd0eb90f201486871c4a9e1d97fe06489fcb35c196c75af3b6e918176be12a28",
-      "sha256": "03566dbabe446f992a9fb6714f4044e70c18af440efef8fcdce6da16a4ece019",
-      "duration": 5.941519,
-      "gainDb": -7.640000000000001,
-      "lufs": -29.99,
-      "truePeakDbfs": -18.55,
-      "license": "CC-BY-3.0",
-      "parts": [
-        {
-          "source": "scifi-4d85a414-Jingle_Win_01",
-          "start": 0,
-          "length": 5.931519,
-          "at": 0,
-          "level": 1,
-          "label": "华彩完成感",
-          "gain": 0.2880551682712706
-        }
-      ]
     }
   },
   "sources": {
@@ -580,5 +534,6 @@
     "enemy-alert-3",
     "enemy-alert-4"
   ],
-  "supersededDiscovery4": "D3-4 now in approved-music.json"
+  "supersededDiscovery4": "D3-4 now in approved-music.json",
+  "newestDiscoveryAndMusic": "approved-raid-audio.json"
 }

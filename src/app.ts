@@ -1,3 +1,4 @@
+import { musicNames } from "./music-catalog";
 import Phaser from "phaser";
 import "./app.css";
 import {
@@ -139,6 +140,7 @@ function nextDiscovery() {
   const headline = ["", "", "", "捡到宝了！", "金色传说！", "天降横财！"][
     d.tier
   ];
+  if (d.tier >= 4) sound.play("unlock", d.tier);
   discoveryFeed.innerHTML = `<section class="discovery-card tier-${d.tier}" data-item="${d.id}" style="--discovery-color:${color}"><div class="discovery-main"><span class="discovery-intro">${headline ? `<span class="discovery-headline">${headline}</span>` : ""}<span class="discovery-unlock">解锁</span></span><strong class="discovery-name"><span style="color:${color}">${esc(d.name)}</span></strong>${itemIcon(activeDiscovery, 76)}</div>${d.tier >= 3 ? `<p class="discovery-description">${esc(d.desc)}</p>` : ""}</section>`;
   const expire = () => {
     if (raid?.paused) {
@@ -378,19 +380,16 @@ function settingsContent(inRaid = false) {
     )
     .join(
       "",
-    )}<label><span>背景曲目</span><select aria-label="背景曲目" data-setting="musicTrack">${[
-    ["BG3", "静静的小镇 · Calm BGM"],
-    ["BG5", "蓝莓 · Blueberries"],
-    ["BG6", "安静角落 · Peaceful Place"],
-    ["BG10", "祥和村庄 · Peaceful Village"],
-  ]
+    )}<label><span>背景曲目</span><select aria-label="背景曲目" data-setting="musicTrack">${Object.entries(
+    musicNames,
+  )
     .map(
       ([id, label]) =>
         `<option value="${id}" ${(s.settings.musicTrack ?? "BG5") === id ? "selected" : ""}>${label}</option>`,
     )
     .join(
       "",
-    )}</select></label><label><span>音乐播放</span><select aria-label="音乐播放" data-setting="musicMode"><option value="loop" ${s.settings.musicMode !== "random" ? "selected" : ""}>单曲循环</option><option value="random" ${s.settings.musicMode === "random" ? "selected" : ""}>四首随机播放</option></select></label><p class="small">循环模式播放所选曲目；随机模式在四首音乐间切换。</p><label><span>准星颜色</span><input aria-label="准星颜色" type="color" value="${s.settings.aim}" data-setting="aim"/></label><label><span>准星样式</span><select aria-label="准星样式" data-setting="crosshair"><option value="ring" ${s.settings.crosshair !== "cross" ? "selected" : ""}>圆环准星</option><option value="cross" ${s.settings.crosshair === "cross" ? "selected" : ""}>中空十字准星</option></select></label><p><a href="./audio-credits.html" target="_blank" rel="noopener">音效来源与许可</a></p></div>${!inRaid && !title && !s.temporary ? `<div class="save-tools">${heading("存档管理")}<div class="button-row">${btn("导出存档", "export", "", "secondary")}<label class="button secondary">导入存档<input id="import-save" type="file" accept=".json,application/json" hidden/></label></div><p>存档保存在当前浏览器，可导出备份。</p>${btn("返回开始界面", "to-title", "", "secondary full")}</div>` : ""}`;
+    )}</select></label><label><span>音乐播放</span><select aria-label="音乐播放" data-setting="musicMode"><option value="loop" ${s.settings.musicMode !== "random" ? "selected" : ""}>单曲循环</option><option value="random" ${s.settings.musicMode === "random" ? "selected" : ""}>随机播放</option></select></label><label><span>准星颜色</span><input aria-label="准星颜色" type="color" value="${s.settings.aim}" data-setting="aim"/></label><label><span>准星样式</span><select aria-label="准星样式" data-setting="crosshair"><option value="ring" ${s.settings.crosshair !== "cross" ? "selected" : ""}>圆环准星</option><option value="cross" ${s.settings.crosshair === "cross" ? "selected" : ""}>中空十字准星</option></select></label><p><a href="./audio-credits.html" target="_blank" rel="noopener">音效来源与许可</a></p></div>${!inRaid && !title && !s.temporary ? `<div class="save-tools">${heading("存档管理")}<div class="button-row">${btn("导出存档", "export", "", "secondary")}<label class="button secondary">导入存档<input id="import-save" type="file" accept=".json,application/json" hidden/></label></div><p>存档保存在当前浏览器，可导出备份。</p>${btn("返回开始界面", "to-title", "", "secondary full")}</div>` : ""}`;
 }
 function guide() {
   return `${heading("操作指南")}<div class="guide-grid">${[

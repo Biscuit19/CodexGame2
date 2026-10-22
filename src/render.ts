@@ -288,6 +288,8 @@ export class Renderer {
           cat(c, 0, 15, {
             player: true,
             weaponId: r.weaponItem?.id,
+            reloadRemaining: r.reload,
+            reloadTotal: r.weapon?.reload,
             walk: p.walk,
             angle: p.angle,
             armor: 1,
@@ -300,6 +302,8 @@ export class Renderer {
           cat(c, p.x, p.y, {
             player: true,
             weaponId: r.weaponItem?.id,
+            reloadRemaining: r.reload,
+            reloadTotal: r.weapon?.reload,
             walk: p.walk,
             angle: p.angle,
             armor: r.save.equipment.armor ? 1 : 0,
