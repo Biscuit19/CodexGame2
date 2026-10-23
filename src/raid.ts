@@ -1231,6 +1231,7 @@ export class Raid {
     const i = this.save.pack.find((i) => i.uid === uid);
     if (!i) return false;
     this.save.pack = this.save.pack.filter((v) => v !== i);
+    this.sound.play("discard");
     persist(this.save);
     this.onChange();
     return true;

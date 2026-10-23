@@ -128,7 +128,7 @@ function selectionText() {
       );
   }
   return lines.length
-    ? "交易与界面音效选择（尚未接入游戏）\n" + lines.join("\n")
+    ? "交易与界面音效选择\n" + lines.join("\n")
     : "还没有选择。";
 }
 function updateSelection() {

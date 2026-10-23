@@ -30,7 +30,9 @@ const files = (await walk("dist")).filter(
     !f.includes("/audio-review/reload-search-cats/") &&
     !f.includes("/audio-review/shots-music/") &&
     !f.includes("/audio-review/discovery-music/") &&
-    !f.includes("/audio-review/commerce/"),
+    !f.includes("/audio-review/commerce/") &&
+    !f.includes("/audio-review/soft-clicks/") &&
+    !f.includes("/audio-mixer/"),
 );
 const hash = createHash("sha256");
 for (const f of files) hash.update(await readFile(f));

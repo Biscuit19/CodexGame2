@@ -81,6 +81,8 @@ test("真实逐件搜索：首次四五级替代音与提示同步，重复及�
           down: false,
         });
         r.paused = true;
+        // Protected unlock requests wait for cached decoding before scheduling.
+        await new Promise((resolve) => setTimeout(resolve, 0));
         return {
           id,
           log: g.revealLog.filter(

@@ -81,3 +81,5 @@ CC0、CC BY3/4、CC BY-SA3按原文件保留，完整文本与额外署名声明
 配方：`scripts/assets/commerce-audio-sources.json`；构建：`python scripts/assets/build-commerce-audio-review.py --cache /tmp/audio-commerce-research`。清单包含原作者、作品URL、归档URL/内路径、原文件SHA-256、原始时长、裁切起止、固定增益和成品哈希。
 
 Chrome专项验证40候选及40完整原声解码/时长/哈希、每类十位作者、四类选择和复制、播放停止、GPL对应WAV、手机布局；截图另行检查。
+
+2026-10-23后续已采用BU3、SE1、DP1，UI保留原声。当前采用和调音工具见[AUDIO_COMMERCE_MIXER.md](AUDIO_COMMERCE_MIXER.md)，本页其他条目仍作备选历史。

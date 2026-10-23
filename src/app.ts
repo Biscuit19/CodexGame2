@@ -121,7 +121,9 @@ document.body.append(discoveryFeed);
 let discoveryQueue: Item[] = [],
   activeDiscovery: Item | undefined,
   discoveryTimer: ReturnType<typeof setTimeout> | undefined;
+const soundedDiscoveries = new Set<string>();
 function clearDiscoveries() {
+  soundedDiscoveries.clear();
   clearTimeout(discoveryTimer);
   discoveryQueue = [];
   activeDiscovery = undefined;
@@ -140,10 +142,13 @@ function nextDiscovery() {
   const headline = ["", "", "", "捡到宝了！", "金色传说！", "天降横财！"][
     d.tier
   ];
-  if (d.tier >= 4) sound.play("unlock", d.tier);
+  if (d.tier >= 4 && !soundedDiscoveries.has(activeDiscovery.uid)) {
+    soundedDiscoveries.add(activeDiscovery.uid);
+    sound.play("unlock", d.tier);
+  }
   discoveryFeed.innerHTML = `<section class="discovery-card tier-${d.tier}" data-item="${d.id}" style="--discovery-color:${color}"><div class="discovery-main"><span class="discovery-intro">${headline ? `<span class="discovery-headline">${headline}</span>` : ""}<span class="discovery-unlock">解锁</span></span><strong class="discovery-name"><span style="color:${color}">${esc(d.name)}</span></strong>${itemIcon(activeDiscovery, 76)}</div>${d.tier >= 3 ? `<p class="discovery-description">${esc(d.desc)}</p>` : ""}</section>`;
   const expire = () => {
-    if (raid?.paused) {
+    if (raid?.paused || sound.unlockRemaining > 0) {
       discoveryTimer = setTimeout(expire, 1000);
       return;
     }
@@ -159,6 +164,7 @@ function showDiscovery(item: Item) {
   discoveryQueue.push({ ...item });
   if (!activeDiscovery) nextDiscovery();
   else if (db[item.id].tier > db[activeDiscovery.id].tier) {
+    discoveryQueue.push(activeDiscovery);
     nextDiscovery();
   }
 }
@@ -1270,7 +1276,9 @@ async function action(el: HTMLElement) {
         selected.from === "overflow" ||
         selected.from === "pack")
     ) {
-      toast(`出售获得 ${money(sell(s, selected.from, selected.uid))} 金币`);
+      const value = sell(s, selected.from, selected.uid);
+      if (value > 0) sound.play("sell");
+      toast(`出售获得 ${money(value)} 金币`);
       selected = undefined;
       render();
     }
@@ -1299,6 +1307,7 @@ async function action(el: HTMLElement) {
     }
   } else if (a === "batch-confirm") {
     const value = sellSelectedStash(s, batchUids);
+    if (value > 0) sound.play("sell");
     batchUids.clear();
     batchMode = false;
     modal = "";
@@ -1309,6 +1318,7 @@ async function action(el: HTMLElement) {
     render();
   } else if (a === "confirm-sell") {
     const value = sellCommonCollectibles(s);
+    if (value > 0) sound.play("sell");
     modal = "";
     toast(`出售获得 ${money(value)} 金币`);
     render();
@@ -1317,13 +1327,15 @@ async function action(el: HTMLElement) {
     render();
   } else if (a === "purchase-selected") {
     toast(
-      buy(s, selected!.uid)
+      purchase(selected!.uid)
         ? "已购买，物品放入仓库"
         : "无法购买，请检查金币、空间与解锁条件",
     );
     render();
   } else if (a === "buyback") {
-    toast(buyBack(s, id!) ? "已购入仓库" : "无法回购，请检查解锁与金币");
+    const ok = buyBack(s, id!);
+    if (ok) sound.play("buy");
+    toast(ok ? "已购入仓库" : "无法回购，请检查解锁与金币");
     render();
   } else if (a === "rescue") {
     toast(rescue(s) ? "救济装备已发放" : "金币少于一千且没有武器时可领取");
@@ -1441,13 +1453,20 @@ document.addEventListener("click", (e) => {
   }
 });
 let hoveredLootUid: string | undefined;
+function purchase(id: string) {
+  const ok = buy(s, id);
+  if (ok) sound.play("buy");
+  return ok;
+}
 function quickItem(from: ItemSource, uid: string) {
   if (batchMode && !raid) return;
   if (from === "shop" && !raid) {
     if (!db[uid] || unlocked(s) < (db[uid].unlock ?? 0)) return;
     closeItemMenu();
     toast(
-      buy(s, uid) ? "已购买，物品放入仓库" : "无法购买，请检查金币、空间与库存",
+      purchase(uid)
+        ? "已购买，物品放入仓库"
+        : "无法购买，请检查金币、空间与库存",
     );
     render();
     return;

@@ -59,4 +59,6 @@ def main():
  p=G/'sources.json';v=json.loads(p.read_text());v['approvedRaidAudio']={'metadata':'approved-raid-audio.json','tracks':tracks}
  for k,name in [('approvedFeedback','approved-feedback.json'),('approvedMusic','approved-music.json')]:v[k]={'metadata':name,'tracks':json.loads((G/name).read_text())['tracks']}
  p.write_text(json.dumps(v,ensure_ascii=False,indent=2)+'\n');print('Installed discovery/unlock choices, ten music choices; shared BGM target',target)
-if __name__=='__main__':main()
+if __name__=='__main__':
+ main()
+ if (G/'approved-commerce.json').exists():subprocess.run(['python',str(R/'scripts/assets/install-approved-commerce.py')],check=True)

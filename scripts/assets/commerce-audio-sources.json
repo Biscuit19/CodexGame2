@@ -2,7 +2,7 @@
   "version": 1,
   "date": "2026-10-23 Asia/Shanghai",
   "previewOnly": true,
-  "installedToGame": false,
+  "installedToGame": "partial",
   "processing": "Original authored sounds, no new layers/synthesis/filtering/pitch. Fixed playback gain only; only explicitly labelled excerpt candidates are cut, with complete originals retained.",
   "sources": {
     "buy-1": {
@@ -1219,5 +1219,11 @@
         }
       ]
     }
-  ]
+  ],
+  "adoptedChoices": {
+    "buy": "BU3",
+    "sell": "SE1",
+    "discard": "DP1",
+    "click": "original-synth"
+  }
 }

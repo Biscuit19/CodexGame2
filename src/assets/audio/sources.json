@@ -1444,5 +1444,190 @@
         "playbackGain": 0.3832657404000346
       }
     }
+  },
+  "approvedCommerce": {
+    "metadata": "approved-commerce.json",
+    "tracks": {
+      "buy": {
+        "candidate": "BU3",
+        "file": "buy.flac",
+        "sha256": "f1bfaca205d52b617271f8b86c92551dcf20ef541580ea1d398f4f4188c7338c",
+        "gainDb": -3.7399999999999984,
+        "source": {
+          "id": "BU3",
+          "name": "几枚硬币付款",
+          "source": "buy-3",
+          "author": "Little Robot Sound Factory",
+          "sourceUrl": "https://opengameart.org/content/coins-sound-effects-library",
+          "license": "CC-BY-3.0",
+          "style": "交易付款",
+          "note": "原包Few Coins，少量硬币轻碰。",
+          "cut": null,
+          "versions": [
+            {
+              "url": "audio/BU3-b6d2b63f1b.flac",
+              "sha256": "b6d2b63f1b02fb8ccbc3fbae8946c70fdf73f7b44202c920c04ca3bcfde58edf",
+              "bytes": 38402,
+              "duration": 0.30428571428571427,
+              "id": "natural",
+              "name": "原速动作",
+              "gain": 1,
+              "whole": false,
+              "start": 0.0,
+              "end": 0.30428571428571427,
+              "fixedGain": 0.6215842477525225,
+              "peak": 0.4510783553123474
+            }
+          ]
+        },
+        "original": {
+          "pack": "coins-sound-effects-library",
+          "name": "Wav/Coins_Few/Coins_Few_01.wav",
+          "author": "Little Robot Sound Factory",
+          "source": "https://opengameart.org/content/coins-sound-effects-library",
+          "license": "CC-BY-3.0",
+          "path": "flat/buy-3.wav",
+          "sourceSha256": "86bceddef24742654970c73bc6e0843a873fbb76235fed85cef0de9f2b485e4d",
+          "sourceDuration": 0.304271,
+          "downloadUrl": null,
+          "archiveUrl": "https://opengameart.org/sites/default/files/Coins%20Sound%20Library.zip",
+          "archiveSha256": "5e91687e6bb5bdb25107e5a636899c3b8ee4e2dbf4ff5e8d740e159b66681120",
+          "member": "Wav/Coins_Few/Coins_Few_01.wav",
+          "url": "originals/BU3-2b01cc1899.flac",
+          "sha256": "2b01cc1899c0f151fcc0f81a114d0a417c08b3377d54bbdefdf4bc77c2105a66",
+          "bytes": 39551,
+          "duration": 0.30428571428571427,
+          "referenceSafetyGain": 1,
+          "previewGain": 0.6215842477525225
+        },
+        "pack": {
+          "name": "coins-sound-effects-library",
+          "author": "Little Robot Sound Factory",
+          "url": "https://opengameart.org/content/coins-sound-effects-library",
+          "license": "CC-BY-3.0",
+          "evidence": "原页文件/包下载数 3601；收藏 13。不是游戏安装量。"
+        }
+      },
+      "sell": {
+        "candidate": "SE1",
+        "file": "sell.flac",
+        "sha256": "b0409ef7b1908db638704ca468d6339a8927babc965be2463297f49a10ee99e8",
+        "gainDb": -3.9800000000000004,
+        "source": {
+          "id": "SE1",
+          "name": "售出零钱收入",
+          "source": "sell-1",
+          "author": "artisticdude",
+          "sourceUrl": "https://opengameart.org/content/rpg-sound-pack",
+          "license": "CC0-1.0",
+          "style": "售出入账",
+          "note": "原包coin3，短促硬币反馈。",
+          "cut": null,
+          "versions": [
+            {
+              "url": "audio/SE1-ea9986b9fd.flac",
+              "sha256": "ea9986b9fd946553e16e5112e078d05ea5339ef66a1c78a2c0d7140a2b5e5846",
+              "bytes": 63820,
+              "duration": 0.30453514739229026,
+              "id": "natural",
+              "name": "原速动作",
+              "gain": 1,
+              "whole": false,
+              "start": 0.0043310657596371885,
+              "end": 0.3088662131519274,
+              "fixedGain": 0.3483373150360118,
+              "peak": 0.3601408898830414
+            }
+          ]
+        },
+        "original": {
+          "pack": "rpg-sound-pack",
+          "name": "RPG Sound Pack/inventory/coin3.wav",
+          "author": "artisticdude",
+          "source": "https://opengameart.org/content/rpg-sound-pack",
+          "license": "CC0-1.0",
+          "path": "flat/sell-1.wav",
+          "sourceSha256": "b7ee8ca02c9ba9293e6ea91bc518213b44aea39636c05801af7b7d8c542e738e",
+          "sourceDuration": 0.308854,
+          "downloadUrl": null,
+          "archiveUrl": "https://opengameart.org/sites/default/files/rpg_sound_pack.zip",
+          "archiveSha256": "f80754a9c04854e30c9da89d0186540ad097309d98b41387b6e83029e2601421",
+          "member": "RPG Sound Pack/inventory/coin3.wav",
+          "url": "originals/SE1-788634cf93.flac",
+          "sha256": "788634cf9311566feec46e2dbe0ac8cf21cd77883e08a420e8b977ac2fe7a9b2",
+          "bytes": 70292,
+          "duration": 0.3088662131519274,
+          "referenceSafetyGain": 0.9285361091958131,
+          "previewGain": 0.3751467622919909
+        },
+        "pack": {
+          "name": "rpg-sound-pack",
+          "author": "artisticdude",
+          "url": "https://opengameart.org/content/rpg-sound-pack",
+          "license": "CC0-1.0",
+          "evidence": "原页文件/包下载数 65162；收藏 410。不是游戏安装量。"
+        }
+      },
+      "discard": {
+        "candidate": "DP1",
+        "file": "discard.flac",
+        "sha256": "7b5edb98e8cb12ec5030fbf33d85616e85d4f5bb9d463db906092b55183985bf",
+        "gainDb": -3.960000000000001,
+        "source": {
+          "id": "DP1",
+          "name": "皮革物品落下",
+          "source": "discard-1",
+          "author": "Kenney",
+          "sourceUrl": "https://opengameart.org/content/50-rpg-sound-effects",
+          "license": "CC0-1.0",
+          "style": "物品处理",
+          "note": "原包明确的dropLeather，轻软物品落下。",
+          "cut": null,
+          "versions": [
+            {
+              "url": "audio/DP1-ccf3185280.flac",
+              "sha256": "ccf3185280daade99e721d66d45865f212bf58b1e9616f9169a487f0c0f63d4f",
+              "bytes": 66599,
+              "duration": 0.4151020408163265,
+              "id": "natural",
+              "name": "原速动作",
+              "gain": 1,
+              "whole": false,
+              "start": 0.0,
+              "end": 0.4151020408163265,
+              "fixedGain": 0.4187935651179184,
+              "peak": 0.4146050214767456
+            }
+          ]
+        },
+        "original": {
+          "pack": "50-rpg-sound-effects",
+          "name": "OGG/dropLeather.ogg",
+          "author": "Kenney",
+          "source": "https://opengameart.org/content/50-rpg-sound-effects",
+          "license": "CC0-1.0",
+          "path": "flat/discard-1.ogg",
+          "sourceSha256": "097e1d3b74949b0145fda0519d40b7e0773ab82ec4858727f95be830927e1a45",
+          "sourceDuration": 0.415083,
+          "downloadUrl": null,
+          "archiveUrl": "https://opengameart.org/sites/default/files/RPGsounds_Kenney.zip",
+          "archiveSha256": "3ae398ad63e293f9c450bda22d5d81c3af69c74df66fc1400f33c012c0bbc231",
+          "member": "OGG/dropLeather.ogg",
+          "url": "originals/DP1-0d23dba74c.flac",
+          "sha256": "0d23dba74c5fad68f48e91052a772769a04c3f02d0fd9c66d9c19ce8c971f4c7",
+          "bytes": 72013,
+          "duration": 0.4151020408163265,
+          "referenceSafetyGain": 0.9696983615321907,
+          "previewGain": 0.4318802441371516
+        },
+        "pack": {
+          "name": "50-rpg-sound-effects",
+          "author": "Kenney",
+          "url": "https://opengameart.org/content/50-rpg-sound-effects",
+          "license": "CC0-1.0",
+          "evidence": "原页文件/包下载数 41230；收藏 211。不是游戏安装量。"
+        }
+      }
+    }
   }
 }

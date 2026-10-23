@@ -1,3 +1,6 @@
+import buy from "./assets/audio/buy.flac?url";
+import sell from "./assets/audio/sell.flac?url";
+import discard from "./assets/audio/discard.flac?url";
 import type { WeaponClass } from "./data";
 import smg from "./assets/audio/shot-smg.flac?url";
 import rifle from "./assets/audio/shot-rifle.flac?url";
@@ -48,6 +51,9 @@ import discover2 from "./assets/audio/discover-2.flac?url";
 import unlock4 from "./assets/audio/unlock-4.flac?url";
 import unlock5 from "./assets/audio/unlock-5.flac?url";
 export const sampleBank = {
+  buy,
+  sell,
+  discard,
   "discover-1": discover1,
   "discover-2": discover2,
   "unlock-4": unlock4,
@@ -161,7 +167,7 @@ export function sampleChoice(name: string, options: SoundOptions = {}) {
             : name === "melee" && (options.swing ?? 1) % 2 === 1
               ? 1.2
               : name === "open"
-                ? 1.3 *
+                ? 1.56 *
                   (["safe", "weapon", "bed"].includes(
                     options.containerType ?? "",
                   )

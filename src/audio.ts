@@ -1,3 +1,4 @@
+import { defaultBalance, type AudioBalance } from "./audio-balance";
 import type { Settings } from "./store";
 import {
   sampleBank,
@@ -26,11 +27,48 @@ export class Sound {
   }
   buffers = new Map<SampleKey, AudioBuffer>();
   private loading = new Map<SampleKey, Promise<AudioBuffer | undefined>>();
-  private voices = new Set<AudioBufferSourceNode>();
+  private voices = new Set<AudioScheduledSourceNode>();
   private reloadVoice?: AudioBufferSourceNode;
   private foodVoice?: AudioBufferSourceNode;
   private discoveryVoice?: AudioBufferSourceNode;
   private discoveryGeneration = 0;
+  private unlockVoices = new Set<AudioBufferSourceNode>();
+  private unlockTail = 0;
+  private unlockRequests = 0;
+  private unlockPending: Promise<void> = Promise.resolve();
+  get unlockRemaining() {
+    return this.unlockRequests > 0
+      ? Infinity
+      : Math.max(0, this.unlockTail - (this.ctx?.currentTime ?? 0));
+  }
+  private cueGain = 1;
+  // Independent protected voice: ordinary discovery/equipment cannot stop an unlock.
+  private queueUnlock(options: SoundOptions) {
+    const choice = sampleChoice("unlock", options);
+    if (!choice || !this.ctx) return;
+    const generation = this.generation;
+    this.unlockRequests++;
+    this.unlockPending = this.unlockPending.then(async () => {
+      const buffer = await this.loadSample(choice.key);
+      if (generation === this.generation) this.unlockRequests--;
+      if (!buffer || !this.ctx || generation !== this.generation) return;
+      const source = this.ctx.createBufferSource(),
+        gain = this.ctx.createGain();
+      source.buffer = buffer;
+      gain.gain.value = choice.gain * (this.balance.samples[choice.key] ?? 1);
+      source.connect(gain);
+      gain.connect(this.effects!);
+      const at = Math.max(this.ctx.currentTime, this.unlockTail);
+      this.unlockTail = at + buffer.duration;
+      this.unlockVoices.add(source);
+      source.onended = () => {
+        this.unlockVoices.delete(source);
+        source.disconnect();
+        gain.disconnect();
+      };
+      source.start(at);
+    });
+  }
   stopDiscovery() {
     this.discoveryGeneration++;
     try {
@@ -88,6 +126,15 @@ export class Sound {
     this.stopReload();
     this.stopFood();
     this.stopDiscovery();
+    for (const voice of this.unlockVoices) {
+      try {
+        voice.stop();
+      } catch {}
+    }
+    this.unlockVoices.clear();
+    this.unlockTail = 0;
+    this.unlockRequests = 0;
+    this.unlockPending = Promise.resolve();
     for (const voice of this.voices) {
       try {
         voice.stop();
@@ -112,7 +159,11 @@ export class Sound {
     const choice = sampleChoice(name, options);
     if (!choice || !this.ctx) return false;
     const isCall = name === "hurt" || name === "enemy-alert";
-    const isDiscovery = name === "loot" || name === "unlock";
+    if (name === "unlock") {
+      this.queueUnlock(options);
+      return true;
+    }
+    const isDiscovery = name === "loot";
     if (isDiscovery) this.stopDiscovery();
     const discoveryGeneration = this.discoveryGeneration;
     if (isCall) {
@@ -151,7 +202,14 @@ export class Sound {
       source.buffer = buffer;
       const rate = choice.seconds ? buffer.duration / choice.seconds : 1;
       source.playbackRate.value = rate;
-      gain.gain.value = choice.gain;
+      gain.gain.value =
+        choice.gain *
+        (this.balance.samples[choice.key] ?? 1) *
+        (name === "enemy" || (name === "shot" && options.enemy)
+          ? this.balance.enemyShots
+          : name === "reload" && options.enemy
+            ? this.balance.enemyReloads
+            : 1);
       source.connect(gain);
       gain.connect(this.effects!);
       if (this.voices.size >= 40) {
@@ -249,7 +307,8 @@ export class Sound {
     this.musicRequest++;
     audio.pause();
     this.musicKey = key;
-    this.trackGain!.gain.value = musicTracks[key].gain;
+    this.trackGain!.gain.value =
+      musicTracks[key].gain * (this.balance.music[key] ?? 1);
     audio.src = musicTracks[key].url;
   }
   private nextMusic() {
@@ -259,7 +318,10 @@ export class Sound {
     this.setMusic(keys[Math.floor(Math.random() * keys.length)]);
     this.syncMusic();
   }
-  constructor(settings: Settings) {
+  constructor(
+    settings: Settings,
+    public balance: AudioBalance = structuredClone(defaultBalance),
+  ) {
     this.settings = settings;
   }
   start() {
@@ -279,11 +341,19 @@ export class Sound {
   }
   apply() {
     if (this.master) {
-      this.master.gain.value = this.settings.master * 1.3;
-      this.musicBus!.gain.value = this.settings.music * 0.35 * 0.8;
-      this.effects!.gain.value = this.settings.sfx * 0.5;
+      this.master.gain.value = this.settings.master * this.balance.buses.master;
+      this.musicBus!.gain.value =
+        this.settings.music * this.balance.buses.music;
+      this.effects!.gain.value = this.settings.sfx * this.balance.buses.effects;
+      if (this.trackGain && this.musicKey)
+        this.trackGain.gain.value =
+          musicTracks[this.musicKey].gain *
+          (this.balance.music[this.musicKey] ?? 1);
       this.syncMusic();
     }
+  }
+  pauseMusic() {
+    this.musicElement?.pause();
   }
   note(
     freq: number,
@@ -302,8 +372,18 @@ export class Sound {
     g.gain.setValueAtTime(0, now);
     g.gain.linearRampToValueAtTime(volume, now + 0.008);
     g.gain.exponentialRampToValueAtTime(0.001, now + duration);
+    const trim = this.ctx.createGain();
+    trim.gain.value = this.cueGain;
     o.connect(g);
-    g.connect(music ? this.musicBus! : this.effects!);
+    g.connect(trim);
+    trim.connect(music ? this.musicBus! : this.effects!);
+    this.voices.add(o);
+    o.onended = () => {
+      this.voices.delete(o);
+      o.disconnect();
+      g.disconnect();
+      trim.disconnect();
+    };
     o.start(now);
     o.stop(now + duration + 0.01);
   }
@@ -323,15 +403,27 @@ export class Sound {
     src.buffer = b;
     f.type = "lowpass";
     f.frequency.value = filter;
-    g.gain.value = volume;
+    g.gain.value = volume * this.cueGain;
     src.connect(f);
     f.connect(g);
     g.connect(this.effects!);
+    this.voices.add(src);
+    src.onended = () => {
+      this.voices.delete(src);
+      src.disconnect();
+      f.disconnect();
+      g.disconnect();
+    };
     src.start();
   }
   play(name: string, tier = 1, options: SoundOptions = {}) {
     if (!this.ctx) return;
     if (this.sample(name, { ...options, tier })) return;
+    this.cueGain =
+      (this.balance.cues[name] ?? 1) *
+      (name === "search"
+        ? (this.balance.cues[`search:${options.containerType}`] ?? 1)
+        : 1);
     if (name === "hit") {
       this.noise(0.05, 0.15, 900);
       this.note(160, 0.06, "sine", 0.1);
@@ -342,7 +434,7 @@ export class Sound {
       this.noise(
         0.05,
         0.06 *
-          1.3 *
+          1.56 *
           (["safe", "weapon", "bed"].includes(options.containerType ?? "")
             ? 1.2
             : 1),
@@ -375,5 +467,6 @@ export class Sound {
         this.note(f, 0.2, "sine", 0.15, i * 0.1),
       );
     }
+    this.cueGain = 1;
   }
 }

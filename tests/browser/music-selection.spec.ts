@@ -127,7 +127,7 @@ test("基地原始配乐循环、十首音乐完整可选、随机与撤离后�
   ).toBe(true);
   expect(details.muted).toBe(true);
   expect(details.master).toBeCloseTo(details.expected, 5);
-  expect(details.musicGain).toBeCloseTo(0.25 * 0.35 * 0.8, 5);
+  expect(details.musicGain).toBeCloseTo(0.25 * 0.35 * 0.64, 5);
   await page.evaluate(() => {
     const g = (window as any).__game,
       r = g.raid;

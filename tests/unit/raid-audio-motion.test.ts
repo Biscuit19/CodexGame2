@@ -151,8 +151,8 @@ it("统一发现增益、首刀和高价值开箱增益，第二刀及枪声不�
   expect(sampleChoice("melee", { swing: 1 })?.gain).toBe(1.2);
   expect(sampleChoice("melee", { swing: 2 })?.gain).toBe(1);
   for (const containerType of ["safe", "weapon", "bed"])
-    expect(sampleChoice("open", { containerType })?.gain).toBeCloseTo(1.56);
-  expect(sampleChoice("open", { containerType: "box" })?.gain).toBe(1.3);
+    expect(sampleChoice("open", { containerType })?.gain).toBeCloseTo(1.872);
+  expect(sampleChoice("open", { containerType: "box" })?.gain).toBe(1.56);
   expect(sampleChoice("shot", { weaponClass: "rifle" })?.gain).toBe(0.7);
 });
 it("弹匣实际卸下与重插时间线，缩放至枪械换弹时间并可中断复位", () => {

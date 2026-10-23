@@ -29,7 +29,7 @@ test("交易与界面40候选：来源作者、原声/片段可解码、选择�
   const verified = await page.evaluate(async () => {
     const m = await (await fetch("manifest-v1.json")).json(),
       ctx = new AudioContext();
-    if (m.installedToGame !== false) throw Error("Unapproved installation");
+    if (m.installedToGame !== "partial" || m.adoptedChoices.buy !== "BU3" || m.adoptedChoices.sell !== "SE1" || m.adoptedChoices.discard !== "DP1" || m.adoptedChoices.click !== "original-synth") throw Error("Wrong adopted choices");
     for (const g of m.groups)
       if (new Set(g.candidates.map((c: any) => c.author)).size !== 10)
         throw Error("Author duplicate " + g.id);

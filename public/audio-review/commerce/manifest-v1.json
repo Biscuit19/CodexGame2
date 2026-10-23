@@ -2,7 +2,7 @@
   "version": 1,
   "date": "2026-10-23 Asia/Shanghai",
   "previewOnly": true,
-  "installedToGame": false,
+  "installedToGame": "partial",
   "processing": "40 authored recordings; fixed gain, documented excerpts or silence trims only, 3ms cut-edge ramps; no pitch/EQ/compression/new layers. Full original recordings retained with fixed clipping-safety gain.",
   "sources": {
     "buy-1": {
@@ -2099,5 +2099,11 @@
         }
       ]
     }
-  ]
+  ],
+  "adoptedChoices": {
+    "buy": "BU3",
+    "sell": "SE1",
+    "discard": "DP1",
+    "click": "original-synth"
+  }
 }

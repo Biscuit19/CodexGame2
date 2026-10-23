@@ -357,3 +357,12 @@ GitHub Actions 的 `Build, publish and check game`：
 - 游戏声音没有替换；仅生产构建、这些相关检查和公开版本/试听资源校验，不执行完整游戏回归。
 
 - `tests/production/audio-review.spec.ts`：用当前生产构建验证访问试听后离线游戏首页仍为游戏，试听目录和MP3也能离线读取。按需执行`npm run build`后运行`npx playwright test --config=playwright.preview.config.ts`，这是一项独立页面缓存检查，不是全量游戏验证。
+
+## 交易采用、柔软点击与全音效调音台
+
+- `audio-balance.test.ts`：版本化音量往返/无效值、实际丢弃成功才响且不生成盒子；关联`raid-audio-motion.test.ts`只更新本轮最新开箱系数。
+- `soft-clicks-mixer.spec.ts`：10个外部＋5个自制和原对照解码、十位作者、音量初始最大、复制选择；全部50现用样本、10首曲目、BGM混听、配置往返与不写游戏存档，截图检查。
+- `unlock-protection.spec.ts`：实际容器逐件首次揭示、装备/普通发现/45声部压力不截断首次解锁，连续高级解锁完整排队，高等级提示优先、低等级等待；重复收藏品不再首次解锁。
+- 相关购买/出售实际成功与失败路径、总线配置检查；生产构建及线上资源版本轻量验证，不重跑全量地图或其他浏览器。
+
+- `tests/production/audio-mixer.spec.ts`：使用实际生产构建验证嵌套调音页、共享脚本、全部50音效、BGM播放和新候选页；防止开发环境路径掩盖部署问题。手机390像素检查不横向溢出和精确百分比输入。

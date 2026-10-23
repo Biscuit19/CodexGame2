@@ -104,7 +104,7 @@ test("散布显示完整角度，近战详情显示真实伤害与攻速", async
     path: "test-results/chrome-melee-damage-attack-speed.png",
   });
 });
-test("Chrome实际解码47个本地音效、真实四类射击及换弹倍速、敌人减音和切枪取消", async ({
+test("Chrome实际解码50个本地音效、真实四类射击及换弹倍速、敌人减音和切枪取消", async ({
   page,
 }) => {
   test.setTimeout(60000);
@@ -143,7 +143,7 @@ test("Chrome实际解码47个本地音效、真实四类射击及换弹倍速、
   });
   expect(
     await page.evaluate(() => (window as any).__game.sound.buffers.size),
-  ).toBe(47);
+  ).toBe(50);
   const silence = await page.evaluate(() => {
     const g = (window as any).__game;
     return [...g.sound.buffers].map(([key, b]: any) => ({
