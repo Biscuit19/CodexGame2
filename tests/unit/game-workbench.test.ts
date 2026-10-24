@@ -22,14 +22,15 @@ import { collectTuning, tuningPlugin } from "../../scripts/tuning-plugin.mjs";
 it("应用上传音量及SC1原文件；文件名明确时区和毫秒", async () => {
   const raw = JSON.parse(
     await readFile(
-      "docs/config-history/audio-20261024T181337+0800.json",
+      "docs/config-history/game-audio-20261024T195332_043+0800.json",
       "utf8",
     ),
   );
-  expect(defaultBalance.buses).toEqual(raw.buses);
-  expect(defaultBalance.samples.click).toBe(raw.cues.click);
-  for (const k of Object.keys(raw.samples))
-    expect((defaultBalance.samples as any)[k]).toBe(raw.samples[k]);
+  const selected=raw.audio;
+  expect(defaultBalance.buses).toEqual(selected.buses);
+  expect(defaultBalance.samples.click).toBe(selected.samples.click);
+  for (const k of Object.keys(selected.samples))
+    expect((defaultBalance.samples as any)[k]).toBe(selected.samples[k]);
   expect(defaultBalance.enemyShots).toBe(0.71);
   expect(defaultBalance.enemyReloads).toBe(0);
   expect(defaults).toMatchObject({ master: 1, music: 0.8, sfx: 1 });
@@ -41,7 +42,7 @@ it("应用上传音量及SC1原文件；文件名明确时区和毫秒", async (
       .update(await readFile("src/assets/audio/click.flac"))
       .digest("hex"),
   ).toBe(metadata.sha256);
-  expect(Object.keys(sampleBank)).toHaveLength(51);
+  expect(Object.keys(sampleBank)).toHaveLength(52);
   expect(timestampSuffix(new Date("2026-10-24T10:13:37.654Z"))).toBe(
     "20261024T181337_654+0800",
   );
