@@ -148,3 +148,15 @@ footer {
     flex-basis: 100%;
   }
 }
+
+body.embedded main {
+  padding: 12px;
+  max-width: none;
+}
+body.embedded header,
+body.embedded footer {
+  display: none;
+}
+body.embedded .transport {
+  margin-top: 0;
+}

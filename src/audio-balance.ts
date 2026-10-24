@@ -1,4 +1,5 @@
 import defaults from "./audio-balance.json";
+import { musicNames } from "./music-catalog";
 export type AudioBalance = typeof defaults & {
   samples: Record<string, number>;
   cues: Record<string, number>;
@@ -35,5 +36,16 @@ export function parseBalance(value: unknown): AudioBalance {
       !Object.values(v[k]).every(valid)
     )
       throw Error("无效的分类音量");
+  if (
+    !v.preview ||
+    !v.preview.settings ||
+    ![
+      v.preview.settings.master,
+      v.preview.settings.music,
+      v.preview.settings.sfx,
+    ].every((n) => Number.isFinite(n) && n >= 0 && n <= 1) ||
+    !Object.hasOwn(musicNames, v.preview.track)
+  )
+    throw Error("试听环境的音量或曲目无效");
   return structuredClone(v);
 }

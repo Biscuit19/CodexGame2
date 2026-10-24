@@ -1,3 +1,5 @@
+import release from "virtual:game-release";
+import { timestampSuffix } from "./config-time";
 import "./audio-mixer.css";
 import { Sound } from "./audio";
 import { sampleBank, type SampleKey, type SoundOptions } from "./audio-samples";
@@ -9,10 +11,11 @@ import {
 import { musicTracks, type MusicTrack } from "./music";
 import { defaults, type Settings } from "./store";
 const $ = (id: string) => document.getElementById(id)!;
-const storageKey = "tricat-audio-mixer-v1";
+const storageKey = "tricat-audio-mixer-" + release.fingerprint;
+if (window.parent !== window) document.body.classList.add("embedded");
 let balance: AudioBalance = structuredClone(defaultBalance);
 let settings: Settings = { ...defaults, musicMode: "loop" };
-let picked: MusicTrack = "BG5";
+let picked: MusicTrack = defaultBalance.preview.track as MusicTrack;
 try {
   const saved = JSON.parse(localStorage.getItem(storageKey) || "null");
   if (saved) {
@@ -44,7 +47,6 @@ const profile = () => ({
   ),
   cues: Object.fromEntries(
     [
-      "click",
       "hit",
       "alert",
       "success",
@@ -81,6 +83,11 @@ function save() {
   sound.apply();
   try {
     localStorage.setItem(storageKey, JSON.stringify(profile()));
+    if (window.parent !== window)
+      window.parent.postMessage(
+        { kind: "tricat-mixer-changed", profile: profile() },
+        location.origin,
+      );
   } catch {
     status("浏览器未允许本地保存，仍可导出配置");
   }
@@ -135,6 +142,7 @@ function slider(
   return row;
 }
 const labels: Record<SampleKey, string> = {
+  click: "UI点击 · SC1 轻轻啵一下",
   buy: "购买 · BU3 几枚硬币付款",
   sell: "售卖 · SE1 售出零钱收入",
   discard: "丢弃 · DP1 皮革物品落下",
@@ -253,19 +261,21 @@ function render() {
       label,
       balance.buses[key] / defaultBalance.buses[key],
       (n) => (balance.buses[key] = n * defaultBalance.buses[key]),
-      key === "master" ? 3 : 4,
+      Math.min(key === "master" ? 3 : 4, 4 / defaultBalance.buses[key]),
     );
   slider(
     $("buses"),
-    "敌人射击（默认＝玩家50%）",
-    balance.enemyShots,
-    (n) => (balance.enemyShots = n),
+    "敌人枪声 / 玩家枪声",
+    balance.enemyShots * 0.5,
+    (n) => (balance.enemyShots = n / 0.5),
+    2,
   );
   slider(
     $("buses"),
-    "敌人换弹（默认＝玩家75%）",
-    balance.enemyReloads,
-    (n) => (balance.enemyReloads = n),
+    "敌人换弹 / 玩家换弹",
+    balance.enemyReloads * 0.75,
+    (n) => (balance.enemyReloads = n / 0.75),
+    3,
   );
   for (const [k, label] of [
     ["master", "游戏设置 · 总音量"],
@@ -324,7 +334,6 @@ function render() {
       });
   }
   for (const [key, label] of [
-    ["click", "UI点击 · 原始声音"],
     ["hit", "命中反馈"],
     ["alert", "警报提示"],
     ["success", "撤离成功"],
@@ -425,7 +434,7 @@ $("export").onclick = () => {
   );
   const a = document.createElement("a");
   a.href = url;
-  a.download = "tricat-audio-balance.json";
+  a.download = `tricat-audio-balance_${timestampSuffix()}.json`;
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
   status("配置已导出，将JSON文件发给我即可");
@@ -460,7 +469,7 @@ $("reset").onclick = () => {
   balance = structuredClone(defaultBalance);
   sound.balance = balance;
   Object.assign(settings, defaults);
-  picked = "BG5";
+  picked = defaultBalance.preview.track as MusicTrack;
   settings.musicTrack = picked;
   ($("bgm") as HTMLSelectElement).value = picked;
   render();
@@ -476,3 +485,46 @@ $("filter").oninput = () => {
 };
 render();
 Object.assign(window, { __audioMixer: { sound, profile, request, labels } });
+
+// The unified workbench embeds this exact mixer, rather than maintain a divergent copy.
+window.addEventListener("message", (e) => {
+  if (
+    e.origin !== location.origin ||
+    e.source !== window.parent ||
+    !e.data ||
+    e.data.kind !== "tricat-mixer-request"
+  )
+    return;
+  const { id, action, profile: raw } = e.data;
+  try {
+    if (action === "set") {
+      balance = parseBalance(raw);
+      sound.balance = balance;
+      if (raw.preview?.settings)
+        for (const k of ["master", "music", "sfx"] as const) {
+          const n = raw.preview.settings[k];
+          if (!Number.isFinite(n) || n < 0 || n > 1)
+            throw Error("试听设置音量无效");
+          settings[k] = n;
+        }
+      if (raw.preview?.track in musicTracks) picked = raw.preview.track;
+      settings.musicTrack = picked;
+      ($("bgm") as HTMLSelectElement).value = picked;
+      render();
+      save();
+      if (!musicOn) sound.pauseMusic();
+    } else if (action === "stop") {
+      $("stop").click();
+      $("music-stop").click();
+    }
+    window.parent.postMessage(
+      { kind: "tricat-mixer-reply", id, profile: profile() },
+      location.origin,
+    );
+  } catch (err) {
+    window.parent.postMessage(
+      { kind: "tricat-mixer-reply", id, error: (err as Error).message },
+      location.origin,
+    );
+  }
+});

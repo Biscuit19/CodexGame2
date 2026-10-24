@@ -1,3 +1,4 @@
+import { containerCount, weightedItem } from "./game-tuning-runtime";
 import {
   bosses,
   collectibles,
@@ -781,7 +782,7 @@ export function buildVillage(r: Raid) {
       }
     }
     const pool = collectibles.filter((c) => c.tier === tier);
-    return makeItem(pool[Math.floor(r.random() * pool.length)].id);
+    return makeItem(weightedItem(pool, r.random).id);
   };
   const callIndices: Record<string, number> = {};
   const roomSlots: Record<string, [string, number, number][]> = {
@@ -849,7 +850,7 @@ export function buildVillage(r: Raid) {
     if (r.random() > chance) return;
     if (type === "box") type = ["box", "basket", "toolbox"][callIndex % 3];
     const high = ["safe", "weapon", "bed"].includes(type),
-      count = high ? 3 : 2;
+      count = containerCount(type);
     const items: Item[] = [];
     for (let i = 0; i < count; i++) {
       const n = r.random();
@@ -858,12 +859,12 @@ export function buildVillage(r: Raid) {
         (["medical", "cooler"].includes(type) && i === 0)
       ) {
         const pool = foods.filter((f) => f.tier <= 3);
-        items.push(makeItem(pool[Math.floor(r.random() * pool.length)].id));
+        items.push(makeItem(weightedItem(pool, r.random).id));
       } else if (type === "weapon" && i === 0) {
         const pool = weapons.filter(
           (w) => w.tier <= (region === "boss" ? 4 : region === "barn" ? 3 : 2),
         );
-        items.push(makeItem(pool[Math.floor(r.random() * pool.length)].id));
+        items.push(makeItem(weightedItem(pool, r.random).id));
       } else if (
         region !== "clinic" &&
         n < (region === "hunter" ? 0.45 : region === "boss" ? 0.35 : 0.15)
@@ -886,7 +887,7 @@ export function buildVillage(r: Raid) {
           makeItem(`a${region === "boss" ? 3 : region === "barn" ? 2 : 1}`),
         );
       } else if ((region === "shop" || region === "wild") && n < 0.45)
-        items.push(makeItem(foods[Math.floor(r.random() * 3)].id));
+        items.push(makeItem(weightedItem(foods.slice(0, 3), r.random).id));
       else items.push(collect(region));
     }
     const names: Record<string, string> = {

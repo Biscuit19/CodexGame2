@@ -3,6 +3,9 @@ import Phaser from "phaser";
 import "./app.css";
 import {
   db,
+  SALE_RATIO,
+  PLAYER_MAX_HP,
+  RAID_SECONDS,
   weaponSpreadDegrees,
   collectibles,
   foodEffect,
@@ -173,7 +176,7 @@ function unknownCollectible() {
 }
 function collectibleDetail(id: string) {
   const d = db[id];
-  return `${heading(`<span style="color:${itemNameColor(id)}">${esc(d.name)}</span>`)}<div class="collection-detail-art">${itemIcon({ id, uid: id, qty: 1 }, 160)}</div><p style="color:${itemNameColor(id)}">${rarity[d.tier]}</p><p class="collection-description">${esc(d.desc)}</p><p>出售价值 ◈ ${money(Math.floor(d.price * 0.65))} 金币</p>`;
+  return `${heading(`<span style="color:${itemNameColor(id)}">${esc(d.name)}</span>`)}<div class="collection-detail-art">${itemIcon({ id, uid: id, qty: 1 }, 160)}</div><p style="color:${itemNameColor(id)}">${rarity[d.tier]}</p><p class="collection-description">${esc(d.desc)}</p><p>出售价值 ◈ ${money(Math.floor(d.price * SALE_RATIO))} 金币</p>`;
 }
 function syncCollectionDialog() {
   const id = modal.startsWith("collection:") ? modal.slice(11) : "";
@@ -359,7 +362,7 @@ function card(i: Item, from: string, shop = false) {
   const d = db[i.id],
     chosen = selected?.uid === i.uid,
     locked = shop && unlocked(s) < (d.unlock ?? 0);
-  return `<button class="item-slot ${chosen ? "selected" : ""}" style="--rarity:${itemNameColor(i.id)}" data-action="${batchMode && from === "stash" ? "batch-toggle" : shop ? "buy" : from === "loot" ? "loot-select" : "select"}" data-id="${shop ? i.id : i.uid}" data-from="${from}" data-item="${i.id}" ${shop || (batchMode && from === "stash") ? "" : 'draggable="true"'} ${locked ? "disabled" : ""}><span class="quality">${rarity[d.tier]}</span>${itemIcon(i, 52)}<strong style="color:${itemNameColor(i.id) || "inherit"}">${name(i.id)}</strong>${d.kind === "food" && shop ? '<span class="food-category">食物</span>' : ""}<span class="${["food", "ammo"].includes(d.kind) ? "stack-quantity" : ""}">${shop ? (locked ? esc(shopUnlockHint(s, i.id)) : `◈ ${money(d.price)}`) : d.kind === "ammo" ? `${i.qty} 发` : d.kind === "food" ? `<small class="food-category">食物</small>×${i.qty}` : i.durability !== undefined ? `${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}` : d.kind === "collectible" ? `◈ ${money(sale(i))}` : kindNames[d.kind]}</span>${shop ? `<small>${d.damage ? `伤害 ${d.damage}${d.pellets! > 1 ? `×${d.pellets}` : ""} · 弹匣 ${d.mag}` : d.capacity ? `${d.capacity} 格` : d.kind === "food" ? foodEffect(d) : d.kind === "ammo" ? "每组 120 发" : `${d.tier} 级防护`}</small>` : ""}</button>`;
+  return `<button class="item-slot ${chosen ? "selected" : ""}" style="--rarity:${itemNameColor(i.id)}" data-action="${batchMode && from === "stash" ? "batch-toggle" : shop ? "buy" : from === "loot" ? "loot-select" : "select"}" data-id="${shop ? i.id : i.uid}" data-from="${from}" data-item="${i.id}" ${shop || (batchMode && from === "stash") ? "" : 'draggable="true"'} ${locked ? "disabled" : ""}><span class="quality">${rarity[d.tier]}</span>${itemIcon(i, 52)}<strong style="color:${itemNameColor(i.id) || "inherit"}">${name(i.id)}</strong>${d.kind === "food" && shop ? '<span class="food-category">食物</span>' : ""}<span class="${["food", "ammo"].includes(d.kind) ? "stack-quantity" : ""}">${shop ? (locked ? esc(shopUnlockHint(s, i.id)) : `◈ ${money(d.buyPrice ?? d.price)}`) : d.kind === "ammo" ? `${i.qty} 发` : d.kind === "food" ? `<small class="food-category">食物</small>×${i.qty}` : i.durability !== undefined ? `${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}` : d.kind === "collectible" ? `◈ ${money(sale(i))}` : kindNames[d.kind]}</span>${shop ? `<small>${d.damage ? `伤害 ${d.damage}${d.pellets! > 1 ? `×${d.pellets}` : ""} · 弹匣 ${d.mag}` : d.capacity ? `${d.capacity} 格` : d.kind === "food" ? foodEffect(d) : d.kind === "ammo" ? `每组 ${AMMO_STACK} 发` : `${d.tier} 级防护`}</small>` : ""}</button>`;
 }
 function remember() {
   if (s.temporary) return;
@@ -503,7 +506,7 @@ function selectedActions() {
   let options = "";
   if (f === "shop")
     options = btn(
-      `购买 ◈ ${money(d.price)}`,
+      `购买 ◈ ${money(d.buyPrice ?? d.price)}`,
       "purchase-selected",
       "",
       "item-option",
@@ -721,9 +724,13 @@ function shop() {
           weaponFilter === "all" ||
           d.weaponClass === weaponFilter),
   );
-  if (category === "food") products.sort((a, b) => a.price - b.price);
+  if (category === "food")
+    products.sort((a, b) => (a.buyPrice ?? a.price) - (b.buyPrice ?? b.price));
   else if (category === "weapon")
-    products.sort((a, b) => a.tier - b.tier || a.price - b.price);
+    products.sort(
+      (a, b) =>
+        a.tier - b.tier || (a.buyPrice ?? a.price) - (b.buyPrice ?? b.price),
+    );
   return `<div class="shop-layout"><header class="shop-heading"><h2>补给商店</h2><span class="shop-shortcut">双击或F购买物品。</span></header><aside class="panel shop-categories">${[
     ["weapon", "武器"],
     ["armor", "护具与背包"],
@@ -757,14 +764,14 @@ function shop() {
           .filter((i) => db[i.id].kind !== "collectible")
           .map(
             (i) =>
-              `<div class="buyback-item">${itemIcon(i, 44)}<strong>${name(i.id)}</strong>${btn(`购买 ◈ ${money(Math.ceil(db[i.id].price * (db[i.id].kind === "ammo" ? i.qty / AMMO_STACK : db[i.id].kind === "food" ? i.qty : 1)))}`, "buyback", `data-id="${i.uid}"`, "secondary")}</div>`,
+              `<div class="buyback-item">${itemIcon(i, 44)}<strong>${name(i.id)}</strong>${btn(`购买 ◈ ${money(Math.ceil((db[i.id].buyPrice ?? db[i.id].price) * (db[i.id].kind === "ammo" ? i.qty / AMMO_STACK : db[i.id].kind === "food" ? i.qty : 1)))}`, "buyback", `data-id="${i.uid}"`, "secondary")}</div>`,
           )
           .join("")}</div></div>`
       : ""
   }</section></div>`;
 }
 function mapsPage() {
-  return `<section class="maps-section">${heading("战区地图")}<div class="map-cards">${maps.map((m, i) => btn(`${icon("map", i === mapIndex ? "#e3c58b" : "#98b08f", 70)}<h2>${m.name}</h2><span>${i > unlocked(s) ? "尚未解锁" : i === 0 ? "推荐 1 级装备" : `推荐 ${i + 1} 级装备`}</span>`, "map-select", `data-id="${i}"`, "map-card " + (i === mapIndex ? "selected" : ""))).join("")}</div><section class="panel mission-panel">${heading(maps[mapIndex].name)}<div class="mission-info"><span>限时 15 分钟</span><span>撤离需 3 秒</span><span>付费撤离 ◈ ${money(maps[mapIndex].fee)}</span></div><div class="boss-list">${bosses
+  return `<section class="maps-section">${heading("战区地图")}<div class="map-cards">${maps.map((m, i) => btn(`${icon("map", i === mapIndex ? "#e3c58b" : "#98b08f", 70)}<h2>${m.name}</h2><span>${i > unlocked(s) ? "尚未解锁" : i === 0 ? "推荐 1 级装备" : `推荐 ${i + 1} 级装备`}</span>`, "map-select", `data-id="${i}"`, "map-card " + (i === mapIndex ? "selected" : ""))).join("")}</div><section class="panel mission-panel">${heading(maps[mapIndex].name)}<div class="mission-info"><span>限时 ${RAID_SECONDS / 60} 分钟</span><span>撤离需 ${EXTRACT_SECONDS} 秒</span><span>付费撤离 ◈ ${money(maps[mapIndex].fee)}</span></div><div class="boss-list">${bosses
     .filter((b) => b.map === mapIndex)
     .map(
       (b) => `<span>${s.defeated.includes(b.id) ? "✓" : "◇"} ${b.name}</span>`,
@@ -783,7 +790,7 @@ function collection() {
           .filter((d) => d.kind === "collectible" && d.tier === t)
           .map(
             (d) =>
-              `<button class="collection-item ${s.collection.includes(d.id) ? "found" : ""}" data-action="collection-detail" data-id="${d.id}" ${s.collection.includes(d.id) ? `data-item="${d.id}"` : "disabled"}>${s.collection.includes(d.id) ? itemIcon({ id: d.id, uid: d.id, qty: 1 }, 80) : unknownCollectible()}<strong style="color:${itemNameColor(d.id)}">${name(d.id)}</strong>${s.collection.includes(d.id) ? `<span>已发现 · ◈ ${money(Math.floor(d.price * 0.65))}</span>` : ""}</button>`,
+              `<button class="collection-item ${s.collection.includes(d.id) ? "found" : ""}" data-action="collection-detail" data-id="${d.id}" ${s.collection.includes(d.id) ? `data-item="${d.id}"` : "disabled"}>${s.collection.includes(d.id) ? itemIcon({ id: d.id, uid: d.id, qty: 1 }, 80) : unknownCollectible()}<strong style="color:${itemNameColor(d.id)}">${name(d.id)}</strong>${s.collection.includes(d.id) ? `<span>已发现 · ◈ ${money(Math.floor(d.price * SALE_RATIO))}</span>` : ""}</button>`,
           )
           .join("")}</div></section>`,
     )
@@ -866,7 +873,7 @@ function renderRaid() {
   canvas.classList.remove("hidden");
   document.body.classList.add("in-raid");
   if (r.map !== 0) scene3d?.show(false);
-  root.innerHTML = `<div class="raid-hud"><div class="raid-top"><strong>${maps[r.map].name}</strong><div id="boss-hud"></div>${btn('<b id="raid-time">15:00</b><span>菜单</span>', "pause", "", "raid-timer")}</div><canvas id="minimap" width="260" height="200" data-action="toggle-map" aria-label="打开战区地图"></canvas><div class="raid-bottom"><section class="vitals"><div><strong id="hp-number">100</strong><span>生命</span></div><div class="meter"><i id="hp-fill"></i></div><div class="stamina-row"><span>体力</span><strong id="st-number">${MOVEMENT.maxStamina}</strong><span id="sprint-state">疾跑</span></div><div class="meter stamina"><i id="st-fill"></i></div><span id="armor-readout"></span><span id="regen-readout"></span></section><section class="food-hud" aria-label="当前食物"><div id="food-art"></div><strong id="food-name"></strong><span id="food-quantity"></span><small>Q 食用</small></section><div class="raid-shortcuts"><span>空格 翻滚</span><span>E 搜索</span><span>Tab 背包</span><span>M 地图</span></div><section class="weapon-hud"><div class="hud-weapon-column"><strong id="weapon-name"></strong><div id="weapon-art" class="hud-weapon-art" aria-hidden="true"></div><span id="weapon-condition"></span></div><div class="hud-ammo-column"><div class="hud-rounds"><b id="mag-count"></b><span id="reserve-count"></span></div><div class="hud-ammo-details"><span id="ammo-art" class="hud-ammo-art" aria-hidden="true"></span><span id="ammo-name"></span></div></div></section></div><div id="paid-exit-hint" class="paid-exit-hint hidden"></div><div id="action-progress" class="action-progress hidden"></div><div id="crosshair" class="${s.settings.crosshair === "cross" ? "cross" : "ring"}" style="--aim:${s.settings.aim}"></div></div><div id="raid-overlay">${raidOverlay()}</div>`;
+  root.innerHTML = `<div class="raid-hud"><div class="raid-top"><strong>${maps[r.map].name}</strong><div id="boss-hud"></div>${btn('<b id="raid-time">15:00</b><span>菜单</span>', "pause", "", "raid-timer")}</div><canvas id="minimap" width="260" height="200" data-action="toggle-map" aria-label="打开战区地图"></canvas><div class="raid-bottom"><section class="vitals"><div><strong id="hp-number">${PLAYER_MAX_HP}</strong><span>生命</span></div><div class="meter"><i id="hp-fill"></i></div><div class="stamina-row"><span>体力</span><strong id="st-number">${MOVEMENT.maxStamina}</strong><span id="sprint-state">疾跑</span></div><div class="meter stamina"><i id="st-fill"></i></div><span id="armor-readout"></span><span id="regen-readout"></span></section><section class="food-hud" aria-label="当前食物"><div id="food-art"></div><strong id="food-name"></strong><span id="food-quantity"></span><small>Q 食用</small></section><div class="raid-shortcuts"><span>空格 翻滚</span><span>E 搜索</span><span>Tab 背包</span><span>M 地图</span></div><section class="weapon-hud"><div class="hud-weapon-column"><strong id="weapon-name"></strong><div id="weapon-art" class="hud-weapon-art" aria-hidden="true"></div><span id="weapon-condition"></span></div><div class="hud-ammo-column"><div class="hud-rounds"><b id="mag-count"></b><span id="reserve-count"></span></div><div class="hud-ammo-details"><span id="ammo-art" class="hud-ammo-art" aria-hidden="true"></span><span id="ammo-name"></span></div></div></section></div><div id="paid-exit-hint" class="paid-exit-hint hidden"></div><div id="action-progress" class="action-progress hidden"></div><div id="crosshair" class="${s.settings.crosshair === "cross" ? "cross" : "ring"}" style="--aim:${s.settings.aim}"></div></div><div id="raid-overlay">${raidOverlay()}</div>`;
   overlay();
   updateHUD();
 }
@@ -1002,7 +1009,7 @@ function updateHUD() {
   );
   const hp = document.getElementById("hp-fill"),
     st = document.getElementById("st-fill");
-  if (hp) hp.style.width = `${Math.max(0, p.hp)}%`;
+  if (hp) hp.style.width = `${Math.max(0, (p.hp / PLAYER_MAX_HP) * 100)}%`;
   if (st) st.style.width = `${(p.stamina / MOVEMENT.maxStamina) * 100}%`;
   document
     .querySelector(".raid-timer")
@@ -1517,7 +1524,10 @@ document.addEventListener("input", (e) => {
     s.settings.musicTrack = input.value as Save["settings"]["musicTrack"];
   else if (key === "musicMode")
     s.settings.musicMode = input.value as Save["settings"]["musicMode"];
-  else s.settings[key] = Number(input.value);
+  else if (["master", "music", "sfx", "shake"].includes(key))
+    s.settings[key as "master" | "music" | "sfx" | "shake"] = Number(
+      input.value,
+    );
   sound.apply();
   const out = input.parentElement?.querySelector("output");
   if (out) out.textContent = `${Math.round(Number(input.value) * 100)}%`;

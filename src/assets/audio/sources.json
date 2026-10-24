@@ -1629,5 +1629,10 @@
         }
       }
     }
+  },
+  "approvedClick": {
+    "metadata": "approved-click.json",
+    "choice": "SC1",
+    "sha256": "8d64773fe74226679a34ab6423d792d00db36ec3ac733ecca61adc39e7d3eab1"
   }
 }

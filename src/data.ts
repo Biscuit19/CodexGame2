@@ -1,3 +1,4 @@
+import { applyItemTuning, weightedItem } from "./game-tuning-runtime";
 import { collectibleRows, foodHomageRows } from "./collectibles";
 export type Kind =
   | "weapon"
@@ -30,6 +31,9 @@ export interface ItemDef {
   kind: Kind;
   tier: number;
   price: number;
+  buyPrice?: number;
+  shopLimit?: number;
+  lootWeight?: number;
   icon: string;
   desc: string;
   damage?: number;
@@ -73,8 +77,14 @@ export function takeQuantity(item: Item, quantity: number): Item {
 export const AMMO_STACK = 120,
   FOOD_STACK = 5,
   BASE_PACK = 20,
-  EXTRACT_SECONDS = 3,
-  MELEE_SWING_SECONDS = 0.45;
+  EXTRACT_SECONDS = 3;
+export let MELEE_SWING_SECONDS = 0.45;
+export const PREFLIGHT_AMMO = 120,
+  PREFLIGHT_FOOD = 1,
+  PREFLIGHT_WEAPONS = 1;
+export const SALE_RATIO = 0.65,
+  PLAYER_MAX_HP = 100,
+  RAID_SECONDS = 900;
 export const MOVEMENT = {
   maxStamina: 100,
   runSpeed: 220,
@@ -200,14 +210,18 @@ export function randomWeapon(
   category?: WeaponClass,
   minTier = 1,
 ) {
-  const unlocked = weapons.filter((w) => (w.unlock ?? 0) <= map);
+  const unlocked = weapons.filter(
+    (w) => (w.unlock ?? 0) <= map && (w.lootWeight ?? 1) > 0,
+  );
   const ranked = unlocked.filter((w) => w.tier >= minTier);
   const available = ranked.length ? ranked : unlocked;
   const matching = available.filter(
     (w) => !category || w.weaponClass === category,
   );
   const pool = matching.length ? matching : available;
-  const weights = pool.map((w) => [0, 24, 12, 6, 3, 1][w.tier]);
+  const weights = pool.map(
+    (w) => [0, 24, 12, 6, 3, 1][w.tier] * (w.lootWeight ?? 1),
+  );
   let pick = random() * weights.reduce((sum, n) => sum + n, 0);
   for (let i = 0; i < pool.length; i++)
     if ((pick -= weights[i]) < 0) return pool[i];
@@ -390,6 +404,13 @@ export const items = [
   ...foods,
   ...collectibles,
 ];
+applyItemTuning(items as unknown as { id: string; [key: string]: unknown }[]);
+if (melee.rpm !== 60 / MELEE_SWING_SECONDS)
+  MELEE_SWING_SECONDS = 60 / melee.rpm!;
+for (let i = 0; i < 5; i++) {
+  armorDur[i] = defenses.find((d) => d.id === `a${i + 1}`)!.durability!;
+  helmetDur[i] = defenses.find((d) => d.id === `h${i + 1}`)!.durability!;
+}
 export const db: Record<string, ItemDef> = Object.fromEntries(
   items.map((i) => [i.id, i]),
 );
@@ -428,7 +449,7 @@ export function wearWeapon(i: Item) {
 export const sale = (i: Item) =>
   Math.floor(
     db[i.id].price *
-      0.65 *
+      SALE_RATIO *
       (db[i.id].kind === "ammo"
         ? i.qty / AMMO_STACK
         : db[i.id].kind === "food"
@@ -750,7 +771,7 @@ export function loot(random: () => number, map: number, high = false): Item {
               ? 2
               : 1;
   const pool = collectibles.filter((d) => d.tier === tier);
-  return makeItem(pool[Math.floor(random() * pool.length)].id);
+  return makeItem(weightedItem(pool, random).id);
 }
 export function mathQuestion(random: () => number) {
   const op = Math.floor(random() * 4);

@@ -38,3 +38,7 @@
 - 空枪切换有备弹即自动换弹；动作弹匣独立、按真实时长、切枪中断复位。翻滚共享受碰撞验证的小凸角避让，长墙/水域不能穿透。新交易/UI各10候选在`public/audio-review/commerce/`，全部待选、不预缓存，见`docs/AUDIO_COMMERCE_REVIEW.md`。
 
 - 2026-10-23最新交易与调音约定见`docs/AUDIO_COMMERCE_MIXER.md`：BU3购买/SE1售卖/DP1丢弃成功才播，UI保持原始正弦点击。BGM总线0.64，开箱/搜索1.56且safe/weapon/bed再1.2。首次解锁独立声道完整排队，不被普通发现、装备或声部上限停止；高级提示可替换低级但低级稍后恢复，高级结束前不覆盖。全音效调音台复用游戏引擎与`src/audio-balance.json`，用户JSON配置校验后可直接应用；不得写游戏存档。新柔软点击10条外部＋5条授权自制均待选、不预缓存。
+
+- 2026-10-24最新声音与统一调整台见`docs/GAME_WORKBENCH.md`：UI点击已明确采用SC1（farfadet46，CC0），不再保留原始合成点击；`src/audio-balance.json`采用用户上传完整音量，原点击1.42迁移到samples.click。三音量滑块按上传preview同步一次，后续个人调整保留；战区默认BG5不改。
+- `/game-workbench/index.html`包含原调音台，必须随每次Codex数值更新同步。目录由`scripts/tuning-plugin.mjs`与真实运行时items自动生成；不要维护另一份静态历史表。新增设计数值应确保进入目录或物品属性表。修改前收到的导出JSON先用`scripts/apply-game-config.mjs --check`校验/应用，再做其他代码变更，以免来源指纹过期。不得绕过概率/范围/版本检查；不改用户未请求的原有平衡。
+- 所有新调整台导出JSON文件名必须带北京时间、毫秒与+0800后缀，内容保留导出时间和来源版本。草稿按来源指纹隔离，旧草稿不得遮盖新发布值；不写游戏存档。不预缓存独立调整台及大目录给普通游戏玩家。

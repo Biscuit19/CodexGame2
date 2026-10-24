@@ -1,5 +1,9 @@
+import { containerCount, weightedItem } from "./game-tuning-runtime";
 import {
   db,
+  SALE_RATIO,
+  PLAYER_MAX_HP,
+  RAID_SECONDS,
   makeItem,
   weapons,
   breeds,
@@ -16,6 +20,7 @@ import {
   protection,
   AMMO_STACK,
   BASE_PACK,
+  safeCap,
   EXTRACT_SECONDS,
   MOVEMENT,
   MELEE_SWING_SECONDS,
@@ -172,7 +177,7 @@ export class Raid {
   p = {
     x: 260,
     y: 1450,
-    hp: 100,
+    hp: PLAYER_MAX_HP,
     stamina: MOVEMENT.maxStamina,
     angle: 0,
     walk: 0,
@@ -206,7 +211,7 @@ export class Raid {
     max: number;
   }[] = [];
   floating: Floating[] = [];
-  time = 900;
+  time = RAID_SECONDS;
   elapsed = 0;
   paused = false;
   done = false;
@@ -481,16 +486,14 @@ export class Raid {
                   ? "cabinet"
                   : ["box", "basket", "toolbox"][i % 3];
       const high = ["safe", "weapon", "bed"].includes(type);
-      const entries = Array.from({ length: high ? 3 : 2 }, () =>
+      const entries = Array.from({ length: containerCount(type) }, () =>
         loot(this.random, m, high),
       );
       if (type === "weapon")
         entries[0] = makeItem(randomWeapon(this.random, m).id);
       if (type === "medical") {
         const available = foods.filter((f) => f.tier <= Math.min(4, m + 2));
-        entries[0] = makeItem(
-          available[Math.floor(this.random() * available.length)].id,
-        );
+        entries[0] = makeItem(weightedItem(available, this.random).id);
       }
       if (i % 3 === 0)
         entries.push(
@@ -1076,7 +1079,7 @@ export class Raid {
     if (old?.qty) put(this.save.pack, old, packCapacity(this.save));
   }
   useFood(uid?: string, source: "pack" | "loot" = "pack") {
-    if (this.heal || this.p.hp >= 100) return;
+    if (this.heal || this.p.hp >= PLAYER_MAX_HP) return;
     this.ensureFood();
     const owned = [
       ...this.save.pack,
@@ -1434,7 +1437,7 @@ export class Raid {
     }
     const i = c.items[index],
       target = safe ? this.save.secure : this.save.pack,
-      cap = safe ? [1, 2, 4, 6][this.save.safe] : packCapacity(this.save);
+      cap = safe ? safeCap[this.save.safe] : packCapacity(this.save);
     if (!safe && kind === "ammo") {
       const next = structuredClone(this.save);
       next.pack.push(structuredClone(i));
@@ -1503,7 +1506,7 @@ export class Raid {
       this.sound.stopReload?.();
       this.syncLoaded();
     }
-    this.value += Math.floor(db[item.id].price * 0.65);
+    this.value += Math.floor(db[item.id].price * SALE_RATIO);
     persist(this.save);
     this.sound.play(
       kind === "weapon" || kind === "melee" ? "equip-weapon" : "equip-gear",
@@ -1779,7 +1782,7 @@ export class Raid {
     }
     if (this.regeneration.remaining > 0) {
       const duration = Math.min(dt, this.regeneration.remaining);
-      p.hp = Math.min(100, p.hp + duration * this.regeneration.rate);
+      p.hp = Math.min(PLAYER_MAX_HP, p.hp + duration * this.regeneration.rate);
       this.regeneration.remaining = Math.max(
         0,
         this.regeneration.remaining - duration,
@@ -1796,7 +1799,7 @@ export class Raid {
         const food = source.find((i) => i.uid === this.healItem);
         if (food) {
           const d = db[food.id];
-          p.hp = Math.min(100, p.hp + (d.heal ?? 0));
+          p.hp = Math.min(PLAYER_MAX_HP, p.hp + (d.heal ?? 0));
           if (d.healOverTime && d.healSeconds)
             this.regeneration = {
               remaining: d.healSeconds,

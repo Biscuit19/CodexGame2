@@ -14,7 +14,7 @@ def encode(a,p):
  return dict(url=str(p.relative_to(O)),sha256=sha(p),duration=len(a)/SR)
 def normalize(a):
  r=subprocess.run(['ffmpeg','-hide_banner','-f','f32le','-ar',str(SR),'-ac','1','-i','-','-af','apad=whole_dur=1,loudnorm=I=-30:TP=-2:LRA=11:print_format=json','-f','null','-'],input=a.astype('<f4').tobytes(),capture_output=True,check=True);s=json.loads(re.search(r'\{[^{}]*"input_i"[^{}]*\}',r.stderr.decode(),re.S)[0]);g=min(-30-float(s['input_i']),-2-float(s['input_tp']));return a*10**(g/20),g
-m=dict(version=1,date='2026-10-23',status='试听待选；游戏UI点击保持原样',processing='外部素材只做固定音量匹配、无损转码；不剪切、不变调、不滤波、不叠层。原创五条基于原460Hz正弦点击，明确为本次自制。试听共同-30LUFS基线，原始对照亦匹配试听基线。',research=prior['research'],groups=[dict(id='external',name='公开素材 · 10位作者',candidates=[]),dict(id='original',name='基于原点击 · 5条自制',candidates=[])])
+m=dict(version=1,date='2026-10-23',status=prior.get('status','试听待选'),adoptedChoice=prior.get('adoptedChoice'),processing='外部素材只做固定音量匹配、无损转码；不剪切、不变调、不滤波、不叠层。原创五条基于原460Hz正弦点击，明确为本次自制。试听共同-30LUFS基线，原始对照亦匹配试听基线。',research=prior['research'],groups=[dict(id='external',name='公开素材 · 10位作者',candidates=[]),dict(id='original',name='基于原点击 · 5条自制',candidates=[])])
 rows=[]
 for i,(slug,file,author,name,license,popularity)in enumerate(selections,1):
  cid=f'SC{i}';p=O/prior['groups'][0]['candidates'][i-1]['original']['url'];dest=p;a=np.frombuffer(subprocess.check_output(['ffmpeg','-v','error','-i',str(p),'-ac','1','-ar',str(SR),'-f','f32le','-']),'<f4').copy();a,g=normalize(a);v=encode(a,O/'audio'/(cid+'.flac'));v['gainDb']=g

@@ -13,3 +13,5 @@ for key,cid in [('buy','BU3'),('sell','SE1'),('discard','DP1')]:
 print('Installed BU3 SE1 DP1, fixed common -30 LUFS base')
 
 p=G/"sources.json";v=json.loads(p.read_text());v["approvedCommerce"]={"metadata":"approved-commerce.json","tracks":tracks};p.write_text(json.dumps(v,ensure_ascii=False,indent=2)+"\n")
+
+if (G/"approved-click.json").exists():subprocess.run(["python",str(R/"scripts/assets/install-approved-click.py")],check=True)

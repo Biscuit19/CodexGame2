@@ -1,3 +1,4 @@
+import click from "./assets/audio/click.flac?url";
 import buy from "./assets/audio/buy.flac?url";
 import sell from "./assets/audio/sell.flac?url";
 import discard from "./assets/audio/discard.flac?url";
@@ -51,6 +52,7 @@ import discover2 from "./assets/audio/discover-2.flac?url";
 import unlock4 from "./assets/audio/unlock-4.flac?url";
 import unlock5 from "./assets/audio/unlock-5.flac?url";
 export const sampleBank = {
+  click,
   buy,
   sell,
   discard,

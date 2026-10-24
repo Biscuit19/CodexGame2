@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-24",
+  "choice": {
+    "id": "SC1",
+    "name": "轻轻啵一下",
+    "author": "farfadet46",
+    "sourceUrl": "https://opengameart.org/content/bubbles-pop",
+    "license": "CC0-1.0",
+    "popularity": "8852次下载；49收藏；有已采用游戏集合",
+    "sourceFile": "pop.ogg",
+    "sourceSha256": "d55886ec5b145045d1abd13926675b93646a8865e53e1f7a3a58cfbb7b733cff",
+    "download": {
+      "url": "https://opengameart.org/sites/default/files/pop.ogg",
+      "file": "bubbles-pop.ogg",
+      "sha256": "d55886ec5b145045d1abd13926675b93646a8865e53e1f7a3a58cfbb7b733cff",
+      "bytes": 8578
+    },
+    "original": {
+      "url": "originals/SC1.ogg",
+      "sha256": "d55886ec5b145045d1abd13926675b93646a8865e53e1f7a3a58cfbb7b733cff"
+    },
+    "audio": {
+      "url": "audio/SC1.flac",
+      "sha256": "8d64773fe74226679a34ab6423d792d00db36ec3ac733ecca61adc39e7d3eab1",
+      "duration": 0.27573696145124715,
+      "gainDb": 3.450000000000003
+    }
+  },
+  "processing": "Byte-identical approved SC1 audition; playback gain comes from uploaded JSON",
+  "sha256": "8d64773fe74226679a34ab6423d792d00db36ec3ac733ecca61adc39e7d3eab1"
+}

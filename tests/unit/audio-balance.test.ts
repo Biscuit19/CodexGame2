@@ -6,7 +6,7 @@ import { sampleChoice } from "../../src/audio-samples";
 it("导出音量以稳定编号往返；拒绝过期、非有限和负增益", () => {
   const profile = structuredClone(defaultBalance);
   profile.samples.buy = 0.8;
-  profile.cues.click = 0.6;
+  profile.samples.click = 0.6;
   profile.music.BG5 = 1.1;
   expect(parseBalance(JSON.parse(JSON.stringify(profile)))).toEqual(profile);
   for (const change of [
@@ -17,7 +17,7 @@ it("导出音量以稳定编号往返；拒绝过期、非有限和负增益", (
     { samples: { buy: Infinity } },
   ])
     expect(() => parseBalance({ ...profile, ...change })).toThrow();
-  expect(defaultBalance.buses.music).toBeCloseTo(0.35 * 0.64);
+  expect(defaultBalance.buses.music).toBeCloseTo(0.25088);
   expect(sampleChoice("open", { containerType: "safe" })?.gain).toBeCloseTo(
     1.872,
   );

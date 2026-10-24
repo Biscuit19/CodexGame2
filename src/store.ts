@@ -1,3 +1,4 @@
+import publishedAudio from "./audio-balance.json";
 import { musicNames, type MusicTrack } from "./music-catalog";
 import {
   db,
@@ -8,8 +9,12 @@ import {
   safeCap,
   safePrice,
   bosses,
+  maps,
   type Item,
   AMMO_STACK,
+  PREFLIGHT_AMMO,
+  PREFLIGHT_FOOD,
+  PREFLIGHT_WEAPONS,
   BASE_PACK,
   stackLimit,
   takeQuantity,
@@ -26,6 +31,7 @@ export type Equipment = {
   food: Item | null;
 };
 export interface Settings {
+  audioPresetRevision?: string;
   master: number;
   music: number;
   musicTrack?: MusicTrack;
@@ -89,11 +95,13 @@ export interface Result {
   reward: number;
 }
 export const defaults: Settings = {
-  master: 0.65,
-  music: 0.25,
+  audioPresetRevision:
+    publishedAudio.revision + ":" + publishedAudio.publishedFromExport,
+  master: publishedAudio.preview.settings.master,
+  music: publishedAudio.preview.settings.music,
   musicTrack: "BG5",
   musicMode: "loop",
-  sfx: 0.7,
+  sfx: publishedAudio.preview.settings.sfx,
   shake: 0.35,
   aim: "#edd39a",
   crosshair: "ring",
@@ -355,6 +363,15 @@ export function validateSave(data: unknown): Save {
   ];
   for (const n of Object.values(s.stats))
     if (!Number.isFinite(n) || n < 0) throw Error("统计数据无效");
+  // Apply the explicitly selected published mix once; subsequent user slider changes remain respected.
+  if (
+    s.settings.audioPresetRevision !==
+    publishedAudio.revision + ":" + publishedAudio.publishedFromExport
+  ) {
+    Object.assign(s.settings, publishedAudio.preview.settings);
+    s.settings.audioPresetRevision =
+      publishedAudio.revision + ":" + publishedAudio.publishedFromExport;
+  }
   for (const n of ["master", "music", "sfx", "shake"] as const)
     if (
       !Number.isFinite(s.settings[n]) ||
@@ -770,14 +787,15 @@ export function buy(s: Save, id: string) {
   if (
     !d ||
     d.kind === "collectible" ||
-    s.coins < d.price ||
+    s.coins < (d.buyPrice ?? d.price) ||
     unlocked(s) < (d.unlock ?? 0) ||
-    (d.tier >= 4 && (s.stock?.[id] ?? 0) >= (d.tier === 5 ? 1 : 2))
+    ((d.shopLimit ?? (d.tier === 5 ? 1 : d.tier === 4 ? 2 : 0)) > 0 &&
+      (s.stock?.[id] ?? 0) >= (d.shopLimit ?? (d.tier === 5 ? 1 : 2)))
   )
     return false;
   const i = makeItem(id, d.kind === "ammo" ? AMMO_STACK : 1);
   if (!canPut(s.stash, i, capacities[s.warehouse])) return false;
-  s.coins -= d.price;
+  s.coins -= d.buyPrice ?? d.price;
   put(s.stash, i, capacities[s.warehouse]);
   s.stock ??= {};
   s.stock[id] = (s.stock[id] ?? 0) + 1;
@@ -794,7 +812,7 @@ export function buyBack(s: Save, uid: string) {
     return false;
   const d = db[lost.id],
     cost = Math.ceil(
-      d.price *
+      (d.buyPrice ?? d.price) *
         (d.kind === "ammo"
           ? lost.qty / AMMO_STACK
           : d.kind === "food"
@@ -955,7 +973,7 @@ export function settle(s: Save, r: Result) {
   persist(s);
   return true;
 }
-const mapsReward = (m: number) => [4000, 7500, 12000, 20000][m];
+const mapsReward = (m: number) => maps[m].reward;
 export function cancelRaid(s: Save) {
   if (!s.pending || !s.raidBackup) return false;
   try {
@@ -1038,8 +1056,12 @@ export function sellCommonCollectibles(s: Save) {
 /** Preflight is advisory; only accessible carried supplies count as prepared. */
 export function deploymentWarnings(s: Save) {
   const warnings: string[] = [];
-  if (!s.equipment.primary && !s.equipment.secondary)
-    warnings.push("未装备枪械（至少1把）");
+  const weaponCount =
+    Number(!!s.equipment.primary) + Number(!!s.equipment.secondary);
+  if (weaponCount < PREFLIGHT_WEAPONS)
+    warnings.push(
+      `${weaponCount ? "装备枪械不足" : "未装备枪械"}（至少${PREFLIGHT_WEAPONS}把）`,
+    );
   const rounds =
     s.pack
       .filter((i) => db[i.id].kind === "ammo")
@@ -1049,15 +1071,19 @@ export function deploymentWarnings(s: Save) {
       (n, i) => n + (i?.loaded?.count || 0),
       0,
     );
-  if (rounds < 120)
+  if (rounds < PREFLIGHT_AMMO)
     warnings.push(
-      `携带子弹不足120发（当前${rounds}发，还缺${120 - rounds}发）`,
+      `携带子弹不足${PREFLIGHT_AMMO}发（当前${rounds}发，还缺${PREFLIGHT_AMMO - rounds}发）`,
     );
-  if (
-    !s.equipment.food?.qty &&
-    !s.pack.some((i) => db[i.id].kind === "food" && i.qty > 0)
-  )
-    warnings.push("未携带食物（至少1份）");
+  const foodCount =
+    (s.equipment.food?.qty ?? 0) +
+    s.pack
+      .filter((i) => db[i.id].kind === "food")
+      .reduce((n, i) => n + i.qty, 0);
+  if (foodCount < PREFLIGHT_FOOD)
+    warnings.push(
+      `${foodCount ? "携带食物不足" : "未携带食物"}（至少${PREFLIGHT_FOOD}份）`,
+    );
   return warnings;
 }
 export function unequipToStash(s: Save, uid: string) {

@@ -51,19 +51,19 @@ test("15个新的柔软候选与原声对照；最大试听音量、解码、勾
     fullPage: true,
   });
 });
-test("全音效调音台复用50个现用样本；BGM混听、音量往返导出及存档隔离", async ({
+test("全音效调音台复用51个现用样本；BGM混听、音量往返导出及存档隔离", async ({
   page,
 }) => {
   await page.goto("/audio-mixer/index.html");
   const before = await page.evaluate(() =>
     Object.fromEntries(
       Object.entries(localStorage).filter(
-        ([k]) => k !== "tricat-audio-mixer-v1",
+        ([k]) => !k.startsWith("tricat-audio-mixer-"),
       ),
     ),
   );
   await expect(page.locator("#tracks .volume-row")).toHaveCount(10);
-  await expect(page.locator("#effects [data-key]")).toHaveCount(50);
+  await expect(page.locator("#effects [data-key]")).toHaveCount(51);
   await page.getByRole("button", { name: "播放背景音乐", exact: true }).click();
   await expect
     .poll(() =>
@@ -78,12 +78,12 @@ test("全音效调音台复用50个现用样本；BGM混听、音量往返导出
   });
   expect(
     await page.evaluate(() => (window as any).__audioMixer.sound.buffers.size),
-  ).toBe(50);
+  ).toBe(51);
   await page
     .getByRole("slider", { name: "购买 · BU3 几枚硬币付款", exact: true })
     .fill("0.6");
   await page
-    .getByRole("slider", { name: "UI点击 · 原始声音", exact: true })
+    .getByRole("slider", { name: "UI点击 · SC1 轻轻啵一下", exact: true })
     .fill("0");
   await page
     .getByRole("slider", { name: "BGM总音量", exact: true })
@@ -102,8 +102,8 @@ test("全音效调音台复用50个现用样本；BGM混听、音量往返导出
   });
   expect(values.playing).toBe(true);
   expect(values.profile.samples.buy).toBe(0.6);
-  expect(values.profile.cues.click).toBe(0);
-  expect(values.bus).toBeCloseTo(0.25 * 0.35 * 0.64 * 0.8);
+  expect(values.profile.samples.click).toBe(0);
+  expect(values.bus).toBeCloseTo(0.8 * 0.25088 * 0.8);
   const download = page.waitForEvent("download");
   await page.getByRole("button", { name: "导出配置文件" }).click();
   const d = await download;
@@ -127,12 +127,12 @@ test("全音效调音台复用50个现用样本；BGM混听、音量往返导出
   });
   await page.reload();
   await expect(
-    page.getByRole("slider", { name: "UI点击 · 原始声音", exact: true }),
+    page.getByRole("slider", { name: "UI点击 · SC1 轻轻啵一下", exact: true }),
   ).toHaveValue("0");
   const after = await page.evaluate(() =>
     Object.fromEntries(
       Object.entries(localStorage).filter(
-        ([k]) => k !== "tricat-audio-mixer-v1",
+        ([k]) => !k.startsWith("tricat-audio-mixer-"),
       ),
     ),
   );
