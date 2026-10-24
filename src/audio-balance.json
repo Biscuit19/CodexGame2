@@ -5,10 +5,11 @@
   "buses": {
     "master": 1.885,
     "music": 0.25088,
-    "effects": 0.915
+    "effects": 0.8509500000000001
   },
   "samples": {
-    "click": 0.74,
+    "click": 0.46,
+    "click-base": 0.41,
     "buy": 1.31,
     "sell": 1.28,
     "discard": 1,
@@ -36,14 +37,14 @@
     "melee-second": 1.4,
     "switch-melee": 1.31,
     "food-tier4": 1.21,
-    "open-box": 1.45,
+    "open-box": 1.37,
     "open-toolbox": 1.28,
-    "open-cooler": 1.66,
-    "open-trashcan": 1.55,
-    "open-basket": 1.7,
+    "open-cooler": 1.47,
+    "open-trashcan": 1.43,
+    "open-basket": 1.51,
     "open-litter": 1.34,
     "open-cabinet": 1.55,
-    "open-medical": 1,
+    "open-medical": 1.1,
     "open-weapon": 1.67,
     "open-bed": 1.26,
     "open-safe": 1.84,
@@ -58,8 +59,7 @@
     "food-water": 1.44,
     "food-milk": 1.37,
     "food-can": 1.36,
-    "food-fries": 1.42,
-    "click-base": 0.74
+    "food-fries": 1.42
   },
   "cues": {
     "hit": 1,
@@ -103,5 +103,5 @@
     },
     "track": "NB5"
   },
-  "publishedFromExport": "2026-10-24T11:53:32.040Z"
+  "publishedFromExport": "2026-10-24T12:31:09.638Z"
 }

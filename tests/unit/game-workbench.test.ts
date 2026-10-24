@@ -22,7 +22,7 @@ import { collectTuning, tuningPlugin } from "../../scripts/tuning-plugin.mjs";
 it("应用上传音量及SC1原文件；文件名明确时区和毫秒", async () => {
   const raw = JSON.parse(
     await readFile(
-      "docs/config-history/game-audio-20261024T195332_043+0800.json",
+      "docs/config-history/game-audio-20261024T203109_642+0800.json",
       "utf8",
     ),
   );
