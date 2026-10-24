@@ -142,7 +142,8 @@ function slider(
   return row;
 }
 const labels: Record<SampleKey, string> = {
-  click: "UI点击 · SC1 轻轻啵一下",
+  click: "战区UI点击 · SC1 轻轻啵一下",
+  "click-base": "基地UI点击 · SC6 小巧气泡点按",
   buy: "购买 · BU3 几枚硬币付款",
   sell: "售卖 · SE1 售出零钱收入",
   discard: "丢弃 · DP1 皮革物品落下",

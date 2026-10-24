@@ -8,6 +8,7 @@
     "effects": 0.915
   },
   "samples": {
+    "click": 0.74,
     "buy": 1.31,
     "sell": 1.28,
     "discard": 1,
@@ -58,7 +59,7 @@
     "food-milk": 1.37,
     "food-can": 1.36,
     "food-fries": 1.42,
-    "click": 1.42
+    "click-base": 0.74
   },
   "cues": {
     "hit": 1,
@@ -102,5 +103,5 @@
     },
     "track": "NB5"
   },
-  "publishedFromExport": "2026-10-24T10:13:37.654Z"
+  "publishedFromExport": "2026-10-24T11:53:32.040Z"
 }

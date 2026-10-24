@@ -60,8 +60,8 @@ test("统一调整台显示真实当前数据，编辑武器/物品/容器并导
     .getByRole("button", { name: "播放背景音乐", exact: true })
     .click();
   await expect(
-    mixer.getByRole("slider", { name: "UI点击 · SC1 轻轻啵一下", exact: true }),
-  ).toHaveValue("1.42");
+    mixer.getByRole("slider", { name: "战区UI点击 · SC1 轻轻啵一下", exact: true }),
+  ).toHaveValue("0.74");
   const download = page.waitForEvent("download");
   await page.getByRole("button", { name: "导出全部配置", exact: true }).click();
   const d = await download;
@@ -189,7 +189,7 @@ test("上传的音量完整接入游戏且SC1实际解码播放，旧存档设�
       kept: again.settings.master,
     };
   });
-  expect(data.buffers).toBe(51);
+  expect(data.buffers).toBe(52);
   expect(data.master).toBeCloseTo(1.885);
   expect(data.music).toBeCloseTo(0.8 * 0.25088);
   expect(data.effects).toBeCloseTo(0.915);
@@ -197,5 +197,5 @@ test("上传的音量完整接入游戏且SC1实际解码播放，旧存档设�
   expect(data.migrated).toBe(0.8);
   expect(data.kept).toBe(0.4);
   await page.getByRole("button", { name: "补给商店", exact: true }).click();
-  expect(data.baseline.samples.click).toBe(1.42);
+  expect(data.baseline.samples.click).toBe(0.74);
 });

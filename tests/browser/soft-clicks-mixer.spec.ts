@@ -51,7 +51,7 @@ test("15个新的柔软候选与原声对照；最大试听音量、解码、勾
     fullPage: true,
   });
 });
-test("全音效调音台复用51个现用样本；BGM混听、音量往返导出及存档隔离", async ({
+test("全音效调音台复用52个现用样本；BGM混听、音量往返导出及存档隔离", async ({
   page,
 }) => {
   await page.goto("/audio-mixer/index.html");
@@ -63,7 +63,7 @@ test("全音效调音台复用51个现用样本；BGM混听、音量往返导出
     ),
   );
   await expect(page.locator("#tracks .volume-row")).toHaveCount(10);
-  await expect(page.locator("#effects [data-key]")).toHaveCount(51);
+  await expect(page.locator("#effects [data-key]")).toHaveCount(52);
   await page.getByRole("button", { name: "播放背景音乐", exact: true }).click();
   await expect
     .poll(() =>
@@ -78,12 +78,12 @@ test("全音效调音台复用51个现用样本；BGM混听、音量往返导出
   });
   expect(
     await page.evaluate(() => (window as any).__audioMixer.sound.buffers.size),
-  ).toBe(51);
+  ).toBe(52);
   await page
     .getByRole("slider", { name: "购买 · BU3 几枚硬币付款", exact: true })
     .fill("0.6");
   await page
-    .getByRole("slider", { name: "UI点击 · SC1 轻轻啵一下", exact: true })
+    .getByRole("slider", { name: "战区UI点击 · SC1 轻轻啵一下", exact: true })
     .fill("0");
   await page
     .getByRole("slider", { name: "BGM总音量", exact: true })
@@ -127,7 +127,7 @@ test("全音效调音台复用51个现用样本；BGM混听、音量往返导出
   });
   await page.reload();
   await expect(
-    page.getByRole("slider", { name: "UI点击 · SC1 轻轻啵一下", exact: true }),
+    page.getByRole("slider", { name: "战区UI点击 · SC1 轻轻啵一下", exact: true }),
   ).toHaveValue("0");
   const after = await page.evaluate(() =>
     Object.fromEntries(

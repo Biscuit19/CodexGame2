@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-test("生产构建的独立调音页能载入共享脚本、51音效及完整BGM", async ({
+test("生产构建的独立调音页能载入共享脚本、52音效及完整BGM", async ({
   page,
 }) => {
   const errors: string[] = [];
@@ -11,7 +11,7 @@ test("生产构建的独立调音页能载入共享脚本、51音效及完整BGM
   });
   expect(
     await page.evaluate(() => (window as any).__audioMixer.sound.buffers.size),
-  ).toBe(51);
+  ).toBe(52);
   await expect
     .poll(() =>
       page.evaluate(
@@ -51,7 +51,7 @@ test("生产构建统一调整台展示当前数值并导出完整可应用配�
   const fs = await import("node:fs/promises");
   const contents = await fs.readFile((await d.path())!, "utf8");
   const profile = JSON.parse(contents);
-  expect(profile.audio.samples.click).toBe(1.42);
+  expect(profile.audio.samples.click).toBe(0.74);
   expect(profile.currentValues.items).toHaveLength(120);
   await fs.writeFile(
     test.info().outputPath("production-workbench-export.json"),
@@ -63,8 +63,8 @@ test("生产构建统一调整台展示当前数值并导出完整可应用配�
     .getByRole("button", { name: "播放背景音乐", exact: true })
     .click();
   await expect(
-    frame.getByRole("slider", { name: "UI点击 · SC1 轻轻啵一下", exact: true }),
-  ).toHaveValue("1.42");
+    frame.getByRole("slider", { name: "战区UI点击 · SC1 轻轻啵一下", exact: true }),
+  ).toHaveValue("0.74");
   await page.screenshot({
     path: "test-results/production-workbench-audio.png",
   });

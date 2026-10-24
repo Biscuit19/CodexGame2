@@ -418,7 +418,13 @@ export class Sound {
   }
   play(name: string, tier = 1, options: SoundOptions = {}) {
     if (!this.ctx) return;
-    if (this.sample(name, { ...options, tier })) return;
+    if (
+      this.sample(
+        name === "click" && this.mode === "base" ? "click-base" : name,
+        { ...options, tier },
+      )
+    )
+      return;
     this.cueGain =
       (this.balance.cues[name] ?? 1) *
       (name === "search"

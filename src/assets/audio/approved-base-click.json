@@ -1,0 +1,26 @@
+{
+  "id": "SC6",
+  "name": "小巧气泡点按",
+  "author": "EZduzziteh",
+  "sourceUrl": "https://opengameart.org/content/pop-sounds-0",
+  "license": "CC0-1.0",
+  "popularity": "此条963次下载；评论有游戏使用反馈",
+  "sourceFile": "pop1.wav",
+  "sourceSha256": "758416a61890a61f4e1f00a65531e75e7d867cad1e96392d829860b8aa3a66f6",
+  "download": {
+    "url": "https://opengameart.org/sites/default/files/pop1.wav",
+    "file": "pop-sounds-0.wav",
+    "sha256": "758416a61890a61f4e1f00a65531e75e7d867cad1e96392d829860b8aa3a66f6",
+    "bytes": 10836
+  },
+  "original": {
+    "url": "originals/SC6.wav",
+    "sha256": "758416a61890a61f4e1f00a65531e75e7d867cad1e96392d829860b8aa3a66f6"
+  },
+  "audio": {
+    "url": "audio/SC6.flac",
+    "sha256": "f71048aed3bf7325756533a7508547dc8f4fcca85ad53b58a7302cb152a95aaf",
+    "duration": 0.06015873015873016,
+    "gainDb": -8.75
+  }
+}

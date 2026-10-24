@@ -1136,7 +1136,31 @@ function selectedMove(to: "stash" | "pack" | "secure") {
   }
   if (selected.from === "equipment" || selected.from === "shop") return;
   if (selected.from === to) return;
-  if (!move(s, selected.from, to, selected.uid)) toast("空间不足");
+  if (!raid && to === "pack" && ["stash", "overflow"].includes(selected.from)) {
+    const i = selectedItem();
+    const kind = i ? db[i.id].kind : undefined;
+    const slot =
+      kind === "weapon"
+        ? !s.equipment.primary
+          ? "primary"
+          : !s.equipment.secondary
+            ? "secondary"
+            : undefined
+        : kind &&
+            ["armor", "helmet", "bag", "ammo", "melee", "food"].includes(
+              kind,
+            ) &&
+            !s.equipment[kind as keyof Equipment]
+          ? (kind as keyof Equipment)
+          : undefined;
+    if (slot) {
+      equipSelected(slot);
+      return;
+    }
+  }
+  const from = selected.from;
+  if (!move(s, from, to, selected.uid)) toast("空间不足");
+  else if (!raid && to === "pack") sound.play("pack");
   selected = undefined;
   if (raid) overlay();
   else render();
@@ -1146,7 +1170,14 @@ async function action(el: HTMLElement) {
     id = el.dataset.id;
   try {
     sound.start();
-    sound.play("click");
+    // Item selection is silent: a double-click transfer must not stack two UI taps.
+    if (!(
+      !raid &&
+      ((a === "select" &&
+        ["stash", "overflow"].includes(el.dataset.from ?? "")) ||
+        a === "move")
+    ))
+      sound.play("click");
   } catch {
     /* Audio availability must never block navigation. */
   }
@@ -1496,12 +1527,19 @@ function quickItem(from: ItemSource, uid: string) {
       kind = i ? db[i.id].kind : undefined;
     const empty =
       kind === "weapon"
-        ? !s.equipment.primary
+        ? !s.equipment.primary || !s.equipment.secondary
         : kind &&
             ["armor", "helmet", "bag", "ammo", "melee", "food"].includes(kind)
           ? !s.equipment[kind as keyof Equipment]
           : false;
-    if (empty) equipSelected();
+    if (empty)
+      equipSelected(
+        kind === "weapon"
+          ? !s.equipment.primary
+            ? "primary"
+            : "secondary"
+          : undefined,
+      );
     else selectedMove("pack");
   } else if (from === "secure") selectedMove("pack");
   else if (from === "pack" && !raid) selectedMove("stash");
