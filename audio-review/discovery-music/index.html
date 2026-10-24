@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>新发现音效与完整BGM试听 · 猫尾乡野</title>
+    <link rel="stylesheet" href="review.css" />
+  </head>
+  <body>
+    <main>
+      <p>
+        <a href="../commerce/index.html">新购买、售卖、丢弃和UI点击 · 40候选</a>
+      </p>
+      <header class="intro">
+        <p>
+          已采用音乐NB2/NB3/NB5/NB6/NB10；其余仍待选。基地恢复原始配乐，战斗选曲在游戏设置中。
+        </p>
+        <div class="eyebrow">猫尾乡野 · 新一轮音效选材</div>
+        <h1>清亮的发现声，安静的新音乐。</h1>
+        <p>
+          10个新的发现奖励音效，另有10首完整舒缓BGM。每类十位不同作者，来源页均未在此前试听中使用。其余<strong>待选，暂不接入游戏</strong>。
+        </p>
+        <div class="links">
+          <a href="../reload-search-cats/index.html">此前换弹与猫叫</a
+          ><a href="../shots-music/index.html">上一轮枪声与音乐</a
+          ><a href="#research">选材依据与授权</a>
+        </div>
+      </header>
+      <section class="desk" aria-label="试听控制">
+        <div class="desk-row">
+          <label class="volume"
+            >试听音量
+            <input
+              id="volume"
+              type="range"
+              min="0"
+              max="100"
+              value="100"
+            /><output id="volume-label">100%</output></label
+          ><button id="stop" class="quiet">停止全部</button
+          ><button id="sequence">连听本组</button
+          ><button id="export" class="quiet">复制我的选择</button>
+        </div>
+        <p id="status" role="status" aria-live="polite">正在载入候选清单…</p>
+      </section>
+      <nav id="categories" aria-label="音效类别"></nav>
+      <section class="category-header">
+        <div class="eyebrow" id="category-count"></div>
+        <h2 id="category-title"></h2>
+        <p id="category-description"></p>
+        <div class="options" id="gun-controls">
+          <label
+            >连发射速
+            <input id="rps" type="range" min="2" max="15" value="10" /><output
+              id="rps-label"
+              >10 发/秒</output
+            ></label
+          ><label
+            >连发时长
+            <select id="burst-seconds">
+              <option value="1">1 秒</option>
+              <option value="2" selected>2 秒</option>
+              <option value="3">3 秒</option>
+              <option value="5">5 秒</option>
+            </select></label
+          >
+        </div>
+        <p class="small" id="context-note"></p>
+      </section>
+      <section id="candidates" aria-label="本类候选"></section>
+      <section class="selection panel">
+        <h2>已选 <span id="selection-count">0</span> 项</h2>
+        <p>
+          发现音效和BGM均可以多选。选择只保存在当前页面，不写游戏存档，离开前可复制清单。
+        </p>
+        <pre id="selection-text">还没有选择。</pre>
+      </section>
+      <section class="panel" id="research">
+        <h2>来源、完整原声与比较依据</h2>
+        <p>
+          以D3-2的明亮、简短奖励质感为参考，优先铃音、闪光提示和物品拾取；排除连续阶梯上扬、长铺垫升级曲。个别短双音拾取如实标注。没有用旧包换编号凑数；20条均来自此前未使用的来源页。
+        </p>
+        <p>
+          本轮所有文件保持原件字节不变，包括发现音效；只在播放时用固定增益匹配响度，不剪切、变调、加滤波、重组旋律或自创新声音。十首音乐保留完整原曲，可拖动进度、整曲循环。
+        </p>
+        <p>
+          参考开发者资源指南、搜索引擎推荐、OpenGameArt作者发行页和作品使用反馈；本次itch.io分类访问返回403，未绕过。热度逐作品如实列出，不用平台知名度代替单条下载量。少数较新作者低热度铃音作为音色补充明确标注。日期为2026-10-22。
+        </p>
+        <details>
+          <summary>对照：当前三级发现 D3-2 明亮物品奖励</summary>
+          <audio
+            controls
+            preload="none"
+            data-gain="1.2022644346174132"
+            src="../interactions/audio/D3-2-natural-ceb3fab959.flac"
+            aria-label="D3-2 对照原声"
+          ></audio>
+          <p>原有参考条目，不计入本轮10个新候选。</p>
+        </details>
+        <details>
+          <summary>全部作者、热度证据与许可</summary>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>作品 / 作者</th>
+                  <th>使用依据</th>
+                  <th>授权</th>
+                </tr>
+              </thead>
+              <tbody id="source-table"></tbody>
+            </table>
+          </div>
+        </details>
+        <p><a href="licenses/index.html">许可全文、原作者声明和处理说明</a></p>
+        <p class="small">
+          Scott
+          Buckley站点本轮返回406，Incompetech返回503，未绕过限制或把未取得的曲目算入候选；PeriTune当前规则限制完整音乐选集式分发，本轮未托管其曲目。Free
+          Music Archive按每首作品的实际许可核验。
+        </p>
+      </section>
+      <footer>只更新独立试听页 · 新枪声与BGM尚未接入游戏</footer>
+    </main>
+    <dialog id="copy-dialog">
+      <h2>把下面这段发给我即可</h2>
+      <textarea id="copy-text" readonly aria-label="音效选择清单"></textarea
+      ><button id="close-copy">关闭</button>
+    </dialog>
+    <script type="module" src="review.js"></script>
+  </body>
+</html>

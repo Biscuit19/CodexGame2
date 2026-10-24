@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>动作与进食音效试听 · 猫尾乡野</title>
+    <link rel="stylesheet" href="review.css" />
+  </head>
+  <body>
+    <main>
+      <header class="intro">
+        <div class="eyebrow">猫尾乡野 · 音效选材</div>
+        <h1>动作与进食，听你来选。</h1>
+        <p>
+          12 类动作，每类 5 个候选，共 60
+          个。枪声已定，这里只比较换弹、翻滚、装备与进食，<strong>尚未接入游戏</strong>。
+        </p>
+        <div class="links">
+<a href="../shots-music/index.html">新枪声与完整BGM · 30候选</a>
+          <a href="../reload-search-cats/index.html">新试听：换弹、轻搜索与猫叫 · 40候选</a>
+          <a href="../interactions/index.html">新一轮：搜索、容器与四级食物 · 115候选</a>
+          <a href="../selected/index.html">已定枪声与旧换弹对照</a
+          ><a href="../index.html">上一轮原声库</a
+          ><a href="#research">选材依据与授权</a>
+        </div>
+      </header>
+      <section class="desk" aria-label="试听控制">
+        <div class="desk-row">
+          <label class="volume"
+            >试听音量
+            <input
+              id="volume"
+              type="range"
+              min="0"
+              max="100"
+              value="100"
+            /><output id="volume-label">100%</output></label
+          >
+          <button id="stop" class="quiet">停止全部</button>
+          <button id="sequence">连听本类 5 个</button>
+          <button id="export" class="quiet">复制我的选择</button>
+        </div>
+        <p id="status" role="status" aria-live="polite">正在载入候选清单…</p>
+      </section>
+      <nav id="categories" aria-label="音效类别"></nav>
+      <section class="category-header">
+        <div>
+          <div class="eyebrow" id="category-count"></div>
+          <h2 id="category-title"></h2>
+        </div>
+        <p id="category-description"></p>
+        <div id="food-items"></div>
+        <div class="options">
+          <label id="version-wrap" hidden
+            >食物版本
+            <select id="version"></select
+          ></label>
+          <label id="effects-wrap" hidden
+            ><input type="checkbox" id="effects" checked />
+            加入轻微恢复点缀</label
+          >
+          <label id="reload-wrap" hidden
+            >换弹播放
+            <select id="reload-time">
+              <option value="0">原速</option>
+              <option value="1.5">同步 1.5 秒动作</option>
+              <option value="2.5">同步 2.5 秒动作</option>
+              <option value="3.5">同步 3.5 秒动作</option>
+            </select></label
+          >
+        </div>
+        <p class="small" id="context-note"></p>
+      </section>
+      <section id="candidates" aria-label="本类候选"></section>
+      <section class="selection panel">
+        <h2>已选 <span id="selection-count">0</span> 项</h2>
+        <p>
+          每类可以独立选，猫条与冰淇淋、水与核爪饮品也能分别选。选择只保留在当前页面，不会写入游戏存档；离开前可复制清单。
+        </p>
+        <pre id="selection-text">还没有选择。</pre>
+      </section>
+      <section id="research" class="panel">
+        <h2>这次怎样找，怎样筛</h2>
+        <p>
+          先查开发者讨论与热门发行页，再核对原作者授权、动作内容和下载/评分依据。下载次数不等于采用它的游戏数量；库的热度也不等于每条音效的热度。
+        </p>
+        <p>
+          主体是可辨认的实际动作。翻滚使用衣物与身体着地的组件；高等级食物用开罐、咀嚼、吸食、打嗝组织节奏。组合示例均注明组成，不把一段吸管声称作实录吃面，不把机件点击称作完整换弹。
+        </p>
+        <p>
+          仅剪切、拼接/轻度叠加、固定音量匹配，剪切边缘做 4
+          毫秒防咔哒处理；不变调、不拉伸、不加混响或失真。换弹播放器的同步试听会改变播放速度，原速按钮始终保留。原声展开后可单独听完整录音，只做必要的固定防削波衰减。
+        </p>
+        <details>
+          <summary>搜索范围、未采用的热门库与访问限制</summary>
+          <div id="research-links"></div>
+        </details>
+        <details>
+          <summary>全部作者、热度证据与许可证</summary>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>素材 / 作者</th>
+                  <th>使用依据</th>
+                  <th>授权</th>
+                </tr>
+              </thead>
+              <tbody id="source-table"></tbody>
+            </table>
+          </div>
+        </details>
+        <p class="small">
+          数值为本次 2026-10-21
+          核验快照。少数舔食/吸食组件没有公开下载数，明确标为动作匹配补充；不声称全部都是热门单品。Sonniss
+          / Mixkit
+          的独立素材分发限制不适合这个逐条公开试听页，保留官方链接供后续考虑。
+        </p>
+      </section>
+      <footer>只更新试听网页 · 游戏现用音效与玩法未修改</footer>
+    </main>
+    <dialog id="copy-dialog">
+      <h2>把下面这段发给我即可</h2>
+      <textarea id="copy-text" readonly aria-label="音效选择清单"></textarea
+      ><button id="close-copy">关闭</button>
+    </dialog>
+    <script type="module" src="review.js"></script>
+  </body>
+</html>
