@@ -969,7 +969,7 @@ describe("真实战区逻辑", () => {
     r.p.angle = 0;
     const e = r.spawn(1150, 1000, 0, 1);
     e.cool = 999;
-    for (let i = 0; i < 10 && r.enemies.includes(e); i++) {
+    for (let i = 0; i < 30 && r.enemies.includes(e); i++) {
       r.fireCool = 0;
       r.p.angle = Math.atan2(e.y - r.p.y, e.x - r.p.x);
       r.shoot();

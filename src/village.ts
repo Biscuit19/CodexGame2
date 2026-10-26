@@ -766,10 +766,10 @@ export function buildVillage(r: Raid) {
       hunter: [0.3, 0.45, 0.23, 0.02, 0],
       shop: [0.35, 0.4, 0.23, 0.02, 0],
       clinic: [0.16, 0.39, 0.41, 0.04, 0],
-      barn: [0.06, 0.25, 0.55, 0.1399, 0.0001],
+      barn: [0.06, 0.25, 0.55, 0.135, 0.005],
       supply: [0.22, 0.43, 0.32, 0.03, 0],
-      "boss-yard": [0.12, 0.3, 0.48, 0.099, 0.001],
-      boss: [0.02, 0.12, 0.56, 0.299, 0.001],
+      "boss-yard": [0.12, 0.3, 0.48, 0.09, 0.01],
+      boss: [0.02, 0.12, 0.56, 0.275, 0.025],
     };
     let roll = r.random(),
       tier = 1;
@@ -1009,6 +1009,16 @@ export function buildVillage(r: Raid) {
     const p = regionPoint(squad.startsWith("boss") ? "boss" : squad, x, y);
     const e = r.spawn(p.x, p.y, breed, tier);
     e.squad = squad;
+    // Health follows the resource risk gradient; armor tiers and enemy counts stay intact.
+    const healthScale = squad.startsWith("boss")
+      ? 1.65
+      : squad === "barn"
+        ? 1.4
+        : squad === "clinic"
+          ? 1.15
+          : 1;
+    e.hp *= healthScale;
+    e.maxHp = e.hp;
     if (squad.startsWith("boss"))
       e.leash = {
         ...villagePoint(1955, 400),

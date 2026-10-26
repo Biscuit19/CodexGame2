@@ -476,7 +476,14 @@ function equipped() {
   )
     .map(([slot, label, ic]) => {
       const i = s.equipment[slot];
-      return `<div class="equipped-slot" data-drop="equipment" data-slot="${slot}" aria-label="${label}装备位"><span class="equipment-title">${label}</span><button class="equipped-item" data-action="select" data-from="equipment" data-item="${i?.id || ""}" data-id="${i?.uid || ""}" ${i ? 'draggable="true"' : "disabled"}>${i ? itemIcon(i, 32) : icon(ic, "#7c917b", 32)}<strong style="color:${i ? itemNameColor(i.id) : "inherit"}">${i ? name(i.id) : "未装备"}</strong>${slot === "food" && i ? `<span>${i.qty} 份</span>` : ""}${slot === "ammo" ? `<span>${i?.qty ?? 0} 发备弹</span><span>弹匣 ${raid?.mag ?? s.equipment.primary?.loaded?.count ?? 0} 发</span>` : ""}${i?.durability !== undefined ? `<span>耐久 ${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}</span>` : ""}</button></div>`;
+      const ammoId =
+        i?.id ?? `m${raid?.ammoTier ?? s.equipment.primary?.loaded?.tier ?? 1}`;
+      const reserve =
+        (i?.qty ?? 0) +
+        s.pack
+          .filter((p) => p.id === ammoId)
+          .reduce((sum, p) => sum + p.qty, 0);
+      return `<div class="equipped-slot" data-drop="equipment" data-slot="${slot}" aria-label="${label}装备位"><span class="equipment-title">${label}</span><button class="equipped-item" data-action="select" data-from="equipment" data-item="${i?.id || ""}" data-id="${i?.uid || ""}" ${i ? 'draggable="true"' : "disabled"}>${i ? itemIcon(i, 32) : icon(ic, "#7c917b", 32)}<strong style="color:${i ? itemNameColor(i.id) : "inherit"}">${i ? name(i.id) : "未装备"}</strong>${slot === "food" && i ? `<span>${i.qty} 份</span>` : ""}${slot === "ammo" ? `<span>${reserve} 发</span>` : ""}${i?.durability !== undefined ? `<span class="equipment-durability">耐久 ${Math.ceil(i.durability)}/${Math.ceil(i.maxDurability!)}</span>` : ""}</button></div>`;
     })
     .join("")}</div>`;
 }
@@ -899,7 +906,13 @@ function overlay() {
   if (raid && !raid.done && !document.querySelector("#raid-overlay"))
     renderRaid();
   const el = document.querySelector("#raid-overlay");
-  if (el) el.innerHTML = raid?.paused ? "" : raidOverlay();
+  if (el) {
+    const scroll =
+      el.querySelector<HTMLElement>(".inventory-scroll")?.scrollTop ?? 0;
+    el.innerHTML = raid?.paused ? "" : raidOverlay();
+    const pack = el.querySelector<HTMLElement>(".inventory-scroll");
+    if (pack) pack.scrollTop = scroll;
+  }
   if (selected && selectedItem()) refreshItemMenu();
   else closeItemMenu();
 }

@@ -900,6 +900,8 @@ export function repair(s: Save, slot: keyof Equipment | Item) {
 export function beginRaid(s: Save) {
   if (s.pending) return false;
   s.raidBackup = JSON.stringify({ ...s, raidBackup: undefined });
+  // Snapshot first: abort restores the original loadout without duplicating relief bags.
+  if (!s.equipment.bag) s.equipment.bag = makeItem("b1");
   s.pending = true;
   s.stats.raids++;
   s.result = undefined;

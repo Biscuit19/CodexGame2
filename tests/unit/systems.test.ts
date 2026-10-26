@@ -172,7 +172,7 @@ describe("配置与战斗", () => {
   it("高阶弹穿甲更强，破甲失去保护", () => {
     expect(damage(30, 4, 2, 60)).toBeGreaterThan(damage(30, 1, 2, 60));
     expect(damage(30, 1, 5, 0)).toBeGreaterThan(damage(30, 1, 5, 100));
-    expect(damage(30, 2, 2, 60, true)).toBe(damage(30, 2, 2, 60) * 1.5);
+    expect(damage(30, 2, 2, 60, true)).toBe(damage(30, 2, 2, 60) * 1.2);
   });
   it("搜索按实际价值，星洲猫心需要七秒，出售为 65%", () => {
     expect(searchTime(makeItem("c4_0"))).toBe(7);

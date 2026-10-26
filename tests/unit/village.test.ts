@@ -184,7 +184,7 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
       }
     }
   });
-  it("原有区域容器数量、概率与资源梯度不变，诊所无枪弹护具，传说仍极稀有", () => {
+  it("区域容器数量与风险收益梯度保留，诊所无枪弹护具，传说可掉落但仍稀有", () => {
     const totals: Record<
       string,
       { value: number; count: number; legend: number }
@@ -240,7 +240,8 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
     for (const [region, t] of Object.entries(totals))
       if (!["boss", "boss-yard", "barn"].includes(region))
         expect(t.legend).toBe(0);
-    expect(totals.boss.legend / totals.boss.count).toBeLessThan(0.005);
+    expect(totals.boss.legend / totals.boss.count).toBeGreaterThan(0.01);
+    expect(totals.boss.legend / totals.boss.count).toBeLessThan(0.04);
   });
   it("大地图A*可跨河经桥和旋转门寻路，实际AI能过主桥；B点在农庄内无击杀限制", () => {
     const r = start(),

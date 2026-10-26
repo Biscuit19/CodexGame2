@@ -130,6 +130,35 @@ export interface Bullet {
   range: number;
   travel: number;
   shotgun?: boolean;
+  melee?: boolean;
+}
+/** Elliptical head volume in the same projected coordinates as bullets (not ground y). */
+export function projectileInHead(
+  b: { x: number; y: number },
+  actor: { x: number; y: number },
+) {
+  return ((b.x - actor.x) / 18) ** 2 + ((b.y - (actor.y - 35)) / 16) ** 2 <= 1;
+}
+/** Test the incoming trajectory through the silhouette, including cheek entry from either side.
+ * A bullet first touching the body boundary must not hide the head farther along that chord.
+ * The closest point is clamped forward so shots already travelling away cannot become headshots.
+ */
+export function projectileHitsHead(
+  b: { x: number; y: number; vx: number; vy: number },
+  actor: { x: number; y: number },
+) {
+  const speed = Math.hypot(b.vx, b.vy);
+  if (!speed) return projectileInHead(b, actor);
+  if (b.y > actor.y - 17) return false;
+  const dx = b.vx / speed / 18,
+    dy = b.vy / speed / 16;
+  const x = (b.x - actor.x) / 18,
+    y = (b.y - actor.y + 35) / 16;
+  const distance = Math.max(
+    0,
+    Math.min(16, -(x * dx + y * dy) / (dx * dx + dy * dy)),
+  );
+  return (x + dx * distance) ** 2 + (y + dy * distance) ** 2 <= 1;
 }
 export const projectileFalloff = (b: Bullet) =>
   b.shotgun
@@ -639,7 +668,7 @@ export class Raid {
   }
   spawn(x: number, y: number, breed: number, tier: number, boss?: BossDef) {
     ({ x, y } = this.freePoint(x, y));
-    const hp = boss?.hp ?? 55 + tier * 17;
+    const hp = boss?.hp ?? 70 + tier * 22;
     const weapon =
       boss?.weapon ??
       Number(
@@ -1222,6 +1251,7 @@ export class Raid {
           vx: Math.cos(a),
           vy: Math.sin(a),
           damage: melee.damage!,
+          melee: true,
           tier: 1,
           friendly: true,
           travel: 0,
@@ -1555,7 +1585,7 @@ export class Raid {
       life: 0.25,
       max: 0.25,
     });
-    const head = b.y < e.y - 34;
+    const head = !b.melee && projectileHitsHead(b, e);
     let d = damage(
       b.damage,
       b.tier,
@@ -1892,17 +1922,22 @@ export class Raid {
         }
         if (b.friendly) {
           const e = this.enemies.find(
-            (e) => Math.hypot(e.x - b.x, e.y - 25 - b.y) < (e.boss ? 28 : 22),
+            (e) =>
+              Math.hypot(e.x - b.x, e.y - 25 - b.y) < (e.boss ? 28 : 22) ||
+              projectileInHead(b, e),
           );
           if (e) {
             this.hurtEnemy(e, b);
             b.life = 0;
           }
-        } else if (Math.hypot(p.x - b.x, p.y - 25 - b.y) < 20) {
+        } else if (
+          Math.hypot(p.x - b.x, p.y - 25 - b.y) < 20 ||
+          projectileInHead(b, p)
+        ) {
           this.hurtPlayer(
             b.damage * (b.shotgun ? projectileFalloff(b) : 1),
             b.tier,
-            b.y < p.y - 34,
+            projectileHitsHead(b, p),
           );
           b.life = 0;
         }
