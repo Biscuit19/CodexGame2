@@ -72,21 +72,34 @@ test("搜索逐件揭示和拾取保留背包滚动，紧凑栏与弹药合计�
   expect(
     await durability.evaluate((el) => el.getBoundingClientRect().height),
   ).toBeLessThanOrEqual(28);
-  const dimensions = await page.locator(".equipment-fixed").evaluate((el) => {
-    const getHeight = () => el.getBoundingClientRect().height;
-    const compact = getHeight();
-    const style = document.createElement("style");
-    style.textContent = `.inventory-panel .equipped-item { gap:3px; padding:5px 0; }
-      .inventory-panel .equipped-item > .item-art { --art-h:48px; }
-      .inventory-panel .equipped-slot { padding:5px; }
-      .inventory-panel .equipment-fixed > .panel-heading { margin-bottom:8px; }`;
-    document.head.append(style);
-    const original = getHeight();
-    style.remove();
-    return { compact, original };
-  });
-  expect(dimensions.compact / dimensions.original).toBeGreaterThan(0.8);
-  expect(dimensions.compact / dimensions.original).toBeLessThan(0.92);
+  const artwork = await page
+    .locator(".equipped-item > .item-art")
+    .evaluateAll(async (els) => {
+      const { equipmentFrame } = await import("/src/equipment-art.ts");
+      return els.map((el) => {
+        const rect = el.querySelector(".art-glyph")!.getBoundingClientRect();
+        const frame = equipmentFrame((el as HTMLElement).dataset.art!)!.rect;
+        return {
+          height: el.getBoundingClientRect().height,
+          ratio: rect.width / rect.height,
+          originalRatio: frame[2] / frame[3],
+        };
+      });
+    });
+  for (const art of artwork) {
+    expect(art.height).toBe(64);
+    expect(art.ratio).toBeCloseTo(art.originalRatio, 2);
+  }
+  for (const selector of [".panel-heading > span", ".raid-income", "button"]) {
+    expect(
+      await heading
+        .locator(selector)
+        .evaluate((el) => getComputedStyle(el).fontSize),
+    ).toBe("18px");
+  }
+  expect(
+    (await heading.locator("button").boundingBox())!.height,
+  ).toBeGreaterThanOrEqual(40);
   const panel = page.locator("#raid-overlay .inventory-panel");
   expect((await panel.boundingBox())!.width).toBe(575);
   for (const selector of [

@@ -2421,17 +2421,21 @@ body:not(.aiming) #crosshair { display: none; }
 /* Keep the raid pack title, capacity, income and sort on one compact row. */
 .inventory-panel .pack-heading { flex-wrap: nowrap; gap: 8px; }
 .inventory-panel .pack-heading > .panel-heading { flex: 0 0 auto; gap: 8px; }
-.inventory-panel .pack-heading .panel-heading h2 { font-size: 19px; }
-.inventory-panel .pack-heading .panel-heading span { font-size: 13px; white-space: nowrap; }
-.inventory-panel .pack-heading > .raid-income { font-size: 13px; white-space: nowrap; text-align: right; }
-.inventory-panel .pack-heading > button { font-size: 13px; padding: 6px 8px; min-height: 0; margin: 0; }
-/* Original equipment typography; reduce spacing and art height rather than text. */
+.inventory-panel .pack-heading .panel-heading h2 { font-size: 23px; }
+.inventory-panel .pack-heading .panel-heading span { font-size: 18px; white-space: nowrap; }
+.inventory-panel .pack-heading > .raid-income { font-size: 18px; white-space: nowrap; text-align: right; }
+.inventory-panel .pack-heading > button { font-size: 18px; padding: 8px 12px; min-height: 40px; margin: 0; }
+/* Keep readable typography, with generous undistorted art and tighter text leading. */
 :root { --inventory-width: 575px; }
 .inventory-layout { grid-template-columns: var(--inventory-width) minmax(0, 1fr); }
 .inventory-panel, .raid-inventory-layout .inventory-panel { width: var(--inventory-width); }
 .inventory-panel .equipped-item .equipment-durability { white-space: nowrap; }
-.inventory-panel .equipped-item { gap: 2px; padding: 3px 0; }
-.inventory-panel .equipped-item > .item-art { --art-h: 36px; }
+.inventory-panel .equipped-item { gap: 2px; padding: 2px 0; }
+.inventory-panel .equipped-item > .item-art { --art-w: 108px; --art-h: 64px; max-width: 100%; }
+.inventory-panel .equipment-title,
+.inventory-panel .equipped-item strong,
+.inventory-panel .equipped-item > span:not(.item-art) { line-height: 1.08; }
+.inventory-panel .equipped-item > svg { width: 64px; height: 64px; }
 .inventory-panel .equipped-slot { padding: 4px; }
 .inventory-panel .equipment-fixed > .panel-heading { margin-bottom: 6px; }
 @media (max-width: 1250px) { :root { --inventory-width: 518px; } }
