@@ -87,6 +87,65 @@ describe("搜索与战斗平衡修订", () => {
       expect(e.armorDurability).toBe(armor);
     }
   });
+  it("下方及斜下方瞄头的真实射击等到头部再命中，身体瞄准仍伤护甲", () => {
+    for (const offsetX of [-120, 0, 120])
+      for (const head of [false, true]) {
+        const r = raid();
+        r.enemies = [];
+        r.walls = [];
+        r.exits = [];
+        r.updateEnemy = () => {}; // Stationary target, as specified by the aiming rule.
+        const e = r.spawn(3000, 3000, 0, 1);
+        r.p.x = e.x + offsetX;
+        r.p.y = e.y + 200;
+        r.save.equipment.primary = makeItem("w9");
+        r.activeWeapon = "primary";
+        r.mag = 5;
+        r.reload = 0;
+        r.fireCool = 0;
+        const armor = e.armorDurability,
+          helmet = e.helmetDurability;
+        r.update(1 / 60, new Set(), {
+          x: e.x,
+          y: e.y - (head ? 35 : 5),
+          down: true,
+        });
+        expect(r.bullets).toHaveLength(1);
+        // Changing the cursor after firing must not steer the projectile.
+        for (let n = 0; n < 25; n++)
+          r.update(1 / 60, new Set(), { x: 4000, y: 4000, down: false });
+        if (head) {
+          expect(e.helmetDurability).toBeLessThan(helmet);
+          expect(e.armorDurability).toBe(armor);
+        } else {
+          expect(e.armorDurability).toBeLessThan(armor);
+          expect(e.helmetDurability).toBe(helmet);
+        }
+      }
+  });
+  it("瞄头不锁敌：目标移走会射空，墙壁仍拦截瞄头子弹", () => {
+    for (const wall of [false, true]) {
+      const r = raid();
+      r.enemies = [];
+      r.walls = [];
+      r.exits = [];
+      r.updateEnemy = () => {};
+      const e = r.spawn(3000, 3000, 0, 1);
+      r.p.x = e.x;
+      r.p.y = e.y + 200;
+      r.save.equipment.primary = makeItem("w9");
+      r.activeWeapon = "primary";
+      r.mag = 5;
+      r.reload = 0;
+      if (wall)
+        r.walls = [{ x: 3000, y: 3120, w: 120, h: 20, z: 40, color: "#888" }];
+      r.update(1 / 60, new Set(), { x: e.x, y: e.y - 35, down: true });
+      if (!wall) e.x += 100;
+      for (let n = 0; n < 25; n++)
+        r.update(1 / 60, new Set(), { x: 4000, y: 4000, down: false });
+      expect(e.hp).toBe(e.maxHp);
+    }
+  });
   it("伤害降低，富资源区更耐打，低级弹对Boss护甲明显弱于高级弹", () => {
     expect(db.w0.damage).toBe(14);
     expect(db.w3.damage).toBe(22);

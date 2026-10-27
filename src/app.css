@@ -2425,11 +2425,14 @@ body:not(.aiming) #crosshair { display: none; }
 .inventory-panel .pack-heading .panel-heading span { font-size: 13px; white-space: nowrap; }
 .inventory-panel .pack-heading > .raid-income { font-size: 13px; white-space: nowrap; text-align: right; }
 .inventory-panel .pack-heading > button { font-size: 13px; padding: 6px 8px; min-height: 0; margin: 0; }
-.inventory-panel .equipped-item .equipment-durability { font-size: 11px; white-space: nowrap; line-height: 1.2; }
-.raid-inventory-layout .equipment-title { font-size: 13px; }
-.raid-inventory-layout .equipped-item { gap: 2px; padding: 2px 0; min-height: 0; }
-.raid-inventory-layout .equipped-item strong { font-size: 14px; }
-.raid-inventory-layout .equipped-item > span:not(.equipment-durability) { font-size: 13px; }
-.raid-inventory-layout .equipped-item > .item-art { width: 28px; height: 28px; }
-.raid-inventory-layout .equipped-slot { padding: 4px; }
-.raid-inventory-layout .equipment-fixed > .panel-heading { margin-bottom: 4px; }
+/* Original equipment typography; reduce spacing and art height rather than text. */
+:root { --inventory-width: 575px; }
+.inventory-layout { grid-template-columns: var(--inventory-width) minmax(0, 1fr); }
+.inventory-panel, .raid-inventory-layout .inventory-panel { width: var(--inventory-width); }
+.inventory-panel .equipped-item .equipment-durability { white-space: nowrap; }
+.inventory-panel .equipped-item { gap: 2px; padding: 3px 0; }
+.inventory-panel .equipped-item > .item-art { --art-h: 36px; }
+.inventory-panel .equipped-slot { padding: 4px; }
+.inventory-panel .equipment-fixed > .panel-heading { margin-bottom: 6px; }
+@media (max-width: 1250px) { :root { --inventory-width: 518px; } }
+@media (max-width: 1000px) { :root { --inventory-width: calc(100vw - 405px); } }

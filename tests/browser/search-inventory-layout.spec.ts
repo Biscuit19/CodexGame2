@@ -71,13 +71,45 @@ test("搜索逐件揭示和拾取保留背包滚动，紧凑栏与弹药合计�
   );
   expect(
     await durability.evaluate((el) => el.getBoundingClientRect().height),
-  ).toBeLessThan(18);
+  ).toBeLessThanOrEqual(28);
+  const dimensions = await page.locator(".equipment-fixed").evaluate((el) => {
+    const getHeight = () => el.getBoundingClientRect().height;
+    const compact = getHeight();
+    const style = document.createElement("style");
+    style.textContent = `.inventory-panel .equipped-item { gap:3px; padding:5px 0; }
+      .inventory-panel .equipped-item > .item-art { --art-h:48px; }
+      .inventory-panel .equipped-slot { padding:5px; }
+      .inventory-panel .equipment-fixed > .panel-heading { margin-bottom:8px; }`;
+    document.head.append(style);
+    const original = getHeight();
+    style.remove();
+    return { compact, original };
+  });
+  expect(dimensions.compact / dimensions.original).toBeGreaterThan(0.8);
+  expect(dimensions.compact / dimensions.original).toBeLessThan(0.92);
+  const panel = page.locator("#raid-overlay .inventory-panel");
+  expect((await panel.boundingBox())!.width).toBe(575);
+  for (const selector of [
+    ".equipment-title",
+    ".equipped-item strong",
+    ".equipment-durability",
+  ]) {
+    expect(
+      await panel
+        .locator(selector)
+        .first()
+        .evaluate((el) => getComputedStyle(el).fontSize),
+    ).toBe("18px");
+  }
+  expect(
+    await durability.evaluate((el) => el.scrollWidth <= el.clientWidth),
+  ).toBe(true);
   await page.screenshot({ path: "test-results/search-pack-layout.png" });
   await page.evaluate(() => (window as any).__game.raid.take(0, false, true));
   expect(await scroll.evaluate((el) => el.scrollTop)).toBeCloseTo(before, 0);
   await page.setViewportSize({ width: 1280, height: 720 });
   await expect(scroll).toBeVisible();
-  expect(await scroll.evaluate((el) => el.clientHeight)).toBeGreaterThan(180);
+  expect(await scroll.evaluate((el) => el.clientHeight)).toBeGreaterThan(100);
   await page.screenshot({ path: "test-results/search-pack-720.png" });
 });
 test("未携带背包入局免费穿戴布兜", async ({ page }) => {

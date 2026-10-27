@@ -131,6 +131,7 @@ export interface Bullet {
   travel: number;
   shotgun?: boolean;
   melee?: boolean;
+  aim?: { x: number; y: number };
 }
 /** Elliptical head volume in the same projected coordinates as bullets (not ground y). */
 export function projectileInHead(
@@ -159,6 +160,25 @@ export function projectileHitsHead(
     Math.min(16, -(x * dx + y * dy) / (dx * dx + dy * dy)),
   );
   return (x + dx * distance) ** 2 + (y + dy * distance) ** 2 <= 1;
+}
+/** A head-aimed player shot may pass the overlapping projected belly on its way
+ * to the head. Recheck current geometry every step; aim is a world point, never a target lock.
+ * Spread must still intersect the head, and walls/nearer actors still block the shot.
+ */
+export function projectileAimedAtHead(
+  b: Bullet,
+  actor: { x: number; y: number },
+) {
+  if (!b.aim || !projectileInHead(b.aim, actor)) return false;
+  const dx = b.vx / 18,
+    dy = b.vy / 16;
+  const x = (b.x - actor.x) / 18,
+    y = (b.y - actor.y + 35) / 16;
+  const speedSquared = dx * dx + dy * dy;
+  if (!speedSquared) return false;
+  const time = -(x * dx + y * dy) / speedSquared;
+  if (time < 0 || time * Math.hypot(b.vx, b.vy) > 64) return false;
+  return (x + dx * time) ** 2 + (y + dy * time) ** 2 <= 1;
 }
 export const projectileFalloff = (b: Bullet) =>
   b.shotgun
@@ -277,6 +297,7 @@ export class Raid {
   onDiscover?: (item: Item) => void;
   tick = 0;
   checkpoint = 0;
+  aimPoint?: { x: number; y: number };
   constructor(
     save: Save,
     map: number,
@@ -1176,6 +1197,7 @@ export class Raid {
         this.weapon.range!,
         count > 1,
         pellet === 0,
+        this.aimPoint,
       );
     }
     this.sound.play("shot", 1, { weaponClass: this.weapon.weaponClass });
@@ -1310,6 +1332,7 @@ export class Raid {
     range = 800,
     shotgun = false,
     muzzle = true,
+    aim?: { x: number; y: number },
   ) {
     const speed = friendly ? 1050 : 440;
     if (muzzle)
@@ -1334,6 +1357,7 @@ export class Raid {
       range,
       travel: 0,
       shotgun,
+      aim: aim ? { ...aim } : undefined,
     });
   }
   alert(x: number, y: number, radius: number) {
@@ -1748,6 +1772,7 @@ export class Raid {
       dx /= l;
       dy /= l;
     }
+    this.aimPoint = { x: mouse.x, y: mouse.y };
     p.angle = Math.atan2(mouse.y - (p.y - 24), mouse.x - p.x);
     p.rollCooldown -= dt;
     p.hit -= dt;
@@ -1923,8 +1948,9 @@ export class Raid {
         if (b.friendly) {
           const e = this.enemies.find(
             (e) =>
-              Math.hypot(e.x - b.x, e.y - 25 - b.y) < (e.boss ? 28 : 22) ||
-              projectileInHead(b, e),
+              projectileInHead(b, e) ||
+              (Math.hypot(e.x - b.x, e.y - 25 - b.y) < (e.boss ? 28 : 22) &&
+                !projectileAimedAtHead(b, e)),
           );
           if (e) {
             this.hurtEnemy(e, b);
