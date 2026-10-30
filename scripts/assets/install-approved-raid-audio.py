@@ -44,13 +44,14 @@ def main():
  for t in music.values():t['targetLufs']=target;t['playbackGain']=10**((target-t['inputLufs'])/20)
  m=dict(version=1,date='2026-10-23 Asia/Shanghai',tracks=tracks,sources=sources,sourcePacks=packs,musicTargetLufs=target,processing='Original WebAudio score faithfully rendered as a seamless 61.44s loop. Other BGM files are original byte-identical copies; common playback-only loudness target. Discovery clips fixed -30 LUFS base incl original tier1/2; runtime x1.2x1.15. No pitch/filter/compression or new layers.')
  (G/'approved-raid-audio.json').write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n')
- names={k:t['name'] for k,t in music.items()}
- (R/'src/music-catalog.ts').write_text('export const musicNames = '+json.dumps(names,ensure_ascii=False,indent=2)+' as const;\nexport type MusicTrack = keyof typeof musicNames;\n')
- code='import { musicNames } from "./music-catalog";\nexport type { MusicTrack } from "./music-catalog";\n'
- for k,t in music.items():code+=f'import {k.lower()} from "./assets/audio/{t["file"]}?url";\n'
- code+='export const musicTracks = {\n'
- for k,t in music.items():code+=f'  {k}: {{url:{k.lower()}, gain:{t["playbackGain"]}, name:musicNames.{k}}},\n'
- code+='} as const;\n';(R/'src/music.ts').write_text(code)
+ if not (G/'approved-peaceful-music.json').exists():
+  names={k:t['name'] for k,t in music.items()}
+  (R/'src/music-catalog.ts').write_text('export const musicNames = '+json.dumps(names,ensure_ascii=False,indent=2)+' as const;\nexport type MusicTrack = keyof typeof musicNames;\n')
+  code='import { musicNames } from "./music-catalog";\nexport type { MusicTrack } from "./music-catalog";\n'
+  for k,t in music.items():code+=f'import {k.lower()} from "./assets/audio/{t["file"]}?url";\n'
+  code+='export const musicTracks = {\n'
+  for k,t in music.items():code+=f'  {k}: {{url:{k.lower()}, gain:{t["playbackGain"]}, name:musicNames.{k}}},\n'
+  code+='} as const;\n';(R/'src/music.ts').write_text(code)
  # Remove superseded current entries from earlier manifests; history stays in docs.
  for name in ['approved-feedback.json','approved-music.json']:
   p=G/name;v=json.loads(p.read_text())
@@ -61,4 +62,5 @@ def main():
  p.write_text(json.dumps(v,ensure_ascii=False,indent=2)+'\n');print('Installed discovery/unlock choices, ten music choices; shared BGM target',target)
 if __name__=='__main__':
  main()
+ if (G/'approved-peaceful-music.json').exists():subprocess.run(['python3',str(R/'scripts/assets/install-approved-peaceful-music.py')],check=True)
  if (G/'approved-commerce.json').exists():subprocess.run(['python',str(R/'scripts/assets/install-approved-commerce.py')],check=True)

@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-test("地图高对比玩家标记、高资源圈及敌人名字和技能预警实际可见", async ({
+test("地图高对比玩家标记、高资源圈及敌人名字可见且不显示地面招式预警", async ({
   page,
 }) => {
   await page.goto("/?test=1");
@@ -34,7 +34,7 @@ test("地图高对比玩家标记、高资源圈及敌人名字和技能预警�
     boss.cool = 100;
     boss.tacticCool = 0;
     r.updateVillageTactics(boss, 0.016, true);
-    // Hold the actual active warning while checking canvas output.
+    // Hold the windup (no ground warning) while checking canvas output.
     boss.maneuver.time = 20;
   });
   await page.waitForTimeout(400);
@@ -49,7 +49,7 @@ test("地图高对比玩家标记、高资源圈及敌人名字和技能预警�
   });
   expect(warning.kind).toBe("boss-fan");
   expect(warning.stage).toBe("warn");
-  await page.screenshot({ path: "test-results/tactics-boss-warning.png" });
+  await page.screenshot({ path: "test-results/tactics-boss-no-warning.png" });
   // Native menus continue to work over the canvas; use Esc to close.
   await page.keyboard.press("Escape");
   await expect(page.locator("#game-menu")).toBeVisible();

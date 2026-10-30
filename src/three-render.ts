@@ -1,3 +1,4 @@
+import { drawProjectileTrail } from "./combat-visuals";
 import { animateReload } from "./reload-motion";
 import { animateKnifeHold } from "./knife-motion";
 import {
@@ -526,6 +527,7 @@ export class ThreeRenderer {
       new THREE.LineBasicMaterial({ color: "#fff0b0" }),
     );
     this.scene.add(this.bulletLines);
+    this.bulletLines.visible = false;
     // Positions change outside the initial zero-filled bounds every frame.
     this.bulletLines.frustumCulled = false;
     const pg = new THREE.BufferGeometry();
@@ -887,6 +889,46 @@ export class ThreeRenderer {
     round(c, farmLabel.x - 48, farmLabel.y - 18, 96, 35, 8, "#2e483be6");
     text(c, "农田", farmLabel.x, farmLabel.y + 5, 23, "#f4e9c8");
     for (const e of r.exits) {
+      if (e.active && (!e.paid || e.bought)) {
+        for (let n = 0; n < 8; n++) {
+          const phase = (r.elapsed * 0.23 + n / 8) % 1;
+          const puff = this.project(
+            e.x + Math.sin(n * 2 + r.elapsed) * 12,
+            e.y,
+            12 + phase * 190,
+          );
+          const radius = 9 + phase * 22,
+            alpha = Math.sin(phase * Math.PI) * 0.65;
+          const glow = c.createRadialGradient(
+            puff.x,
+            puff.y,
+            0,
+            puff.x,
+            puff.y,
+            radius,
+          );
+          glow.addColorStop(0, `rgba(109,255,153,${alpha})`);
+          glow.addColorStop(1, "rgba(58,205,119,0)");
+          c.fillStyle = glow;
+          c.beginPath();
+          c.arc(puff.x, puff.y, radius, 0, Math.PI * 2);
+          c.fill();
+        }
+      } else if (e.active && e.paid) {
+        const coin = this.project(e.x, e.y, 115 + Math.sin(r.elapsed * 2) * 7);
+        c.save();
+        c.shadowColor = "#ffd75d";
+        c.shadowBlur = 12;
+        c.fillStyle = "#f2bd48";
+        c.strokeStyle = "#6c4b24";
+        c.lineWidth = 3;
+        c.beginPath();
+        c.arc(coin.x, coin.y, 21, 0, Math.PI * 2);
+        c.fill();
+        c.stroke();
+        text(c, "◈", coin.x, coin.y + 8, 26, "#6c431e");
+        c.restore();
+      }
       const p = this.project(e.x, e.y, 65);
       text(c, e.name, p.x, p.y, 20, e.active ? "#f4edcf" : "#b5c1aa");
       text(
@@ -906,6 +948,10 @@ export class ThreeRenderer {
     }
     for (const e of r.enemies) {
       const p = this.project(e.x, e.y, e.boss ? 133 : 105);
+      if (e.state === "investigate") {
+        round(c, p.x - 17, p.y - 78, 34, 38, 12, "#292238ee");
+        text(c, "？", p.x, p.y - 48, 32, "#ffe478");
+      }
       const enemyName = e.boss?.name ?? breeds[e.breed]?.name ?? "炮塔";
       c.font = '600 26px "三角猫黑体",sans-serif';
       const nameWidth = c.measureText(enemyName).width + 18;
@@ -916,7 +962,7 @@ export class ThreeRenderer {
         p.x,
         p.y,
         26,
-        e.boss ? "#ff927f" : "#ffd35c",
+        e.boss ? "#ff3d50" : "#ffd35c",
       );
     }
     for (const e of r.enemies)
@@ -952,59 +998,16 @@ export class ThreeRenderer {
   drawCombat(r: Raid, c: CanvasRenderingContext2D) {
     c.save();
     c.lineCap = "round";
-    for (const e of r.enemies) {
-      const m = e.maneuver;
-      if (!m || m.stage !== "warn") continue;
-      const p = this.project(e.x, e.y, 8),
-        q = this.project(m.x, m.y, 8);
-      c.strokeStyle = "#ff658c";
-      c.fillStyle = "#ff658c20";
-      c.lineWidth = 4;
-      c.setLineDash([10, 6]);
-      c.beginPath();
-      if (m.kind === "boss-ring") {
-        for (let i = 0; i < 12; i++) {
-          if (i % 6 === 0) continue;
-          const a = m.angle + (i * Math.PI) / 6;
-          const edge = this.project(
-            e.x + Math.cos(a) * 240,
-            e.y + Math.sin(a) * 240,
-            8,
-          );
-          c.moveTo(p.x, p.y);
-          c.lineTo(edge.x, edge.y);
-        }
-      } else {
-        c.moveTo(p.x, p.y);
-        c.lineTo(q.x, q.y);
-        if (m.kind.includes("fan") || m.kind === "sweep") {
-          for (const offset of [-0.48, 0.48]) {
-            const edge = this.project(
-              e.x + Math.cos(m.angle + offset) * 300,
-              e.y + Math.sin(m.angle + offset) * 300,
-              8,
-            );
-            c.moveTo(p.x, p.y);
-            c.lineTo(edge.x, edge.y);
-          }
-        }
-        c.ellipse(q.x, q.y, 25, 16, 0, 0, Math.PI * 2);
-      }
-      c.fill();
-      c.stroke();
-      c.setLineDash([]);
-    }
     for (const b of r.bullets) {
+      const speed = Math.hypot(b.vx, b.vy),
+        length = Math.min(65, b.travel + 10);
       const p = this.project(b.x, b.y + 24, 30),
-        q = this.project(b.x - b.vx * 0.032, b.y + 24 - b.vy * 0.032, 30);
-      c.strokeStyle = b.friendly ? "#fff2b5" : "#ff9c70";
-      c.shadowColor = c.strokeStyle;
-      c.shadowBlur = 10;
-      c.lineWidth = b.friendly ? 3 : 3.5;
-      c.beginPath();
-      c.moveTo(q.x, q.y);
-      c.lineTo(p.x, p.y);
-      c.stroke();
+        q = this.project(
+          b.x - (b.vx / speed) * length,
+          b.y + 24 - (b.vy / speed) * length,
+          30,
+        );
+      drawProjectileTrail(c, b, p, q);
     }
     for (const fx of r.combatFX) {
       const p = this.project(fx.x, fx.y + 24, 32),
@@ -1020,7 +1023,31 @@ export class ThreeRenderer {
         c.stroke();
         continue;
       }
-      c.strokeStyle = fx.friendly ? "#ffe7a0" : "#ff9d78";
+      c.strokeStyle = fx.friendly ? "#ffe7a0" : fx.boss ? "#ce6aff" : "#ff6033";
+      if (fx.kind === "hit") {
+        c.save();
+        c.globalAlpha = life * 0.55;
+        const flash = c.createRadialGradient(
+          p.x,
+          p.y,
+          0,
+          p.x,
+          p.y,
+          28 * (1 - life) + 8,
+        );
+        flash.addColorStop(0, "#fff4dc");
+        flash.addColorStop(0.3, fx.boss ? "#dca5ff" : "#ffc27b");
+        flash.addColorStop(1, "#ffac3c00");
+        c.fillStyle = flash;
+        c.beginPath();
+        c.arc(p.x, p.y, 28 * (1 - life) + 8, 0, Math.PI * 2);
+        c.fill();
+        c.lineWidth = 2;
+        c.beginPath();
+        c.arc(p.x, p.y, 6 + (1 - life) * 24, 0, Math.PI * 2);
+        c.stroke();
+        c.restore();
+      }
       c.fillStyle = "#fff9de";
       c.shadowColor = c.strokeStyle;
       c.shadowBlur = 12;

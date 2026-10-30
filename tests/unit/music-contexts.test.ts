@@ -8,9 +8,18 @@ Object.assign(globalThis, {
   localStorage: { getItem: () => null, setItem: () => {} },
 });
 describe("基地与游戏音乐分开", () => {
-  it("原曲只在基地列表，游戏保留九首，旧存档音乐和音量安全迁移", () => {
-    expect(Object.keys(baseMusicNames)).toEqual(["ORIGINAL"]);
-    expect(Object.keys(gameMusicNames)).toHaveLength(9);
+  it("基地与游戏新选曲严格分组，旧存档音乐和音量安全迁移", () => {
+    expect(Object.keys(baseMusicNames)).toEqual([
+      "ORIGINAL",
+      "PM05",
+      "PM06",
+      "PM08",
+      "PM12",
+      "PM16",
+      "PM18",
+      "PM20",
+    ]);
+    expect(Object.keys(gameMusicNames)).toHaveLength(11);
     expect(gameMusicNames).not.toHaveProperty("ORIGINAL");
     const s = newSave();
     s.settings.musicTrack = "NB2";
@@ -25,6 +34,31 @@ describe("基地与游戏音乐分开", () => {
     expect(validateSave(s).settings.musicTrack).toBe("BG5");
     s.settings.baseMusic = 2;
     expect(() => validateSave(s)).toThrow("基地音乐音量");
+  });
+  it("获选7首保留原文件与响度基线，基地与游戏列表按最终选择接入", async () => {
+    const { musicTracks } = await import("../../src/music");
+    const approved = JSON.parse(
+      readFileSync("src/assets/audio/approved-peaceful-music.json", "utf8"),
+    );
+    expect(approved.base).toEqual([
+      "PM05",
+      "PM06",
+      "PM08",
+      "PM12",
+      "PM16",
+      "PM18",
+      "PM20",
+    ]);
+    expect(approved.game).toEqual(["PM08", "PM12"]);
+    for (const t of approved.tracks) {
+      const suffix = t.url.slice(t.url.lastIndexOf(".")),
+        file = `src/assets/audio/music-${t.id.toLowerCase()}${suffix}`;
+      expect(
+        createHash("sha256").update(readFileSync(file)).digest("hex"),
+      ).toBe(t.sha256);
+      const gain = (musicTracks as any)[t.id].gain;
+      expect(t.inputLufs + 20 * Math.log10(gain)).toBeCloseTo(-24, 2);
+    }
   });
   it("调音JSON兼容旧三滑块，新增基地音量单独导入", () => {
     const old = structuredClone(defaultBalance);

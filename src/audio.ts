@@ -1,3 +1,4 @@
+import { baseMusicNames, gameMusicNames } from "./music-catalog";
 import { defaultBalance, type AudioBalance } from "./audio-balance";
 import type { Settings } from "./store";
 import {
@@ -267,16 +268,21 @@ export class Sound {
     const picked =
       this.mode === "base"
         ? (this.settings.baseMusicTrack ?? "ORIGINAL")
-        : !this.musicPreview && this.settings.musicTrack === "ORIGINAL"
+        : !this.musicPreview &&
+            this.settings.musicTrack &&
+            !Object.hasOwn(gameMusicNames, this.settings.musicTrack)
           ? "BG5"
           : (this.settings.musicTrack ?? "BG5");
     const musicVolume =
-      this.mode === "base" || (this.musicPreview && picked === "ORIGINAL")
+      this.mode === "base" ||
+      (this.musicPreview && !Object.hasOwn(gameMusicNames, picked))
         ? (this.settings.baseMusic ?? this.settings.music)
         : this.settings.music;
     this.musicBus.gain.value = musicVolume * this.balance.buses.music;
     const mode =
-      this.mode === "base" ? "loop" : (this.settings.musicMode ?? "loop");
+      this.mode === "base"
+        ? (this.settings.baseMusicMode ?? "loop")
+        : (this.settings.musicMode ?? "loop");
     const signature = `${this.mode === "base" ? "base" : "raid"}:${picked}:${mode}`;
     if (!this.musicElement) {
       this.musicElement = new Audio();
@@ -287,7 +293,11 @@ export class Sound {
         .connect(this.trackGain);
       this.trackGain.connect(this.musicBus);
       this.musicElement.addEventListener("ended", () => {
-        if (this.mode !== "base" && this.settings.musicMode === "random")
+        if (
+          (this.mode === "base"
+            ? this.settings.baseMusicMode
+            : this.settings.musicMode) === "random"
+        )
           this.nextMusic();
       });
       document.addEventListener("visibilitychange", () => this.syncMusic());
@@ -323,7 +333,13 @@ export class Sound {
   }
   private nextMusic() {
     const keys = (Object.keys(musicTracks) as MusicTrack[]).filter(
-      (k) => k !== this.musicKey && (this.musicPreview || k !== "ORIGINAL"),
+      (k) =>
+        k !== this.musicKey &&
+        (this.musicPreview ||
+          Object.hasOwn(
+            this.mode === "base" ? baseMusicNames : gameMusicNames,
+            k,
+          )),
     );
     this.setMusic(keys[Math.floor(Math.random() * keys.length)]);
     this.syncMusic();

@@ -12,10 +12,10 @@ test("基地与游戏音乐曲目、音量独立，随机不含基地曲，撤�
     .click();
   await expect(
     page.getByLabel("基地音乐", { exact: true }).locator("option"),
-  ).toHaveCount(1);
+  ).toHaveCount(8);
   await expect(
     page.getByLabel("游戏音乐", { exact: true }).locator("option"),
-  ).toHaveCount(9);
+  ).toHaveCount(11);
   await expect(
     page
       .getByLabel("游戏音乐", { exact: true })
@@ -180,13 +180,11 @@ test("调音台导出独立基地音量且兼容旧三滑块JSON", async ({ page
     p.preview.settings.music = 0.33;
     return p;
   });
-  await page
-    .locator("#import")
-    .setInputFiles({
-      name: "old-audio.json",
-      mimeType: "application/json",
-      buffer: Buffer.from(JSON.stringify(old)),
-    });
+  await page.locator("#import").setInputFiles({
+    name: "old-audio.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(old)),
+  });
   await expect(page.locator("#status")).toContainText("已导入配置");
   expect(
     await page.evaluate(

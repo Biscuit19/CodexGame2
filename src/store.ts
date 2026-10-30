@@ -1,5 +1,11 @@
 import publishedAudio from "./audio-balance.json";
-import { musicNames, type MusicTrack } from "./music-catalog";
+import {
+  musicNames,
+  baseMusicNames,
+  gameMusicNames,
+  type BaseMusicTrack,
+  type MusicTrack,
+} from "./music-catalog";
 import {
   db,
   makeItem,
@@ -35,7 +41,8 @@ export interface Settings {
   master: number;
   music: number;
   baseMusic?: number;
-  baseMusicTrack?: "ORIGINAL";
+  baseMusicTrack?: BaseMusicTrack;
+  baseMusicMode?: "loop" | "random";
   musicTrack?: MusicTrack;
   musicMode?: "loop" | "random";
   sfx: number;
@@ -105,6 +112,7 @@ export const defaults: Settings = {
     publishedAudio.preview.settings.baseMusic ??
     publishedAudio.preview.settings.music,
   baseMusicTrack: "ORIGINAL",
+  baseMusicMode: "loop",
   musicTrack: "BG5",
   musicMode: "loop",
   sfx: publishedAudio.preview.settings.sfx,
@@ -411,11 +419,20 @@ export function validateSave(data: unknown): Save {
     throw Error("基地音乐音量无效");
   if (
     s.settings.baseMusicTrack !== undefined &&
-    s.settings.baseMusicTrack !== "ORIGINAL"
+    !Object.hasOwn(baseMusicNames, s.settings.baseMusicTrack)
   )
     throw Error("基地音乐曲目无效");
   s.settings.baseMusicTrack ??= "ORIGINAL";
-  if (s.settings.musicTrack === "ORIGINAL") s.settings.musicTrack = "BG5";
+  if (
+    s.settings.baseMusicMode !== undefined &&
+    !["loop", "random"].includes(s.settings.baseMusicMode)
+  )
+    throw Error("基地音乐播放方式无效");
+  if (
+    s.settings.musicTrack &&
+    !Object.hasOwn(gameMusicNames, s.settings.musicTrack)
+  )
+    s.settings.musicTrack = "BG5";
   if (s.loadedRounds) {
     if (!Array.isArray(s.loadedRounds) || s.loadedRounds.length > 2)
       throw Error("弹匣记录无效");

@@ -177,7 +177,7 @@ describe("配置与战斗", () => {
   it("搜索按实际价值，星洲猫心需要七秒，出售为 65%", () => {
     expect(searchTime(makeItem("c4_0"))).toBe(7);
     expect(searchTime(makeItem("c0_0"))).toBeLessThan(1);
-    expect(sale(makeItem("w0"))).toBe(585);
+    expect(sale(makeItem("w0"))).toBe(195);
     expect(sale(makeItem("m1", 15))).toBe(29);
   });
 });

@@ -1,3 +1,4 @@
+import { drawProjectileTrail } from "./combat-visuals";
 import {
   containerHighlighted,
   containerHighlightColor,
@@ -6,7 +7,7 @@ import { drawContainerSprite } from "./container-sprites";
 import { drawVillageMap } from "./village-map";
 import { drawVillageGround } from "./village-ground";
 import { cat, box, tree, ellipse, round, path, text, type Ctx } from "./art";
-import { maps, breeds, colors, rng } from "./data";
+import { maps, breeds, colors, rng, EXTRACT_SECONDS } from "./data";
 import { type Raid, type Rect, type Enemy } from "./raid";
 export class Renderer {
   ctx: Ctx;
@@ -163,6 +164,25 @@ export class Renderer {
     c.drawImage(this.ground!, 0, 0);
     for (const exit of r.exits) {
       const active = exit.active;
+      if (active && (!exit.paid || exit.bought)) {
+        for (let n = 0; n < 8; n++) {
+          const phase = (r.elapsed * 0.23 + n / 8) % 1,
+            px = exit.x + Math.sin(n + r.elapsed) * 14,
+            py = exit.y - phase * 170;
+          const radius = 9 + phase * 20,
+            alpha = Math.sin(phase * Math.PI) * 0.6,
+            g = c.createRadialGradient(px, py, 0, px, py, radius);
+          g.addColorStop(0, `rgba(109,255,153,${alpha})`);
+          g.addColorStop(1, "rgba(58,205,119,0)");
+          c.fillStyle = g;
+          c.beginPath();
+          c.arc(px, py, radius, 0, Math.PI * 2);
+          c.fill();
+        }
+      } else if (active && exit.paid) {
+        ellipse(c, exit.x, exit.y - 105, 22, 22, "#edbf4e");
+        text(c, "◈", exit.x, exit.y - 96, 26, "#69471e");
+      }
       ellipse(c, exit.x, exit.y, 64, 32, active ? "#cee1af2f" : "#37483c44");
       c.strokeStyle = active ? "#c2dcaa" : "#89998a";
       c.lineWidth = 3;
@@ -187,7 +207,7 @@ export class Renderer {
             ? exit.bought
               ? "撤离已启动"
               : `${maps[r.map].fee} 金币 · E 启动`
-            : "免费撤离 · 停留 5 秒",
+            : `免费撤离 · 停留 ${EXTRACT_SECONDS} 秒`,
         exit.x,
         exit.y - 40,
         12,
@@ -326,12 +346,14 @@ export class Renderer {
     }
     sorted.sort((a, b) => a.y - b.y).forEach((d) => d.draw());
     for (const b of r.bullets) {
-      c.strokeStyle = b.friendly ? "#fff0b6" : "#ffbf91";
-      c.lineWidth = b.friendly ? 2.5 : 3;
-      c.beginPath();
-      c.moveTo(b.x, b.y);
-      c.lineTo(b.x - b.vx * 0.018, b.y - b.vy * 0.018);
-      c.stroke();
+      const speed = Math.hypot(b.vx, b.vy),
+        length = Math.min(65, b.travel + 10);
+      drawProjectileTrail(
+        c,
+        b,
+        { x: b.x, y: b.y },
+        { x: b.x - (b.vx / speed) * length, y: b.y - (b.vy / speed) * length },
+      );
     }
     for (const e of r.enemies)
       if (e.telegraph) {
@@ -491,6 +513,18 @@ export class Renderer {
         hit: e.hit,
       });
     const close = Math.hypot(e.x - r.p.x, e.y - r.p.y) < 650;
+    if (e.state === "investigate") {
+      round(
+        c,
+        e.x - 17,
+        e.y - (e.boss ? 140 : 104) - 78,
+        34,
+        38,
+        12,
+        "#292238ee",
+      );
+      text(c, "？", e.x, e.y - (e.boss ? 140 : 104) - 48, 32, "#ffe478");
+    }
     const enemyName = e.boss?.name ?? breeds[e.breed]?.name ?? "自动炮塔";
     c.font = '600 26px "三角猫黑体",sans-serif';
     const nameWidth = c.measureText(enemyName).width + 18;
@@ -509,7 +543,7 @@ export class Renderer {
       e.x,
       e.y - (e.boss ? 140 : 104),
       26,
-      e.boss ? "#ff927f" : "#ffd35c",
+      e.boss ? "#ff3d50" : "#ffd35c",
     );
     if (close && (e.state === "combat" || e.hit > 0)) {
       const size = e.boss ? 85 : 40;

@@ -505,5 +505,20 @@
     }
   ],
   "processing": "Complete original files, unchanged bytes. Loudness-matched using playback gain only; no excerpts, edits, filters, pitch, fade or compression.",
-  "authorCount": 15
+  "authorCount": 15,
+  "installedToGame": {
+    "base": [
+      "PM05",
+      "PM06",
+      "PM08",
+      "PM12",
+      "PM16",
+      "PM18",
+      "PM20"
+    ],
+    "game": [
+      "PM08",
+      "PM12"
+    ]
+  }
 }

@@ -41,7 +41,7 @@ async function prepare(a) {
 }
 function text() {
   return [
-    "静谧音乐选择（候选尚未接入游戏）",
+    "静谧音乐选择（未采用项仍为候选）",
     ...["base", "game"].map(
       (area) =>
         (area === "base" ? "基地音乐" : "游戏音乐") +

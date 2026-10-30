@@ -393,10 +393,13 @@ function settingsContent(inRaid = false) {
     )}<label><span>基地音乐</span><select aria-label="基地音乐" data-setting="baseMusicTrack">${Object.entries(
     baseMusicNames,
   )
-    .map(([id, label]) => `<option value="${id}">${label}</option>`)
+    .map(
+      ([id, label]) =>
+        `<option value="${id}" ${(s.settings.baseMusicTrack ?? "ORIGINAL") === id ? "selected" : ""}>${label}</option>`,
+    )
     .join(
       "",
-    )}</select></label><label><span>游戏音乐</span><select aria-label="游戏音乐" data-setting="musicTrack">${Object.entries(
+    )}</select></label><label><span>基地音乐播放</span><select aria-label="基地音乐播放" data-setting="baseMusicMode"><option value="loop" ${s.settings.baseMusicMode !== "random" ? "selected" : ""}>单曲循环</option><option value="random" ${s.settings.baseMusicMode === "random" ? "selected" : ""}>随机播放</option></select></label><label><span>游戏音乐</span><select aria-label="游戏音乐" data-setting="musicTrack">${Object.entries(
     gameMusicNames,
   )
     .map(
@@ -1579,7 +1582,10 @@ document.addEventListener("input", (e) => {
   else if (key === "crosshair")
     s.settings.crosshair = input.value as "ring" | "cross";
   else if (key === "baseMusicTrack")
-    s.settings.baseMusicTrack = input.value as "ORIGINAL";
+    s.settings.baseMusicTrack =
+      input.value as Save["settings"]["baseMusicTrack"];
+  else if (key === "baseMusicMode")
+    s.settings.baseMusicMode = input.value as "loop" | "random";
   else if (key === "musicTrack")
     s.settings.musicTrack = input.value as Save["settings"]["musicTrack"];
   else if (key === "musicMode")

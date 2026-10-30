@@ -853,6 +853,10 @@ export function buildVillage(r: Raid) {
       count = containerCount(type);
     const items: Item[] = [];
     for (let i = 0; i < count; i++) {
+      if (["safe", "bed"].includes(type)) {
+        items.push(collect(region));
+        continue;
+      }
       const n = r.random();
       if (
         (region === "clinic" && n < 0.7) ||
@@ -866,6 +870,7 @@ export function buildVillage(r: Raid) {
         );
         items.push(makeItem(weightedItem(pool, r.random).id));
       } else if (
+        ["weapon", "cabinet", "toolbox"].includes(type) &&
         region !== "clinic" &&
         n < (region === "hunter" ? 0.45 : region === "boss" ? 0.35 : 0.15)
       ) {
@@ -877,6 +882,7 @@ export function buildVillage(r: Raid) {
               : 1;
         items.push(makeItem(`m${tier}`, 25 + Math.floor(r.random() * 26)));
       } else if (
+        ["weapon", "cabinet"].includes(type) &&
         region !== "spawn" &&
         region !== "shelter" &&
         region !== "outbuilding" &&
@@ -1052,7 +1058,7 @@ export function buildVillage(r: Raid) {
     bossLocation.x,
     bossLocation.y,
     bosses[0].breed,
-    2,
+    3,
     bosses[0],
   );
   boss.squad = "boss-inner";

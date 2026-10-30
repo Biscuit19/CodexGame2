@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-test("基地原始配乐循环、九首游戏音乐可选、随机与撤离后恢复基地", async ({
+test("基地原始配乐循环、11首游戏音乐可选、随机与撤离后恢复基地", async ({
   page,
 }) => {
   test.setTimeout(90000);
@@ -22,7 +22,7 @@ test("基地原始配乐循环、九首游戏音乐可选、随机与撤离后�
   await expect(page.getByLabel("游戏音乐", { exact: true })).toHaveValue("BG5");
   await expect(
     page.getByLabel("游戏音乐", { exact: true }).locator("option"),
-  ).toHaveCount(9);
+  ).toHaveCount(11);
   await expect(
     page.getByLabel("游戏音乐播放", { exact: true }).locator("option"),
   ).toHaveText(["单曲循环", "随机播放"]);
@@ -62,7 +62,12 @@ test("基地原始配乐循环、九首游戏音乐可选、随机与撤离后�
         await fetch("/src/assets/audio/approved-raid-audio.json")
       ).json(),
       tracks = [];
-    s.musicPreview = true; // The mixer may still audition the base reference track.
+    const approved = await (
+      await fetch("/src/assets/audio/approved-peaceful-music.json")
+    ).json();
+    for (const t of approved.tracks)
+      meta.tracks[t.id] = { duration: t.duration, inputLufs: t.inputLufs };
+    s.musicPreview = true; // The mixer may audition both context banks.
     for (const [id, t] of Object.entries(mod.musicTracks) as any) {
       s.settings.musicTrack = id;
       s.settings.musicMode = "loop";
@@ -117,7 +122,7 @@ test("基地原始配乐循环、九首游戏音乐可选、随机与撤离后�
       musicGain: s.musicBus.gain.value,
     };
   });
-  expect(details.tracks).toHaveLength(10);
+  expect(details.tracks).toHaveLength(17);
   for (const t of details.tracks) {
     expect(t.duration).toBeCloseTo(t.expected, 0);
     expect(t.loudness).toBeCloseTo(t.target, 3);

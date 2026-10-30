@@ -40,7 +40,7 @@ describe("乡野战术与建筑外出生", () => {
       }
     }
   });
-  it("地图一实际敌群覆盖12种战术，低级不分配精锐蓄力与扫射，其他地图不启用", () => {
+  it("地图一实际敌群覆盖16种战术，低级不分配精锐蓄力与扫射，其他地图不启用", () => {
     const r = start();
     const used = new Set(
       r.enemies.filter((e) => !e.boss).flatMap((e) => [...(e.tactics ?? [])]),
@@ -120,7 +120,7 @@ describe("乡野战术与建筑外出生", () => {
     r.updateVillageTactics(e, 0.016, true);
     expect(e.maneuver?.kind).toBe("dodge");
   });
-  it("铁腮三轮独有招式有预警、环射缺口及翻滚后连喷，低血阶段更快", () => {
+  it("铁腮六招循环、三阶护具弹药、血量降低不切阶段", () => {
     const r = start();
     r.walls = [];
     const boss = r.enemies.find((e) => e.boss)!;
@@ -128,7 +128,7 @@ describe("乡野战术与建筑外出生", () => {
     r.p.y = boss.y + 80;
     boss.state = "combat";
     const kinds = [];
-    for (let cycle = 0; cycle < 3; cycle++) {
+    for (let cycle = 0; cycle < 6; cycle++) {
       boss.tacticCool = 0;
       r.bullets = [];
       r.updateVillageTactics(boss, 0.016, true);
@@ -140,11 +140,21 @@ describe("乡野战术与建筑外出生", () => {
       expect(r.bullets.length).toBeLessThanOrEqual(21);
       expect(boss.maneuver).toBeUndefined();
     }
-    expect(kinds).toEqual(["boss-fan", "boss-roll", "boss-ring"]);
+    expect(kinds).toEqual([
+      "boss-fan",
+      "boss-roll",
+      "tracking-burst",
+      "boss-ring",
+      "advance-burst",
+      "crossfire",
+    ]);
+    expect(boss.tier).toBe(3);
     const l = boss.leash!;
     expect(Math.abs(boss.x - l.x)).toBeLessThanOrEqual(l.w / 2);
     expect(Math.abs(boss.y - l.y)).toBeLessThanOrEqual(l.h / 2);
-    boss.phase = 1;
+    boss.hp = boss.maxHp * 0.2;
+    r.updateEnemy(boss, 1 / 60);
+    expect(boss.phase).toBe(0);
     boss.tacticCool = 0;
     r.updateVillageTactics(boss, 0.016, true);
     expect(boss.tacticCool).toBe(4.2);

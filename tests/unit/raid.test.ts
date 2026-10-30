@@ -682,7 +682,7 @@ describe("真实战区逻辑", () => {
       expect(r.bullets.at(-1)!.damage).toBeCloseTo(db[id].damage! * 0.65);
     }
   });
-  it("发现玩家会通知同房间敌猫，隔墙远处敌人不会全图仇恨", () => {
+  it("发现玩家先让邻近同伴警觉，远处敌人不会全图仇恨", () => {
     const { r } = start();
     r.p.x = 1000;
     r.p.y = 1000;
@@ -690,7 +690,7 @@ describe("真实战区逻辑", () => {
       b = r.spawn(1200, 1000, 0, 1),
       far = r.spawn(2000, 1000, 0, 1);
     r.updateEnemy(a, 1 / 60);
-    expect(b.state).toBe("combat");
+    expect(b.state).toBe("investigate");
     expect(b.target).toEqual({ x: 1000, y: 1000 });
     expect(far.state).toBe("patrol");
   });

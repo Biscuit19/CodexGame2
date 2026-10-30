@@ -514,7 +514,7 @@ export function drawVillageMap(
         c.font = "bold 36px sans-serif";
         c.lineWidth = 5;
         c.strokeStyle = "#f1e7cd";
-        c.fillStyle = "#8e4437";
+        c.fillStyle = "#b72f41";
         c.textAlign = "center";
         c.strokeText(e.boss.name, p.x, p.y + 48);
         c.fillText(e.boss.name, p.x, p.y + 48);

@@ -85,6 +85,10 @@ export const VILLAGE_TACTICS = [
   "double",
   "aim",
   "sweep",
+  "advance-burst",
+  "tracking-burst",
+  "crossfire",
+  "retreat-burst",
 ] as const;
 export type VillageTactic = (typeof VILLAGE_TACTICS)[number];
 export interface Maneuver {
@@ -97,6 +101,7 @@ export interface Maneuver {
   y: number;
 }
 export interface Enemy {
+  burstLeft?: number;
   tactics?: readonly VillageTactic[];
   tacticCool?: number;
   tacticStep?: number;
@@ -161,6 +166,7 @@ export interface Bullet {
   travel: number;
   shotgun?: boolean;
   melee?: boolean;
+  boss?: boolean;
   aim?: { x: number; y: number };
 }
 /** Elliptical head volume in the same projected coordinates as bullets (not ground y). */
@@ -282,6 +288,7 @@ export class Raid {
   private footstepSide = 1;
   combatFX: {
     kind: "muzzle" | "hit" | "melee";
+    boss?: boolean;
     x: number;
     y: number;
     angle: number;
@@ -328,6 +335,8 @@ export class Raid {
   tick = 0;
   checkpoint = 0;
   aimPoint?: { x: number; y: number };
+  playerVelocity = { x: 0, y: 0 };
+  noiseClock = 0;
   constructor(
     save: Save,
     map: number,
@@ -575,7 +584,7 @@ export class Raid {
         const available = foods.filter((f) => f.tier <= Math.min(4, m + 2));
         entries[0] = makeItem(weightedItem(available, this.random).id);
       }
-      if (i % 3 === 0)
+      if (i % 3 === 0 && ["weapon", "cabinet"].includes(type))
         entries.push(
           makeItem(
             `m${Math.min(4, m + 1)}`,
@@ -791,13 +800,13 @@ export class Raid {
       ];
       const high: VillageTactic[][] = [
         ["orbit", "burst"],
-        ["dodge", "double"],
-        ["flank", "burst"],
+        ["dodge", "tracking-burst"],
+        ["flank", "crossfire"],
         ["kite", "aim"],
         ["zigzag", "sweep"],
         ["rush", "fan"],
-        ["orbit", "fan"],
-        ["dodge", "sweep"],
+        ["orbit", "advance-burst"],
+        ["dodge", "retreat-burst"],
       ];
       const profiles = tier >= 2 ? high : low;
       e.tactics =
@@ -975,6 +984,7 @@ export class Raid {
     else {
       this.interrupt();
       this.reload = this.weapon.reload!;
+      this.alert(this.p.x, this.p.y, 240);
       this.sound.play("reload", 1, {
         weaponClass: this.weapon.weaponClass,
         seconds: this.weapon.reload,
@@ -1180,6 +1190,7 @@ export class Raid {
     this.p.rollX = l ? dx / l : Math.cos(this.p.angle);
     this.p.rollY = l ? dy / l : Math.sin(this.p.angle);
     this.sound.play("roll");
+    this.alert(this.p.x, this.p.y, 360);
   }
   ensureFood(forceLowest = false) {
     if (!forceLowest && this.save.equipment.food?.qty) return;
@@ -1287,7 +1298,7 @@ export class Raid {
       5,
       "#ffe4a4",
     );
-    this.alert(this.p.x, this.p.y, 420);
+    this.alert(this.p.x, this.p.y, 1000);
   }
   syncLoaded() {
     for (const slot of ["primary", "secondary"] as const) {
@@ -1391,7 +1402,7 @@ export class Raid {
         (Math.hypot(e.x - ally.x, e.y - ally.y) < 320 &&
           this.lineClear(e.x, e.y, ally.x, ally.y))
       ) {
-        ally.state = "combat";
+        if (ally.state !== "combat") ally.state = "investigate";
         ally.alert = 8;
         ally.target = { x: this.p.x, y: this.p.y };
       }
@@ -1408,11 +1419,14 @@ export class Raid {
     shotgun = false,
     muzzle = true,
     aim?: { x: number; y: number },
+    boss = false,
+    projectileSpeed?: number,
   ) {
-    const speed = friendly ? 1050 : 440;
+    const speed = projectileSpeed ?? (friendly ? 1050 : 950);
     if (muzzle)
       this.combatFX.push({
         kind: "muzzle",
+        boss,
         x: x + Math.cos(a) * 40,
         y: y + Math.sin(a) * 40,
         angle: a,
@@ -1432,12 +1446,16 @@ export class Raid {
       range,
       travel: 0,
       shotgun,
+      boss,
       aim: aim ? { ...aim } : undefined,
     });
   }
   alert(x: number, y: number, radius: number) {
     for (const e of this.enemies)
-      if (Math.hypot(e.x - x, e.y - y) < radius) {
+      if (
+        Math.hypot(e.x - x, e.y - y) <
+        radius * (this.lineClear(e.x, e.y, x, y) ? 1 : 0.65)
+      ) {
         e.alert = 5;
         e.target = { x, y };
         if (e.state === "patrol") e.state = "investigate";
@@ -1513,6 +1531,7 @@ export class Raid {
   startSearch(c: Container) {
     for (const item of c.items.slice(0, c.revealed)) this.discover(item);
     this.search = c;
+    this.alert(this.p.x, this.p.y, 220);
     this.searchProgress = 0;
     this.stats.searches += c.open ? 0 : 1;
     if (!c.open) this.sound.play("open", 1, { containerType: c.type });
@@ -1643,7 +1662,7 @@ export class Raid {
     this.onChange();
     return true;
   }
-  hurtPlayer(dmg: number, tier: number, head = false) {
+  hurtPlayer(dmg: number, tier: number, head = false, boss = false) {
     if (this.done) return;
     this.combatFX.push({
       kind: "hit",
@@ -1651,6 +1670,7 @@ export class Raid {
       y: this.p.y - 24,
       angle: 0,
       friendly: false,
+      boss,
       life: 0.25,
       max: 0.25,
     });
@@ -1701,7 +1721,12 @@ export class Raid {
     this.stats.damageDealt += d;
     e.hit = 0.12;
     e.alert = 6;
-    this.engage(e);
+    if (
+      this.lineClear(e.x, e.y, this.p.x, this.p.y) &&
+      Math.hypot(e.x - this.p.x, e.y - this.p.y) < 560
+    )
+      this.engage(e);
+    else if (e.state !== "combat") e.state = "investigate";
     e.target = { x: this.p.x, y: this.p.y };
     this.float(
       e.x,
@@ -1839,7 +1864,10 @@ export class Raid {
       this.warning = true;
       this.notify("最后 5 分钟 · 立即规划撤离路线");
     }
-    const p = this.p;
+    const p = this.p,
+      frameX = p.x,
+      frameY = p.y;
+    this.noiseClock -= dt;
     let dx = (keys.has("KeyD") ? 1 : 0) - (keys.has("KeyA") ? 1 : 0),
       dy = (keys.has("KeyS") ? 1 : 0) - (keys.has("KeyW") ? 1 : 0),
       l = Math.hypot(dx, dy);
@@ -1898,6 +1926,14 @@ export class Raid {
     if (p.roll > 0) {
       p.roll = Math.max(0, p.roll - dt);
       this.moveActor(p, p.rollX * 390 * dt, p.rollY * 390 * dt);
+    }
+    const vx = (p.x - frameX) / Math.max(dt, 0.001),
+      vy = (p.y - frameY) / Math.max(dt, 0.001);
+    this.playerVelocity.x = vx * 0.7 + this.playerVelocity.x * 0.3;
+    this.playerVelocity.y = vy * 0.7 + this.playerVelocity.y * 0.3;
+    if (Math.hypot(vx, vy) > 5 && this.noiseClock <= 0) {
+      this.alert(p.x, p.y, sprint ? 320 : 180);
+      this.noiseClock = 0.35;
     }
     if (!sprint)
       p.stamina = Math.min(
@@ -1998,7 +2034,7 @@ export class Raid {
     for (const c of this.containers) c.cooldown = Math.max(0, c.cooldown - dt);
     for (const e of [...this.enemies]) this.updateEnemy(e, dt);
     for (const b of this.bullets) {
-      const steps = 3;
+      const steps = Math.max(3, Math.ceil((Math.hypot(b.vx, b.vy) * dt) / 8));
       for (let n = 0; n < steps && b.life > 0; n++) {
         const dx = (b.vx * dt) / steps,
           dy = (b.vy * dt) / steps;
@@ -2011,6 +2047,7 @@ export class Raid {
           this.emit(b.x, b.y, 3, "#afbc99");
           this.combatFX.push({
             kind: "hit",
+            boss: b.boss,
             x: b.x,
             y: b.y,
             angle: 0,
@@ -2039,6 +2076,7 @@ export class Raid {
             b.damage * (b.shotgun ? projectileFalloff(b) : 1),
             b.tier,
             projectileHitsHead(b, p),
+            !!b.boss,
           );
           b.life = 0;
         }
@@ -2070,6 +2108,45 @@ export class Raid {
       ? "boss"
       : "raid";
   }
+  enemyCanFire(e: Enemy) {
+    if (this.map === 0) {
+      const room = villageBuildings.find((b) => inBuilding(b, e.x, e.y));
+      return !room || inBuilding(room, this.p.x, this.p.y);
+    }
+    const room = this.rooms.find(([x, y, w, h, rotation]) =>
+      hitsRect(e.x, e.y, { x, y, w, h, rotation }),
+    );
+    return (
+      !room ||
+      hitsRect(this.p.x, this.p.y, {
+        x: room[0],
+        y: room[1],
+        w: room[2],
+        h: room[3],
+        rotation: room[4],
+      })
+    );
+  }
+  enemyAim(e: Enemy, speed = 950) {
+    const dx = this.p.x - e.x,
+      dy = this.p.y - e.y,
+      v = this.playerVelocity;
+    const a = v.x * v.x + v.y * v.y - speed * speed,
+      b = 2 * (dx * v.x + dy * v.y),
+      c = dx * dx + dy * dy;
+    const disc = b * b - 4 * a * c;
+    let time = 0;
+    if (disc >= 0 && Math.abs(a) > 0.001) {
+      const roots = [
+        (-b - Math.sqrt(disc)) / (2 * a),
+        (-b + Math.sqrt(disc)) / (2 * a),
+      ].filter((t) => t > 0);
+      time = roots.length ? Math.min(...roots) : 0;
+    }
+    const lead = e.boss ? 0.95 : e.tier >= 2 ? 0.85 : e.breed % 2 ? 0.65 : 0.35;
+    time = Math.min(0.8, time) * lead;
+    return Math.atan2(dy + v.y * time, dx + v.x * time);
+  }
   tacticalMove(e: Enemy, angle: number, distance: number) {
     let x = e.x + Math.cos(angle) * distance,
       y = e.y + Math.sin(angle) * distance;
@@ -2088,6 +2165,8 @@ export class Raid {
   }
   tacticShot(e: Enemy, kind: string, angle: number) {
     e.angle = angle;
+    if (!this.enemyCanFire(e) || !this.lineClear(e.x, e.y, this.p.x, this.p.y))
+      return;
     const boss = !!e.boss,
       ring = kind === "boss-ring";
     const count = ring ? 12 : kind === "boss-fan" ? 7 : kind === "fan" ? 3 : 1;
@@ -2103,11 +2182,18 @@ export class Raid {
         e.y - 24,
         a,
         false,
-        boss ? 9 : kind === "aim" ? 12 : 7,
+        boss
+          ? 12
+          : kind === "aim"
+            ? Math.max(20, weapons[e.weapon].damage! * 1.1)
+            : Math.max(12, weapons[e.weapon].damage! * 0.8),
         Math.min(4, e.tier),
         kind === "aim" ? 850 : 650,
         count > 1,
         i === 0,
+        undefined,
+        boss,
+        boss || kind === "aim" ? 1100 : 950,
       );
     }
     e.mag = Math.max(0, e.mag - 1);
@@ -2120,6 +2206,13 @@ export class Raid {
     e.tacticCool = Math.max(0, (e.tacticCool ?? 4) - dt);
     const m = e.maneuver;
     if (m) {
+      if (
+        (!canSee || !this.enemyCanFire(e)) &&
+        !["rush", "dodge", "boss-roll"].includes(m.kind)
+      ) {
+        e.maneuver = undefined;
+        return false;
+      }
       e.cool = Math.max(e.cool, 0.35);
       m.time -= dt;
       if (m.stage === "warn") {
@@ -2144,15 +2237,33 @@ export class Raid {
             };
           } else e.maneuver = undefined;
         }
-      } else if (m.time <= 0) {
+      } else {
+        if (m.kind === "advance-burst") this.tacticalMove(e, m.angle, 110 * dt);
+        if (m.kind === "retreat-burst")
+          this.tacticalMove(e, m.angle + Math.PI, 120 * dt);
+        if (m.time > 0) return true;
+        if (m.kind === "tracking-burst") m.angle = this.enemyAim(e);
         this.tacticShot(
           e,
           m.kind,
-          m.angle + (m.kind === "sweep" ? (m.shots - 3) * 0.12 : 0),
+          m.angle +
+            (m.kind === "sweep"
+              ? (m.shots - 3) * 0.12
+              : m.kind === "crossfire"
+                ? m.shots % 2
+                  ? 0.13
+                  : -0.13
+                : 0),
         );
         m.shots--;
         m.time =
-          m.kind === "boss-ring" ? 0.6 : m.kind === "boss-fan" ? 0.24 : 0.18;
+          m.kind === "boss-ring"
+            ? 0.45
+            : m.kind === "boss-fan"
+              ? 0.2
+              : e.boss
+                ? 0.12
+                : 60 / weapons[e.weapon].rpm!;
         if (m.shots <= 0 || (!e.boss && !e.mag)) e.maneuver = undefined;
       }
       return true;
@@ -2166,11 +2277,18 @@ export class Raid {
     )
       return false;
     let kind: string | undefined;
-    const a = Math.atan2(this.p.y - e.y, this.p.x - e.x);
+    const a = this.enemyAim(e, e.boss ? 1100 : 950);
     if (e.boss?.id === "iron") {
-      const cycle = ["boss-fan", "boss-roll", "boss-ring"];
+      const cycle = [
+        "boss-fan",
+        "boss-roll",
+        "tracking-burst",
+        "boss-ring",
+        "advance-burst",
+        "crossfire",
+      ];
       kind = cycle[(e.tacticStep ?? 0) % cycle.length];
-      e.tacticCool = e.phase ? 4.2 : 6;
+      e.tacticCool = 4.2;
     } else {
       const t = e.tactics ?? [];
       const incoming = this.bullets.some(
@@ -2186,7 +2304,17 @@ export class Raid {
               Math.hypot(e.x - this.p.x, e.y - this.p.y) > 180
             ? "rush"
             : t.find((x) =>
-                ["aim", "sweep", "fan", "burst", "double"].includes(x),
+                [
+                  "aim",
+                  "sweep",
+                  "fan",
+                  "burst",
+                  "double",
+                  "advance-burst",
+                  "tracking-burst",
+                  "crossfire",
+                  "retreat-burst",
+                ].includes(x),
               );
       if (!kind) return false;
       e.tacticCool = kind === "dodge" ? 4 : 6.5;
@@ -2196,19 +2324,23 @@ export class Raid {
     e.maneuver = {
       kind,
       stage: "warn",
-      time: e.boss ? 0.9 : kind === "aim" ? 0.85 : 0.4,
+      time: kind === "aim" ? 0.45 : 0.22,
       shots:
-        kind === "boss-fan"
-          ? 3
-          : kind === "boss-ring"
-            ? 2
-            : kind === "sweep"
-              ? 5
-              : kind === "burst"
-                ? 3
-                : kind === "double"
-                  ? 2
-                  : 1,
+        kind === "tracking-burst" || kind === "crossfire"
+          ? 6
+          : kind === "advance-burst" || kind === "retreat-burst"
+            ? 4
+            : kind === "boss-fan"
+              ? 3
+              : kind === "boss-ring"
+                ? 2
+                : kind === "sweep"
+                  ? 5
+                  : kind === "burst"
+                    ? 3
+                    : kind === "double"
+                      ? 2
+                      : 1,
       angle:
         kind === "dodge" ? a + ((e.tacticStep % 2 ? 1 : -1) * Math.PI) / 2 : a,
       x: this.p.x,
@@ -2234,6 +2366,7 @@ export class Raid {
       e.target = { x: p.x, y: p.y };
     } else if (e.alert <= 0 && e.state !== "patrol") {
       e.state = "patrol";
+      e.target = undefined;
       e.path = [];
     }
     if (e.reload > 0) {
@@ -2258,14 +2391,10 @@ export class Raid {
         e.telegraph = undefined;
       }
     }
-    if (e.boss && e.hp < e.maxHp * 0.5 && !e.phase && this.map === 0) {
-      e.phase = 1;
-      e.tacticCool = 1;
-      this.notify(`${e.boss.name} · 进入第二阶段`);
-    }
-    if (this.map === 0 && this.updateVillageTactics(e, dt, canSee)) return;
-    if (e.state === "combat" && canSee) {
-      e.angle = Math.atan2(p.y - e.y, p.x - e.x);
+    const canFire = canSee && this.enemyCanFire(e);
+    if (this.map === 0 && this.updateVillageTactics(e, dt, canFire)) return;
+    if (e.state === "combat" && canFire) {
+      e.angle = this.enemyAim(e, e.boss ? 1100 : 950);
       if (
         e.cool <= 0 &&
         e.reload <= 0 &&
@@ -2288,33 +2417,37 @@ export class Raid {
               e.y - 24,
               e.angle +
                 (this.random() - 0.5) *
-                  (shots > 1 ? gun.spread! * 2 : 0.15 + 0.04 * (5 - e.tier)),
+                  (shots > 1
+                    ? gun.spread! * 2
+                    : gun.spread! * (e.tier >= 2 ? 1 : 1.5)),
               false,
-              (e.boss ? 14 + this.map * 2 : 8 + this.map * 2) *
+              Math.max(12, gun.damage! * 0.9) *
                 weaponDamageScale(e.weaponDurability) *
-                (shots > 1 ? (e.boss ? 4 : 2.8) / shots : 1),
+                1,
               Math.min(4, e.tier),
               gun.range!,
               shots > 1,
               i === 0,
+              undefined,
+              !!e.boss,
+              e.boss ? 1100 : 950,
             );
           e.mag--;
           e.weaponDurability = Math.max(
             0,
             e.weaponDurability - weapons[e.weapon].durability! / 700,
           );
-          e.cool = Math.max(
-            60 / gun.rpm!,
-            e.boss?.skill === "shotgun"
-              ? 1.5
-              : e.boss?.skill === "turret"
-                ? 0.7
-                : e.boss?.skill === "shield"
-                  ? 0.25
-                  : role === "sniper"
-                    ? 1.7
-                    : 0.65 + this.random() * 0.65,
-          );
+          const auto = gun.weaponClass === "smg" || gun.weaponClass === "rifle";
+          if (auto && !(e.burstLeft ?? 0))
+            e.burstLeft = gun.weaponClass === "smg" ? 5 : 3;
+          e.burstLeft = Math.max(0, (e.burstLeft ?? 1) - 1);
+          e.cool =
+            auto && e.burstLeft > 0
+              ? 60 / gun.rpm!
+              : Math.max(
+                  60 / gun.rpm!,
+                  auto ? 0.5 + this.random() * 0.25 : 0.35,
+                );
           this.sound.play("shot", 1, {
             weaponClass: gun.weaponClass,
             enemy: true,
@@ -2350,7 +2483,7 @@ export class Raid {
           this.emit(e.x, e.y - 20, 8, "#a0d7ab");
         }
       }
-      if (e.boss && e.hp < e.maxHp * 0.5 && !e.phase) {
+      if (this.map !== 0 && e.boss && e.hp < e.maxHp * 0.5 && !e.phase) {
         e.phase = 1;
         e.skillCool = 0.5;
         this.notify(`${e.boss.name} · 进入第二阶段`);
@@ -2382,7 +2515,7 @@ export class Raid {
     if (target) {
       let tx = target.x,
         ty = target.y;
-      if (e.state === "combat" && canSee) {
+      if (e.state === "combat" && canFire) {
         if (d < desired - 60) {
           tx = e.x - Math.cos(e.angle) * 100;
           ty = e.y - Math.sin(e.angle) * 100;

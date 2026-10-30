@@ -54,6 +54,10 @@ const groupNames = {
   "reload-motion": "换弹动作",
 };
 const names = {
+  enemyAim: "敌人走位预判",
+  enemyCanFire: "室内外射击规则",
+  alert: "声音传播与警觉",
+  noiseClock: "脚步声感知节奏",
   freeEnemyPoint: "建筑外敌人出生范围",
   tacticalMove: "战术冲刺与翻滚位移",
   tacticShot: "战术射击伤害与弹幕",

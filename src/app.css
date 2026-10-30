@@ -2440,3 +2440,4 @@ body:not(.aiming) #crosshair { display: none; }
 .inventory-panel .equipment-fixed > .panel-heading { margin-bottom: 6px; }
 @media (max-width: 1250px) { :root { --inventory-width: 518px; } }
 @media (max-width: 1000px) { :root { --inventory-width: calc(100vw - 405px); } }
+#boss-hud > strong { color: #ff6873; }
