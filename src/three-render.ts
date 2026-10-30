@@ -1,4 +1,4 @@
-import { drawProjectileTrail } from "./combat-visuals";
+import { drawProjectileTrail, projectileTrailLength } from "./combat-visuals";
 import { animateReload } from "./reload-motion";
 import { animateKnifeHold } from "./knife-motion";
 import {
@@ -949,7 +949,6 @@ export class ThreeRenderer {
     for (const e of r.enemies) {
       const p = this.project(e.x, e.y, e.boss ? 133 : 105);
       if (e.state === "investigate") {
-        round(c, p.x - 17, p.y - 78, 34, 38, 12, "#292238ee");
         text(c, "？", p.x, p.y - 48, 32, "#ffe478");
       }
       const enemyName = e.boss?.name ?? breeds[e.breed]?.name ?? "炮塔";
@@ -1000,7 +999,7 @@ export class ThreeRenderer {
     c.lineCap = "round";
     for (const b of r.bullets) {
       const speed = Math.hypot(b.vx, b.vy),
-        length = Math.min(65, b.travel + 10);
+        length = projectileTrailLength(b);
       const p = this.project(b.x, b.y + 24, 30),
         q = this.project(
           b.x - (b.vx / speed) * length,
@@ -1023,7 +1022,14 @@ export class ThreeRenderer {
         c.stroke();
         continue;
       }
-      c.strokeStyle = fx.friendly ? "#ffe7a0" : fx.boss ? "#ce6aff" : "#ff6033";
+      c.strokeStyle =
+        fx.kind === "muzzle"
+          ? "#ffe7a0"
+          : fx.friendly
+            ? "#ffe7a0"
+            : fx.boss
+              ? "#ce6aff"
+              : "#ff6033";
       if (fx.kind === "hit") {
         c.save();
         c.globalAlpha = life * 0.55;
@@ -1050,8 +1056,13 @@ export class ThreeRenderer {
       }
       c.fillStyle = "#fff9de";
       c.shadowColor = c.strokeStyle;
-      c.shadowBlur = 12;
-      const radius = fx.kind === "hit" ? 5 + (1 - life) * 15 : 6 + life * 7;
+      c.shadowBlur = fx.friendly ? 12 : 0;
+      const radius =
+        fx.kind === "hit"
+          ? 5 + (1 - life) * 15
+          : fx.friendly
+            ? 6 + life * 7
+            : 3 + life * 4;
       c.lineWidth = 2.5;
       c.beginPath();
       for (let k = 0; k < 6; k++) {

@@ -1,4 +1,4 @@
-import { drawProjectileTrail } from "./combat-visuals";
+import { drawProjectileTrail, projectileTrailLength } from "./combat-visuals";
 import {
   containerHighlighted,
   containerHighlightColor,
@@ -347,7 +347,7 @@ export class Renderer {
     sorted.sort((a, b) => a.y - b.y).forEach((d) => d.draw());
     for (const b of r.bullets) {
       const speed = Math.hypot(b.vx, b.vy),
-        length = Math.min(65, b.travel + 10);
+        length = projectileTrailLength(b);
       drawProjectileTrail(
         c,
         b,
@@ -514,15 +514,6 @@ export class Renderer {
       });
     const close = Math.hypot(e.x - r.p.x, e.y - r.p.y) < 650;
     if (e.state === "investigate") {
-      round(
-        c,
-        e.x - 17,
-        e.y - (e.boss ? 140 : 104) - 78,
-        34,
-        38,
-        12,
-        "#292238ee",
-      );
       text(c, "？", e.x, e.y - (e.boss ? 140 : 104) - 48, 32, "#ffe478");
     }
     const enemyName = e.boss?.name ?? breeds[e.breed]?.name ?? "自动炮塔";

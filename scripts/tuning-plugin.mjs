@@ -15,6 +15,7 @@ const files = [
   "locomotion.ts",
   "knife-motion.ts",
   "reload-motion.ts",
+  "combat-visuals.ts",
 ];
 const omitted = new Set([
   "weaponRows",
@@ -52,8 +53,13 @@ const groupNames = {
   locomotion: "角色移动",
   "knife-motion": "近战动作",
   "reload-motion": "换弹动作",
+  "combat-visuals": "子弹表现",
 };
 const names = {
+  moveScale: "敌人个体移速系数",
+  autoLoadout: "一键低级配装",
+  projectileTrailLength: "子弹拖尾长度",
+  fullReduction: "满耐久护具穿透减伤",
   enemyAim: "敌人走位预判",
   enemyCanFire: "室内外射击规则",
   alert: "声音传播与警觉",

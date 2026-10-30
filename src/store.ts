@@ -37,6 +37,7 @@ export type Equipment = {
   food: Item | null;
 };
 export interface Settings {
+  musicShuffleRevision?: number;
   audioPresetRevision?: string;
   master: number;
   music: number;
@@ -112,9 +113,10 @@ export const defaults: Settings = {
     publishedAudio.preview.settings.baseMusic ??
     publishedAudio.preview.settings.music,
   baseMusicTrack: "ORIGINAL",
-  baseMusicMode: "loop",
+  musicShuffleRevision: 1,
+  baseMusicMode: "random",
   musicTrack: "BG5",
-  musicMode: "loop",
+  musicMode: "random",
   sfx: publishedAudio.preview.settings.sfx,
   shake: 0.35,
   aim: "#edd39a",
@@ -377,6 +379,12 @@ export function validateSave(data: unknown): Save {
   ];
   for (const n of Object.values(s.stats))
     if (!Number.isFinite(n) || n < 0) throw Error("统计数据无效");
+  // One-time adoption of the newly requested shuffle defaults; later personal choices persist.
+  if (s.settings.musicShuffleRevision !== 1) {
+    s.settings.baseMusicMode = "random";
+    s.settings.musicMode = "random";
+    s.settings.musicShuffleRevision = 1;
+  }
   // Apply the explicitly selected published mix once; subsequent user slider changes remain respected.
   if (
     s.settings.audioPresetRevision !==
@@ -1148,4 +1156,83 @@ export function shopUnlockHint(s: Save, id: string) {
   const level = db[id]?.unlock ?? 0;
   if (unlocked(s) >= level) return "";
   return `击败${bosses.find((b) => b.id === ["iron", "swift", "yeed"][level - 1])?.name || "对应首领"}解锁`;
+}
+
+/** Assemble the cheapest usable complete kit from owned items as a capacity-checked transaction. */
+export function autoLoadout(s: Save) {
+  const next = structuredClone(s);
+  next.stash.push(
+    ...Object.values(next.equipment).filter((i): i is Item => !!i),
+  );
+  for (const slot of Object.keys(next.equipment) as (keyof Equipment)[])
+    next.equipment[slot] = null;
+  normalizeStacks(next.stash);
+  const usable = (i: Item) => !db[i.id].durability || (i.durability ?? 0) > 0;
+  const cheapest = (kind: string) =>
+    [...next.stash, ...next.pack]
+      .filter((i) => db[i.id].kind === kind && usable(i))
+      .sort(
+        (a, b) =>
+          db[a.id].tier - db[b.id].tier ||
+          db[a.id].price - db[b.id].price ||
+          (a.durability ?? 0) - (b.durability ?? 0),
+      );
+  const assign = (slot: keyof Equipment, item: Item) => {
+    const source = next.stash.includes(item) ? next.stash : next.pack;
+    source.splice(source.indexOf(item), 1);
+    next.equipment[slot] = item;
+  };
+  const missing: string[] = [];
+  for (const [slot, kind, label] of [
+    ["bag", "bag", "背包"],
+    ["primary", "weapon", "枪械"],
+    ["armor", "armor", "护甲"],
+    ["helmet", "helmet", "头盔"],
+    ["melee", "melee", "近战武器"],
+    ["food", "food", "食物"],
+  ] as const) {
+    const item = cheapest(kind).find(
+      (i) => kind !== "bag" || db[i.id].capacity! >= next.pack.length,
+    );
+    if (item) assign(slot, item);
+    else missing.push(label);
+  }
+  const secondary = cheapest("weapon")[0];
+  if (secondary) assign("secondary", secondary);
+  const ammo = cheapest("ammo")[0];
+  if (ammo) assign("ammo", ammo);
+  refillAmmo(next);
+  let rounds =
+    (next.equipment.ammo?.qty ?? 0) +
+    next.pack
+      .filter((i) => db[i.id].kind === "ammo")
+      .reduce((n, i) => n + i.qty, 0) +
+    [next.equipment.primary, next.equipment.secondary].reduce(
+      (n, i) => n + (i?.loaded?.count ?? 0),
+      0,
+    );
+  for (const item of cheapest("ammo").filter((i) => next.stash.includes(i))) {
+    if (rounds >= PREFLIGHT_AMMO) break;
+    const amount = Math.min(item.qty, PREFLIGHT_AMMO - rounds);
+    if (!canPut(next.pack, { ...item, qty: amount }, packCapacity(next))) break;
+    const part = takeQuantity(item, amount);
+    part.uid = crypto.randomUUID();
+    put(next.pack, part, packCapacity(next));
+    rounds += amount;
+    if (!item.qty) next.stash.splice(next.stash.indexOf(item), 1);
+  }
+  refillAmmo(next);
+  if (rounds < PREFLIGHT_AMMO)
+    missing.push(`子弹（还缺${PREFLIGHT_AMMO - rounds}发）`);
+  if (
+    next.stash.length > capacities[next.warehouse] ||
+    next.pack.length > packCapacity(next)
+  )
+    return ["空间不足，请先整理仓库或背包"];
+  s.stash = next.stash;
+  s.pack = next.pack;
+  s.equipment = next.equipment;
+  packGrid(s);
+  persist(s);
+  return missing;
 }

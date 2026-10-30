@@ -281,8 +281,8 @@ export class Sound {
     this.musicBus.gain.value = musicVolume * this.balance.buses.music;
     const mode =
       this.mode === "base"
-        ? (this.settings.baseMusicMode ?? "loop")
-        : (this.settings.musicMode ?? "loop");
+        ? (this.settings.baseMusicMode ?? "random")
+        : (this.settings.musicMode ?? "random");
     const signature = `${this.mode === "base" ? "base" : "raid"}:${picked}:${mode}`;
     if (!this.musicElement) {
       this.musicElement = new Audio();
@@ -296,7 +296,7 @@ export class Sound {
         if (
           (this.mode === "base"
             ? this.settings.baseMusicMode
-            : this.settings.musicMode) === "random"
+            : this.settings.musicMode) !== "loop"
         )
           this.nextMusic();
       });
@@ -305,7 +305,16 @@ export class Sound {
     if (signature !== this.musicSelection) {
       this.musicSelection = signature;
       this.musicFailed = false;
-      this.setMusic(picked in musicTracks ? picked : "BG5");
+      const pool = Object.keys(
+        this.mode === "base" ? baseMusicNames : gameMusicNames,
+      ) as MusicTrack[];
+      this.setMusic(
+        mode === "random" && !this.musicPreview
+          ? pool[Math.floor(Math.random() * pool.length)]
+          : picked in musicTracks
+            ? picked
+            : "BG5",
+      );
     }
     this.musicElement.loop = mode === "loop";
     if (!this.settings.master || !musicVolume || document.hidden) {

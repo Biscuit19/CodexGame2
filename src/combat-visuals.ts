@@ -16,9 +16,9 @@ export function drawProjectileTrail(
   trail.addColorStop(0.45, color + "99");
   trail.addColorStop(1, color);
   c.strokeStyle = trail;
-  c.lineWidth = b.friendly ? 4 : b.boss ? 8 : 6;
+  c.lineWidth = b.friendly ? 3 : b.boss ? 5 : 4;
   c.shadowColor = color;
-  c.shadowBlur = b.boss ? 17 : 10;
+  c.shadowBlur = b.friendly ? 5 : 0;
   c.beginPath();
   c.moveTo(q.x, q.y);
   c.lineTo(p.x, p.y);
@@ -36,3 +36,6 @@ export function drawProjectileTrail(
   c.fill();
   c.restore();
 }
+
+export const projectileTrailLength = (b: Bullet) =>
+  Math.min(b.longTrail ? 44 : 23, b.travel + 6);

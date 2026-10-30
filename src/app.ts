@@ -56,6 +56,7 @@ import {
   buyBack,
   sell,
   upgradeWarehouse,
+  autoLoadout,
   upgradeSafe,
   repair,
   repairCost,
@@ -221,6 +222,7 @@ function syncBaseMenu() {
       "base-settings",
       "base-help",
       "sell-confirm",
+      "warehouse-confirm",
       "batch-confirm",
       "preflight",
       "safe",
@@ -230,6 +232,7 @@ function syncBaseMenu() {
   ) {
     content = [
       "preflight",
+      "warehouse-confirm",
       "batch-confirm",
       "sell-confirm",
       "safe",
@@ -245,6 +248,7 @@ function syncBaseMenu() {
     if (
       ![
         "preflight",
+        "warehouse-confirm",
         "batch-confirm",
         "sell-confirm",
         "safe",
@@ -721,7 +725,7 @@ function warehouse() {
             ].indexOf(db[b.id].kind) || sale(b) - sale(a)
         : db[b.id].tier - db[a.id].tier || sale(b) - sale(a),
   );
-  return `<div class="inventory-layout">${inventoryPanel()}<section class="panel warehouse-panel" data-drop="stash" aria-label="右侧仓库">${heading("仓库", `${s.stash.length}/${capacities[s.warehouse]} 格`)}<div class="warehouse-tools"><select id="filter" aria-label="物品分类"><option value="all">全部物品</option>${Object.entries(
+  return `<div class="inventory-layout">${inventoryPanel()}<section class="panel warehouse-panel" data-drop="stash" aria-label="右侧仓库">${heading("仓库", `${s.stash.length}/${capacities[s.warehouse]} 格`)}<div class="warehouse-tools">${btn("一键配装", "auto-loadout", "", "primary")}<select id="filter" aria-label="物品分类"><option value="all">全部物品</option>${Object.entries(
     kindNames,
   )
     .map(
@@ -853,18 +857,20 @@ function baseModal() {
           .join(
             "",
           )}</ul><p>确定继续前往战区吗？</p>${btn("返回装备", "preflight-back", "", "secondary full")}${btn("继续前往", "preflight-go", "", "primary full")}`
-      : modal === "batch-confirm"
-        ? `${heading("确认批量出售")}<p class="sell-question">确认出售选中的${[...batchUids].filter((uid) => s.stash.some((i) => i.uid === uid)).length}件物品？</p><p>预计获得 ◈ ${money(s.stash.filter((i) => batchUids.has(i.uid)).reduce((n, i) => n + sale(i), 0))} 金币</p>${btn("确认批量出售", "batch-confirm", "", "primary full")}${btn("取消", "close-modal", "", "secondary full")}`
-        : modal === "sell-confirm"
-          ? `${heading("确认出售")}<p class="sell-question">确认出售全部珍贵及以下收集品？</p>${btn("确认出售", "confirm-sell", "", "primary full")}${btn("取消", "close-modal", "", "secondary full")}`
-          : modal === "help"
-            ? guide()
-            : modal === "safe"
-              ? `${heading("升级安全箱")}<div class="safe-options">${safeNames.map((n, i) => btn(`${icon("safe", "#d8bf88", 54)}<strong>${n}</strong><span>${safeCap[i]} 格</span><span>${i <= s.safe ? "已拥有" : i === 3 && !s.defeated.includes("yeed") ? "击败猫伊德后解锁" : `◈ ${money(safePrice[i])}`}</span>`, "safe", `data-id="${i}" ${i <= s.safe || (i === 3 && !s.defeated.includes("yeed")) ? "disabled" : ""}`)).join("")}</div>`
-              : modal === "settings"
-                ? settingsContent()
-                : "";
-  return `<section class="modal panel ${["sell-confirm", "batch-confirm"].includes(modal) ? "sale-confirm-modal" : ""}">${btn("×", "close-modal", 'aria-label="关闭"', "close")}${content}</section>`;
+      : modal === "warehouse-confirm"
+        ? `${heading("仓库扩容")}<p class="sell-question">花费 ◈ ${money(warehouseCosts[s.warehouse + 1])} 金币，将仓库从 ${capacities[s.warehouse]} 格扩容到 ${capacities[s.warehouse + 1]} 格？</p>${btn("确认扩容", "warehouse-confirm", s.coins < warehouseCosts[s.warehouse + 1] ? "disabled" : "", "primary full")}${s.coins < warehouseCosts[s.warehouse + 1] ? "<p>金币不足</p>" : ""}${btn("取消", "close-modal", "", "secondary full")}`
+        : modal === "batch-confirm"
+          ? `${heading("确认批量出售")}<p class="sell-question">确认出售选中的${[...batchUids].filter((uid) => s.stash.some((i) => i.uid === uid)).length}件物品？</p><p>预计获得 ◈ ${money(s.stash.filter((i) => batchUids.has(i.uid)).reduce((n, i) => n + sale(i), 0))} 金币</p>${btn("确认批量出售", "batch-confirm", "", "primary full")}${btn("取消", "close-modal", "", "secondary full")}`
+          : modal === "sell-confirm"
+            ? `${heading("确认出售")}<p class="sell-question">确认出售全部珍贵及以下收集品？</p>${btn("确认出售", "confirm-sell", "", "primary full")}${btn("取消", "close-modal", "", "secondary full")}`
+            : modal === "help"
+              ? guide()
+              : modal === "safe"
+                ? `${heading("升级安全箱")}<div class="safe-options">${safeNames.map((n, i) => btn(`${icon("safe", "#d8bf88", 54)}<strong>${n}</strong><span>${safeCap[i]} 格</span><span>${i <= s.safe ? "已拥有" : i === 3 && !s.defeated.includes("yeed") ? "击败猫伊德后解锁" : `◈ ${money(safePrice[i])}`}</span>`, "safe", `data-id="${i}" ${i <= s.safe || (i === 3 && !s.defeated.includes("yeed")) ? "disabled" : ""}`)).join("")}</div>`
+                : modal === "settings"
+                  ? settingsContent()
+                  : "";
+  return `<section class="modal panel ${["sell-confirm", "batch-confirm", "warehouse-confirm"].includes(modal) ? "sale-confirm-modal" : ""}">${btn("×", "close-modal", 'aria-label="关闭"', "close")}${content}</section>`;
 }
 function resultModal(r: Result) {
   return `<section class="modal result-panel panel"><h1>${s.completed && r.bosses.includes("doctor") ? "行动完成" : r.success ? "成功撤离" : "行动失败"}</h1><p>${esc(r.reason)}</p><div class="result-stats">${[
@@ -890,7 +896,7 @@ function renderRaid() {
   canvas.classList.remove("hidden");
   document.body.classList.add("in-raid");
   if (r.map !== 0) scene3d?.show(false);
-  root.innerHTML = `<div class="raid-hud"><div class="raid-top"><strong>${maps[r.map].name}</strong><div id="boss-hud"></div>${btn('<b id="raid-time">15:00</b><span>菜单</span>', "pause", "", "raid-timer")}</div><canvas id="minimap" width="260" height="200" data-action="toggle-map" aria-label="打开战区地图"></canvas><div class="raid-bottom"><section class="vitals"><div><strong id="hp-number">${PLAYER_MAX_HP}</strong><span>生命</span></div><div class="meter"><i id="hp-fill"></i></div><div class="stamina-row"><span>体力</span><strong id="st-number">${MOVEMENT.maxStamina}</strong><span id="sprint-state">疾跑</span></div><div class="meter stamina"><i id="st-fill"></i></div><span id="armor-readout"></span><span id="regen-readout"></span></section><section class="food-hud" aria-label="当前食物"><div id="food-art"></div><strong id="food-name"></strong><span id="food-quantity"></span><small>Q 食用</small></section><div class="raid-shortcuts"><span>空格 翻滚</span><span>E 搜索</span><span>Tab 背包</span><span>M 地图</span></div><section class="weapon-hud"><div class="hud-weapon-column"><strong id="weapon-name"></strong><div id="weapon-art" class="hud-weapon-art" aria-hidden="true"></div><span id="weapon-condition"></span></div><div class="hud-ammo-column"><div class="hud-rounds"><b id="mag-count"></b><span id="reserve-count"></span></div><div class="hud-ammo-details"><span id="ammo-art" class="hud-ammo-art" aria-hidden="true"></span><span id="ammo-name"></span></div></div></section></div><div id="paid-exit-hint" class="paid-exit-hint hidden"></div><div id="action-progress" class="action-progress hidden"></div><div id="crosshair" class="${s.settings.crosshair === "cross" ? "cross" : "ring"}" style="--aim:${s.settings.aim}"></div></div><div id="raid-overlay">${raidOverlay()}</div>`;
+  root.innerHTML = `<div class="raid-hud"><div class="raid-top"><strong>${maps[r.map].name}</strong><div id="boss-hud"></div>${btn('<b id="raid-time">15:00</b><span>菜单</span>', "pause", "", "raid-timer")}</div><canvas id="minimap" width="260" height="200" data-action="toggle-map" aria-label="打开战区地图"></canvas><div class="raid-bottom"><section class="vitals" aria-label="生命与体力"><div><span class="vital-paw" aria-hidden="true">♥</span><strong id="hp-number">${PLAYER_MAX_HP}</strong><span>生命</span></div><div class="meter"><i id="hp-fill"></i></div><div class="stamina-row"><span>体力</span><strong id="st-number">${MOVEMENT.maxStamina}</strong><span id="sprint-state">疾跑</span></div><div class="meter stamina"><i id="st-fill"></i></div><span id="armor-readout"></span><span id="regen-readout"></span></section><section class="food-hud" aria-label="当前食物"><div id="food-art"></div><strong id="food-name"></strong><span id="food-quantity"></span><small>Q 食用</small></section><div class="raid-shortcuts"><span>空格 翻滚</span><span>E 搜索</span><span>Tab 背包</span><span>M 地图</span></div><section class="weapon-hud"><div class="hud-weapon-column"><strong id="weapon-name"></strong><div id="weapon-art" class="hud-weapon-art" aria-hidden="true"></div><span id="weapon-condition"></span></div><div class="hud-ammo-column"><div class="hud-rounds"><b id="mag-count"></b><span id="reserve-count"></span></div><div class="hud-ammo-details"><span id="ammo-art" class="hud-ammo-art" aria-hidden="true"></span><span id="ammo-name"></span></div></div></section></div><div id="paid-exit-hint" class="paid-exit-hint hidden"></div><div id="action-progress" class="action-progress hidden"></div><div id="crosshair" class="${s.settings.crosshair === "cross" ? "cross" : "ring"}" style="--aim:${s.settings.aim}"></div></div><div id="raid-overlay">${raidOverlay()}</div>`;
   overlay();
   updateHUD();
 }
@@ -944,9 +950,15 @@ function updateHUD() {
   );
   set("hp-number", String(Math.max(0, Math.ceil(p.hp))));
   set("st-number", String(Math.ceil(p.stamina)));
+  document.querySelector(".vitals")?.classList.toggle("low-health", p.hp < 30);
+  document.querySelector(".vitals")?.classList.toggle("exhausted", p.exhausted);
   set(
     "sprint-state",
-    p.exhausted ? "疲劳" : r.weapon?.kind === "melee" ? "持刀加速" : "疾跑",
+    p.exhausted
+      ? "疲劳 · 等待恢复"
+      : r.weapon?.kind === "melee"
+        ? "持刀加速"
+        : "Shift 疾跑",
   );
   set("weapon-name", r.weaponItem ? name(r.weaponItem.id) : "未装备武器");
   set("mag-count", String(r.mag).padStart(2, "0"));
@@ -1321,7 +1333,23 @@ async function action(el: HTMLElement) {
     toast(item && repair(s, item) ? "修复完成" : "无需修复或金币不足");
     render();
   } else if (a === "warehouse") {
+    if (s.warehouse < 4) modal = "warehouse-confirm";
+    render();
+  } else if (a === "warehouse-confirm") {
     toast(upgradeWarehouse(s) ? "仓库扩容完成" : "金币不足");
+    modal = "";
+    render();
+  } else if (a === "auto-loadout") {
+    const missing = autoLoadout(s);
+    if (!missing[0]?.startsWith("空间不足")) sound.play("pack");
+    toast(
+      missing[0]?.startsWith("空间不足")
+        ? missing[0]
+        : missing.length
+          ? `已装配现有最低级装备；缺少${missing.join("、")}`
+          : "已完成配装 · 满足出战要求",
+    );
+    closeItemMenu();
     render();
   } else if (a === "safe-menu") {
     modal = "safe";

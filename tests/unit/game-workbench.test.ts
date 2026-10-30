@@ -95,6 +95,7 @@ it("导出配置实际改变战斗数值、购买价和每类容器数量；无�
       "locomotion.ts",
       "knife-motion.ts",
       "reload-motion.ts",
+      "combat-visuals.ts",
       "game-catalog.ts",
       "game-tuning-runtime.ts",
       "game-tuning.json",

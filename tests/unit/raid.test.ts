@@ -183,9 +183,9 @@ describe("真实战区逻辑", () => {
     expect(s.pack).toHaveLength(3);
     for (const [id, qty] of [
       ["f1", 1],
-      ["c1_9", 1],
-      ["f2", 1],
       ["f3", 1],
+      ["f2", 1],
+      ["c1_9", 1],
       [null, 0],
     ] as const) {
       r.p.hp = 1;
@@ -626,7 +626,7 @@ describe("真实战区逻辑", () => {
     };
     const near = hits(80),
       far = hits(210);
-    expect(near).toBeGreaterThan(40);
+    expect(near).toBeGreaterThan(30);
     expect(far).toBeGreaterThan(0);
     expect(near).toBeGreaterThan(far * 2);
   });

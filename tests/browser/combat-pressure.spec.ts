@@ -18,6 +18,8 @@ test("已选曲目按基地8首和游戏11首分开，基地随机不混游戏�
   await expect(
     page.getByLabel("游戏音乐", { exact: true }).locator("option[value=PM18]"),
   ).toHaveCount(0);
+  await page.getByLabel("基地音乐播放", { exact: true }).selectOption("loop");
+  await page.getByLabel("游戏音乐播放", { exact: true }).selectOption("loop");
   await page.getByLabel("基地音乐", { exact: true }).selectOption("PM20");
   await expect
     .poll(() =>

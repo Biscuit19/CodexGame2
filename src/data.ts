@@ -494,8 +494,32 @@ export function damage(
   distanceMultiplier = 1,
 ) {
   const p = penetration[ammoTier - 1];
-  const reduction =
-    durability <= 0 ? 1 : p > armorTier ? 0.85 : p === armorTier ? 0.63 : 0.28;
+  // Armor grade matters per penetration gap; worn gear gradually loses protection.
+  const gap = armorTier - p;
+  const fullReduction =
+    gap >= 3
+      ? 0.055
+      : gap === 2
+        ? 0.1
+        : gap === 1
+          ? 0.22
+          : gap === 0
+            ? 0.55
+            : gap === -1
+              ? 0.82
+              : 0.95;
+  // Evaluate condition against the actual helmet/body armor maximum.
+  const condition =
+    armorTier > 0
+      ? Math.min(
+          1,
+          Math.max(
+            0,
+            durability / (head ? helmetDur : armorDur)[armorTier - 1],
+          ),
+        )
+      : 0;
+  const reduction = 1 - (1 - fullReduction) * Math.sqrt(condition);
   return Math.max(
     1,
     base *

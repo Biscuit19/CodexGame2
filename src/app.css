@@ -2441,3 +2441,88 @@ body:not(.aiming) #crosshair { display: none; }
 @media (max-width: 1250px) { :root { --inventory-width: 518px; } }
 @media (max-width: 1000px) { :root { --inventory-width: calc(100vw - 405px); } }
 #boss-hud > strong { color: #ff6873; }
+
+/* Soft country HUD: rounded inset tracks, calm contrast and compact status hints. */
+.vitals {
+  width: 292px;
+  padding: 15px 19px 14px;
+  border-radius: 22px 22px 17px 17px;
+  background: linear-gradient(145deg, #304c3cf5, #213b30f5);
+  border: 1px solid #d4dbb884;
+  box-shadow:
+    0 4px 0 #18302766,
+    inset 0 1px #f7edcb24;
+  color: #fff3d9;
+}
+.vitals > div:first-child {
+  gap: 9px;
+}
+.vitals > div:first-child strong {
+  font-size: 34px;
+  line-height: 1.1;
+}
+.vitals > div:first-child span {
+  font-size: 16px;
+  color: #e2e3c8;
+}
+.vitals > div:first-child .vital-paw {
+  font-size: 23px;
+  color: #f3ad97;
+  margin-right: 1px;
+}
+.vitals .meter {
+  height: 13px;
+  border-radius: 10px;
+  margin: 9px 0 12px;
+  background: #132d24;
+  border: 2px solid #11271e66;
+  box-shadow: inset 0 2px 3px #0003;
+}
+.vitals .meter i {
+  border-radius: 8px;
+  background: linear-gradient(#f5c6a2, #dc9c81);
+}
+.vitals .stamina {
+  height: 9px;
+  margin: 6px 0 10px;
+}
+.vitals .stamina i {
+  background: linear-gradient(#d0dfa8, #a4c68f);
+}
+.vitals .stamina-row {
+  gap: 8px;
+  font-size: 15px;
+  color: #dce6c6;
+}
+.vitals .stamina-row strong {
+  font-size: 17px;
+}
+.vitals .stamina-row span:last-child {
+  font-size: 13px;
+  color: #bfcfad;
+}
+.vitals #armor-readout {
+  font-size: 14px;
+  margin-top: 9px;
+  padding-top: 8px;
+  border-top: 1px solid #ced8b42b;
+  color: #dfdfc4;
+}
+.vitals #regen-readout {
+  display: block;
+  font-size: 14px;
+  color: #c3e8a9;
+  margin-top: 4px;
+}
+.vitals #regen-readout:empty {
+  display: none;
+}
+.vitals.low-health {
+  border-color: #e9a38e;
+}
+.vitals.low-health #hp-number {
+  color: #ffb39f;
+}
+.vitals.exhausted #sprint-state {
+  color: #f2cb94;
+}

@@ -109,7 +109,7 @@ describe("乡野战术与建筑外出生", () => {
     e.tacticCool = 100;
     const before = Math.hypot(e.x - r.p.x, e.y - r.p.y);
     for (let n = 0; n < 15; n++) r.updateEnemy(e, 1 / 60);
-    expect(Math.hypot(e.x - r.p.x, e.y - r.p.y)).toBeLessThan(before - 15);
+    expect(Math.hypot(e.x - r.p.x, e.y - r.p.y)).toBeLessThan(before - 10);
     e.tactics = ["kite"];
     const near = Math.hypot(e.x - r.p.x, e.y - r.p.y);
     for (let n = 0; n < 15; n++) r.updateEnemy(e, 1 / 60);
@@ -135,16 +135,17 @@ describe("乡野战术与建筑外出生", () => {
       kinds.push(boss.maneuver!.kind);
       expect(boss.maneuver!.stage).toBe("warn");
       expect(r.bullets.length).toBe(0);
-      for (let n = 0; n < 220; n++) r.updateVillageTactics(boss, 1 / 60, true);
+      for (let n = 0; n < 220 && boss.maneuver; n++)
+        r.updateVillageTactics(boss, 1 / 60, true);
       expect(r.bullets.length).toBeGreaterThan(0);
-      expect(r.bullets.length).toBeLessThanOrEqual(21);
+      expect(r.bullets.length).toBeLessThanOrEqual(30);
       expect(boss.maneuver).toBeUndefined();
     }
     expect(kinds).toEqual([
       "boss-fan",
       "boss-roll",
       "tracking-burst",
-      "boss-ring",
+      "boss-wide",
       "advance-burst",
       "crossfire",
     ]);
@@ -157,7 +158,7 @@ describe("乡野战术与建筑外出生", () => {
     expect(boss.phase).toBe(0);
     boss.tacticCool = 0;
     r.updateVillageTactics(boss, 0.016, true);
-    expect(boss.tacticCool).toBe(4.2);
+    expect(boss.tacticCool).toBe(2.8);
   });
   it("冲刺闪避受实体墙和水域约束，不瞬移穿墙；失去视线不凭空开启招式", () => {
     const r = start();

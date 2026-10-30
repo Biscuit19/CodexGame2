@@ -29,7 +29,7 @@ function start(seed = 42, map = 0) {
   return { r, events };
 }
 describe("战斗压力、听觉和经济", () => {
-  it("低级SMG按枪械射速连发，子弹更快且基础伤害更高", () => {
+  it("低级SMG按枪械射速连发，保留快弹速并按武器伤害缩放", () => {
     const { r } = start();
     r.enemies = [];
     r.walls = [];
@@ -46,7 +46,8 @@ describe("战斗压力、听觉和经济", () => {
     expect(r.bullets.length).toBeGreaterThanOrEqual(3);
     for (const b of r.bullets) {
       expect(Math.hypot(b.vx, b.vy)).toBeCloseTo(950);
-      expect(b.damage).toBeGreaterThanOrEqual(11.9);
+      expect(b.damage).toBeGreaterThan(0);
+      expect(b.damage).toBeCloseTo(weapons[0].damage! * 0.62, 1);
     }
     expect(e.mag).toBeLessThanOrEqual(27);
   });

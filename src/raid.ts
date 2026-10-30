@@ -101,6 +101,7 @@ export interface Maneuver {
   y: number;
 }
 export interface Enemy {
+  moveScale?: number;
   burstLeft?: number;
   tactics?: readonly VillageTactic[];
   tacticCool?: number;
@@ -154,6 +155,8 @@ export interface Container {
   cooldown: number;
 }
 export interface Bullet {
+  headIntent?: boolean;
+  longTrail?: boolean;
   x: number;
   y: number;
   vx: number;
@@ -784,6 +787,11 @@ export class Raid {
       boss,
       id: boss?.id ?? crypto.randomUUID(),
       weapon,
+      moveScale: boss
+        ? 1
+        : [0.72, 0.85, 0.95, 1.2][
+            Math.abs(Math.round(x * 13 + y * 7 + breed)) % 4
+          ],
       weaponDurability: weapons[weapon].durability!,
       mag: weapons[weapon].mag!,
       reload: 0,
@@ -1201,7 +1209,8 @@ export class Raid {
       .filter((i) => db[i.id].kind === "food" && i.qty > 0)
       .sort(
         (a, b) =>
-          db[a.id].tier - db[b.id].tier || db[a.id].price - db[b.id].price,
+          (this.p.hp < 50 ? -1 : 1) *
+          (db[a.id].tier - db[b.id].tier || db[a.id].price - db[b.id].price),
       );
     const next = available[0];
     if (!next) {
@@ -1284,6 +1293,10 @@ export class Raid {
         count > 1,
         pellet === 0,
         this.aimPoint,
+        false,
+        undefined,
+        false,
+        this.weapon.weaponClass === "sniper",
       );
     }
     this.sound.play("shot", 1, { weaponClass: this.weapon.weaponClass });
@@ -1421,6 +1434,8 @@ export class Raid {
     aim?: { x: number; y: number },
     boss = false,
     projectileSpeed?: number,
+    headIntent = false,
+    longTrail = false,
   ) {
     const speed = projectileSpeed ?? (friendly ? 1050 : 950);
     if (muzzle)
@@ -1448,6 +1463,8 @@ export class Raid {
       shotgun,
       boss,
       aim: aim ? { ...aim } : undefined,
+      headIntent,
+      longTrail,
     });
   }
   alert(x: number, y: number, radius: number) {
@@ -1687,7 +1704,10 @@ export class Raid {
     this.p.hp -= taken;
     this.stats.damageTaken += taken;
     if (armor)
-      armor.durability = Math.max(0, (armor.durability ?? 0) - dmg * 0.25);
+      armor.durability = Math.max(
+        0,
+        (armor.durability ?? 0) - Math.max(0.15, taken * 0.3),
+      );
     this.p.hit = 0.25;
     this.shake = 5;
     this.sound.play("hurt");
@@ -2069,13 +2089,17 @@ export class Raid {
             b.life = 0;
           }
         } else if (
-          Math.hypot(p.x - b.x, p.y - 25 - b.y) < 20 ||
+          (Math.hypot(p.x - b.x, p.y - 25 - b.y) < 20 &&
+            !(b.headIntent && projectileAimedAtHead(b, p))) ||
           projectileInHead(b, p)
         ) {
           this.hurtPlayer(
             b.damage * (b.shotgun ? projectileFalloff(b) : 1),
             b.tier,
-            projectileHitsHead(b, p),
+            !!b.headIntent &&
+              !!b.aim &&
+              projectileInHead(b.aim, p) &&
+              projectileHitsHead(b, p),
             !!b.boss,
           );
           b.life = 0;
@@ -2127,9 +2151,9 @@ export class Raid {
       })
     );
   }
-  enemyAim(e: Enemy, speed = 950) {
+  enemyAim(e: Enemy, speed = 950, head = false) {
     const dx = this.p.x - e.x,
-      dy = this.p.y - e.y,
+      dy = this.p.y - e.y - (head ? 11 : 0),
       v = this.playerVelocity;
     const a = v.x * v.x + v.y * v.y - speed * speed,
       b = 2 * (dx * v.x + dy * v.y),
@@ -2167,26 +2191,34 @@ export class Raid {
     e.angle = angle;
     if (!this.enemyCanFire(e) || !this.lineClear(e.x, e.y, this.p.x, this.p.y))
       return;
-    const boss = !!e.boss,
-      ring = kind === "boss-ring";
-    const count = ring ? 12 : kind === "boss-fan" ? 7 : kind === "fan" ? 3 : 1;
+    const boss = !!e.boss;
+    const count =
+      kind === "boss-wide"
+        ? 11
+        : kind === "boss-fan"
+          ? 7
+          : kind === "fan" || boss
+            ? 3
+            : 1;
     for (let i = 0; i < count; i++) {
-      if (ring && i % 6 === 0) continue; // Two consistent escape gaps.
       const a =
-        angle +
-        (ring
-          ? (i * Math.PI) / 6
-          : (i - (count - 1) / 2) * (boss ? 0.16 : 0.13));
+        angle + (i - (count - 1) / 2) * (kind === "boss-wide" ? 0.095 : 0.13);
       this.addBullet(
         e.x,
         e.y - 24,
         a,
         false,
         boss
-          ? 12
+          ? weapons[e.weapon].damage! *
+              0.9 *
+              weaponDamageScale(e.weaponDurability)
           : kind === "aim"
-            ? Math.max(20, weapons[e.weapon].damage! * 1.1)
-            : Math.max(12, weapons[e.weapon].damage! * 0.8),
+            ? weapons[e.weapon].damage! *
+              0.72 *
+              weaponDamageScale(e.weaponDurability)
+            : weapons[e.weapon].damage! *
+              0.62 *
+              weaponDamageScale(e.weaponDurability),
         Math.min(4, e.tier),
         kind === "aim" ? 850 : 650,
         count > 1,
@@ -2194,6 +2226,8 @@ export class Raid {
         undefined,
         boss,
         boss || kind === "aim" ? 1100 : 950,
+        false,
+        weapons[e.weapon].weaponClass === "sniper",
       );
     }
     e.mag = Math.max(0, e.mag - 1);
@@ -2205,6 +2239,8 @@ export class Raid {
   updateVillageTactics(e: Enemy, dt: number, canSee: boolean) {
     e.tacticCool = Math.max(0, (e.tacticCool ?? 4) - dt);
     const m = e.maneuver;
+    if (canSee && e.state === "combat")
+      e.angle = Math.atan2(this.p.y - e.y, this.p.x - e.x);
     if (m) {
       if (
         (!canSee || !this.enemyCanFire(e)) &&
@@ -2238,11 +2274,17 @@ export class Raid {
           } else e.maneuver = undefined;
         }
       } else {
-        if (m.kind === "advance-burst") this.tacticalMove(e, m.angle, 110 * dt);
+        if (m.kind === "advance-burst")
+          this.tacticalMove(e, m.angle, (e.boss ? 210 : 110) * dt);
         if (m.kind === "retreat-burst")
           this.tacticalMove(e, m.angle + Math.PI, 120 * dt);
         if (m.time > 0) return true;
-        if (m.kind === "tracking-burst") m.angle = this.enemyAim(e);
+        if (
+          m.kind === "tracking-burst" ||
+          (e.boss &&
+            ["boss-fan", "boss-wide", "advance-burst"].includes(m.kind))
+        )
+          m.angle = this.enemyAim(e, e.boss ? 1100 : 950);
         this.tacticShot(
           e,
           m.kind,
@@ -2257,8 +2299,8 @@ export class Raid {
         );
         m.shots--;
         m.time =
-          m.kind === "boss-ring"
-            ? 0.45
+          m.kind === "boss-wide"
+            ? 0.35
             : m.kind === "boss-fan"
               ? 0.2
               : e.boss
@@ -2283,12 +2325,12 @@ export class Raid {
         "boss-fan",
         "boss-roll",
         "tracking-burst",
-        "boss-ring",
+        "boss-wide",
         "advance-burst",
         "crossfire",
       ];
       kind = cycle[(e.tacticStep ?? 0) % cycle.length];
-      e.tacticCool = 4.2;
+      e.tacticCool = 2.8;
     } else {
       const t = e.tactics ?? [];
       const incoming = this.bullets.some(
@@ -2332,7 +2374,7 @@ export class Raid {
             ? 4
             : kind === "boss-fan"
               ? 3
-              : kind === "boss-ring"
+              : kind === "boss-wide"
                 ? 2
                 : kind === "sweep"
                   ? 5
@@ -2391,6 +2433,7 @@ export class Raid {
         e.telegraph = undefined;
       }
     }
+    if (e.state === "combat") e.angle = Math.atan2(p.y - e.y, p.x - e.x);
     const canFire = canSee && this.enemyCanFire(e);
     if (this.map === 0 && this.updateVillageTactics(e, dt, canFire)) return;
     if (e.state === "combat" && canFire) {
@@ -2411,26 +2454,31 @@ export class Raid {
         } else {
           const gun = weapons[e.weapon];
           const shots = gun.pellets ?? 1;
+          const headIntent =
+            this.random() < (e.boss ? 0.08 : e.tier >= 3 ? 0.06 : 0.03);
+          const shotAngle = this.enemyAim(e, e.boss ? 1100 : 950, headIntent);
           for (let i = 0; i < shots; i++)
             this.addBullet(
               e.x,
               e.y - 24,
-              e.angle +
+              shotAngle +
                 (this.random() - 0.5) *
                   (shots > 1
                     ? gun.spread! * 2
                     : gun.spread! * (e.tier >= 2 ? 1 : 1.5)),
               false,
-              Math.max(12, gun.damage! * 0.9) *
-                weaponDamageScale(e.weaponDurability) *
-                1,
+              gun.damage! *
+                (e.boss ? 0.9 : 0.62) *
+                weaponDamageScale(e.weaponDurability),
               Math.min(4, e.tier),
               gun.range!,
               shots > 1,
               i === 0,
-              undefined,
+              headIntent ? { x: p.x, y: p.y - 35 } : undefined,
               !!e.boss,
               e.boss ? 1100 : 950,
+              headIntent,
+              gun.weaponClass === "sniper",
             );
           e.mag--;
           e.weaponDurability = Math.max(
@@ -2521,6 +2569,7 @@ export class Raid {
           ty = e.y - Math.sin(e.angle) * 100;
         } else if (d < desired + 30) {
           if (
+            e.boss ||
             role === "flank" ||
             role === "elite" ||
             (this.map === 0 &&
@@ -2570,23 +2619,25 @@ export class Raid {
         speed =
           e.state === "patrol"
             ? 28
-            : role === "heavy"
-              ? 48
-              : role === "flank" || role === "assault"
-                ? 84
-                : 62;
+            : e.boss
+              ? 110
+              : role === "heavy"
+                ? 48
+                : role === "flank" || role === "assault"
+                  ? 84
+                  : 62;
       e.walk += dt * 9;
       if (e.state !== "combat") e.angle = a;
       const boost =
         this.map === 0 && e.state !== "patrol"
           ? e.tactics?.includes("pursuit")
-            ? 1.65
-            : 1.25
+            ? 1.1
+            : 1
           : 1;
       this.moveActor(
         e,
-        Math.cos(a) * speed * boost * dt,
-        Math.sin(a) * speed * boost * dt,
+        Math.cos(a) * speed * boost * (e.moveScale ?? 1) * dt,
+        Math.sin(a) * speed * boost * (e.moveScale ?? 1) * dt,
       );
     }
   }
