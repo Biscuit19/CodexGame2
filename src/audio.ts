@@ -252,6 +252,7 @@ export class Sound {
     else void this.loadSample(choice.key).then(play);
     return true;
   }
+  musicPreview = false;
   private musicElement?: HTMLAudioElement;
   private trackGain?: GainNode;
   private musicKey?: MusicTrack;
@@ -264,7 +265,16 @@ export class Sound {
   private syncMusic() {
     if (!this.ctx || !this.musicBus) return;
     const picked =
-      this.mode === "base" ? "ORIGINAL" : (this.settings.musicTrack ?? "BG5");
+      this.mode === "base"
+        ? (this.settings.baseMusicTrack ?? "ORIGINAL")
+        : !this.musicPreview && this.settings.musicTrack === "ORIGINAL"
+          ? "BG5"
+          : (this.settings.musicTrack ?? "BG5");
+    const musicVolume =
+      this.mode === "base" || (this.musicPreview && picked === "ORIGINAL")
+        ? (this.settings.baseMusic ?? this.settings.music)
+        : this.settings.music;
+    this.musicBus.gain.value = musicVolume * this.balance.buses.music;
     const mode =
       this.mode === "base" ? "loop" : (this.settings.musicMode ?? "loop");
     const signature = `${this.mode === "base" ? "base" : "raid"}:${picked}:${mode}`;
@@ -288,7 +298,7 @@ export class Sound {
       this.setMusic(picked in musicTracks ? picked : "BG5");
     }
     this.musicElement.loop = mode === "loop";
-    if (!this.settings.master || !this.settings.music || document.hidden) {
+    if (!this.settings.master || !musicVolume || document.hidden) {
       this.musicRequest++;
       this.musicElement.pause();
     } else if (this.musicElement.paused && !this.musicFailed) {
@@ -313,7 +323,7 @@ export class Sound {
   }
   private nextMusic() {
     const keys = (Object.keys(musicTracks) as MusicTrack[]).filter(
-      (k) => k !== this.musicKey,
+      (k) => k !== this.musicKey && (this.musicPreview || k !== "ORIGINAL"),
     );
     this.setMusic(keys[Math.floor(Math.random() * keys.length)]);
     this.syncMusic();

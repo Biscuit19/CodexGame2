@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-test("基地原始配乐循环、十首音乐完整可选、随机与撤离后恢复基地", async ({
+test("基地原始配乐循环、九首游戏音乐可选、随机与撤离后恢复基地", async ({
   page,
 }) => {
   test.setTimeout(90000);
@@ -19,17 +19,18 @@ test("基地原始配乐循环、十首音乐完整可选、随机与撤离后�
     .getByRole("dialog")
     .getByRole("button", { name: "设置", exact: true })
     .click();
-  await expect(page.getByLabel("背景曲目")).toHaveValue("BG5");
-  await expect(page.getByLabel("背景曲目").locator("option")).toHaveCount(10);
-  await expect(page.getByLabel("音乐播放").locator("option")).toHaveText([
-    "单曲循环",
-    "随机播放",
-  ]);
+  await expect(page.getByLabel("游戏音乐", { exact: true })).toHaveValue("BG5");
+  await expect(
+    page.getByLabel("游戏音乐", { exact: true }).locator("option"),
+  ).toHaveCount(9);
+  await expect(
+    page.getByLabel("游戏音乐播放", { exact: true }).locator("option"),
+  ).toHaveText(["单曲循环", "随机播放"]);
   await expect(
     page.getByText("循环模式播放所选曲目；随机模式在四首音乐间切换。"),
   ).toHaveCount(0);
-  await page.getByLabel("背景曲目").selectOption("NB2");
-  await page.getByLabel("音乐播放").selectOption("random");
+  await page.getByLabel("游戏音乐", { exact: true }).selectOption("NB2");
+  await page.getByLabel("游戏音乐播放", { exact: true }).selectOption("random");
   expect(
     await page.evaluate(() => (window as any).__game.sound.currentMusic),
   ).toBe("ORIGINAL");
@@ -61,6 +62,7 @@ test("基地原始配乐循环、十首音乐完整可选、随机与撤离后�
         await fetch("/src/assets/audio/approved-raid-audio.json")
       ).json(),
       tracks = [];
+    s.musicPreview = true; // The mixer may still audition the base reference track.
     for (const [id, t] of Object.entries(mod.musicTracks) as any) {
       s.settings.musicTrack = id;
       s.settings.musicMode = "loop";
@@ -81,6 +83,7 @@ test("基地原始配乐循环、十首音乐完整可选、随机与撤离后�
         target: meta.musicTargetLufs,
       });
     }
+    s.musicPreview = false;
     s.settings.musicTrack = "NB2";
     s.settings.musicMode = "random";
     s.apply();

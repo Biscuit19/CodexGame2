@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>安静的新音乐 · 20首完整曲目试听</title>
+    <link rel="stylesheet" href="review.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <a href="../index.html">← 音效选择网站</a>
+        <p class="eyebrow">猫尾乡野 · 2026.10.30 · 完整原曲</p>
+        <h1>给猫猫留一段安静的时间。</h1>
+        <p>
+          20首新的静谧、平和、柔软配乐，来自15位作者。偏柔和钢琴、竖琴、木吉他与轻环境音色。可以分别选作<strong>基地音乐</strong>和<strong>游戏音乐</strong>，也可以两边都选。
+        </p>
+        <p class="muted">
+          完整文件不截取、不变调、不加滤镜，仅以播放增益拉齐试听响度。新候选暂未接入游戏，等你选择后再更新。
+        </p>
+      </header>
+      <section class="reference">
+        <div>
+          <h2>当前基地音乐 · 暖窝基地</h2>
+          <p class="muted">保留原始配乐，作为听感对照，不计入20首新候选。</p>
+        </div>
+        <audio
+          controls
+          preload="none"
+          src="audio/original-reference.flac"
+          data-gain="0.9649393118055822"
+          aria-label="暖窝基地参考曲"
+        ></audio>
+      </section>
+      <section class="toolbar" aria-label="试听控制">
+        <label
+          >试听音量
+          <input
+            id="volume"
+            type="range"
+            min="0"
+            max="100"
+            value="100"
+          /><output id="volume-value">100%</output></label
+        ><button id="stop">停止全部</button
+        ><button id="copy">复制我的选择</button
+        ><button id="export">导出选择JSON</button
+        ><span id="count">正在加载…</span>
+      </section>
+      <p id="status" role="status" aria-live="polite">正在读取曲目…</p>
+      <label class="search"
+        >查找曲名、作者或乐器
+        <input id="search" type="search" placeholder="例如：钢琴、竖琴、Kevin"
+      /></label>
+      <section id="tracks" class="tracks" aria-label="20首新音乐"></section>
+      <section class="selection">
+        <h2>我的选择</h2>
+        <pre id="selection"></pre>
+        <p class="muted">
+          可多选。复制后发给我即可；此页的选择只保存在试听页，不改游戏设置或存档。
+        </p>
+      </section>
+      <section class="research">
+        <h2>来源、授权与选材</h2>
+        <p>
+          优先核对原作者与发行页，参考公开收藏、下载和听众反馈。没有单曲热度数据的作品会直说，不把作者知名度当作单曲下载量。少数短曲按完整原版保留，时长在卡片中显示。
+        </p>
+        <p>
+          CC0作品可自由使用；CC-BY 3.0 /
+          4.0作品可用于游戏及商业项目，须按原作者要求署名、保留许可链接。每首的原始来源、许可、文件哈希与试听增益都记录在<a
+            href="manifest.json"
+            >曲目清单</a
+          >中。
+        </p>
+      </section>
+      <dialog id="copy-dialog">
+        <h2>复制我的选择</h2>
+        <textarea id="copy-text" readonly rows="12"></textarea
+        ><button id="close-copy">关闭</button>
+      </dialog>
+      <footer>
+        <a href="../discovery-music/index.html">上一轮音乐试听</a> ·
+        <a href="../../game-workbench/index.html">游戏数值与调音台</a> ·
+        <a href="../../index.html">返回游戏</a>
+      </footer>
+    </main>
+    <script type="module" src="review.js"></script>
+  </body>
+</html>

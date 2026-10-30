@@ -32,6 +32,7 @@ const files = (await walk("dist")).filter(
     !f.includes("/audio-review/discovery-music/") &&
     !f.includes("/audio-review/commerce/") &&
     !f.includes("/audio-review/soft-clicks/") &&
+    !f.includes("/audio-review/peaceful-music/") &&
     !f.includes("/audio-mixer/") &&
     !f.includes("/game-workbench/") &&
     !f.includes("/assets/workbench-") &&

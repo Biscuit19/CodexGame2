@@ -47,5 +47,14 @@ export function parseBalance(value: unknown): AudioBalance {
     !Object.hasOwn(musicNames, v.preview.track)
   )
     throw Error("试听环境的音量或曲目无效");
-  return structuredClone(v);
+  if (
+    v.preview.settings.baseMusic !== undefined &&
+    (!Number.isFinite(v.preview.settings.baseMusic) ||
+      v.preview.settings.baseMusic < 0 ||
+      v.preview.settings.baseMusic > 1)
+  )
+    throw Error("基地试听音量无效");
+  const result = structuredClone(v);
+  result.preview.settings.baseMusic ??= result.preview.settings.music;
+  return result;
 }

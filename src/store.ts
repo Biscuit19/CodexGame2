@@ -34,6 +34,8 @@ export interface Settings {
   audioPresetRevision?: string;
   master: number;
   music: number;
+  baseMusic?: number;
+  baseMusicTrack?: "ORIGINAL";
   musicTrack?: MusicTrack;
   musicMode?: "loop" | "random";
   sfx: number;
@@ -99,6 +101,10 @@ export const defaults: Settings = {
     publishedAudio.revision + ":" + publishedAudio.publishedFromExport,
   master: publishedAudio.preview.settings.master,
   music: publishedAudio.preview.settings.music,
+  baseMusic:
+    publishedAudio.preview.settings.baseMusic ??
+    publishedAudio.preview.settings.music,
+  baseMusicTrack: "ORIGINAL",
   musicTrack: "BG5",
   musicMode: "loop",
   sfx: publishedAudio.preview.settings.sfx,
@@ -395,6 +401,21 @@ export function validateSave(data: unknown): Save {
   )
     throw Error("音乐播放方式无效");
   if (!/^#[0-9a-f]{6}$/i.test(s.settings.aim)) throw Error("瞄准色无效");
+  if (s.settings.baseMusic === undefined)
+    s.settings.baseMusic = s.settings.music;
+  if (
+    !Number.isFinite(s.settings.baseMusic) ||
+    s.settings.baseMusic < 0 ||
+    s.settings.baseMusic > 1
+  )
+    throw Error("基地音乐音量无效");
+  if (
+    s.settings.baseMusicTrack !== undefined &&
+    s.settings.baseMusicTrack !== "ORIGINAL"
+  )
+    throw Error("基地音乐曲目无效");
+  s.settings.baseMusicTrack ??= "ORIGINAL";
+  if (s.settings.musicTrack === "ORIGINAL") s.settings.musicTrack = "BG5";
   if (s.loadedRounds) {
     if (!Array.isArray(s.loadedRounds) || s.loadedRounds.length > 2)
       throw Error("弹匣记录无效");

@@ -11,3 +11,8 @@ export const musicNames = {
   NB10: "森林圆舞曲 · Sylvan Waltz",
 } as const;
 export type MusicTrack = keyof typeof musicNames;
+
+export const baseMusicNames = { ORIGINAL: musicNames.ORIGINAL } as const;
+export const gameMusicNames = Object.fromEntries(
+  Object.entries(musicNames).filter(([key]) => key !== "ORIGINAL"),
+) as Omit<typeof musicNames, "ORIGINAL">;

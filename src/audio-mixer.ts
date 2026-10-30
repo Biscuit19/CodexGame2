@@ -21,18 +21,20 @@ try {
   if (saved) {
     balance = parseBalance(saved);
     if (saved.preview) {
-      for (const k of ["master", "music", "sfx"] as const)
+      for (const k of ["master", "baseMusic", "music", "sfx"] as const)
         if (
           Number.isFinite(saved.preview.settings?.[k]) &&
           saved.preview.settings[k] >= 0 &&
           saved.preview.settings[k] <= 1
         )
           settings[k] = saved.preview.settings[k];
+      settings.baseMusic = balance.preview.settings.baseMusic;
       if (saved.preview.track in musicTracks) picked = saved.preview.track;
     }
   }
 } catch {}
 const sound = new Sound(settings, balance);
+sound.musicPreview = true;
 sound.mode = "raid";
 const status = (text: string) => {
   $("status").textContent = text;
@@ -73,6 +75,7 @@ const profile = () => ({
     settings: {
       master: settings.master,
       music: settings.music,
+      baseMusic: settings.baseMusic ?? settings.music,
       sfx: settings.sfx,
     },
     track: picked,
@@ -280,10 +283,17 @@ function render() {
   );
   for (const [k, label] of [
     ["master", "游戏设置 · 总音量"],
-    ["music", "游戏设置 · 音乐"],
+    ["baseMusic", "游戏设置 · 基地音乐"],
+    ["music", "游戏设置 · 游戏音乐"],
     ["sfx", "游戏设置 · 音效"],
   ] as const)
-    slider($("settings"), label, settings[k], (n) => (settings[k] = n), 1);
+    slider(
+      $("settings"),
+      label,
+      settings[k] ?? settings.music,
+      (n) => (settings[k] = n),
+      1,
+    );
   for (const [key, track] of Object.entries(musicTracks)) {
     const row = slider(
       $("tracks"),
@@ -448,13 +458,14 @@ $("import").onchange = async () => {
     balance = parseBalance(raw);
     sound.balance = balance;
     if (raw.preview?.settings)
-      for (const k of ["master", "music", "sfx"] as const)
+      for (const k of ["master", "baseMusic", "music", "sfx"] as const)
         if (
           Number.isFinite(raw.preview.settings[k]) &&
           raw.preview.settings[k] >= 0 &&
           raw.preview.settings[k] <= 1
         )
           settings[k] = raw.preview.settings[k];
+    settings.baseMusic = balance.preview.settings.baseMusic;
     if (raw.preview?.track in musicTracks) picked = raw.preview.track;
     settings.musicTrack = picked;
     ($("bgm") as HTMLSelectElement).value = picked;
@@ -502,12 +513,13 @@ window.addEventListener("message", (e) => {
       balance = parseBalance(raw);
       sound.balance = balance;
       if (raw.preview?.settings)
-        for (const k of ["master", "music", "sfx"] as const) {
-          const n = raw.preview.settings[k];
+        for (const k of ["master", "baseMusic", "music", "sfx"] as const) {
+          const n = balance.preview.settings[k];
           if (!Number.isFinite(n) || n < 0 || n > 1)
             throw Error("试听设置音量无效");
           settings[k] = n;
         }
+      settings.baseMusic = balance.preview.settings.baseMusic;
       if (raw.preview?.track in musicTracks) picked = raw.preview.track;
       settings.musicTrack = picked;
       ($("bgm") as HTMLSelectElement).value = picked;
