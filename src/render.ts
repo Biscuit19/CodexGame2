@@ -491,13 +491,25 @@ export class Renderer {
         hit: e.hit,
       });
     const close = Math.hypot(e.x - r.p.x, e.y - r.p.y) < 650;
+    const enemyName = e.boss?.name ?? breeds[e.breed]?.name ?? "自动炮塔";
+    c.font = '600 26px "三角猫黑体",sans-serif';
+    const nameWidth = c.measureText(enemyName).width + 18;
+    round(
+      c,
+      e.x - nameWidth / 2,
+      e.y - (e.boss ? 140 : 104) - 29,
+      nameWidth,
+      36,
+      8,
+      "#242033ed",
+    );
     text(
       c,
       e.boss?.name ?? breeds[e.breed]?.name ?? "自动炮塔",
       e.x,
       e.y - (e.boss ? 140 : 104),
-      20,
-      "#f4e6c7",
+      26,
+      e.boss ? "#ff927f" : "#ffd35c",
     );
     if (close && (e.state === "combat" || e.hit > 0)) {
       const size = e.boss ? 85 : 40;

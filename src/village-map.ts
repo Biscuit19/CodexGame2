@@ -84,6 +84,33 @@ function createAtlas() {
   c.scale(S, S);
   drawVillageGround(c);
   c.restore();
+  // Quiet transparent resource contours under the landmarks, without extra labels.
+  for (const [id, color] of [
+    ["clinic", "#3987a6"],
+    ["barn", "#d69930"],
+    ["boss", "#ba5361"],
+  ]) {
+    const b = villageBuildings.find((b) => b.id === id);
+    if (!b) continue;
+    c.save();
+    c.fillStyle = color + "25";
+    c.strokeStyle = color + "b0";
+    c.lineWidth = 3;
+    c.setLineDash([12, 7]);
+    c.beginPath();
+    c.ellipse(
+      b.x * S,
+      b.y * S,
+      (b.id === "boss" ? 1050 : 650) * S,
+      (b.id === "boss" ? 850 : 500) * S,
+      0,
+      0,
+      Math.PI * 2,
+    );
+    c.fill();
+    c.stroke();
+    c.restore();
+  }
   // Pictorial cartography: rounded trees, timber fence posts, roof tiles and framed labels.
   for (const f of villageFenceRects) {
     const horizontal = f.w > f.h,
@@ -495,19 +522,19 @@ export function drawVillageMap(
     }
   const p = point(r.p.x, r.p.y);
   c.beginPath();
-  c.arc(p.x, p.y, large ? 22 : 11, 0, Math.PI * 2);
-  c.fillStyle = "#f5da94";
+  c.arc(p.x, p.y, large ? 24 : 12, 0, Math.PI * 2);
+  c.fillStyle = "#ff2e86";
   c.fill();
-  c.lineWidth = 4;
-  c.strokeStyle = "#665c39";
+  c.lineWidth = 6;
+  c.strokeStyle = "#ffffff";
   c.stroke();
   if (large) {
     c.font = "bold 36px sans-serif";
     c.textAlign = "center";
-    c.strokeStyle = "#495b3e";
-    c.lineWidth = 5;
+    c.strokeStyle = "#26152f";
+    c.lineWidth = 8;
     c.strokeText("你", p.x, p.y + 52);
-    c.fillStyle = "#fff4ce";
+    c.fillStyle = "#ff68b0";
     c.fillText("你", p.x, p.y + 52);
   }
 }

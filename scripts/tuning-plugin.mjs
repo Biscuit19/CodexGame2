@@ -54,6 +54,12 @@ const groupNames = {
   "reload-motion": "换弹动作",
 };
 const names = {
+  freeEnemyPoint: "建筑外敌人出生范围",
+  tacticalMove: "战术冲刺与翻滚位移",
+  tacticShot: "战术射击伤害与弹幕",
+  updateVillageTactics: "乡野敌人战术节奏",
+  tacticCool: "敌人战术冷却",
+  tacticStep: "敌人战术轮次",
   PREFLIGHT_AMMO: "出战最低弹药数",
   PREFLIGHT_FOOD: "出战最低食物数",
   PREFLIGHT_WEAPONS: "出战最低枪械数",

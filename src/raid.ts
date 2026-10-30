@@ -57,6 +57,8 @@ import {
   villageWaterBlocked,
   villageTravelClear,
   hitsRect,
+  inBuilding,
+  villageBuildings,
 } from "./village";
 import { routeVillage } from "./navigation";
 export interface Rect {
@@ -70,7 +72,35 @@ export interface Rect {
   label?: string;
   type?: string;
 }
+export const VILLAGE_TACTICS = [
+  "pursuit",
+  "zigzag",
+  "orbit",
+  "flank",
+  "kite",
+  "rush",
+  "dodge",
+  "burst",
+  "fan",
+  "double",
+  "aim",
+  "sweep",
+] as const;
+export type VillageTactic = (typeof VILLAGE_TACTICS)[number];
+export interface Maneuver {
+  kind: string;
+  stage: "warn" | "active";
+  time: number;
+  shots: number;
+  angle: number;
+  x: number;
+  y: number;
+}
 export interface Enemy {
+  tactics?: readonly VillageTactic[];
+  tacticCool?: number;
+  tacticStep?: number;
+  maneuver?: Maneuver;
   squad?: string;
   leash?: { x: number; y: number; w: number; h: number };
   x: number;
@@ -687,8 +717,26 @@ export class Raid {
       }
     return this.map === 0 ? { x: this.p.x, y: this.p.y } : { x: 1100, y: 1600 };
   }
+  freeEnemyPoint(x: number, y: number) {
+    const legal = (px: number, py: number) =>
+      !this.blocked(px, py, 24) &&
+      (this.map === 0
+        ? !villageBuildings.some((b) => inBuilding(b, px, py, 40))
+        : !this.rooms.some(([x, y, w, h, rotation]) =>
+            hitsRect(px, py, { x, y, w, h, rotation }, 40),
+          ));
+    if (legal(x, y)) return { x, y };
+    for (let radius = 40; radius <= 2000; radius += 30)
+      for (let k = 0; k < 32; k++) {
+        const angle = (k * Math.PI) / 16,
+          px = x + Math.cos(angle) * radius,
+          py = y + Math.sin(angle) * radius;
+        if (legal(px, py)) return { x: px, y: py };
+      }
+    throw Error("找不到建筑外的敌人出生位置");
+  }
   spawn(x: number, y: number, breed: number, tier: number, boss?: BossDef) {
-    ({ x, y } = this.freePoint(x, y));
+    ({ x, y } = this.freeEnemyPoint(x, y));
     const hp = boss?.hp ?? 70 + tier * 22;
     const weapon =
       boss?.weapon ??
@@ -734,6 +782,33 @@ export class Raid {
       shield: 0,
       pathTime: 0,
     };
+    if (this.map === 0) {
+      const low: VillageTactic[][] = [
+        ["pursuit"],
+        ["pursuit", "zigzag"],
+        ["pursuit", "double"],
+        ["pursuit", "rush"],
+      ];
+      const high: VillageTactic[][] = [
+        ["orbit", "burst"],
+        ["dodge", "double"],
+        ["flank", "burst"],
+        ["kite", "aim"],
+        ["zigzag", "sweep"],
+        ["rush", "fan"],
+        ["orbit", "fan"],
+        ["dodge", "sweep"],
+      ];
+      const profiles = tier >= 2 ? high : low;
+      e.tactics =
+        profiles[
+          this.enemies.filter(
+            (other) => other.tier >= 2 === tier >= 2 && !other.boss,
+          ).length % profiles.length
+        ];
+      e.tacticCool = 3 + (this.enemies.length % 5) * 0.7;
+      e.tacticStep = 0;
+    }
     this.enemies.push(e);
     return e;
   }
@@ -1995,6 +2070,152 @@ export class Raid {
       ? "boss"
       : "raid";
   }
+  tacticalMove(e: Enemy, angle: number, distance: number) {
+    let x = e.x + Math.cos(angle) * distance,
+      y = e.y + Math.sin(angle) * distance;
+    if (e.leash) {
+      x = Math.max(
+        e.leash.x - e.leash.w / 2 + 24,
+        Math.min(e.leash.x + e.leash.w / 2 - 24, x),
+      );
+      y = Math.max(
+        e.leash.y - e.leash.h / 2 + 24,
+        Math.min(e.leash.y + e.leash.h / 2 - 24, y),
+      );
+    }
+    this.moveActor(e, x - e.x, y - e.y);
+    e.walk += distance * 0.06;
+  }
+  tacticShot(e: Enemy, kind: string, angle: number) {
+    e.angle = angle;
+    const boss = !!e.boss,
+      ring = kind === "boss-ring";
+    const count = ring ? 12 : kind === "boss-fan" ? 7 : kind === "fan" ? 3 : 1;
+    for (let i = 0; i < count; i++) {
+      if (ring && i % 6 === 0) continue; // Two consistent escape gaps.
+      const a =
+        angle +
+        (ring
+          ? (i * Math.PI) / 6
+          : (i - (count - 1) / 2) * (boss ? 0.16 : 0.13));
+      this.addBullet(
+        e.x,
+        e.y - 24,
+        a,
+        false,
+        boss ? 9 : kind === "aim" ? 12 : 7,
+        Math.min(4, e.tier),
+        kind === "aim" ? 850 : 650,
+        count > 1,
+        i === 0,
+      );
+    }
+    e.mag = Math.max(0, e.mag - 1);
+    this.sound.play("shot", 1, {
+      weaponClass: weapons[e.weapon].weaponClass,
+      enemy: true,
+    });
+  }
+  updateVillageTactics(e: Enemy, dt: number, canSee: boolean) {
+    e.tacticCool = Math.max(0, (e.tacticCool ?? 4) - dt);
+    const m = e.maneuver;
+    if (m) {
+      e.cool = Math.max(e.cool, 0.35);
+      m.time -= dt;
+      if (m.stage === "warn") {
+        if (m.time <= 0) {
+          m.stage = "active";
+          m.time = 0;
+        }
+        return true;
+      }
+      if (m.kind === "rush" || m.kind === "dodge" || m.kind === "boss-roll") {
+        this.tacticalMove(e, m.angle, (e.boss ? 520 : 310) * dt);
+        if (m.time <= -0.32) {
+          if (m.kind === "boss-roll") {
+            e.maneuver = {
+              kind: "boss-fan",
+              stage: "warn",
+              time: 0.45,
+              shots: 3,
+              angle: Math.atan2(this.p.y - e.y, this.p.x - e.x),
+              x: this.p.x,
+              y: this.p.y,
+            };
+          } else e.maneuver = undefined;
+        }
+      } else if (m.time <= 0) {
+        this.tacticShot(
+          e,
+          m.kind,
+          m.angle + (m.kind === "sweep" ? (m.shots - 3) * 0.12 : 0),
+        );
+        m.shots--;
+        m.time =
+          m.kind === "boss-ring" ? 0.6 : m.kind === "boss-fan" ? 0.24 : 0.18;
+        if (m.shots <= 0 || (!e.boss && !e.mag)) e.maneuver = undefined;
+      }
+      return true;
+    }
+    if (
+      !canSee ||
+      e.state !== "combat" ||
+      e.reload > 0 ||
+      (!e.mag && !e.boss) ||
+      e.tacticCool > 0
+    )
+      return false;
+    let kind: string | undefined;
+    const a = Math.atan2(this.p.y - e.y, this.p.x - e.x);
+    if (e.boss?.id === "iron") {
+      const cycle = ["boss-fan", "boss-roll", "boss-ring"];
+      kind = cycle[(e.tacticStep ?? 0) % cycle.length];
+      e.tacticCool = e.phase ? 4.2 : 6;
+    } else {
+      const t = e.tactics ?? [];
+      const incoming = this.bullets.some(
+        (b) =>
+          b.friendly &&
+          Math.hypot(b.x - e.x, b.y + 24 - e.y) < 170 &&
+          (e.x - b.x) * b.vx + (e.y - 24 - b.y) * b.vy > 0,
+      );
+      kind =
+        t.includes("dodge") && incoming
+          ? "dodge"
+          : t.includes("rush") &&
+              Math.hypot(e.x - this.p.x, e.y - this.p.y) > 180
+            ? "rush"
+            : t.find((x) =>
+                ["aim", "sweep", "fan", "burst", "double"].includes(x),
+              );
+      if (!kind) return false;
+      e.tacticCool = kind === "dodge" ? 4 : 6.5;
+    }
+    e.tacticStep = (e.tacticStep ?? 0) + 1;
+    e.angle = a;
+    e.maneuver = {
+      kind,
+      stage: "warn",
+      time: e.boss ? 0.9 : kind === "aim" ? 0.85 : 0.4,
+      shots:
+        kind === "boss-fan"
+          ? 3
+          : kind === "boss-ring"
+            ? 2
+            : kind === "sweep"
+              ? 5
+              : kind === "burst"
+                ? 3
+                : kind === "double"
+                  ? 2
+                  : 1,
+      angle:
+        kind === "dodge" ? a + ((e.tacticStep % 2 ? 1 : -1) * Math.PI) / 2 : a,
+      x: this.p.x,
+      y: this.p.y,
+    };
+    return true;
+  }
   updateEnemy(e: Enemy, dt: number) {
     const p = this.p,
       d = Math.hypot(e.x - p.x, e.y - p.y),
@@ -2037,6 +2258,12 @@ export class Raid {
         e.telegraph = undefined;
       }
     }
+    if (e.boss && e.hp < e.maxHp * 0.5 && !e.phase && this.map === 0) {
+      e.phase = 1;
+      e.tacticCool = 1;
+      this.notify(`${e.boss.name} · 进入第二阶段`);
+    }
+    if (this.map === 0 && this.updateVillageTactics(e, dt, canSee)) return;
     if (e.state === "combat" && canSee) {
       e.angle = Math.atan2(p.y - e.y, p.x - e.x);
       if (
@@ -2133,7 +2360,17 @@ export class Raid {
     if (e.turret || e.telegraph) return;
     let target = e.target;
     const desired =
-      role === "sniper" ? 500 : role === "heavy" ? 210 : e.boss ? 250 : 260;
+      this.map === 0 && e.tactics?.includes("pursuit")
+        ? 130
+        : this.map === 0 && e.tactics?.includes("kite")
+          ? 420
+          : role === "sniper"
+            ? 500
+            : role === "heavy"
+              ? 210
+              : e.boss
+                ? 250
+                : 260;
     if (e.state === "patrol") {
       if (!target || Math.hypot(target.x - e.x, target.y - e.y) < 25)
         e.target = {
@@ -2150,10 +2387,25 @@ export class Raid {
           tx = e.x - Math.cos(e.angle) * 100;
           ty = e.y - Math.sin(e.angle) * 100;
         } else if (d < desired + 30) {
-          if (role === "flank" || role === "elite") {
+          if (
+            role === "flank" ||
+            role === "elite" ||
+            (this.map === 0 &&
+              (e.tactics?.includes("orbit") || e.tactics?.includes("flank")))
+          ) {
             tx = e.x - Math.sin(e.angle) * 80;
             ty = e.y + Math.cos(e.angle) * 80;
           } else return;
+        }
+      }
+      if (this.map === 0 && e.state === "combat" && canSee) {
+        if (e.tactics?.includes("zigzag")) {
+          tx -= Math.sin(e.angle) * Math.sin(this.elapsed * 3 + e.homeX) * 95;
+          ty += Math.cos(e.angle) * Math.sin(this.elapsed * 3 + e.homeX) * 95;
+        }
+        if (e.tactics?.includes("flank") && d > desired) {
+          tx -= Math.sin(e.angle) * 130;
+          ty += Math.cos(e.angle) * 130;
         }
       }
       if (e.leash) {
@@ -2192,7 +2444,17 @@ export class Raid {
                 : 62;
       e.walk += dt * 9;
       if (e.state !== "combat") e.angle = a;
-      this.moveActor(e, Math.cos(a) * speed * dt, Math.sin(a) * speed * dt);
+      const boost =
+        this.map === 0 && e.state !== "patrol"
+          ? e.tactics?.includes("pursuit")
+            ? 1.65
+            : 1.25
+          : 1;
+      this.moveActor(
+        e,
+        Math.cos(a) * speed * boost * dt,
+        Math.sin(a) * speed * boost * dt,
+      );
     }
   }
 }

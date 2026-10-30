@@ -817,7 +817,9 @@ export class ThreeRenderer {
         e.y,
         e.angle,
         e.walk,
-        0,
+        e.maneuver?.kind === "boss-roll" && e.maneuver.stage === "active"
+          ? Math.max(0, 0.32 + e.maneuver.time)
+          : 0,
         e.helmetDurability > 0 ? e.tier : 0,
         e.armorDurability > 0 ? e.tier : 0,
         true,
@@ -904,13 +906,17 @@ export class ThreeRenderer {
     }
     for (const e of r.enemies) {
       const p = this.project(e.x, e.y, e.boss ? 133 : 105);
+      const enemyName = e.boss?.name ?? breeds[e.breed]?.name ?? "炮塔";
+      c.font = '600 26px "三角猫黑体",sans-serif';
+      const nameWidth = c.measureText(enemyName).width + 18;
+      round(c, p.x - nameWidth / 2, p.y - 29, nameWidth, 36, 8, "#242033ed");
       text(
         c,
         e.boss?.name ?? breeds[e.breed]?.name ?? "炮塔",
         p.x,
         p.y,
-        20,
-        "#fff0d4",
+        26,
+        e.boss ? "#ff927f" : "#ffd35c",
       );
     }
     for (const e of r.enemies)
@@ -946,6 +952,48 @@ export class ThreeRenderer {
   drawCombat(r: Raid, c: CanvasRenderingContext2D) {
     c.save();
     c.lineCap = "round";
+    for (const e of r.enemies) {
+      const m = e.maneuver;
+      if (!m || m.stage !== "warn") continue;
+      const p = this.project(e.x, e.y, 8),
+        q = this.project(m.x, m.y, 8);
+      c.strokeStyle = "#ff658c";
+      c.fillStyle = "#ff658c20";
+      c.lineWidth = 4;
+      c.setLineDash([10, 6]);
+      c.beginPath();
+      if (m.kind === "boss-ring") {
+        for (let i = 0; i < 12; i++) {
+          if (i % 6 === 0) continue;
+          const a = m.angle + (i * Math.PI) / 6;
+          const edge = this.project(
+            e.x + Math.cos(a) * 240,
+            e.y + Math.sin(a) * 240,
+            8,
+          );
+          c.moveTo(p.x, p.y);
+          c.lineTo(edge.x, edge.y);
+        }
+      } else {
+        c.moveTo(p.x, p.y);
+        c.lineTo(q.x, q.y);
+        if (m.kind.includes("fan") || m.kind === "sweep") {
+          for (const offset of [-0.48, 0.48]) {
+            const edge = this.project(
+              e.x + Math.cos(m.angle + offset) * 300,
+              e.y + Math.sin(m.angle + offset) * 300,
+              8,
+            );
+            c.moveTo(p.x, p.y);
+            c.lineTo(edge.x, edge.y);
+          }
+        }
+        c.ellipse(q.x, q.y, 25, 16, 0, 0, Math.PI * 2);
+      }
+      c.fill();
+      c.stroke();
+      c.setLineDash([]);
+    }
     for (const b of r.bullets) {
       const p = this.project(b.x, b.y + 24, 30),
         q = this.project(b.x - b.vx * 0.032, b.y + 24 - b.vy * 0.032, 30);
