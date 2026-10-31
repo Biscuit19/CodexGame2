@@ -38,4 +38,4 @@ export function drawProjectileTrail(
 }
 
 export const projectileTrailLength = (b: Bullet) =>
-  Math.min(b.longTrail ? 44 : 23, b.travel + 6);
+  Math.min(b.longTrail ? 44 : 23, b.travel + 6) * 1.2;

@@ -234,15 +234,15 @@ describe("护具、配装与战斗细化", () => {
     expect(r.bullets).toHaveLength(11);
     expect(r.bullets.every((b) => b.vx > 0)).toBe(true);
   });
-  it("普通拖尾23、狙击44，初始拖尾随飞行距离增长", () => {
+  it("普通拖尾27.6、狙击52.8，初始拖尾随飞行距离增长", () => {
     const r = start();
     r.addBullet(3000, 3000, 0, true, 10, 1);
     const b = r.bullets[0];
     b.travel = 100;
-    expect(projectileTrailLength(b)).toBe(23);
+    expect(projectileTrailLength(b)).toBeCloseTo(27.6);
     b.longTrail = true;
-    expect(projectileTrailLength(b)).toBe(44);
+    expect(projectileTrailLength(b)).toBeCloseTo(52.8);
     b.travel = 0;
-    expect(projectileTrailLength(b)).toBe(6);
+    expect(projectileTrailLength(b)).toBeCloseTo(7.2);
   });
 });

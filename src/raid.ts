@@ -90,8 +90,26 @@ export const VILLAGE_TACTICS = [
   "crossfire",
   "retreat-burst",
 ] as const;
+export const IRON_BOSS_ATTACKS = [
+  "boss-fan",
+  "boss-side-roll",
+  "tracking-burst",
+  "boss-strafe",
+  "boss-wide",
+  "boss-roll",
+  "boss-sweep",
+  "advance-burst",
+  "boss-retreat-roll",
+  "boss-focus",
+  "crossfire",
+] as const;
+export const isBossRoll = (kind?: string) =>
+  kind === "boss-roll" ||
+  kind === "boss-side-roll" ||
+  kind === "boss-retreat-roll";
 export type VillageTactic = (typeof VILLAGE_TACTICS)[number];
 export interface Maneuver {
+  side?: number;
   kind: string;
   stage: "warn" | "active";
   time: number;
@@ -2195,14 +2213,18 @@ export class Raid {
     const count =
       kind === "boss-wide"
         ? 11
-        : kind === "boss-fan"
-          ? 7
-          : kind === "fan" || boss
-            ? 3
-            : 1;
+        : kind === "boss-focus"
+          ? 9
+          : kind === "boss-fan" || kind === "boss-sweep"
+            ? 7
+            : kind === "fan" || boss
+              ? 3
+              : 1;
     for (let i = 0; i < count; i++) {
       const a =
-        angle + (i - (count - 1) / 2) * (kind === "boss-wide" ? 0.095 : 0.13);
+        angle +
+        (i - (count - 1) / 2) *
+          (kind === "boss-focus" ? 0.045 : kind === "boss-wide" ? 0.095 : 0.13);
       this.addBullet(
         e.x,
         e.y - 24,
@@ -2244,7 +2266,7 @@ export class Raid {
     if (m) {
       if (
         (!canSee || !this.enemyCanFire(e)) &&
-        !["rush", "dodge", "boss-roll"].includes(m.kind)
+        !(["rush", "dodge"].includes(m.kind) || isBossRoll(m.kind))
       ) {
         e.maneuver = undefined;
         return false;
@@ -2258,15 +2280,15 @@ export class Raid {
         }
         return true;
       }
-      if (m.kind === "rush" || m.kind === "dodge" || m.kind === "boss-roll") {
+      if (m.kind === "rush" || m.kind === "dodge" || isBossRoll(m.kind)) {
         this.tacticalMove(e, m.angle, (e.boss ? 520 : 310) * dt);
         if (m.time <= -0.32) {
-          if (m.kind === "boss-roll") {
+          if (isBossRoll(m.kind)) {
             e.maneuver = {
-              kind: "boss-fan",
+              kind: m.kind === "boss-retreat-roll" ? "boss-wide" : "boss-fan",
               stage: "warn",
               time: 0.45,
-              shots: 3,
+              shots: m.kind === "boss-roll" ? 3 : 2,
               angle: Math.atan2(this.p.y - e.y, this.p.x - e.x),
               x: this.p.x,
               y: this.p.y,
@@ -2274,6 +2296,14 @@ export class Raid {
           } else e.maneuver = undefined;
         }
       } else {
+        if (m.kind === "boss-strafe") {
+          const facing = Math.atan2(this.p.y - e.y, this.p.x - e.x);
+          this.tacticalMove(
+            e,
+            facing + ((m.side ?? 1) * Math.PI) / 2,
+            170 * dt,
+          );
+        }
         if (m.kind === "advance-burst")
           this.tacticalMove(e, m.angle, (e.boss ? 210 : 110) * dt);
         if (m.kind === "retreat-burst")
@@ -2282,30 +2312,38 @@ export class Raid {
         if (
           m.kind === "tracking-burst" ||
           (e.boss &&
-            ["boss-fan", "boss-wide", "advance-burst"].includes(m.kind))
+            ["boss-fan", "boss-wide", "advance-burst", "boss-strafe"].includes(
+              m.kind,
+            ))
         )
           m.angle = this.enemyAim(e, e.boss ? 1100 : 950);
         this.tacticShot(
           e,
           m.kind,
           m.angle +
-            (m.kind === "sweep"
-              ? (m.shots - 3) * 0.12
-              : m.kind === "crossfire"
-                ? m.shots % 2
-                  ? 0.13
-                  : -0.13
-                : 0),
+            (m.kind === "boss-sweep"
+              ? (3 - m.shots) * 0.17
+              : m.kind === "sweep"
+                ? (m.shots - 3) * 0.12
+                : m.kind === "crossfire"
+                  ? m.shots % 2
+                    ? 0.13
+                    : -0.13
+                  : 0),
         );
         m.shots--;
         m.time =
-          m.kind === "boss-wide"
-            ? 0.35
-            : m.kind === "boss-fan"
-              ? 0.2
-              : e.boss
-                ? 0.12
-                : 60 / weapons[e.weapon].rpm!;
+          m.kind === "boss-sweep"
+            ? 0.22
+            : m.kind === "boss-strafe"
+              ? 0.18
+              : m.kind === "boss-wide"
+                ? 0.35
+                : m.kind === "boss-fan"
+                  ? 0.2
+                  : e.boss
+                    ? 0.12
+                    : 60 / weapons[e.weapon].rpm!;
         if (m.shots <= 0 || (!e.boss && !e.mag)) e.maneuver = undefined;
       }
       return true;
@@ -2321,15 +2359,7 @@ export class Raid {
     let kind: string | undefined;
     const a = this.enemyAim(e, e.boss ? 1100 : 950);
     if (e.boss?.id === "iron") {
-      const cycle = [
-        "boss-fan",
-        "boss-roll",
-        "tracking-burst",
-        "boss-wide",
-        "advance-burst",
-        "crossfire",
-      ];
-      kind = cycle[(e.tacticStep ?? 0) % cycle.length];
+      kind = IRON_BOSS_ATTACKS[(e.tacticStep ?? 0) % IRON_BOSS_ATTACKS.length];
       e.tacticCool = 2.8;
     } else {
       const t = e.tactics ?? [];
@@ -2361,30 +2391,51 @@ export class Raid {
       if (!kind) return false;
       e.tacticCool = kind === "dodge" ? 4 : 6.5;
     }
+    // Alternate the preferred side each full rotation; pick the open side near cover.
+    let side =
+      Math.floor((e.tacticStep ?? 0) / IRON_BOSS_ATTACKS.length) % 2 ? -1 : 1;
+    if (kind === "boss-side-roll" || kind === "boss-strafe") {
+      const sideAngle = a + (side * Math.PI) / 2;
+      const x = e.x + Math.cos(sideAngle) * 150,
+        y = e.y + Math.sin(sideAngle) * 150;
+      if (this.blocked(x, y, 20) || !villageTravelClear(this, e.x, e.y, x, y))
+        side *= -1;
+    }
     e.tacticStep = (e.tacticStep ?? 0) + 1;
     e.angle = a;
     e.maneuver = {
       kind,
       stage: "warn",
-      time: kind === "aim" ? 0.45 : 0.22,
+      time: kind === "boss-focus" ? 0.55 : kind === "aim" ? 0.45 : 0.22,
+      side,
       shots:
-        kind === "tracking-burst" || kind === "crossfire"
-          ? 6
-          : kind === "advance-burst" || kind === "retreat-burst"
-            ? 4
-            : kind === "boss-fan"
-              ? 3
-              : kind === "boss-wide"
-                ? 2
-                : kind === "sweep"
-                  ? 5
-                  : kind === "burst"
-                    ? 3
-                    : kind === "double"
-                      ? 2
-                      : 1,
+        kind === "boss-sweep"
+          ? 5
+          : kind === "boss-strafe"
+            ? 5
+            : kind === "tracking-burst" || kind === "crossfire"
+              ? 6
+              : kind === "advance-burst" || kind === "retreat-burst"
+                ? 4
+                : kind === "boss-fan"
+                  ? 3
+                  : kind === "boss-wide"
+                    ? 2
+                    : kind === "sweep"
+                      ? 5
+                      : kind === "burst"
+                        ? 3
+                        : kind === "double"
+                          ? 2
+                          : 1,
       angle:
-        kind === "dodge" ? a + ((e.tacticStep % 2 ? 1 : -1) * Math.PI) / 2 : a,
+        kind === "boss-side-roll"
+          ? a + (side * Math.PI) / 2
+          : kind === "boss-retreat-roll"
+            ? a + Math.PI
+            : kind === "dodge"
+              ? a + ((e.tacticStep % 2 ? 1 : -1) * Math.PI) / 2
+              : a,
       x: this.p.x,
       y: this.p.y,
     };

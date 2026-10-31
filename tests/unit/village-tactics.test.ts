@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { Raid, VILLAGE_TACTICS } from "../../src/raid";
+import { Raid, VILLAGE_TACTICS, IRON_BOSS_ATTACKS } from "../../src/raid";
 import { newSave } from "../../src/store";
 import { villageBuildings, inBuilding } from "../../src/village";
 import type { Sound } from "../../src/audio";
@@ -120,15 +120,22 @@ describe("乡野战术与建筑外出生", () => {
     r.updateVillageTactics(e, 0.016, true);
     expect(e.maneuver?.kind).toBe("dodge");
   });
-  it("铁腮六招循环、三阶护具弹药、血量降低不切阶段", () => {
+  it("铁腮十一招循环、三阶护具弹药、血量降低不切阶段", () => {
     const r = start();
     r.walls = [];
     const boss = r.enemies.find((e) => e.boss)!;
     r.p.x = boss.x - 180;
     r.p.y = boss.y + 80;
     boss.state = "combat";
+    boss.x = 4000;
+    boss.y = 2800;
+    boss.leash = { x: 4000, y: 2800, w: 1000, h: 1000 };
     const kinds = [];
-    for (let cycle = 0; cycle < 6; cycle++) {
+    for (let cycle = 0; cycle < IRON_BOSS_ATTACKS.length; cycle++) {
+      boss.x = 4000;
+      boss.y = 2800;
+      r.p.x = 4400;
+      r.p.y = 2800;
       boss.tacticCool = 0;
       r.bullets = [];
       r.updateVillageTactics(boss, 0.016, true);
@@ -137,18 +144,11 @@ describe("乡野战术与建筑外出生", () => {
       expect(r.bullets.length).toBe(0);
       for (let n = 0; n < 220 && boss.maneuver; n++)
         r.updateVillageTactics(boss, 1 / 60, true);
-      expect(r.bullets.length).toBeGreaterThan(0);
-      expect(r.bullets.length).toBeLessThanOrEqual(30);
+      expect(r.bullets.length, kinds.at(-1)).toBeGreaterThan(0);
+      expect(r.bullets.length).toBeLessThanOrEqual(35);
       expect(boss.maneuver).toBeUndefined();
     }
-    expect(kinds).toEqual([
-      "boss-fan",
-      "boss-roll",
-      "tracking-burst",
-      "boss-wide",
-      "advance-burst",
-      "crossfire",
-    ]);
+    expect(kinds).toEqual([...IRON_BOSS_ATTACKS]);
     expect(boss.tier).toBe(3);
     const l = boss.leash!;
     expect(Math.abs(boss.x - l.x)).toBeLessThanOrEqual(l.w / 2);
@@ -177,4 +177,106 @@ describe("乡野战术与建筑外出生", () => {
     expect(r.updateVillageTactics(e, 0.016, false)).toBe(false);
     expect(e.maneuver).toBeUndefined();
   });
+});
+
+it("铁腮左右侧滚是真正的横向位移、结束后双喷，前后朝向不被滚动覆盖", () => {
+  for (const round of [0, 1]) {
+    const r = start();
+    r.walls = [];
+    const boss = r.enemies.find((e) => e.boss)!;
+    boss.x = 4000;
+    boss.y = 2800;
+    boss.leash = { x: 4000, y: 2800, w: 1000, h: 1000 };
+    r.p.x = 4400;
+    r.p.y = 2800;
+    boss.state = "combat";
+    boss.tacticStep = 1 + round * IRON_BOSS_ATTACKS.length;
+    boss.tacticCool = 0;
+    r.updateVillageTactics(boss, 1 / 60, true);
+    expect(boss.maneuver?.kind).toBe("boss-side-roll");
+    expect(Math.abs(Math.cos(boss.maneuver!.angle))).toBeLessThan(0.001);
+    for (let n = 0; n < 60 && boss.maneuver?.kind === "boss-side-roll"; n++)
+      r.updateVillageTactics(boss, 1 / 60, true);
+    expect(boss.x).toBeCloseTo(4000);
+    expect((boss.y - 2800) * (round ? -1 : 1)).toBeGreaterThan(150);
+    expect(Math.abs(boss.angle)).toBeLessThan(0.5);
+    expect(boss.maneuver?.kind).toBe("boss-fan");
+    expect(boss.maneuver?.shots).toBe(2);
+    r.bullets = [];
+    for (let n = 0; n < 100 && boss.maneuver; n++)
+      r.updateVillageTactics(boss, 1 / 60, true);
+    expect(r.bullets).toHaveLength(14);
+  }
+});
+it("新增扫射、集中喷射和横移连喷朝向玩家，具有不同节奏与位移", () => {
+  for (const kind of ["boss-strafe", "boss-sweep", "boss-focus"]) {
+    const r = start();
+    r.walls = [];
+    const boss = r.enemies.find((e) => e.boss)!;
+    boss.x = 4000;
+    boss.y = 2800;
+    boss.leash = { x: 4000, y: 2800, w: 1000, h: 1000 };
+    r.p.x = 4400;
+    r.p.y = 2800;
+    boss.state = "combat";
+    boss.tacticStep = IRON_BOSS_ATTACKS.indexOf(kind as any);
+    boss.tacticCool = 0;
+    r.bullets = [];
+    r.updateVillageTactics(boss, 1 / 60, true);
+    if (kind === "boss-focus") {
+      for (let n = 0; n < 30; n++) r.updateVillageTactics(boss, 1 / 60, true);
+      expect(r.bullets).toHaveLength(0);
+    }
+    for (let n = 0; n < 180 && boss.maneuver; n++)
+      r.updateVillageTactics(boss, 1 / 60, true);
+    expect(r.bullets.length).toBe(
+      kind === "boss-sweep" ? 35 : kind === "boss-focus" ? 9 : 15,
+    );
+    expect(r.bullets.every((b) => b.vx > 0)).toBe(true);
+    if (kind === "boss-strafe")
+      expect(Math.abs(boss.y - 2800)).toBeGreaterThan(100);
+    else expect(boss.y).toBe(2800);
+  }
+});
+it("侧滚优先选择畅通侧，强制滚向实体墙时也不能穿过，后滚受据点边界约束", () => {
+  const r = start();
+  const boss = r.enemies.find((e) => e.boss)!;
+  boss.x = 4000;
+  boss.y = 2800;
+  boss.leash = { x: 4000, y: 2800, w: 1000, h: 1000 };
+  r.p.x = 4400;
+  r.p.y = 2800;
+  boss.state = "combat";
+  boss.tacticStep = 1;
+  boss.tacticCool = 0;
+  r.walls = [{ x: 4000, y: 2850, w: 500, h: 20, z: 70, color: "#333" }];
+  r.updateVillageTactics(boss, 1 / 60, true);
+  expect(boss.maneuver!.angle).toBeCloseTo(-Math.PI / 2);
+  boss.maneuver = {
+    kind: "boss-side-roll",
+    stage: "active",
+    time: 0,
+    shots: 1,
+    angle: Math.PI / 2,
+    x: 4400,
+    y: 2800,
+  };
+  for (let n = 0; n < 20; n++) r.updateVillageTactics(boss, 1 / 60, true);
+  expect(boss.y).toBeLessThanOrEqual(2826);
+  r.walls = [];
+  boss.x = 3530;
+  boss.y = 2800;
+  boss.maneuver = {
+    kind: "boss-retreat-roll",
+    stage: "active",
+    time: 0,
+    shots: 1,
+    angle: Math.PI,
+    x: 4400,
+    y: 2800,
+  };
+  for (let n = 0; n < 20; n++) r.updateVillageTactics(boss, 1 / 60, true);
+  expect(boss.x).toBeGreaterThanOrEqual(3524);
+  expect(boss.maneuver?.kind).toBe("boss-wide");
+  expect(boss.maneuver?.shots).toBe(2);
 });

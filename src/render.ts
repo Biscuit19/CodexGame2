@@ -8,7 +8,7 @@ import { drawVillageMap } from "./village-map";
 import { drawVillageGround } from "./village-ground";
 import { cat, box, tree, ellipse, round, path, text, type Ctx } from "./art";
 import { maps, breeds, colors, rng, EXTRACT_SECONDS } from "./data";
-import { type Raid, type Rect, type Enemy } from "./raid";
+import { isBossRoll, type Raid, type Rect, type Enemy } from "./raid";
 export class Renderer {
   ctx: Ctx;
   canvas: HTMLCanvasElement;
@@ -498,8 +498,14 @@ export class Renderer {
       c.rotate(e.angle);
       round(c, -6, -5, 40, 10, 3, "#354a46");
       c.restore();
-    } else
-      cat(c, e.x, e.y, {
+    } else {
+      c.save();
+      c.translate(e.x, e.y);
+      if (isBossRoll(e.maneuver?.kind) && e.maneuver?.stage === "active") {
+        const sign = Math.sin(e.maneuver.angle - e.angle) < 0 ? -1 : 1;
+        c.rotate(Math.min(1, -e.maneuver.time / 0.32) * Math.PI * 2 * sign);
+      }
+      cat(c, 0, 0, {
         weaponId: `w${e.weapon}`,
         fur: b.fur,
         patch: b.patch,
@@ -512,6 +518,8 @@ export class Renderer {
         scale: e.boss ? (e.boss.skill === "charge" ? 1.55 : 1.24) : 1,
         hit: e.hit,
       });
+      c.restore();
+    }
     const close = Math.hypot(e.x - r.p.x, e.y - r.p.y) < 650;
     if (e.state === "investigate") {
       text(c, "？", e.x, e.y - (e.boss ? 140 : 104) - 48, 32, "#ffe478");

@@ -17,7 +17,7 @@ import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.j
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import { breeds, maps, db } from "./data";
 import { weaponPalette } from "./equipment-art";
-import type { Raid, Enemy, Container } from "./raid";
+import { isBossRoll, type Raid, type Enemy, type Container } from "./raid";
 import { Renderer } from "./render";
 import { text, round } from "./art";
 import { PawPrints } from "./pawprints";
@@ -819,12 +819,14 @@ export class ThreeRenderer {
         e.y,
         e.angle,
         e.walk,
-        e.maneuver?.kind === "boss-roll" && e.maneuver.stage === "active"
+        isBossRoll(e.maneuver?.kind) && e.maneuver?.stage === "active"
           ? Math.max(0, 0.32 + e.maneuver.time)
           : 0,
         e.helmetDurability > 0 ? e.tier : 0,
         e.armorDurability > 0 ? e.tier : 0,
         true,
+        e.maneuver?.angle ?? e.angle,
+        e.angle,
       );
     }
     for (const [id, rig] of this.actors)
