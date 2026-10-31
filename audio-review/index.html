@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>三角猫行动 · 第二轮音效选材</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #182e27;
+        --panel: #294737;
+        --text: #f3efdc;
+        --muted: #c6d0bc;
+        --gold: #efd29c;
+        --line: #a1b48c55;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        color: var(--text);
+        background: radial-gradient(ellipse at top, #385842, var(--bg));
+        font:
+          18px/1.65 system-ui,
+          "Microsoft YaHei",
+          sans-serif;
+      }
+      main {
+        max-width: 1400px;
+        margin: auto;
+        padding: 30px 24px 70px;
+      }
+      h1 {
+        font-size: 34px;
+        line-height: 1.3;
+        margin: 8px 0 14px;
+      }
+      h2 {
+        font-size: 26px;
+        margin: 0;
+      }
+      h3 {
+        font-size: 20px;
+        margin: 0 0 10px;
+      }
+      p {
+        margin: 10px 0;
+      }
+      a {
+        color: var(--gold);
+        overflow-wrap: anywhere;
+      }
+      button,
+      input {
+        font: inherit;
+      }
+      button {
+        background: #385c45;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 9px 15px;
+        color: var(--text);
+        cursor: pointer;
+      }
+      button:hover {
+        border-color: var(--gold);
+        background: #4a684b;
+      }
+      button:focus-visible,
+      a:focus-visible,
+      input:focus-visible,
+      summary:focus-visible {
+        outline: 3px solid var(--gold);
+        outline-offset: 3px;
+      }
+      .tag {
+        display: inline-block;
+        font-size: 15px;
+        border: 1px solid var(--line);
+        border-radius: 99px;
+        padding: 3px 10px;
+        color: var(--gold);
+      }
+      .heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+      }
+      .notice,
+      .reference,
+      .controls,
+      details {
+        background: #223f30;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 18px 22px;
+        margin: 18px 0;
+      }
+      .controls {
+        position: sticky;
+        top: 0;
+        z-index: 3;
+        background: #1c352cf7;
+      }
+      .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 12px 20px;
+        flex-wrap: wrap;
+      }
+      .volume {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .volume input {
+        accent-color: var(--gold);
+        width: 130px;
+      }
+      #status {
+        color: var(--gold);
+        margin: 10px 0 0;
+        min-height: 30px;
+      }
+      .muted {
+        color: var(--muted);
+        font-size: 16px;
+      }
+      .jump,
+      .tabs {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 16px 0;
+      }
+      .jump a {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        text-decoration: none;
+        padding: 6px 12px;
+      }
+      .tabs [aria-selected="true"] {
+        background: var(--gold);
+        color: #243f30;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        align-items: start;
+      }
+      .set {
+        min-width: 0;
+        background: #294737;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        overflow: hidden;
+        scroll-margin-top: 180px;
+      }
+      .set-header {
+        padding: 20px;
+        border-bottom: 1px solid var(--line);
+      }
+      .set-header h2 {
+        display: flex;
+        align-items: start;
+        gap: 10px;
+        font-size: 24px;
+        line-height: 1.4;
+      }
+      .letter {
+        flex: none;
+        display: inline-grid;
+        place-items: center;
+        background: var(--gold);
+        color: #254336;
+        border-radius: 11px;
+        width: 35px;
+        height: 35px;
+      }
+      .author {
+        font-size: 16px;
+        color: var(--gold);
+      }
+      .scope {
+        font-size: 16px;
+        border-left: 3px solid #e1cb8d;
+        padding-left: 10px;
+        color: var(--muted);
+      }
+      .set-header details {
+        margin: 12px 0 0;
+        padding: 10px;
+        background: #213e30;
+        font-size: 15px;
+      }
+      .clips {
+        padding: 6px 18px 18px;
+      }
+      .clip {
+        padding: 17px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .clip:last-child {
+        border: 0;
+      }
+      .clip h3 {
+        font-size: 19px;
+        margin: 0 0 6px;
+      }
+      .clip p {
+        font-size: 15px;
+        color: var(--muted);
+      }
+      audio {
+        width: 100%;
+        height: 43px;
+        margin: 7px 0;
+      }
+      .clip-links {
+        display: flex;
+        gap: 16px;
+        font-size: 15px;
+        flex-wrap: wrap;
+      }
+      .playing {
+        background: #385c4155;
+        border-radius: 10px;
+        outline: 2px solid #e6c99188;
+        outline-offset: 6px;
+      }
+      .set-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 15px;
+      }
+      .official {
+        padding: 20px;
+      }
+      .official iframe {
+        border: 0;
+        width: 100%;
+        height: 230px;
+        border-radius: 12px;
+        background: #15291f;
+      }
+      .official .media-block + .media-block {
+        margin-top: 20px;
+      }
+      .official-note {
+        color: #f2d396;
+      }
+      .empty {
+        padding: 18px;
+        color: var(--muted);
+        font-size: 16px;
+      }
+      .bonus {
+        margin-top: 28px;
+        scroll-margin-top: 180px;
+      }
+      .bonus .clips {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0 26px;
+      }
+      .reference {
+        max-width: 720px;
+      }
+      .reference p {
+        font-size: 16px;
+      }
+      summary {
+        cursor: pointer;
+        font-weight: 650;
+      }
+      li {
+        margin: 10px 0;
+      }
+      footer {
+        color: var(--muted);
+        margin-top: 30px;
+        font-size: 16px;
+      }
+      #error {
+        color: #ffd4b0;
+      }
+      section[hidden] {
+        display: none;
+      }
+      .primary {
+        background: var(--gold);
+        color: #254336;
+        font-weight: 700;
+      }
+      #source-guide {
+        font-size: 17px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 16px;
+      }
+      th,
+      td {
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+        padding: 10px;
+      }
+      .table-wrap {
+        overflow-x: auto;
+      }
+      @media (max-width: 1050px) {
+        .grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .bonus .clips {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 650px) {
+        main {
+          padding: 20px 12px 45px;
+        }
+        h1 {
+          font-size: 28px;
+        }
+        .heading {
+          align-items: start;
+        }
+        .heading > a {
+          font-size: 16px;
+          white-space: nowrap;
+        }
+        .grid,
+        .bonus .clips {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .controls {
+          position: static;
+          padding: 14px;
+        }
+        .set {
+          scroll-margin-top: 16px;
+        }
+        .notice,
+        .reference {
+          padding: 16px;
+        }
+        .set-header {
+          padding: 18px;
+        }
+        .toolbar {
+          gap: 10px 14px;
+        }
+        .volume input {
+          width: 105px;
+        }
+        button {
+          max-width: 100%;
+        }
+        .bonus {
+          scroll-margin-top: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main><p><a href="peaceful-music/index.html">最新：20首静谧音乐 · 可分别选择基地／游戏音乐</a></p><p><a href="soft-clicks/index.html">新柔软点击试听 · 10个素材＋5个原创</a> · <a href="../audio-mixer/index.html">全音效调音台</a></p><p><a href="commerce/index.html">新购买、售卖、丢弃和UI点击 · 40候选</a></p><p><a href="discovery-music/index.html">新发现音效与完整BGM · 20候选</a></p>
+      <div class="heading">
+        <span class="tag">原素材对照页</span><a href="../">返回游戏</a>
+      </div>
+      <h1>第二轮音效选材 · 五位不同作者</h1>
+      <p class="notice"><a href="interactions/index.html"><strong>新试听：搜索、开箱、挥刀与四级食物 · 23类 × 5个候选 →</strong></a></p>
+      <p class="notice"><a href="actions/index.html"><strong>新试听：换弹、翻滚、装备与不同进食动作 · 12 类 × 5 个候选 →</strong></a></p>
+      <p class="notice">
+        <a href="selected/index.html"
+          ><strong
+            >游戏现用方案：四类单发、换弹与可调射速的连发试听 →</strong
+          ></a
+        >
+      </p>
+      <p>
+        先听能辨认动作和枪型的原声。E–I 五组均可在本页逐项播放。额外提供 FilmCow
+        动作录音，专门比较衣物摩擦、落地和拿动装备。
+      </p>
+      <div class="notice">
+        <strong>旧方案仅保留 A 的冲锋枪。</strong
+        >其余旧候选与原创合成已弃用。本轮枪声不变调、不滤波、不重混；原始 MP3
+        直接复制，WAV
+        仅完整转码。<strong>五个来源不等于五套都齐全的成品</strong>：各组缺少哪些枪型和动作，均在各组注明。
+      </div>
+      <p class="notice"><a href="reload-search-cats/index.html"><strong>新试听：换弹、轻搜索与猫叫 · 4类各10个 →</strong></a></p>
+      <p class="notice"><a href="shots-music/index.html"><strong>新枪声与完整BGM · 冲锋枪10＋步枪10＋完整音乐10 →</strong></a></p>
+<section class="controls" aria-label="试听控制">
+        <div class="toolbar">
+          <label class="volume"
+            >试听音量<input
+              id="volume"
+              type="range"
+              min="0"
+              max="100"
+              value="100"
+              aria-label="试听音量"
+            /><output id="volume-value">100%</output></label
+          ><label><input id="level" type="checkbox" />统一本页试听音量</label
+          ><button id="stop">停止全部</button
+          ><button id="representatives">连播五位作者代表枪声</button>
+        </div>
+        <p id="status" role="status" aria-live="polite">正在加载……</p>
+        <p class="muted">
+          默认以最高音量播放原声。需要统一不同录音的响度时，可勾选“统一本页试听音量”；只影响播放器，不改音频文件。
+        </p>
+      </section>
+      <section class="reference" aria-label="保留的冲锋枪参考">
+        <h2>保留参考 · 旧 A 冲锋枪</h2>
+        <p>
+          文件与上一轮相同。这是你勉强认可的参考，仍等待你决定是否正式采用。
+        </p>
+        <div id="references"></div>
+      </section>
+      <nav class="jump" aria-label="作者跳转">
+        <a href="#set-E">E · SnakeF8</a><a href="#set-F">F · Still North</a
+        ><a href="#set-G">G · Mike Koenig</a
+        ><a href="#set-H">H · RA The Sun God</a><a href="#set-I">I · JKirsch</a
+        ><a href="#action-supplement">动作补充 · FilmCow</a>
+      </nav>
+      <div class="tabs" role="tablist" aria-label="声音分类">
+        <button role="tab" data-group="all" aria-selected="true">全部</button
+        ><button role="tab" data-group="shot" aria-selected="false">
+          枪械射击</button
+        ><button role="tab" data-group="reload" aria-selected="false">
+          换弹</button
+        ><button role="tab" data-group="action" aria-selected="false">
+          翻滚与装备
+        </button>
+      </div>
+      <div id="sets" class="grid"><p>正在加载素材……</p></div>
+      <section id="action-supplement" class="set bonus"></section>
+      <details id="source-guide">
+        <summary>怎么判断这些素材，为什么没有把每组都填满</summary>
+        <p>
+          枪声要有击发的冲击与枪型差别；换弹要有真实的弹匣、装弹和枪机动作。翻滚的核心是衣物摩擦和身体落地，穿戴是拿取、布料及扣合。枪机声、拉链声和衣物声都保留真实名称，不冒充整套动作。
+        </p>
+        <p>
+          免费枪械录音包通常不同时包含翻滚、护具穿戴。这里将缺项公开，动作录音单列，选定后再按猫咪动画做必要的时长匹配。五组均有逐项原声；G/H/I
+          是按作者整理的专题选集，<strong>不是五套都包含四类枪声、四类换弹和全部动作的现成套装</strong>。
+        </p>
+        <p>
+          来源热度使用原站评分、明确标注的下载数或独立推荐文章。没有公开数字的厂牌只列来源，不编造排名。较早发行但有明确使用记录的录音库标注年份背景，不以新旧代替质量判断。
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>作者</th>
+                <th>可核验的使用依据</th>
+              </tr>
+            </thead>
+            <tbody id="evidence"></tbody>
+          </table>
+        </div>
+        <p>
+          <a href="manifest.json">逐项文件、来源与处理清单</a> ·
+          <a href="licenses/ATTRIBUTION.md">署名与授权说明</a> ·
+          <a href="licenses/FilmCow-license.pdf">FilmCow 原始许可</a>
+        </p>
+      </details>
+      <footer>
+        本页保留原始候选供对照，不会写入存档。已选并处理的枪声与换弹已接入游戏，请在上方“游戏现用方案”中试听当前版本。
+      </footer>
+    </main>
+    <script>
+      const $ = (s) => document.querySelector(s);
+      let data,
+        group = "all",
+        volume = 1,
+        level = false,
+        token = 0,
+        transport = new Audio(),
+        resolvePlay = null;
+      const status = (t) => ($("#status").textContent = t);
+      const esc = (s) =>
+        String(s).replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
+      const audios = () => [...document.querySelectorAll("audio")];
+      function gain(t) {
+        return volume * (level ? t.previewGain : 1);
+      }
+      function stop(keep) {
+        token++;
+        transport.pause();
+        transport.currentTime = 0;
+        if (resolvePlay) {
+          resolvePlay(false);
+          resolvePlay = null;
+        }
+        audios().forEach((a) => {
+          if (a !== keep) a.pause();
+        });
+        document
+          .querySelectorAll(".playing")
+          .forEach((a) => a.classList.remove("playing"));
+      }
+      function attach(a, t) {
+        a.volume = gain(t);
+        a.dataset.gain = t.previewGain;
+        a.addEventListener("play", () => {
+          stop(a);
+          status("正在试听：" + t.name);
+          a.closest(".clip")?.classList.add("playing");
+        });
+        a.addEventListener("ended", () => {
+          a.closest(".clip")?.classList.remove("playing");
+          status("播放结束。");
+        });
+        a.addEventListener("error", () =>
+          status("音频加载失败，请打开原作者页面或刷新重试。"),
+        );
+      }
+      function clip(t) {
+        return `<div class="clip" data-track="${t.set}-${t.id}"><h3>${esc(t.name)}</h3><audio controls preload="none" src="${esc(t.url)}" aria-label="${esc(t.set + " " + t.name)}"></audio><p>${t.duration.toFixed(2)} 秒 · ${t.channels === 2 ? "立体声" : "单声道"} · ${esc(t.processing)}</p><p>${esc(t.note)}</p><div class="clip-links"><a href="${esc(t.source)}" target="_blank" rel="noopener">原作者条目</a>${t.set === "J" ? "" : `<a href="${esc(t.url)}" download>下载原声试听</a>`}</div></div>`;
+      }
+      function header(s) {
+        return `<header class="set-header"><h2><span class="letter">${s.id}</span>${esc(s.name)}</h2><p class="author">作者：${esc(s.author)}</p><p>${esc(s.description)}</p><p class="scope">${esc(s.scope)}</p><details><summary>来源、使用依据与授权</summary><p>${esc(s.evidence)}</p><p>${esc(s.license)}</p><a href="${esc(s.source)}" target="_blank" rel="noopener">原作者发行页</a>${s.extraSource ? ` · <a href="${esc(s.extraSource)}" target="_blank" rel="noopener">第二包</a>` : ""}</details>${s.mode === "local" ? `<div class="set-actions"><button data-sequence="${s.id}">连播当前分类</button></div>` : ""}</header>`;
+      }
+      function render() {
+        stop();
+        $("#sets").innerHTML = data.sets
+          .map((s) => {
+            const ts = data.tracks.filter(
+              (t) => t.set === s.id && (group === "all" || group === t.group),
+            );
+            return `<section id="set-${s.id}" class="set" data-set="${s.id}">${header(s)}${`<div class="clips">${ts.length ? ts.map(clip).join("") : '<p class="empty">该原包在本次取得的文件中没有此类声音，没有用其他声音补齐。</p>'}</div>`}</section>`;
+          })
+          .join("");
+        const j = data.bonus;
+        $("#action-supplement").hidden = !["all", "action"].includes(group);
+        $("#action-supplement").innerHTML =
+          header(j) +
+          `<div class="clips">${data.tracks
+            .filter((t) => t.set === "J")
+            .map(clip)
+            .join("")}</div>`;
+        document.querySelectorAll("[data-track] audio").forEach((a) => {
+          const t = data.tracks.find(
+            (t) =>
+              `${t.set}-${t.id}` === a.closest("[data-track]").dataset.track,
+          );
+          attach(a, t);
+        });
+        status("原素材已加载，可逐项试听。");
+      }
+      function playOne(t, id) {
+        if (id !== token) return Promise.resolve(false);
+        document
+          .querySelectorAll(".playing")
+          .forEach((a) => a.classList.remove("playing"));
+        document
+          .querySelector(`[data-track="${t.set}-${t.id}"]`)
+          ?.classList.add("playing");
+        transport.src = t.url;
+        transport.volume = gain(t);
+        transport.dataset.gain = t.previewGain;
+        status("正在连播：" + t.set + " · " + t.name);
+        return new Promise((resolve) => {
+          let done = false;
+          const finish = (ok) => {
+            if (done) return;
+            done = true;
+            resolvePlay = null;
+            resolve(ok);
+          };
+          resolvePlay = finish;
+          transport.onended = () => finish(true);
+          transport.onerror = () => {
+            status("音频加载失败，已停止。");
+            finish(false);
+          };
+          transport.play().catch(() => {
+            if (id === token) status("播放被浏览器阻止，请再次点击播放。");
+            finish(false);
+          });
+        });
+      }
+      async function playList(list) {
+        stop();
+        if (!list.length) {
+          status("当前分类没有可连播的本地录音。");
+          return;
+        }
+        const id = token;
+        for (const t of list) {
+          if (id !== token || !(await playOne(t, id))) return;
+          await new Promise((r) => setTimeout(r, 350));
+        }
+        if (id === token) {
+          document
+            .querySelectorAll(".playing")
+            .forEach((a) => a.classList.remove("playing"));
+          status("这一轮播放结束。");
+        }
+      }
+      $("#stop").onclick = () => {
+        stop();
+        status("已停止全部。");
+      };
+      function applyVolume() {
+        audios().forEach(
+          (a) =>
+            (a.volume = volume * (level ? Number(a.dataset.gain || 1) : 1)),
+        );
+        transport.volume =
+          volume * (level ? Number(transport.dataset.gain || 1) : 1);
+      }
+      $("#volume").oninput = (e) => {
+        volume = e.target.value / 100;
+        $("#volume-value").value = e.target.value + "%";
+        applyVolume();
+      };
+      $("#level").onchange = (e) => {
+        level = e.target.checked;
+        applyVolume();
+        status(
+          level
+            ? "已统一本页试听音量；文件原声不变。"
+            : "原始录音音量可能较大，请先调低设备音量。",
+        );
+      };
+      $(".tabs").onclick = (e) => {
+        const b = e.target.closest("[data-group]");
+        if (!b || !data) return;
+        group = b.dataset.group;
+        document
+          .querySelectorAll("[data-group]")
+          .forEach((x) => x.setAttribute("aria-selected", String(x === b)));
+        render();
+      };
+      $("#representatives").onclick = () => {
+        if (data)
+          playList(
+            [
+              ["E", "556"],
+              ["F", "ar15"],
+              ["G", "sbmkak"],
+              ["H", "sbrashot"],
+              ["I", "sbjk9mm"],
+            ].map(([s, id]) =>
+              data.tracks.find((t) => t.set === s && t.id === id),
+            ),
+          );
+      };
+      document.addEventListener("click", (e) => {
+        const seq = e.target.closest("[data-sequence]");
+        if (seq && data)
+          playList(
+            data.tracks.filter(
+              (t) =>
+                t.set === seq.dataset.sequence &&
+                (group === "all" || group === t.group),
+            ),
+          );
+      });
+      fetch("manifest-v2.json", { cache: "no-cache" })
+        .then((r) => {
+          if (!r.ok) throw Error();
+          return r.json();
+        })
+        .then((d) => {
+          data = d;
+          $("#references").innerHTML = d.references
+            .map(
+              (t) =>
+                `<audio controls preload="none" src="${esc(t.url)}" aria-label="${esc(t.name)}"></audio>`,
+            )
+            .join("");
+          document
+            .querySelectorAll("#references audio")
+            .forEach((a, i) => attach(a, d.references[i]));
+          $("#evidence").innerHTML = [...d.sets, d.bonus]
+            .map(
+              (s) =>
+                `<tr><td><a href="${esc(s.evidenceUrl)}" target="_blank" rel="noopener">${esc(s.author)}</a></td><td>${esc(s.evidence)}</td></tr>`,
+            )
+            .join("");
+          render();
+        })
+        .catch(() => {
+          $("#sets").innerHTML =
+            '<p id="error">试听清单加载失败，请刷新重试。</p>';
+          status("无法加载试听清单。");
+        });
+      window.addEventListener("pagehide", () => stop());
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) stop();
+      });
+      if ("serviceWorker" in navigator)
+        navigator.serviceWorker
+          .getRegistration("../")
+          .then((r) => r?.update())
+          .catch(() => {});
+    </script>
+  </body>
+</html>

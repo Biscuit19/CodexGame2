@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>三角猫 · 游戏数值与声音调整台</title>
+    <script type="module" crossorigin src="../assets/workbench-B_8_rR-Y.js"></script>
+    <link rel="modulepreload" crossorigin href="../assets/store-DqAaLydA.js">
+    <link rel="modulepreload" crossorigin href="../assets/config-time-iAX8s_Q5.js">
+    <link rel="stylesheet" crossorigin href="../assets/workbench-DVBp0r1h.css">
+  </head>
+  <body>
+    <header class="masthead">
+      <div>
+        <p class="eyebrow">三角猫行动 / GAME WORKBENCH</p>
+        <h1>游戏数值与声音调整台</h1>
+        <p id="release">正在读取当前发布数据…</p>
+      </div>
+      <a href="../index.html">返回游戏 ↗</a>
+    </header>
+    <div class="topbar">
+      <button id="export-all" class="primary">导出全部配置</button
+      ><button id="export-numbers">仅导出数值</button
+      ><label class="button"
+        >导入配置<input
+          id="import-config"
+          type="file"
+          accept="application/json,.json"
+          hidden /></label
+      ><button id="reset">恢复当前发布值</button
+      ><button id="stop-audio">停止声音</button><span id="dirty">尚未修改</span
+      ><output id="status" role="status"
+        >这里显示当前游戏配置；调整后导出JSON即可交给我更新游戏。</output
+      >
+    </div>
+    <div class="layout">
+      <nav id="tabs" aria-label="调整分类"></nav>
+      <main>
+        <section id="overview" class="panel">
+          <h2>当前游戏配置</h2>
+          <div id="counts" class="stats"></div>
+          <p>
+            基础物品价值与商店售价可以分别调整。容器等级概率是“已生成收集品后”的等级分布；弹药、食物等分支另列。修改会保存在这个调整台，不占用游戏存档。
+          </p>
+        </section>
+        <section class="panel filters" id="filters">
+          <label
+            >搜索名称或规则
+            <input
+              id="search"
+              type="search"
+              placeholder="如：三尾47、罐头、猎人小屋、翻滚" /></label
+          ><label
+            >规则分组
+            <select id="scope">
+              <option value="">全部</option>
+            </select></label
+          ><label><input id="only-changes" type="checkbox" />只看修改项</label>
+        </section>
+        <section id="content"></section>
+        <section id="audio-pane" hidden>
+          <iframe
+            id="mixer"
+            title="当前游戏全音效调音台"
+            src="../audio-mixer/index.html?embedded=1"
+          ></iframe>
+        </section>
+        <footer>
+          <p>
+            导出文件名包含北京时间与毫秒，文件内另有导出时间、发布版本、来源基线和完整当前值。每次发布自动重新读取游戏源码与配置；新版本不会沿用旧版本草稿覆盖新值。
+          </p>
+          <a href="../audio-credits.html">音频来源与许可</a> ·
+          <a href="../audio-review/soft-clicks/index.html">点击音效试听</a>
+        </footer>
+      </main>
+    </div>
+  </body>
+</html>

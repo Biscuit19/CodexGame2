@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>三角猫 · 全音效调音台</title>
+    <script type="module" crossorigin src="../assets/mixer-D5NunGAh.js"></script>
+    <link rel="modulepreload" crossorigin href="../assets/store-DqAaLydA.js">
+    <link rel="modulepreload" crossorigin href="../assets/config-time-iAX8s_Q5.js">
+    <link rel="modulepreload" crossorigin href="../assets/audio-Ccr4er2O.js">
+    <link rel="stylesheet" crossorigin href="../assets/mixer-CGgENdp8.css">
+  </head>
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">三角猫行动 / AUDIO MIXER</p>
+        <h1>全音效调音台</h1>
+        <p>
+          <a href="../game-workbench/index.html"
+            >打开完整游戏数值与声音调整台</a
+          >
+        </p>
+        <p>
+          使用游戏当前音源、响度基线和播放引擎。先播放背景音乐，再逐个试听、调整；导出配置后发给我即可。
+        </p>
+        <a href="../audio-review/soft-clicks/index.html"
+          >柔软点击声 · 10个素材＋5个原创</a
+        >
+        · <a href="../audio-review/peaceful-music/index.html">20首静谧音乐候选</a> · <a href="../index.html">返回游戏</a>
+      </header>
+      <section class="transport panel">
+        <label
+          >背景音乐
+          <select id="bgm"></select></label
+        ><button id="music-play">播放背景音乐</button
+        ><button id="music-stop">暂停音乐</button
+        ><button id="stop">停止试听</button
+        ><button id="export">导出配置文件</button
+        ><label class="button"
+          >导入配置<input
+            id="import"
+            type="file"
+            accept="application/json,.json"
+            hidden /></label
+        ><button id="reset">恢复本轮默认</button
+        ><output id="status" role="status"
+          >不会改动游戏存档。设置自动保存在此调音台。</output
+        >
+      </section>
+      <section class="panel">
+        <h2>整体声音</h2>
+        <p>初始值已同步当前游戏配置。播放器的系统音量也会影响听感。</p>
+        <div id="buses" class="controls"></div>
+        <details>
+          <summary>模拟游戏设置的音量滑块</summary>
+          <p>
+            初始值和新游戏一致；如果你在游戏里调过音量，可以在这里设成相同数值。
+          </p>
+          <div id="settings" class="controls"></div>
+        </details>
+      </section>
+      <section class="panel">
+        <h2>逐首背景音乐</h2>
+        <div id="tracks"></div>
+      </section>
+      <section class="panel">
+        <h2>音效</h2>
+        <label
+          >筛选
+          <input
+            id="filter"
+            type="search"
+            placeholder="如：发现、换弹、纸箱" /></label
+        ><label
+          >动作时长
+          <input
+            id="seconds"
+            type="number"
+            min="0.3"
+            max="20"
+            step="0.1"
+            value="3"
+          />
+          秒（仅换弹、进食）</label
+        >
+        <p>
+          同一声音被多个动作复用时会一起调整；敌人枪声和换弹另有比例控制。连续试听只在此页发生。
+        </p>
+        <div id="effects"></div>
+      </section>
+      <footer>
+        <a href="../audio-credits.html">现用音频来源与授权</a> ·
+        <a href="../audio-review/commerce/index.html">之前的交易试听</a>
+        <p>
+          本页不替换游戏音效；导出的JSON包含版本、稳定音源编号、全部音量和试听设置。返回游戏后仍使用已发布配置。
+        </p>
+      </footer>
+    </main>
+  </body>
+</html>
