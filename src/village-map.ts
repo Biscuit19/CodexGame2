@@ -75,6 +75,37 @@ function label(
   c.textBaseline = "middle";
   c.fillText(value, x, y);
 }
+export function drawSafeMapIcon(
+  c: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  size: number,
+) {
+  c.save();
+  c.translate(x, y);
+  c.scale(size / 20, size / 20);
+  rounded(c, -21, -20, 42, 40, 7, "#f2e5bf", "#5b5b46");
+  rounded(c, -16, -15, 32, 30, 4, "#71816c", "#354b3c");
+  c.fillStyle = "#f6d88e";
+  c.beginPath();
+  c.arc(-3, 0, 7, 0, Math.PI * 2);
+  c.fill();
+  c.strokeStyle = "#485843";
+  c.lineWidth = 2;
+  c.beginPath();
+  c.moveTo(-3, -5);
+  c.lineTo(-3, 5);
+  c.moveTo(-8, 0);
+  c.lineTo(2, 0);
+  c.stroke();
+  c.strokeStyle = "#f7e8c0";
+  c.lineWidth = 3;
+  c.beginPath();
+  c.moveTo(10, -6);
+  c.lineTo(10, 6);
+  c.stroke();
+  c.restore();
+}
 function createAtlas() {
   const canvas = document.createElement("canvas");
   canvas.width = W;
@@ -84,33 +115,26 @@ function createAtlas() {
   c.scale(S, S);
   drawVillageGround(c);
   c.restore();
-  // Quiet transparent resource contours under the landmarks, without extra labels.
-  for (const [id, color] of [
-    ["clinic", "#3987a6"],
-    ["barn", "#d69930"],
-    ["boss", "#ba5361"],
-  ]) {
-    const b = villageBuildings.find((b) => b.id === id);
-    if (!b) continue;
-    c.save();
-    c.fillStyle = color + "25";
-    c.strokeStyle = color + "b0";
-    c.lineWidth = 3;
-    c.setLineDash([12, 7]);
-    c.beginPath();
-    c.ellipse(
-      b.x * S,
-      b.y * S,
-      (b.id === "boss" ? 1050 : 650) * S,
-      (b.id === "boss" ? 850 : 500) * S,
-      0,
-      0,
-      Math.PI * 2,
-    );
-    c.fill();
-    c.stroke();
-    c.restore();
-  }
+  // Only the Boss farmstead is a highlighted resource zone.
+  const bossZone = villageBuildings.find((b) => b.id === "boss")!;
+  c.save();
+  c.fillStyle = "#efbe3545";
+  c.strokeStyle = "#ffdc65";
+  c.lineWidth = 6;
+  c.setLineDash([14, 7]);
+  c.beginPath();
+  c.ellipse(
+    bossZone.x * S,
+    bossZone.y * S,
+    1050 * S,
+    850 * S,
+    0,
+    0,
+    Math.PI * 2,
+  );
+  c.fill();
+  c.stroke();
+  c.restore();
   // Pictorial cartography: rounded trees, timber fence posts, roof tiles and framed labels.
   for (const f of villageFenceRects) {
     const horizontal = f.w > f.h,
@@ -337,7 +361,14 @@ function createAtlas() {
       }
     }
     c.restore();
-    if (b.name) label(c, b.name, b.x * S, b.y * S - h * 0.7 - 34, 46);
+    if (b.name)
+      label(
+        c,
+        b.name,
+        b.x * S,
+        b.y * S - h * 0.7 - (b.id === "boss" ? 134 : 34),
+        46,
+      );
   }
   const field = villagePoint(2060, 900);
   label(c, "农田", field.x * S, field.y * S, 40);
@@ -464,11 +495,13 @@ export function drawVillageMap(
     if (p.x < -40 || p.x > w + 40 || p.y < -40 || p.y > h + 40) return;
     rounded(c, p.x - size, p.y - size, size * 2, size * 2, 6, color, "#f1e7cd");
     c.fillStyle = "#fff6dc";
-    c.font = `bold ${size + 5}px sans-serif`;
+    c.font = `bold ${large ? 36 : 19}px sans-serif`;
     c.textAlign = "center";
     c.textBaseline = "middle";
     c.fillText(symbol, p.x, p.y + 1);
   };
+  const safes = r.containers.filter((c) => c.type === "safe");
+  canvas.dataset.safeCount = String(safes.length);
   for (const e of r.exits) {
     const p = point(e.x, e.y),
       radius = large ? 25 : 12;
@@ -490,11 +523,19 @@ export function drawVillageMap(
     c.font = `bold ${size}px sans-serif`;
     const width =
       Math.max(c.measureText(type).width, c.measureText(e.name).width) + 20;
-    const x = Math.max(width / 2 + 8, Math.min(w - width / 2 - 8, p.x));
+    const sideLabel = e.name === "农庄内院 B";
+    const x = Math.max(
+      width / 2 + 8,
+      Math.min(
+        w - width / 2 - 8,
+        sideLabel ? p.x + radius + 16 + width / 2 : p.x,
+      ),
+    );
     const bottom = p.y + radius + 12,
       height = size * 2.55;
-    const y =
-      large && !e.paid && e.name.includes(" A")
+    const y = sideLabel
+      ? Math.max(8, p.y - height / 2)
+      : large && !e.paid && e.name.includes(" A")
         ? p.y - radius - height - 12
         : Math.min(h - height - 8, bottom);
     rounded(c, x - width / 2, y, width, height, 8, "#e9e5cbeF", "#71966a");
@@ -506,9 +547,36 @@ export function drawVillageMap(
     c.fillStyle = "#2f4533";
     c.fillText(e.name, x, y + size * 1.85);
   }
+  for (const safe of safes) {
+    const p = point(safe.x, safe.y);
+    if (p.x < -25 || p.x > w + 25 || p.y < -25 || p.y > h + 25) continue;
+    const crowded = r.enemies.some(
+      (e) =>
+        e.boss &&
+        Math.hypot(point(e.x, e.y).x - p.x, point(e.x, e.y).y - p.y) <
+          (large ? 75 : 30),
+    );
+    const iconX = crowded ? Math.max(25, p.x - (large ? 60 : 25)) : p.x;
+    const iconY = crowded ? p.y - (large ? 12 : 5) : p.y;
+    if (crowded) {
+      c.save();
+      c.strokeStyle = "#f9e6a8";
+      c.lineWidth = large ? 3 : 2;
+      c.beginPath();
+      c.moveTo(p.x, p.y);
+      c.lineTo(iconX, iconY);
+      c.stroke();
+      c.fillStyle = "#f9e6a8";
+      c.beginPath();
+      c.arc(p.x, p.y, large ? 4 : 2, 0, Math.PI * 2);
+      c.fill();
+      c.restore();
+    }
+    drawSafeMapIcon(c, iconX, iconY, large ? 21 : 11);
+  }
   for (const e of r.enemies)
     if (e.boss) {
-      pin(e.x, e.y, "#aa5745", "首");
+      pin(e.x, e.y, "#aa5745", "首", large ? 26 : 12);
       if (large) {
         const p = point(e.x, e.y);
         c.font = "bold 36px sans-serif";
@@ -536,5 +604,32 @@ export function drawVillageMap(
     c.strokeText("你", p.x, p.y + 52);
     c.fillStyle = "#ff68b0";
     c.fillText("你", p.x, p.y + 52);
+  }
+  if (large) {
+    rounded(c, 22, 22, 270, 162, 13, "#eee3c4f5", "#807351");
+    const rows = ["保险箱", "高资源区", "首领"];
+    for (let i = 0; i < 3; i++) {
+      const cy = 52 + i * 48;
+      if (i === 0) drawSafeMapIcon(c, 52, cy, 17);
+      else if (i === 1) {
+        c.save();
+        c.setLineDash([6, 4]);
+        c.lineWidth = 3;
+        rounded(c, 34, cy - 13, 36, 26, 8, "#efbe3566", "#b28722");
+        c.restore();
+      } else {
+        rounded(c, 35, cy - 17, 34, 34, 6, "#aa5745", "#fff0cb");
+        c.font = "bold 27px sans-serif";
+        c.textAlign = "center";
+        c.textBaseline = "middle";
+        c.fillStyle = "#fff6dc";
+        c.fillText("首", 52, cy + 1);
+      }
+      c.font = "bold 27px sans-serif";
+      c.textAlign = "left";
+      c.textBaseline = "middle";
+      c.fillStyle = "#3c4b34";
+      c.fillText(rows[i], 86, cy);
+    }
   }
 }

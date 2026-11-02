@@ -193,13 +193,15 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
       const r = start(seed);
       expect(r.containers.length).toBeGreaterThanOrEqual(46);
       expect(r.containers.length).toBeLessThanOrEqual(
-        81 +
+        87 +
           villageProps.filter((p) => ["cooler", "trashcan"].includes(p.model))
             .length,
       );
       expect(
         r.containers.filter((c) =>
-          ["box", "basket", "toolbox", "litter"].includes(c.type),
+          ["box", "basket", "toolbox", "litter", "cooler", "trashcan"].includes(
+            c.type,
+          ),
         ).length,
       ).toBeGreaterThan(
         r.containers.filter((c) => ["safe", "weapon", "bed"].includes(c.type))
@@ -208,8 +210,8 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
       const region = (name: string) =>
         r.containers.filter((c) => c.region === name);
       expect(region("spawn")).toHaveLength(2);
-      expect(region("hunter").length).toBeGreaterThanOrEqual(5);
-      expect(region("hunter").length).toBeLessThanOrEqual(6);
+      expect(region("hunter").length).toBeGreaterThanOrEqual(6);
+      expect(region("hunter").length).toBeLessThanOrEqual(7);
       expect(region("clinic").filter((c) => c.type === "medical")).toHaveLength(
         3,
       );
@@ -409,8 +411,9 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
       expect(
         boxes.every(
           (c) =>
-            ["box", "basket", "toolbox"].includes(c.type) &&
-            c.items.every((i) => db[i.id].tier <= 3),
+            ["box", "basket", "toolbox", "cooler", "trashcan"].includes(
+              c.type,
+            ) && c.items.every((i) => db[i.id].tier <= 3),
         ),
       ).toBe(true);
     }

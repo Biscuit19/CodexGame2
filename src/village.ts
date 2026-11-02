@@ -1,6 +1,7 @@
 import { containerCount, weightedItem } from "./game-tuning-runtime";
 import {
   bosses,
+  maps,
   collectibles,
   foods,
   makeItem,
@@ -785,6 +786,7 @@ export function buildVillage(r: Raid) {
     return makeItem(weightedItem(pool, r.random).id);
   };
   const callIndices: Record<string, number> = {};
+  let ordinaryIndex = 0;
   const roomSlots: Record<string, [string, number, number][]> = {
     hunter: [
       ["hunter", -80, -30],
@@ -793,6 +795,7 @@ export function buildVillage(r: Raid) {
       ["hunter", 80, -30],
       ["hunter-side", 0, 50],
       ["hunter", 0, 65],
+      ["hunter", -195, 60],
     ],
     clinic: [
       ["clinic", -105, -50],
@@ -800,6 +803,7 @@ export function buildVillage(r: Raid) {
       ["clinic", 105, -50],
       ["clinic", 205, 120],
       ["clinic", 105, 45],
+      ["clinic", -205, 60],
       ["clinic", 0, 45],
     ],
     shop: [
@@ -816,6 +820,7 @@ export function buildVillage(r: Raid) {
       ["home", -160, 110],
       ["home", 60, -30],
       ["home", 155, 70],
+      ["home", -165, -70],
     ],
     barn: [
       ["barn", -130, -80],
@@ -826,6 +831,7 @@ export function buildVillage(r: Raid) {
       ["barn", 260, 190],
       ["barn", 130, 80],
       ["barn", -130, 0],
+      ["barn", 0, 80],
     ],
     boss: [
       ["boss", -115, -80],
@@ -836,6 +842,8 @@ export function buildVillage(r: Raid) {
       ["boss", -245, 180],
       ["boss", 115, 0],
       ["boss", 220, 230],
+      ["boss", -245, -130],
+      ["boss", 245, -150],
     ],
   };
   const container = (
@@ -848,7 +856,11 @@ export function buildVillage(r: Raid) {
     const callIndex = callIndices[region] || 0;
     callIndices[region] = callIndex + 1;
     if (r.random() > chance) return;
-    if (type === "box") type = ["box", "basket", "toolbox"][callIndex % 3];
+    // Fixed litter buckets are already plentiful; rotate the other everyday containers globally.
+    if (type === "box")
+      type = ["box", "basket", "toolbox", "cooler", "trashcan"][
+        ordinaryIndex++ % 5
+      ];
     const high = ["safe", "weapon", "bed"].includes(type),
       count = containerCount(type);
     const items: Item[] = [];
@@ -862,7 +874,9 @@ export function buildVillage(r: Raid) {
         (region === "clinic" && n < 0.7) ||
         (["medical", "cooler"].includes(type) && i === 0)
       ) {
-        const pool = foods.filter((f) => f.tier <= 3);
+        const pool = foods.filter(
+          (f) => f.tier <= (["spawn", "shelter"].includes(region) ? 1 : 3),
+        );
         items.push(makeItem(weightedItem(pool, r.random).id));
       } else if (type === "weapon" && i === 0) {
         const pool = weapons.filter(
@@ -938,6 +952,7 @@ export function buildVillage(r: Raid) {
   container("hunter", "cabinet", 315, 560);
   container("hunter", "cabinet", 200, 640);
   container("hunter", "weapon", 265, 605, 0.5);
+  container("hunter", "bed", 200, 610);
   container("wild", "box", 810, 860);
   container("wild", "litter", 900, 520);
   container("wild", "box", 1120, 780);
@@ -950,6 +965,7 @@ export function buildVillage(r: Raid) {
   container("clinic", "box", 1370, 695);
   container("clinic", "cabinet", 1360, 610);
   container("clinic", "bed", 1300, 580, 0.25);
+  container("clinic", "safe", 1260, 610);
   container("shop", "box", 1000, 965);
   container("shop", "box", 1110, 965);
   container("shop", "box", 965, 1120);
@@ -961,6 +977,7 @@ export function buildVillage(r: Raid) {
   container("home", "box", 1420, 1220);
   container("home", "litter", 1430, 1130);
   container("home", "cabinet", 1380, 1100, 0.2);
+  container("home", "bed", 1320, 1110);
   container("farm", "box", 1850, 810);
   container("farm", "box", 2160, 960);
   container("farm", "box", 2220, 840);
@@ -975,6 +992,7 @@ export function buildVillage(r: Raid) {
   container("barn", "box", 2200, 1330);
   container("barn", "bed", 2070, 1150);
   container("barn", "safe", 2070, 1220, 0.35);
+  container("barn", "weapon", 2070, 1220);
   container("boss", "weapon", 1840, 300);
   container("boss", "weapon", 2010, 300);
   container("boss", "cabinet", 1850, 380);
@@ -983,6 +1001,8 @@ export function buildVillage(r: Raid) {
   container("boss", "bed", 1800, 550, 0.5);
   container("boss", "safe", 2010, 380);
   container("boss", "box", 2140, 580);
+  container("boss", "medical", 1760, 250);
+  container("boss", "medical", 2180, 250);
   // Exactly eight extra farmyard containers: two high, three medium, three ordinary.
   for (const [type, x, y] of [
     ["weapon", 1740, 400],
@@ -1077,7 +1097,10 @@ export function buildVillage(r: Raid) {
       bought: false,
     },
     {
-      ...villagePoint(2140, 500),
+      ...r.freePoint(
+        villageBuildings.find((b) => b.id === "boss")!.x,
+        villageBuildings.find((b) => b.id === "boss")!.y - 340,
+      ),
       name: "农庄内院 B",
       paid: false,
       active: true,
@@ -1087,6 +1110,16 @@ export function buildVillage(r: Raid) {
       ...villagePoint(950, 300),
       name: "乡间运输点",
       paid: true,
+      active: true,
+      bought: false,
+    },
+    {
+      ...(() => {
+        const p = villagePoint(2230, 870);
+        return r.freePoint(p.x, p.y);
+      })(),
+      name: maps[0].free[2],
+      paid: false,
       active: true,
       bought: false,
     },

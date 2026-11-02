@@ -1,3 +1,4 @@
+import { notificationPresentation } from "./notifications";
 import { baseMusicNames, gameMusicNames, musicNames } from "./music-catalog";
 import Phaser from "phaser";
 import "./app.css";
@@ -350,15 +351,22 @@ const emptySlots = (n: number) =>
     { length: Math.max(0, n) },
     () => '<div class="empty-slot" aria-label="空格"></div>',
   ).join("");
+let noticeTimer: ReturnType<typeof setTimeout>;
 function toast(message: string) {
-  const box = document.createElement("div");
-  box.className = "toast";
-  box.textContent = message;
+  const notice = notificationPresentation(message);
   const target = document.querySelector("#toasts")!;
-  target.append(box);
-  while (target.children.length > 4) target.firstElementChild!.remove();
-  setTimeout(() => box.remove(), 3500);
+  let box = target.firstElementChild as HTMLDivElement | null;
+  if (!box) {
+    box = document.createElement("div");
+    target.replaceChildren(box);
+  }
+  box.className = `toast notice-${notice.tone}`;
+  box.setAttribute("role", "status");
+  box.textContent = notice.text;
+  clearTimeout(noticeTimer);
+  noticeTimer = setTimeout(() => box?.remove(), 3500);
 }
+
 function logo(large = false) {
   return `<div class="logo ${large ? "large-logo" : ""}"><svg viewBox="0 0 120 105" aria-hidden="true"><path d="M60 5 114 96H6Z" fill="#c7b57e"/><path d="M31 65V29l24 15h10l24-15v36c0 32-58 32-58 0" fill="#263d30"/><path d="m41 62 10 3m18 0 10-3M55 76l5 4 5-4" fill="none" stroke="#ebd29a" stroke-width="5" stroke-linecap="round"/></svg><strong>三角猫行动</strong></div>`;
 }

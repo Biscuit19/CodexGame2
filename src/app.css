@@ -2526,3 +2526,41 @@ body:not(.aiming) #crosshair { display: none; }
 .vitals.exhausted #sprint-state {
   color: #f2cb94;
 }
+
+/* Ordinary notices share the unlock card silhouette, typography and arrival motion. */
+.toast, .in-raid .toast {
+  --notice-color: #c9d9b0;
+  background: #162d25f5;
+  border: 1px solid var(--notice-color);
+  border-top: 4px solid var(--notice-color);
+  border-left: 1px solid var(--notice-color);
+  border-radius: 13px;
+  padding: 14px 22px 18px;
+  text-align: center;
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #e8edda;
+  max-width: min(850px, calc(100vw - 40px));
+  box-shadow: 0 10px 35px #07150f99;
+  animation: discovery-arrival .35s ease-out;
+}
+.toast.notice-danger { --notice-color: #ef8a7c; color: #ffb4a8; background: #382422f5; }
+.toast.notice-warning { --notice-color: #d9bd7e; color: #efdaac; }
+.toast.notice-success { --notice-color: #9fd3a9; color: #bfe8c2; }
+.toast.notice-reward { --notice-color: #efd078; color: #ffe09b; background: #302b20f5; }
+.paid-exit-hint {
+  --notice-color: #efd078;
+  top: 24px;
+  border: 1px solid var(--notice-color);
+  border-top: 4px solid var(--notice-color);
+  border-radius: 13px;
+  padding: 14px 22px 18px;
+  background: #162d25f5;
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.3;
+  box-shadow: 0 10px 35px #07150f99;
+}
+body:has(#toasts:not(:empty)) .paid-exit-hint { visibility: hidden; }
+body:has(#discovery-feed:not(:empty)) .paid-exit-hint { top: 228px; }

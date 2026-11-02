@@ -1003,7 +1003,7 @@ export class Raid {
     )
       return;
     if (!this.reserve) {
-      this.notify("没有对应等级的备弹 · 在背包切换弹药");
+      this.notify("无备弹 · 切换弹药");
       return;
     }
     if (instant) this.finishReload();

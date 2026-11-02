@@ -725,7 +725,7 @@ export const maps = [
     floor: "#b9a277",
     fee: 600,
     bosses: ["iron"],
-    free: ["田间岔路 A", "农庄内院 B"],
+    free: ["田间岔路 A", "农庄内院 B", "麦田东侧 C"],
     paid: "乡间运输点",
     zones: ["猎人小屋", "中央聚落", "农田谷仓", "铁腮农庄"],
     reward: 4000,
