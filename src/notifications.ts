@@ -3,7 +3,7 @@ export function notificationPresentation(message: string) {
   if (/没有对应等级的备弹|无备弹/.test(message))
     return { text: "无备弹 · 切换弹药", tone: "danger" };
   if (
-    /立即规划撤离|最后.*分钟|手雷|蓄力|警觉|答案错误|正在蓄力|倒下|进食被打断/.test(
+    /立即规划撤离|最后.*分钟|手雷|蓄力|警觉|答案错误|正在蓄力|倒下|进食被打断|进入第二阶段|部署.*炮塔|警报|警告|危险/.test(
       message,
     )
   )
