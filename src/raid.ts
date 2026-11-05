@@ -6,6 +6,7 @@ import {
   RAID_SECONDS,
   makeItem,
   weapons,
+  collectibles,
   breeds,
   bosses,
   maps,
@@ -612,6 +613,14 @@ export class Raid {
             15 + Math.floor(this.random() * 16),
           ),
         );
+      if (high && entries.length && !entries.some((i) => db[i.id].tier >= 3)) {
+        entries[entries.length - 1] = makeItem(
+          weightedItem(
+            collectibles.filter((d) => d.tier === 3),
+            this.random,
+          ).id,
+        );
+      }
       this.containers.push({
         x,
         y,
@@ -1455,7 +1464,9 @@ export class Raid {
     headIntent = false,
     longTrail = false,
   ) {
-    const speed = projectileSpeed ?? (friendly ? 1050 : 950);
+    const speed =
+      (projectileSpeed ?? (friendly ? 1050 : 950)) *
+      (!friendly && !boss ? 0.7 : 1);
     if (muzzle)
       this.combatFX.push({
         kind: "muzzle",
@@ -2169,7 +2180,7 @@ export class Raid {
       })
     );
   }
-  enemyAim(e: Enemy, speed = 950, head = false) {
+  enemyAim(e: Enemy, speed = 665, head = false) {
     const dx = this.p.x - e.x,
       dy = this.p.y - e.y - (head ? 11 : 0),
       v = this.playerVelocity;
@@ -2316,7 +2327,7 @@ export class Raid {
               m.kind,
             ))
         )
-          m.angle = this.enemyAim(e, e.boss ? 1100 : 950);
+          m.angle = this.enemyAim(e, e.boss ? 1100 : 665);
         this.tacticShot(
           e,
           m.kind,
@@ -2357,7 +2368,7 @@ export class Raid {
     )
       return false;
     let kind: string | undefined;
-    const a = this.enemyAim(e, e.boss ? 1100 : 950);
+    const a = this.enemyAim(e, e.boss ? 1100 : 665);
     if (e.boss?.id === "iron") {
       kind = IRON_BOSS_ATTACKS[(e.tacticStep ?? 0) % IRON_BOSS_ATTACKS.length];
       e.tacticCool = 2.8;
@@ -2488,7 +2499,7 @@ export class Raid {
     const canFire = canSee && this.enemyCanFire(e);
     if (this.map === 0 && this.updateVillageTactics(e, dt, canFire)) return;
     if (e.state === "combat" && canFire) {
-      e.angle = this.enemyAim(e, e.boss ? 1100 : 950);
+      e.angle = this.enemyAim(e, e.boss ? 1100 : 665);
       if (
         e.cool <= 0 &&
         e.reload <= 0 &&
@@ -2507,7 +2518,7 @@ export class Raid {
           const shots = gun.pellets ?? 1;
           const headIntent =
             this.random() < (e.boss ? 0.08 : e.tier >= 3 ? 0.06 : 0.03);
-          const shotAngle = this.enemyAim(e, e.boss ? 1100 : 950, headIntent);
+          const shotAngle = this.enemyAim(e, e.boss ? 1100 : 665, headIntent);
           for (let i = 0; i < shots; i++)
             this.addBullet(
               e.x,

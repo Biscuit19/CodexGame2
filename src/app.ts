@@ -2,6 +2,7 @@ import { notificationPresentation } from "./notifications";
 import { baseMusicNames, gameMusicNames, musicNames } from "./music-catalog";
 import Phaser from "phaser";
 import "./app.css";
+import "./ui-theme.css";
 import {
   db,
   SALE_RATIO,
@@ -904,7 +905,7 @@ function renderRaid() {
   canvas.classList.remove("hidden");
   document.body.classList.add("in-raid");
   if (r.map !== 0) scene3d?.show(false);
-  root.innerHTML = `<div class="raid-hud"><div class="raid-top"><strong>${maps[r.map].name}</strong><div id="boss-hud"></div>${btn('<b id="raid-time">15:00</b><span>菜单</span>', "pause", "", "raid-timer")}</div><canvas id="minimap" width="260" height="200" data-action="toggle-map" aria-label="打开战区地图"></canvas><div class="raid-bottom"><section class="vitals" aria-label="生命与体力"><div><span class="vital-paw" aria-hidden="true">♥</span><strong id="hp-number">${PLAYER_MAX_HP}</strong><span>生命</span></div><div class="meter"><i id="hp-fill"></i></div><div class="stamina-row"><span>体力</span><strong id="st-number">${MOVEMENT.maxStamina}</strong><span id="sprint-state">疾跑</span></div><div class="meter stamina"><i id="st-fill"></i></div><span id="armor-readout"></span><span id="regen-readout"></span></section><section class="food-hud" aria-label="当前食物"><div id="food-art"></div><strong id="food-name"></strong><span id="food-quantity"></span><small>Q 食用</small></section><div class="raid-shortcuts"><span>空格 翻滚</span><span>E 搜索</span><span>Tab 背包</span><span>M 地图</span></div><section class="weapon-hud"><div class="hud-weapon-column"><strong id="weapon-name"></strong><div id="weapon-art" class="hud-weapon-art" aria-hidden="true"></div><span id="weapon-condition"></span></div><div class="hud-ammo-column"><div class="hud-rounds"><b id="mag-count"></b><span id="reserve-count"></span></div><div class="hud-ammo-details"><span id="ammo-art" class="hud-ammo-art" aria-hidden="true"></span><span id="ammo-name"></span></div></div></section></div><div id="paid-exit-hint" class="paid-exit-hint hidden"></div><div id="action-progress" class="action-progress hidden"></div><div id="crosshair" class="${s.settings.crosshair === "cross" ? "cross" : "ring"}" style="--aim:${s.settings.aim}"></div></div><div id="raid-overlay">${raidOverlay()}</div>`;
+  root.innerHTML = `<div class="raid-hud"><div class="raid-top"><strong>${maps[r.map].name}</strong><div id="boss-hud"></div>${btn('<b id="raid-time">15:00</b><span>菜单</span>', "pause", "", "raid-timer")}</div><canvas id="minimap" width="260" height="200" data-action="toggle-map" aria-label="打开战区地图"></canvas><div class="raid-bottom"><section class="vitals" aria-label="生命与体力"><div class="vital-header"><span class="vital-emblem" aria-hidden="true">${icon("paw", "#e6c19d", 25)}</span><div class="vital-reading"><strong id="hp-number">${PLAYER_MAX_HP}</strong><small>/ ${PLAYER_MAX_HP}</small></div><span class="vital-label">生命</span></div><div class="meter"><i id="hp-fill"></i></div><div class="stamina-row"><span>体力</span><strong id="st-number">${MOVEMENT.maxStamina}</strong><span id="sprint-state">疾跑</span></div><div class="meter stamina"><i id="st-fill"></i></div><span id="armor-readout"></span><span id="regen-readout"></span></section><section class="food-hud" aria-label="当前食物"><div id="food-art"></div><strong id="food-name"></strong><span id="food-quantity"></span><span id="food-effect"></span><small><kbd>Q</kbd> 食用</small></section><div class="raid-shortcuts"><span>空格 翻滚</span><span>E 搜索</span><span>Tab 背包</span><span>M 地图</span></div><section class="weapon-hud"><div class="hud-weapon-column"><strong id="weapon-name"></strong><div id="weapon-art" class="hud-weapon-art" aria-hidden="true"></div><span id="weapon-condition"></span></div><div class="hud-ammo-column"><div class="hud-rounds"><b id="mag-count"></b><span id="reserve-count"></span></div><div class="hud-ammo-details"><span id="ammo-art" class="hud-ammo-art" aria-hidden="true"></span><span id="ammo-name"></span></div></div></section></div><div id="paid-exit-hint" class="paid-exit-hint hidden"></div><div id="action-progress" class="action-progress hidden"></div><div id="crosshair" class="${s.settings.crosshair === "cross" ? "cross" : "ring"}" style="--aim:${s.settings.aim}"></div></div><div id="raid-overlay">${raidOverlay()}</div>`;
   overlay();
   updateHUD();
 }
@@ -1021,6 +1022,12 @@ function updateHUD() {
     if (el) el.style.color = item ? itemNameColor(item.id) : "";
   }
   set("food-quantity", currentFood ? `${currentFood.qty} 份` : "背包无补给");
+  set(
+    "food-effect",
+    currentFood
+      ? foodEffect(db[currentFood.id]).replace("，", "\n")
+      : "背包中暂无可用食物",
+  );
   const foodArt = document.getElementById("food-art");
   if (foodArt && foodArt.dataset.artId !== (currentFood?.id ?? "empty")) {
     foodArt.dataset.artId = currentFood?.id ?? "empty";
@@ -1040,10 +1047,31 @@ function updateHUD() {
     set("reserve-count", "");
     set("ammo-name", "不消耗弹药");
   }
-  set(
-    "armor-readout",
-    `护甲 ${Math.ceil(s.equipment.armor?.durability ?? 0)}　头盔 ${Math.ceil(s.equipment.helmet?.durability ?? 0)}`,
-  );
+  const protection = document.getElementById("armor-readout");
+  const gearSignature = [
+    s.equipment.armor?.id,
+    s.equipment.armor?.durability,
+    s.equipment.helmet?.id,
+    s.equipment.helmet?.durability,
+  ].join(":");
+  if (protection && protection.dataset.gear !== gearSignature) {
+    protection.dataset.gear = gearSignature;
+    protection.innerHTML = (["armor", "helmet"] as const)
+      .map((slot) => {
+        const item = s.equipment[slot],
+          amount = Math.max(0, Math.ceil(item?.durability ?? 0));
+        const percent = item
+          ? Math.min(
+              100,
+              (amount / (item.maxDurability ?? db[item.id].durability ?? 1)) *
+                100,
+            )
+          : 0;
+        const label = slot === "armor" ? "护甲" : "头盔";
+        return `<span class="protection-part" title="${item ? esc(name(item.id)) : "未装备"}">${icon(slot, "#b8c7a3", 22)}<span>${label}</span><strong>${amount}</strong><span class="protection-track"><i style="width:${percent}%"></i></span></span>`;
+      })
+      .join("");
+  }
   set(
     "regen-readout",
     r.regeneration.remaining > 0

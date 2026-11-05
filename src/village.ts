@@ -1,6 +1,7 @@
 import { containerCount, weightedItem } from "./game-tuning-runtime";
 import {
   bosses,
+  db,
   maps,
   collectibles,
   foods,
@@ -756,26 +757,27 @@ export function buildVillage(r: Raid) {
     const p = villagePoint(x, y);
     add(p.x, p.y, w, h, 35, "village-cover");
   }
-  const collect = (region: string): Item => {
+  const collect = (region: string, minimumTier = 1): Item => {
     const weights: Record<string, number[]> = {
-      spawn: [1, 0, 0, 0, 0],
-      shelter: [1, 0, 0, 0, 0],
-      outbuilding: [0.72, 0.25, 0.03, 0, 0],
-      wild: [0.65, 0.29, 0.06, 0, 0],
-      farm: [0.54, 0.34, 0.115, 0.005, 0],
-      home: [0.55, 0.32, 0.12, 0.01, 0],
-      hunter: [0.3, 0.45, 0.23, 0.02, 0],
-      shop: [0.35, 0.4, 0.23, 0.02, 0],
-      clinic: [0.16, 0.39, 0.41, 0.04, 0],
-      barn: [0.06, 0.25, 0.55, 0.135, 0.005],
-      supply: [0.22, 0.43, 0.32, 0.03, 0],
-      "boss-yard": [0.12, 0.3, 0.48, 0.09, 0.01],
-      boss: [0.02, 0.12, 0.56, 0.275, 0.025],
+      spawn: [0.7, 0.15, 0.15, 0, 0],
+      shelter: [0.65, 0.2, 0.15, 0, 0],
+      outbuilding: [0.43, 0.32, 0.23, 0.02, 0],
+      wild: [0.38, 0.37, 0.23, 0.02, 0],
+      farm: [0.32, 0.38, 0.27, 0.03, 0],
+      home: [0.3, 0.42, 0.25, 0.03, 0],
+      hunter: [0.16, 0.4, 0.37, 0.07, 0],
+      shop: [0.2, 0.39, 0.35, 0.06, 0],
+      clinic: [0.08, 0.26, 0.53, 0.13, 0],
+      barn: [0.03, 0.18, 0.55, 0.23, 0.01],
+      supply: [0.12, 0.3, 0.5, 0.08, 0],
+      "boss-yard": [0.02, 0.15, 0.5, 0.31, 0.02],
+      boss: [0, 0.05, 0.43, 0.485, 0.035],
     };
-    let roll = r.random(),
-      tier = 1;
     const ws = weights[region] || weights.wild;
-    for (let i = 0; i < ws.length; i++) {
+    let roll =
+        r.random() * ws.slice(minimumTier - 1).reduce((a, b) => a + b, 0),
+      tier = minimumTier;
+    for (let i = minimumTier - 1; i < ws.length; i++) {
       roll -= ws[i];
       if (roll < 0) {
         tier = i + 1;
@@ -866,7 +868,7 @@ export function buildVillage(r: Raid) {
     const items: Item[] = [];
     for (let i = 0; i < count; i++) {
       if (["safe", "bed"].includes(type)) {
-        items.push(collect(region));
+        items.push(collect(region, i === 0 ? 3 : 1));
         continue;
       }
       const n = r.random();
@@ -909,6 +911,17 @@ export function buildVillage(r: Raid) {
       } else if ((region === "shop" || region === "wild") && n < 0.45)
         items.push(makeItem(weightedItem(foods.slice(0, 3), r.random).id));
       else items.push(collect(region));
+    }
+    if (high && items.length && !items.some((i) => db[i.id].tier >= 3)) {
+      items[items.length - 1] =
+        type === "weapon" && items.length === 1
+          ? makeItem(
+              weightedItem(
+                weapons.filter((w) => w.tier === 3),
+                r.random,
+              ).id,
+            )
+          : collect(region, 3);
     }
     const names: Record<string, string> = {
       box: "纸箱",

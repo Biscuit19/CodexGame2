@@ -45,7 +45,7 @@ describe("战斗压力、听觉和经济", () => {
     for (let n = 0; n < 30; n++) r.updateEnemy(e, 1 / 120);
     expect(r.bullets.length).toBeGreaterThanOrEqual(3);
     for (const b of r.bullets) {
-      expect(Math.hypot(b.vx, b.vy)).toBeCloseTo(950);
+      expect(Math.hypot(b.vx, b.vy)).toBeCloseTo(665);
       expect(b.damage).toBeGreaterThan(0);
       expect(b.damage).toBeCloseTo(weapons[0].damage! * 0.62, 1);
     }

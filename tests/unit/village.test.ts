@@ -367,7 +367,7 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
     }
     expect(r.containers.filter((c) => c.region === "shelter")).toHaveLength(6);
     for (const c of r.containers.filter((c) => c.region === "shelter"))
-      expect(c.items.every((i) => db[i.id].tier === 1)).toBe(true);
+      expect(c.items.every((i) => db[i.id].tier <= 3)).toBe(true);
     expect(
       new Set(villageProps.map((p) => p.model)).size,
     ).toBeGreaterThanOrEqual(12);
@@ -413,7 +413,7 @@ describe("大尺度猫尾乡野布局与风险梯度", () => {
           (c) =>
             ["box", "basket", "toolbox", "cooler", "trashcan"].includes(
               c.type,
-            ) && c.items.every((i) => db[i.id].tier <= 3),
+            ) && c.items.every((i) => db[i.id].tier <= 4),
         ),
       ).toBe(true);
     }
