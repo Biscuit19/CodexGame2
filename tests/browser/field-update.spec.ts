@@ -5,7 +5,7 @@ async function start(page: Page) {
   await page.getByRole("button", { name: "临时测试入口", exact: true }).click();
 }
 async function deploy(page: Page) {
-  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await acceptPreflightIfPresent(page);
   await page.evaluate(() => {
@@ -30,7 +30,7 @@ test("物品悬停只保留小字食物分类，整理背包与批量出售确�
     g.save.stash = [...cs, d.makeItem("f1")];
     return cs.map((i) => i.uid);
   });
-  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.getByRole("button", { name: "仓库配装", exact: true }).click();
   await page.locator(".pack-grid [data-item=w3]").hover();
   await expect(page.locator("#item-tooltip")).toBeVisible();
   await expect(
@@ -263,7 +263,7 @@ test("常驻付费撤离靠近显示E提示，付款后真实倒计时结算，�
   await expect(
     page.getByRole("heading", { name: "暖窝基地", exact: true }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.getByRole("button", { name: "仓库配装", exact: true }).click();
   const scrollbar = await page
     .locator(".warehouse-scroll")
     .evaluate((el) => getComputedStyle(el).scrollbarColor);

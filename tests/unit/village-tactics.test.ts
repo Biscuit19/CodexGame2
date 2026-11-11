@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { Raid, VILLAGE_TACTICS, IRON_BOSS_ATTACKS } from "../../src/raid";
+import {
+  Raid,
+  VILLAGE_TACTICS,
+  IRON_BOSS_ATTACKS,
+  BOSS_ATTACK_RATE,
+} from "../../src/raid";
 import { newSave } from "../../src/store";
 import { villageBuildings, inBuilding } from "../../src/village";
 import type { Sound } from "../../src/audio";
@@ -224,7 +229,8 @@ it("新增扫射、集中喷射和横移连喷朝向玩家，具有不同节奏�
     r.bullets = [];
     r.updateVillageTactics(boss, 1 / 60, true);
     if (kind === "boss-focus") {
-      for (let n = 0; n < 30; n++) r.updateVillageTactics(boss, 1 / 60, true);
+      for (let n = 0; n < Math.floor(30 / BOSS_ATTACK_RATE); n++)
+        r.updateVillageTactics(boss, 1 / 60, true);
       expect(r.bullets).toHaveLength(0);
     }
     for (let n = 0; n < 180 && boss.maneuver; n++)

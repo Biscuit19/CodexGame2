@@ -7,7 +7,7 @@ test("所选交互声音：真实开盖、逐件揭示、入包与两刀交替�
   await page.evaluate(async () => {
     await (window as any).__game.sound.prepare();
   });
-  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await expect(page.locator(".raid-hud")).toBeVisible();
   const result = await page.evaluate(async () => {

@@ -91,6 +91,7 @@ export const VILLAGE_TACTICS = [
   "crossfire",
   "retreat-burst",
 ] as const;
+export const BOSS_ATTACK_RATE = 1.2;
 export const IRON_BOSS_ATTACKS = [
   "boss-fan",
   "boss-side-roll",
@@ -2270,7 +2271,10 @@ export class Raid {
     });
   }
   updateVillageTactics(e: Enemy, dt: number, canSee: boolean) {
-    e.tacticCool = Math.max(0, (e.tacticCool ?? 4) - dt);
+    e.tacticCool = Math.max(
+      0,
+      (e.tacticCool ?? 4) - dt * (e.boss ? BOSS_ATTACK_RATE : 1),
+    );
     const m = e.maneuver;
     if (canSee && e.state === "combat")
       e.angle = Math.atan2(this.p.y - e.y, this.p.x - e.x);
@@ -2283,7 +2287,11 @@ export class Raid {
         return false;
       }
       e.cool = Math.max(e.cool, 0.35);
-      m.time -= dt;
+      m.time -=
+        dt *
+        (e.boss && !isBossRoll(m.kind) && !["rush", "dodge"].includes(m.kind)
+          ? BOSS_ATTACK_RATE
+          : 1);
       if (m.stage === "warn") {
         if (m.time <= 0) {
           m.stage = "active";
@@ -2457,8 +2465,8 @@ export class Raid {
       d = Math.hypot(e.x - p.x, e.y - p.y),
       role = e.breed < 0 ? "boss" : breeds[e.breed].role;
     e.hit -= dt;
-    e.cool -= dt;
-    e.skillCool -= dt;
+    e.cool -= dt * (e.boss ? BOSS_ATTACK_RATE : 1);
+    e.skillCool -= dt * (e.boss ? BOSS_ATTACK_RATE : 1);
     e.shield -= dt;
     e.pathTime -= dt;
     e.alert -= dt;

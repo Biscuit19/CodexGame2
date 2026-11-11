@@ -10,7 +10,7 @@ test("已选进食原声按物品时长播放，攻击中断立即停止且四�
   await page.evaluate(async () => {
     await (window as any).__game.sound.prepare();
   });
-  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await expect(page.locator(".raid-hud")).toBeVisible();
   const result = await page.evaluate(async () => {
@@ -96,7 +96,7 @@ test("散布显示完整角度，近战详情显示真实伤害与攻速", async
     await page.locator(".shop-heading").click();
   }
   await page.getByRole("button", { name: "返回基地", exact: true }).click();
-  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.getByRole("button", { name: "仓库配装", exact: true }).click();
   await page.locator(".equipped-slot[data-slot=melee] .equipped-item").click();
   await expect(page.locator("#item-menu")).toContainText("伤害 48");
   await expect(page.locator("#item-menu")).toContainText("攻速 2.22 次／秒");
@@ -172,7 +172,7 @@ test("Chrome实际解码52个本地音效、真实四类射击及换弹倍速、
   expect(
     silence.find((x: any) => x.key === "shot-shotgun").duration,
   ).toBeCloseTo(2, 3);
-  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await expect(page.locator(".raid-hud")).toBeVisible();
   await page.evaluate(() => {

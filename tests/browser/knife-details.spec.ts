@@ -49,7 +49,7 @@ test("两种出售确认弹窗窄版且按钮间隔清楚，取消与Esc保留�
       d = await import("/src/data.ts");
     g.save.stash = [d.makeItem("c1_0"), d.makeItem("w0")];
   });
-  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.getByRole("button", { name: "仓库配装", exact: true }).click();
   await page
     .getByRole("button", { name: "出售珍贵及以下收集品", exact: true })
     .click();
@@ -87,7 +87,7 @@ test("斜下握刀、左右交替肩臂劈砍与回位，跑动脚印没有刀�
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await start(page);
-  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await expect(page.locator(".raid-hud")).toBeVisible();
   await page.evaluate(() => {

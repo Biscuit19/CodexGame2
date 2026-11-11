@@ -5,7 +5,7 @@ async function start(page: Page) {
   await page.getByRole("button", { name: "临时测试入口", exact: true }).click();
 }
 async function deploy(page: Page) {
-  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await acceptPreflightIfPresent(page);
   await page.evaluate(() => {
@@ -28,7 +28,7 @@ test("背包实体拖拽交换、空位保留，名称品质和功能说明清�
     g.save.packLayout = undefined;
     return g.save.pack.map((i: any) => i.uid);
   });
-  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.getByRole("button", { name: "仓库配装", exact: true }).click();
   await drag(
     page,
     `.pack-grid [data-id="${ids[0]}"]`,
@@ -77,7 +77,7 @@ test("背包实体拖拽交换、空位保留，名称品质和功能说明清�
   await page.screenshot({ path: "test-results/chrome-pack-slot-stats.png" });
   await page.keyboard.press("Escape");
   await page.keyboard.press("Escape");
-  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.getByRole("button", { name: "仓库配装", exact: true }).click();
   await expect(page.locator(".pack-grid > *").nth(8)).toHaveAttribute(
     "data-id",
     ids[0],

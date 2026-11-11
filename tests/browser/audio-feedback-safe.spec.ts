@@ -7,7 +7,7 @@ test("保险箱本局复开和答错不换题；猫叫触发与发现增益真�
   await page.evaluate(async () => {
     await (window as any).__game.sound.prepare();
   });
-  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await expect(page.locator(".raid-hud")).toBeVisible();
   await page.evaluate(() => {

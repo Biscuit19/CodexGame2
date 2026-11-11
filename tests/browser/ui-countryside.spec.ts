@@ -6,7 +6,7 @@ test("乡野UI：标题、基地悬浮、仓库、商店、图鉴和设置维持
   await page.goto("/?test=1");
   await page.screenshot({ path: "test-results/polish-title.png" });
   await page.getByRole("button", { name: "临时测试入口", exact: true }).click();
-  const entry = page.getByRole("button", { name: "仓库与整备", exact: true });
+  const entry = page.getByRole("button", { name: "仓库配装", exact: true });
   await entry.hover();
   await page.waitForTimeout(300);
   expect(await entry.evaluate((e) => getComputedStyle(e).transform)).not.toBe(

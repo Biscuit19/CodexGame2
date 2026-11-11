@@ -163,7 +163,7 @@ test("价值仅在描述展示，背包可出售和全部放回，武器可修�
   page,
 }) => {
   await start(page);
-  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.getByRole("button", { name: "仓库配装", exact: true }).click();
   await expect(
     page.locator('[data-grid="pack"] [data-item="m1"] .item-value'),
   ).toHaveCount(0);
@@ -224,7 +224,7 @@ test("空装备位双击默认穿戴，拾取弹药优先补满原堆叠至120�
     g.save.equipment.primary = null;
     g.render();
   });
-  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.getByRole("button", { name: "仓库配装", exact: true }).click();
   await page.locator('[data-grid="stash"] [data-item="w3"]').dblclick();
   expect(
     await page.evaluate(() => (window as any).__game.save.equipment.primary.id),
@@ -270,7 +270,7 @@ test("撤离后不重读即可连续入库，弹匣不卸弹且没有待整理�
     g.raid.finish(true, "test");
   });
   await page.locator('[data-action="close-result"]').click();
-  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.getByRole("button", { name: "仓库配装", exact: true }).click();
   expect(
     await page.evaluate(() => (window as any).__game.raid),
   ).toBeUndefined();
@@ -424,7 +424,7 @@ test("原描述、物品旁菜单、正方形格子、仓库拖拽装备与筛�
   page,
 }) => {
   await start(page);
-  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.getByRole("button", { name: "仓库配装", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "当前装备", exact: true }),
   ).toBeVisible();
@@ -600,7 +600,7 @@ async function start(page: Page, mode = "standard") {
   ).toBeVisible();
 }
 async function deploy(page: Page) {
-  await page.getByRole("button", { name: "战区地图", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await acceptPreflightIfPresent(page);
   await expect(page.locator("#scene3d")).toBeVisible({ timeout: 20000 });
@@ -626,12 +626,12 @@ test("开始菜单、标准模式默认、简洁基地、仓库右侧和固定�
   expect(await page.evaluate(() => (window as any).__game.save.mode)).toBe(
     "standard",
   );
-  await expect(page.locator(".base-tile")).toHaveCount(5);
+  await expect(page.locator(".home-entry")).toHaveCount(3);
   const content = await page.locator("#ui").innerText();
   expect(content).not.toMatch(/[A-Za-z]/);
   expect(content).not.toMatch(/小小的猫|整备一下|老爪的提醒|每一条命/);
   await page.screenshot({ path: "test-results/base-v2.png" });
-  await page.getByRole("button", { name: "仓库与整备" }).click();
+  await page.getByRole("button", { name: "仓库配装" }).click();
   const bag = await page
       .getByRole("region", { name: "左侧背包" })
       .boundingBox(),
@@ -830,7 +830,7 @@ test("容器立即打开，自动显示左侧背包，逐件搜索后双击拾�
       uid,
     ),
   ).toBe(false);
-  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.getByRole("button", { name: "仓库配装", exact: true }).click();
   await page.locator(`[data-grid="pack"] [data-id="${uid}"]`).click();
   await page
     .locator("#item-menu")

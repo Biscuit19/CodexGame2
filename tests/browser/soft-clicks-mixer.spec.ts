@@ -184,7 +184,7 @@ test("购买按钮/双击只在成功时响BU3；实际单件出售响SE1", asyn
     ),
   ).toBe(2);
   await page.getByRole("button", { name: "返回基地", exact: true }).click();
-  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.getByRole("button", { name: "仓库配装", exact: true }).click();
   await page.locator(".warehouse-grid [data-action=select]").first().click();
   await page.locator("[data-action=sell]").click();
   expect(

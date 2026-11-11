@@ -14,7 +14,7 @@ for (const empty of [false, true])
       if (empty)
         for (const k of Object.keys(s.equipment)) s.equipment[k] = null;
     }, empty);
-    await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+    await page.getByRole("button", { name: "准备出发", exact: true }).click();
     await page.getByRole("button", { name: "开始行动", exact: true }).click();
     await expect(page.locator("#base-menu")).toHaveJSProperty("open", true);
     await page.getByRole("button", { name: "继续前往", exact: true }).click();

@@ -3,6 +3,8 @@ import { baseMusicNames, gameMusicNames, musicNames } from "./music-catalog";
 import Phaser from "phaser";
 import "./app.css";
 import "./ui-theme.css";
+import "./homestead.css";
+import { homesteadArt } from "./homestead-art";
 import {
   db,
   SALE_RATIO,
@@ -445,45 +447,50 @@ function guide() {
 function titleScreen() {
   let content = "";
   if (titlePage === "main")
-    content = `${logo(true)}<div class="title-options">${btn("新的游戏", "title-new", "", "primary")}${btn("继续游戏", "title-load", "", "secondary")}${btn("设置", "title-settings", "", "secondary")}</div>`;
+    content = `<div class="cover-copy"><span class="cover-eyebrow">${icon("paw", "currentColor", 23)} 乡野搜寻 · 满载而归</span><h1 class="cover-title">三角猫<span>行动<i>。</i></span></h1><div class="cover-rule"></div><div class="title-options">${btn('<span class="menu-number">01</span><strong>新的游戏</strong><span class="menu-arrow">↗</span>', "title-new", 'aria-label="新的游戏"', "cover-start")}${btn('<span class="menu-number">02</span><strong>继续游戏</strong><span class="menu-arrow">→</span>', "title-load", 'aria-label="继续游戏"', "cover-link")}${btn('<span class="menu-number">03</span><strong>设置</strong><span class="menu-arrow">→</span>', "title-settings", 'aria-label="设置"', "cover-link")}</div><span class="cover-footnote">收拾行囊，下一段冒险正等着你。</span></div><div class="cover-art">${homesteadArt("cover")}<div class="scene-seal">${icon("paw", "currentColor", 26)}<span>三角猫<br>乡野行动</span></div><div class="scene-caption"><span>FIELD NOTES / 01</span><strong>灯火亮起的地方，就是家。</strong></div></div>`;
   if (titlePage === "new")
     content = `${logo()}<h1>新的游戏</h1><div class="mode-picker">${btn("<strong>标准模式</strong><span>死亡掉落，安全箱保留</span>", "new-mode", 'data-id="standard"', newMode === "standard" ? "selected" : "")}${btn("<strong>轻松模式</strong><span>死亡保留所有物品</span>", "new-mode", 'data-id="easy"', newMode === "easy" ? "selected" : "")}</div><label class="name-field">干员名字<input id="new-name" value="${esc(newName)}" maxlength="24"/></label><div class="slot-picker">${slots.map((slot, i) => btn(`存档 ${i + 1}<span>${slot ? esc(slot.name) : "空存档"}</span>`, "new-slot", `data-id="${i}"`, newSlot === i ? "selected" : "")).join("")}</div>${replaceSave ? '<p class="warning-text">此位置已有存档，再次点击会替换。请先导出需要保留的存档。</p>' : ""}${btn(replaceSave ? "替换存档并进入基地" : "创建并进入基地", "create", "", "primary full")}${btn("返回", "title-main", "", "secondary full")}`;
   if (titlePage === "load")
     content = `${logo()}<h1>继续游戏</h1><div class="save-list">${slots.map((slot, i) => `<div class="save-row"><div><strong>存档 ${i + 1}${slot ? ` · ${esc(slot.name)}` : ""}</strong><span>${slot ? `${slot.mode === "standard" ? "标准模式" : "轻松模式"} · ◈ ${money(slot.coins)} · 首领 ${slot.defeated.length}/6` : "空存档"}</span></div>${btn("读取", "load-slot", `data-id="${i}" ${!slot ? "disabled" : ""}`, "secondary")}</div>`).join("")}</div>${btn("返回", "title-main", "", "secondary full")}`;
   if (titlePage === "settings")
     content = `${heading("设置")}${settingsContent()}${btn("返回", "title-main", "", "secondary full")}`;
-  return `<main class="title-screen"><section class="title-card ${titlePage === "main" ? "title-main" : ""}">${content}</section>${titlePage === "main" ? btn("·", "test-entry", 'aria-label="临时测试入口"', "test-entry") : ""}</main>`;
+  return `<main class="title-screen ${titlePage === "main" ? "cover-screen" : "cover-subpage"}"><section class="title-card ${titlePage === "main" ? "title-main" : ""}">${content}</section>${titlePage === "main" ? btn("·", "test-entry", 'aria-label="临时测试入口"', "test-entry") : ""}</main>`;
 }
 function header() {
-  return `<header class="base-header">${btn(logo(), "nav", 'data-id="base"', "logo-button")}<div class="header-state"><span>${esc(s.name)}</span><span>${s.temporary ? "临时测试 · 不保存" : s.mode === "standard" ? "标准模式" : "轻松模式"}</span><strong>◈ ${money(s.coins)}</strong></div><div class="header-actions">${btn("设置", "settings", "", "secondary")}${page !== "base" ? btn("返回基地", "nav", 'data-id="base"', "secondary") : btn("开始界面", "to-title", "", "secondary")}</div></header>`;
+  return `<header class="base-header">${btn(logo(), "nav", 'data-id="base"', "logo-button")}<div class="header-state"><span>${esc(s.name)}</span><span>${s.temporary ? "临时测试 · 不保存" : s.mode === "standard" ? "标准模式" : "轻松模式"}</span><strong>◈ ${money(s.coins)}</strong></div><div class="header-actions">${btn("设置", "settings", "", "secondary")}${page === "loadout" ? btn("准备出发", "quick-deploy", "", "primary") : ""}${page !== "base" ? btn("返回基地", "nav", 'data-id="base"', "secondary") : btn("开始界面", "to-title", "", "secondary")}</div></header>`;
 }
 function dashboard() {
-  return `<div class="base-tiles"><section class="base-tile base-summary">${icon("paw", "#e4c890", 70)}<h1>暖窝基地</h1><div class="summary-stats"><div><strong>${s.defeated.length}/6</strong><span>主线首领</span></div><div><strong>${s.stats.extracts}</strong><span>成功撤离</span></div><div><strong>${s.collection.length}/${collectibles.length}</strong><span>物品收藏</span></div></div>${btn("进入地图一", "quick-deploy", "", "primary")}</section>${[
+  const primary = s.equipment.primary;
+  return `<div class="homestead-dashboard"><section class="home-view"><div class="home-heading"><span class="cover-eyebrow">${icon("paw", "currentColor", 20)} HOME / 暖窝</span><h1>暖窝基地</h1><p>整备行囊，再去看看远方。</p></div><div class="home-landscape">${homesteadArt("base")}</div><div class="home-weapon"><span>当前主武器</span>${primary ? itemIcon(primary, 100) : icon("rifle", "#cbb584", 90)}<strong>${primary ? esc(name(primary.id)) : "尚未装备"}</strong></div><div class="home-stats"><div><strong>${s.defeated.length}<small>/6</small></strong><span>主线首领</span></div><div><strong>${s.stats.extracts}</strong><span>成功撤离</span></div><div><strong>${s.collection.length}<small>/${collectibles.length}</small></strong><span>物品收藏</span></div></div></section><aside class="home-operations"><div class="operations-heading"><span>行动准备</span><small>PREPARATION</small></div>${[
     [
       "loadout",
-      "仓库与整备",
+      "仓库配装",
       "bag",
-      `${s.stash.length}/${capacities[s.warehouse]} 格`,
+      `${s.stash.length}/${capacities[s.warehouse]} 格 · 整理物资与装备`,
+      "01",
     ],
-    ["shop", "补给商店", "box", ""],
-    ["maps", "战区地图", "map", ""],
+    ["shop", "补给商店", "box", "补充弹药、装备与食物", "02"],
     [
       "collection",
       "收藏图鉴",
       "gem",
-      `${s.collection.length}/${collectibles.length}`,
+      `${s.collection.length}/${collectibles.length} · 查看乡野珍藏`,
+      "03",
     ],
   ]
-    .map(([id, label, i, info]) =>
+    .map(([id, label, glyph, info, order]) =>
       btn(
-        `${icon(i, "#c5c89a", 74)}<h2>${label}</h2>${info ? `<span>${info}</span>` : ""}`,
+        `<span class="entry-art">${icon(glyph, "currentColor", 58)}</span><span class="entry-copy"><small>${order}</small><strong>${label}</strong><span>${info}</span></span><span class="entry-arrow">↗</span>`,
         "nav",
         `data-id="${id}" aria-label="${label}"`,
-        "base-tile",
+        `home-entry ${id === "loadout" ? "entry-loadout" : ""}`,
       ),
     )
-    .join("")}</div>`;
+    .join(
+      "",
+    )}<div class="departure-block"><span>行囊就绪，就出发吧。</span>${btn("<strong>准备出发</strong><span>选择地图 →</span>", "quick-deploy", 'aria-label="准备出发"', "departure-button")}</div></aside></div>`;
 }
+
 function equipped() {
   return `<div class="equipped-grid" aria-label="当前装备">${(
     [
@@ -511,7 +518,7 @@ function equipped() {
     .join("")}</div>`;
 }
 function inventoryPanel() {
-  return `<section class="panel inventory-panel" aria-label="左侧背包"><div class="equipment-fixed">${heading("当前装备")}${equipped()}</div><div class="pack-heading">${heading("背包", `${s.pack.length}/${packCapacity(s)} 格`)}${raid ? `<strong class="raid-income">本局收入 ◈ ${money(raid.extractedLootValue())}</strong>` : ""}${btn("整理", "sort-pack", "", "secondary")}${!raid ? btn("全部放回", "stash-all", s.pack.length ? "" : "disabled", "secondary") : ""}</div><div class="inventory-scroll" data-drop="pack"><div class="slot-grid pack-grid" data-grid="pack">${packGrid(
+  return `<section class="panel inventory-panel" aria-label="左侧背包"><div class="equipment-fixed">${heading("当前装备")}${equipped()}</div><div class="pack-heading">${heading("背包", `${s.pack.length}/${packCapacity(s)} 格`)}${raid ? `<strong class="raid-income">本局收入 ◈ ${money(raid.extractedLootValue())}</strong>` : ""}${btn("整理", "sort-pack", "", "secondary")}${!raid ? btn("全部放回", "stash-all", s.pack.length || s.secure.length ? "" : "disabled", "secondary") : ""}</div><div class="inventory-scroll" data-drop="pack"><div class="slot-grid pack-grid" data-grid="pack">${packGrid(
     s,
   )
     .map((i) => (i ? card(i, "pack") : emptySlots(1)))
@@ -801,7 +808,7 @@ function shop() {
   }</section></div>`;
 }
 function mapsPage() {
-  return `<section class="maps-section">${heading("战区地图")}<div class="map-cards">${maps.map((m, i) => btn(`${icon("map", i === mapIndex ? "#e3c58b" : "#98b08f", 70)}<h2>${m.name}</h2><span>${i > unlocked(s) ? "尚未解锁" : i === 0 ? "推荐 1 级装备" : `推荐 ${i + 1} 级装备`}</span>`, "map-select", `data-id="${i}"`, "map-card " + (i === mapIndex ? "selected" : ""))).join("")}</div><section class="panel mission-panel">${heading(maps[mapIndex].name)}<div class="mission-info"><span>限时 ${RAID_SECONDS / 60} 分钟</span><span>撤离需 ${EXTRACT_SECONDS} 秒</span><span>付费撤离 ◈ ${money(maps[mapIndex].fee)}</span></div><div class="boss-list">${bosses
+  return `<section class="maps-section">${heading("出发准备", "选择本次行动地图")}<div class="map-cards">${maps.map((m, i) => btn(`${icon("map", i === mapIndex ? "#e3c58b" : "#98b08f", 70)}<h2>${m.name}</h2><span>${i > unlocked(s) ? "尚未解锁" : i === 0 ? "推荐 1 级装备" : `推荐 ${i + 1} 级装备`}</span>`, "map-select", `data-id="${i}"`, "map-card " + (i === mapIndex ? "selected" : ""))).join("")}</div><section class="panel mission-panel">${heading(maps[mapIndex].name)}<div class="mission-info"><span>限时 ${RAID_SECONDS / 60} 分钟</span><span>撤离需 ${EXTRACT_SECONDS} 秒</span><span>付费撤离 ◈ ${money(maps[mapIndex].fee)}</span></div><div class="boss-list">${bosses
     .filter((b) => b.map === mapIndex)
     .map(
       (b) => `<span>${s.defeated.includes(b.id) ? "✓" : "◇"} ${b.name}</span>`,
@@ -847,7 +854,7 @@ function render() {
   }
   root.innerHTML =
     header() +
-    `<main class="base-main ${page === "loadout" ? "inventory-page" : ""}">${page === "base" ? dashboard() : page === "loadout" ? warehouse() : page === "shop" ? shop() : page === "maps" ? mapsPage() : page === "collection" ? collection() : `<section class="panel settings-panel">${settingsContent()}</section>`}</main>`;
+    `<main class="base-main ${page === "base" ? "homestead-page" : page === "loadout" ? "inventory-page" : ""}">${page === "base" ? dashboard() : page === "loadout" ? warehouse() : page === "shop" ? shop() : page === "maps" ? mapsPage() : page === "collection" ? collection() : `<section class="panel settings-panel">${settingsContent()}</section>`}</main>`;
 }
 function baseModal() {
   if (result) return "";
@@ -1360,7 +1367,7 @@ async function action(el: HTMLElement) {
     toast(
       r.left
         ? `已放回 ${r.moved} 件，剩余 ${r.left} 件请整理仓库空间`
-        : "背包物品已全部放回仓库",
+        : "背包与安全箱物品已全部放回仓库",
     );
   } else if (a === "repair") {
     const item = [...s.stash, ...s.pack, ...Object.values(s.equipment)].find(
@@ -1469,7 +1476,7 @@ async function action(el: HTMLElement) {
     mapIndex = Number(id);
     render();
   } else if (a === "quick-deploy") {
-    mapIndex = 0;
+    mapIndex = Math.min(mapIndex, unlocked(s));
     page = "maps";
     render();
   } else if (a === "preflight-back") {

@@ -94,7 +94,7 @@ test("手持实体切换20款独立枪械模型，三尾与霰弹枪实际可见
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await start(page);
-  await page.getByRole("button", { name: "战区地图", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await acceptPreflightIfPresent(page);
   await expect(page.locator("#scene3d")).toBeVisible();

@@ -58,7 +58,7 @@ try {
   });
   await page.keyboard.press("Escape");
   await page.getByRole("button", { name: "返回基地", exact: true }).click();
-  await page.getByRole("button", { name: "战区地图", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await expect(page.locator(".map-cards")).not.toContainText("尚未解锁");
   await page.getByRole("button", { name: "返回基地", exact: true }).click();
   await page.getByRole("button", { name: "开始界面", exact: true }).click();
@@ -73,7 +73,7 @@ try {
     page.locator('[data-action="new-mode"][data-id="standard"]'),
   ).toHaveClass(/selected/);
   await page.getByRole("button", { name: "创建并进入基地" }).click();
-  await expect(page.locator(".base-tile")).toHaveCount(5);
+  await expect(page.locator(".home-entry")).toHaveCount(3);
   expect(await page.evaluate(() => typeof window.__game)).toBe("undefined");
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.waitForFunction(() => !!navigator.serviceWorker.controller);
@@ -122,7 +122,7 @@ try {
   await expect(page.locator("#item-menu")).toContainText("立即恢复 60 生命");
   await page.screenshot({ path: "test-results/production-supplies.png" });
   await page.getByRole("button", { name: "返回基地", exact: true }).click();
-  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.getByRole("button", { name: "仓库配装", exact: true }).click();
   await page
     .locator('[data-grid="stash"] [data-item="w16"]')
     .dragTo(page.locator('[data-slot="primary"]'));
@@ -153,7 +153,7 @@ try {
     .click();
   await expect(page.locator("#sort")).toHaveValue("type");
   await page.getByRole("button", { name: "返回基地", exact: true }).click();
-  await page.getByRole("button", { name: "战区地图", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await expect(page.locator("#scene3d")).toBeVisible();
   await expect(page.locator("#raid-time")).toBeVisible();
@@ -230,7 +230,7 @@ try {
   await expect(
     page.getByRole("heading", { name: "暖窝基地", exact: true }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.getByRole("button", { name: "仓库配装", exact: true }).click();
   await expect(page.getByRole("region", { name: "左侧背包" })).toBeVisible();
   await expect(page.getByRole("region", { name: "右侧仓库" })).toBeVisible();
   await expect(page.locator('[data-grid="stash"] > *')).toHaveCount(60);
@@ -287,8 +287,8 @@ try {
     fullPage: true,
   });
   await page.keyboard.press("Escape");
-  await expect(page.locator(".base-tile")).toHaveCount(5);
-  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await expect(page.locator(".home-entry")).toHaveCount(3);
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await expect(page.locator("#raid-time")).toBeVisible();
   await page.keyboard.press("Digit3");

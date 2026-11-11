@@ -889,11 +889,14 @@ export function sell(
   return price;
 }
 export function stashAll(s: Save) {
-  if (s.pending) return { moved: 0, left: s.pack.length };
+  if (s.pending) return { moved: 0, left: s.pack.length + s.secure.length };
   let moved = 0;
-  for (const i of [...s.pack]) if (move(s, "pack", "stash", i.uid)) moved++;
-  return { moved, left: s.pack.length };
+  for (const source of ["pack", "secure"] as const)
+    for (const i of [...s[source]])
+      if (move(s, source, "stash", i.uid)) moved++;
+  return { moved, left: s.pack.length + s.secure.length };
 }
+
 export function upgradeWarehouse(s: Save) {
   if (s.warehouse >= 4 || s.coins < warehouseCosts[s.warehouse + 1])
     return false;

@@ -56,6 +56,7 @@ const groupNames = {
   "combat-visuals": "子弹表现",
 };
 const names = {
+  BOSS_ATTACK_RATE: "Boss攻击频率倍率",
   moveScale: "敌人个体移速系数",
   autoLoadout: "一键低级配装",
   projectileTrailLength: "子弹拖尾长度",

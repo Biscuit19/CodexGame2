@@ -50,7 +50,7 @@ test("Chrome图鉴详情使用顶层弹窗，简洁问号、品质文字、关�
     g.save.stash = items.map((id) => d.makeItem(id));
     g.render();
   }, ids);
-  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.getByRole("button", { name: "仓库配装", exact: true }).click();
   for (let n = 0; n < ids.length; n++)
     expect(
       await page
@@ -135,12 +135,12 @@ test("隐藏测试入口资金与地图图鉴全解锁，购买、退出、结�
   await page.getByRole("button", { name: "收藏图鉴", exact: true }).click();
   await expect(page.locator(".collection-item.found")).toHaveCount(70);
   await page.getByRole("button", { name: "返回基地", exact: true }).click();
-  await page.getByRole("button", { name: "战区地图", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await expect(page.locator(".map-card")).toHaveCount(4);
   await expect(page.locator(".map-cards")).not.toContainText("尚未解锁");
   for (let map = 0; map < 4; map++) {
     if (map > 0)
-      await page.getByRole("button", { name: "战区地图", exact: true }).click();
+      await page.getByRole("button", { name: "准备出发", exact: true }).click();
     await page.locator(`[data-action="map-select"][data-id="${map}"]`).click();
     await page.getByRole("button", { name: "开始行动", exact: true }).click();
     await acceptPreflightIfPresent(page);
@@ -164,7 +164,7 @@ test("隐藏测试入口资金与地图图鉴全解锁，购买、退出、结�
   await expect(page.getByText("存档管理", { exact: true })).toHaveCount(0);
   await page.getByRole("slider", { name: "主音量", exact: true }).fill("0.2");
   await page.keyboard.press("Escape");
-  await page.getByRole("button", { name: "战区地图", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await acceptPreflightIfPresent(page);
   await page.evaluate(() =>
@@ -192,7 +192,7 @@ test("补给按五份分堆、拖拽合并，食用只扣一份", async ({ page 
     g.save.stash = [d.makeItem("f1", 3)];
     g.render();
   });
-  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.getByRole("button", { name: "仓库配装", exact: true }).click();
   await page
     .locator('[data-grid="stash"] [data-item="f1"]')
     .dragTo(page.locator('[data-grid="pack"]'));
@@ -204,7 +204,7 @@ test("补给按五份分堆、拖拽合并，食用只扣一份", async ({ page 
   await page.locator('[data-grid="pack"] [data-item="f1"]').first().click();
   await expect(page.locator("#item-menu")).toContainText("390");
   await page.getByRole("button", { name: "返回基地", exact: true }).click();
-  await page.getByRole("button", { name: "战区地图", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await acceptPreflightIfPresent(page);
   await page.evaluate(() => {
@@ -241,7 +241,7 @@ test("首次发现顶部居中，五档颜色与描述门槛正确，武器弹�
 }) => {
   test.setTimeout(60000);
   await start(page);
-  await page.getByRole("button", { name: "战区地图", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await acceptPreflightIfPresent(page);
   await page.evaluate(() => {
@@ -335,7 +335,7 @@ test("实际逐件搜索仅收藏品在顶部首次提示，高品质没有右�
 }) => {
   test.setTimeout(60000);
   await start(page);
-  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await acceptPreflightIfPresent(page);
   const searched = ["m4", "a5", "h5", "f4", "w3", "c0_6", "c2_4", "c4_0"];
@@ -443,7 +443,7 @@ test("Chrome 连续停留撤离点后显示顶层结算，截图、命中测试�
   page,
 }) => {
   await start(page);
-  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await acceptPreflightIfPresent(page);
   await page.evaluate(async () => {
@@ -502,14 +502,14 @@ test("基地子页面按 Esc 返回基地，详情先关闭且结算不会被误
   page,
 }) => {
   await start(page);
-  for (const name of ["仓库与整备", "补给商店", "战区地图", "收藏图鉴"]) {
+  for (const name of ["仓库配装", "补给商店", "准备出发", "收藏图鉴"]) {
     await page.getByRole("button", { name, exact: true }).click();
-    if (name === "仓库与整备") {
+    if (name === "仓库配装") {
       await page.locator('.pack-grid [data-item="f1"]').click();
       await expect(page.locator("#item-menu")).toBeVisible();
     }
     await page.keyboard.press("Escape");
-    await expect(page.locator(".base-tile")).toHaveCount(5);
+    await expect(page.locator(".home-entry")).toHaveCount(3);
     await expect(page.locator("#item-menu")).toHaveCount(0);
     await expect(
       page.getByRole("heading", { name: "暖窝基地", exact: true }),
@@ -524,14 +524,14 @@ test("基地子页面按 Esc 返回基地，详情先关闭且结算不会被误
   await expect(page.locator("#collection-dialog")).toBeHidden();
   await expect(page.locator(".collection-item")).toHaveCount(70);
   await page.keyboard.press("Escape");
-  await expect(page.locator(".base-tile")).toHaveCount(5);
+  await expect(page.locator(".home-entry")).toHaveCount(3);
 });
 
 test("实际撤离带入物资价值为零，再次出击只计算新捡且最终保留的战利品", async ({
   page,
 }) => {
   await start(page);
-  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await acceptPreflightIfPresent(page);
   const moveToExit = async () =>
@@ -555,7 +555,7 @@ test("实际撤离带入物资价值为零，再次出击只计算新捡且最�
     path: "test-results/chrome-extraction-zero-starting-gear.png",
   });
   await page.locator('[data-action="close-result"]').click();
-  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await acceptPreflightIfPresent(page);
   await page.evaluate(async () => {
@@ -580,7 +580,7 @@ test("实际撤离带入物资价值为零，再次出击只计算新捡且最�
     path: "test-results/chrome-extraction-new-loot-only.png",
   });
   await page.locator('[data-action="close-result"]').click();
-  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await acceptPreflightIfPresent(page);
   await moveToExit();

@@ -17,7 +17,7 @@ test("仓库双击/F优先空副武器；普通入包仅响一次pack且不叠UI
       play(n, ...args);
     };
   });
-  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.getByRole("button", { name: "仓库配装", exact: true }).click();
   await page.evaluate(() => ((window as any).__game.events = []));
   await page.locator(".warehouse-grid [data-item=w3]").dblclick();
   expect(

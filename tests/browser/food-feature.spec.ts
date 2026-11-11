@@ -8,7 +8,7 @@ async function start(page: Page) {
     .click();
 }
 async function deploy(page: Page) {
-  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await acceptPreflightIfPresent(page);
   await page.evaluate(() => ((window as any).__game.raid.enemies = []));

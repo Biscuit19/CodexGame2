@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test("批量出售选择框圆润且支持键盘与鼠标切换", async ({ page }) => {
   await page.goto("/?test=1");
   await page.getByRole("button", { name: "临时测试入口", exact: true }).click();
-  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.getByRole("button", { name: "仓库配装", exact: true }).click();
   await page.getByRole("button", { name: "批量出售", exact: true }).click();
   const boxes = page.locator(".batch-item > input");
   const style = await boxes.first().evaluate((el) => {
@@ -36,7 +36,7 @@ test("容器白金粗描边与名称同步，持刀抬起，战斗根节点隐�
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/?test=1");
   await page.getByRole("button", { name: "临时测试入口", exact: true }).click();
-  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await expect(page.locator(".raid-hud")).toBeVisible();
   await page.evaluate(() => {

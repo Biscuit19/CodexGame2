@@ -8,7 +8,7 @@ test("Chrome安全箱升级使用顶层弹窗，实际可点击、购买、关�
   page,
 }) => {
   await start(page);
-  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.getByRole("button", { name: "仓库配装", exact: true }).click();
   await page.locator('[data-action="safe-menu"]').click();
   const modal = page.locator("#base-menu");
   await expect(modal).toBeVisible();
@@ -52,7 +52,7 @@ test("实际拖拽弹药补满120发，拖到主副武器装填并卸回旧弹�
     ];
     g.render();
   });
-  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.getByRole("button", { name: "仓库配装", exact: true }).click();
   await page
     .locator('[data-grid="pack"] [data-item="m2"]')
     .first()
@@ -114,7 +114,7 @@ test("相对瞄准的八方向前后侧翻，保持朝向且沿实际移动方�
 }) => {
   test.setTimeout(60000);
   await start(page);
-  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await acceptPreflightIfPresent(page);
   await page.evaluate(() => {

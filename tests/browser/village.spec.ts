@@ -4,7 +4,7 @@ import { test, expect, type Page } from "@playwright/test";
 async function enter(page: Page, keepBoss = false) {
   await page.goto("/?test=1");
   await page.getByRole("button", { name: "临时测试入口", exact: true }).click();
-  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await acceptPreflightIfPresent(page);
   await page.waitForFunction(
@@ -328,7 +328,7 @@ test("乡野三桥、二十二栋建筑入口实走、室内搜索和三秒撤�
   ).toBeVisible();
   await page.screenshot({ path: "test-results/village-extraction.png" });
   await result.locator("button").click();
-  await expect(page.locator(".base-tile")).toHaveCount(5);
+  await expect(page.locator(".home-entry")).toHaveCount(3);
   expect(errors).toEqual([]);
 });
 

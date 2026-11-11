@@ -39,7 +39,7 @@ test("扩容确认、取消、Esc不扣钱，确认显示新容量，一键配�
     s.coins = 10000;
     g.setSave(s);
   });
-  await page.getByRole("button", { name: /仓库与整备/ }).click();
+  await page.getByRole("button", { name: /仓库配装/ }).click();
   const before = await page.evaluate(() => (window as any).__game.save.coins);
   await page.getByRole("button", { name: /扩容 ◈/ }).click();
   const dialog = page.getByRole("dialog");

@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 async function enter(page: any) {
   await page.goto("/?test=1");
   await page.getByRole("button", { name: "临时测试入口", exact: true }).click();
-  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await expect(page.locator(".raid-hud")).toBeVisible();
   await page.evaluate(async () => {

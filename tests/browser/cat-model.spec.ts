@@ -15,7 +15,7 @@ test("B方案圆团三花玩家的连续轮廓、独立四肢和待机动作在C
   await page
     .getByRole("button", { name: "创建并进入基地", exact: true })
     .click();
-  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await acceptPreflightIfPresent(page);
   await page.evaluate(async () => {

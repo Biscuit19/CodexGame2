@@ -100,7 +100,7 @@ for (const viewport of [
       g.save.equipment.secondary.loaded = { tier: 1, count: 4 };
       g.render();
     });
-    await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+    await page.getByRole("button", { name: "仓库配装", exact: true }).click();
     const primary = () => page.locator('[data-slot="primary"] .equipped-item');
     const secondary = () =>
       page.locator('[data-slot="secondary"] .equipped-item');
@@ -121,7 +121,7 @@ for (const viewport of [
     await expect(primary()).toHaveAttribute("data-item", "w3");
     await expect(secondary()).toBeDisabled();
     await page.getByRole("button", { name: "返回基地", exact: true }).click();
-    await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+    await page.getByRole("button", { name: "准备出发", exact: true }).click();
     await page.getByRole("button", { name: "开始行动", exact: true }).click();
     await acceptPreflightIfPresent(page);
     await page.evaluate(async () => {
@@ -198,7 +198,7 @@ test("撤离显示实际物资价值和鼓励按钮，仓库每次打开默认�
   page,
 }) => {
   await start(page);
-  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await acceptPreflightIfPresent(page);
   await page.evaluate(async () => {
@@ -228,7 +228,7 @@ test("撤离显示实际物资价值和鼓励按钮，仓库每次打开默认�
       (id) => d.makeItem(id),
     );
   });
-  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.getByRole("button", { name: "仓库配装", exact: true }).click();
   await expect(page.locator("#sort")).toHaveValue("type");
   expect(
     await page
@@ -237,6 +237,6 @@ test("撤离显示实际物资价值和鼓励按钮，仓库每次打开默认�
   ).toEqual(["w11", "w0", "a1", "h1", "b1", "m2", "f1", "c4_0"]);
   await page.locator("#sort").selectOption("value");
   await page.getByRole("button", { name: "返回基地", exact: true }).click();
-  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.getByRole("button", { name: "仓库配装", exact: true }).click();
   await expect(page.locator("#sort")).toHaveValue("type");
 });

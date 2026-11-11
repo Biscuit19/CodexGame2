@@ -40,7 +40,7 @@ test("基地原始配乐循环、11首游戏音乐可选、随机与撤离后恢
   await page.screenshot({ path: "test-results/chrome-music-ten-settings.png" });
   await page.getByRole("button", { name: "返回基地菜单", exact: true }).click();
   await page.getByRole("button", { name: "继续整备", exact: true }).click();
-  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await expect(page.locator(".raid-hud")).toBeVisible();
   expect(

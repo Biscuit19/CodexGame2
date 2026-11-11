@@ -13,7 +13,7 @@ test("首次搜索未拾取也点亮图鉴，顶中提示、未发现问号与�
   page,
 }) => {
   await start(page);
-  await page.getByRole("button", { name: "战区地图", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await acceptPreflightIfPresent(page);
   await page.evaluate(async () => {
@@ -107,7 +107,7 @@ test("十种补给展示三种回血效果，持续回血可暂停且没有浏�
   );
   await page.screenshot({ path: "test-results/supply-healing-effects.png" });
   await page.getByRole("button", { name: "返回基地", exact: true }).click();
-  await page.getByRole("button", { name: "战区地图", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await acceptPreflightIfPresent(page);
   await page.evaluate(async () => {

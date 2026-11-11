@@ -13,7 +13,7 @@ async function start(page: Page, temporary = true) {
   }
 }
 async function deploy(page: Page) {
-  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await expect(page.locator(".raid-hud")).toBeVisible();
   await page.evaluate(() => {
@@ -80,7 +80,7 @@ test("商店双击和F只购买一次，锁定首领提示准确；仓库与装�
     g.save.equipment.primary.loaded = { tier: 1, count: 17 };
     return g.save.stash.map((i: any) => i.uid);
   });
-  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.getByRole("button", { name: "仓库配装", exact: true }).click();
   await page.locator(`.warehouse-grid [data-id="${ids[0]}"]`).hover();
   await page.keyboard.press("f");
   await expect(page.locator(`.pack-grid [data-id="${ids[0]}"]`)).toBeVisible();
@@ -118,7 +118,7 @@ test("仓库勾选批量出售及Chrome确认，出战缺项可返回整备或�
     g.save.stash = ["w3", "c4_0", "f2", "h3"].map((id) => d.makeItem(id));
     return g.save.stash.map((i: any) => i.uid);
   });
-  await page.getByRole("button", { name: "仓库与整备", exact: true }).click();
+  await page.getByRole("button", { name: "仓库配装", exact: true }).click();
   await page.getByRole("button", { name: "批量出售", exact: true }).click();
   await expect(page.locator(".batch-item input[type=checkbox]")).toHaveCount(4);
   await page.locator(`.batch-item input[data-id="${ids[0]}"]`).click();
@@ -151,7 +151,7 @@ test("仓库勾选批量出售及Chrome确认，出战缺项可返回整备或�
     s.secure = [];
     for (const slot of Object.keys(s.equipment)) s.equipment[slot] = null;
   });
-  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "出战前检查", exact: true }),
@@ -166,7 +166,7 @@ test("仓库勾选批量出售及Chrome确认，出战缺项可返回整备或�
   await page.getByRole("button", { name: "返回装备", exact: true }).click();
   await expect(page.locator(".warehouse-panel")).toBeVisible();
   await page.getByRole("button", { name: "返回基地", exact: true }).click();
-  await page.getByRole("button", { name: "进入地图一", exact: true }).click();
+  await page.getByRole("button", { name: "准备出发", exact: true }).click();
   await page.getByRole("button", { name: "开始行动", exact: true }).click();
   await page.getByRole("button", { name: "继续前往", exact: true }).click();
   await expect(page.locator(".raid-hud")).toBeVisible();
