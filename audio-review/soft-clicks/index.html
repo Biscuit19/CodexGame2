@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>柔软点击声 · 三角猫试听</title>
+    <link rel="stylesheet" href="review.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">三角猫行动 / 待选音效</p>
+        <h1>柔软、轻盈的小点击</h1>
+        <p>
+          10个新公开原声，来自10位作者；再加5个基于现有点击风格制作的声音。游戏已采用SC1“轻轻啵一下”，其余保留为备选。
+        </p>
+        <a href="../../audio-mixer/index.html">全音效调音台</a> ·
+        <a href="../commerce/index.html">之前的交易音效</a> ·
+        <a href="manifest-v1.json">逐条来源与处理记录</a>
+      </header>
+      <section class="panel">
+        <h2>现有点击 · 对照</h2>
+        <div id="reference"></div>
+        <p>
+          本页固定匹配试听响度，方便比较音色。公开素材不变调、不加滤波、不叠层；完整原文件也可试听。泡泡/水滴类原本不是UI素材，在此作为柔软点击的候选。
+        </p>
+      </section>
+      <section class="panel transport">
+        <label
+          >试听音量
+          <input
+            id="volume"
+            type="range"
+            min="0"
+            max="100"
+            value="100"
+          /><output id="volume-value">100%</output></label
+        ><button id="stop">停止全部</button><button id="copy">复制选择</button
+        ><button id="clear">清空选择</button
+        ><output id="status" role="status"
+          >SC1已采用，其余候选仍可对比选择。</output
+        >
+      </section>
+      <div id="groups"></div>
+      <section class="panel">
+        <h2>已选内容</h2>
+        <textarea
+          id="selection"
+          readonly
+          rows="5"
+          placeholder="勾选后，可复制编号和名称发给我。"
+        ></textarea>
+      </section>
+      <section class="panel">
+        <h2>来源与许可</h2>
+        <p>
+          先查开发者资源推荐、itch分类与作者页，再核实具体作品。各条显示实际下载快照，下载数不等于使用游戏数。没有把平台知名度当成单条热度。
+        </p>
+        <p>
+          <a href="licenses/CC0-1.0.txt">CC0-1.0</a> ·
+          <a href="licenses/CC-BY-3.0.txt">CC-BY-3.0</a> ·
+          <a href="licenses/OGA-BY-4.0.txt">OGA-BY-4.0</a
+          >。素材属于原作者，原创五条明确单列。
+        </p>
+      </section>
+    </main>
+    <script src="review.js" type="module"></script>
+  </body>
+</html>
