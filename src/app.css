@@ -248,7 +248,7 @@ button svg {
   font-size: 18px;
   color: #b6c7a7;
 }
-.selected {
+.selected:not(.map-card) {
   border-color: var(--gold) !important;
   background: #deca8b13 !important;
 }

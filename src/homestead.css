@@ -67,158 +67,73 @@
   display: block;
   color: #efc48d;
 }
-.cover-title i {
-  font-style: normal;
-  color: #df9672;
-}
-.cover-rule {
-  width: 62px;
-  height: 3px;
-  background: #efc48d;
-  margin-bottom: 33px;
-}
 .cover-screen .title-options {
-  gap: 7px;
-  width: min(390px, 100%);
+  display: grid;
+  gap: 8px;
+  width: min(360px, 100%);
+  margin-top: 46px;
 }
 .cover-screen .title-options button {
   display: flex;
   align-items: center;
-  gap: 22px;
-  min-height: 76px;
-  border-radius: 4px 18px 18px 4px;
-  padding: 15px 22px;
-  font-size: 25px;
+  gap: 20px;
+  min-height: 64px;
+  padding: 12px 8px;
   text-align: left;
-  position: relative;
-  overflow: hidden;
+  font-size: 27px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #eee6d3;
+  transition:
+    color 0.2s,
+    padding 0.2s;
 }
 .cover-screen .title-options button strong {
   color: inherit;
   font-size: inherit;
-}
-.cover-start {
-  background: linear-gradient(115deg, #f5deb6, #deb07b);
-  color: #213b38;
-  border: 1px solid #ffe7bd;
-  box-shadow:
-    0 5px 0 #997957,
-    0 17px 38px #071d2566;
-  margin-bottom: 13px;
-}
-.cover-screen .cover-link {
-  background: transparent;
-  color: #f7e9d4;
-  border: 1px solid transparent;
-  border-bottom-color: #a3b8ac3b;
-  box-shadow: none;
-}
-.cover-screen .cover-link:hover,
-.cover-screen .cover-link:focus-visible {
-  background: #36514c;
-  border-color: #a7b7a85c;
-  transform: translateX(7px);
-  color: #fff7e8;
-}
-.menu-number {
-  font-size: 13px;
   font-weight: 500;
-  letter-spacing: 0.1em;
-  opacity: 0.8;
 }
-.menu-arrow {
-  margin-left: auto;
-  transition: transform 0.25s;
+.menu-marker {
+  font-size: 12px;
+  color: #e9bc80;
+  opacity: 0;
+  transform: scale(0.6);
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
 }
-.title-options button:hover .menu-arrow {
-  transform: translateX(5px);
+.cover-screen .title-options button:hover,
+.cover-screen .title-options button:focus-visible {
+  color: #ffdfa8;
+  padding-left: 18px;
+  transform: none;
+  background: linear-gradient(90deg, #d8c29518, transparent);
 }
-.cover-start::after,
-.departure-button::after {
-  content: "";
-  position: absolute;
-  width: 38%;
-  height: 200%;
-  top: -50%;
-  left: -60%;
-  background: linear-gradient(90deg, transparent, #fff8df6b, transparent);
-  transform: skewX(-25deg);
-  transition: left 0.65s;
-  pointer-events: none;
+.title-options button:is(:hover, :focus-visible) .menu-marker {
+  opacity: 1;
+  transform: scale(1);
 }
-.cover-start:hover::after,
-.departure-button:hover::after {
-  left: 130%;
-}
-.cover-footnote {
-  display: block;
-  color: #c1cfc6;
-  font-size: 15px;
-  margin-top: 34px;
-  letter-spacing: 0.05em;
+.cover-screen .title-options button:active {
+  color: #fff;
+  padding-left: 22px;
 }
 .cover-art {
   position: relative;
-  transform: rotate(-3deg);
-  animation: cover-arrive 1s 0.1s both;
-  padding: 12px;
-  border: 1px solid #ead8ac55;
-  border-radius: 44px 44px 120px 44px;
-  background: #a3ae8d13;
-  box-shadow:
-    0 35px 95px #051c2c70,
-    inset 0 0 0 6px #ead8ac0a;
+  overflow: hidden;
+  border-radius: 46% 46% 8px 8px;
+  border: 1px solid #b4be9a55;
+  box-shadow: 0 24px 60px #071c2544;
+  animation: home-reveal 0.8s both;
 }
-.cover-art .homestead-art {
+.cover-painting {
   width: 100%;
+  height: 100%;
+  min-height: 480px;
+  max-height: 740px;
+  object-fit: cover;
   display: block;
-  border-radius: 32px 32px 110px 32px;
-}
-.scene-seal {
-  position: absolute;
-  right: -24px;
-  top: 10%;
-  width: 112px;
-  height: 112px;
-  border: 1px solid #eed5a8;
-  border-radius: 50%;
-  background: #233e3e;
-  box-shadow:
-    0 0 0 6px #1e3636,
-    0 0 0 7px #d9bd8266,
-    0 12px 24px #122b2e66;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  color: #f3d7a5;
-  transform: rotate(12deg);
-  text-align: center;
-}
-.scene-seal span {
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 1.3;
-  letter-spacing: 0.15em;
-}
-.scene-caption {
-  position: absolute;
-  bottom: 42px;
-  left: 42px;
-  right: 40px;
-  color: #fff1d7;
-  display: grid;
-  gap: 9px;
-  text-shadow: 0 2px 8px #132e2f;
-}
-.scene-caption span {
-  color: #efcd95;
-  font-size: 11px;
-  letter-spacing: 0.22em;
-}
-.scene-caption strong {
-  font-size: clamp(17px, 1.5vw, 24px);
 }
 .cover-copy > * {
   animation: home-reveal 0.65s both;
@@ -278,44 +193,91 @@
 .cover-subpage .title-card p {
   color: #d5ddcc;
 }
-/* Header retains all existing account and settings actions. */
-body:not(.in-raid):has(.homestead-page) {
+/* Shared identity bar; wraps without hiding player or mode. */
+body:not(.in-raid):has(.homestead-page),
+body:has(.maps-section) {
   background: #152e30;
 }
 body:not(.in-raid) .base-header {
   background: #173235;
   color: #f7ead4;
   border-bottom: 1px solid #c7b88940;
-  height: 88px;
-  padding: 0 36px;
-  box-shadow: 0 3px 16px #0c202722;
+  min-height: 96px;
+  height: auto;
+  padding: 18px 36px;
+  gap: 28px;
+  display: flex;
+  flex-wrap: wrap;
 }
 .base-header .logo strong {
   color: #f7ead4;
-  font-size: 23px;
+  font-size: 22px;
   letter-spacing: 0.06em;
 }
 .base-header .logo svg {
-  width: 45px;
-  height: 43px;
+  width: 40px;
+  height: 40px;
 }
 .base-header .header-state {
-  color: #d7dfd0;
-  font-size: 16px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 20px;
+  min-width: 230px;
 }
-.base-header .header-state strong {
-  background: #324842;
-  color: #ffe0a6;
-  border: 1px solid #d3bb7c60;
-  padding: 9px 17px;
-  border-radius: 8px;
-  font-size: 22px;
+.agent-identity {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 4px 10px;
+  padding-left: 22px;
+  border-left: 1px solid #9bac8c50;
+}
+.agent-label,
+.agent-mode,
+.header-wallet > span {
+  color: #c3cebb;
+  font-size: 13px;
+}
+.base-header .agent-identity > strong {
+  padding: 0;
+  border: 0;
+  background: none;
+  border-radius: 0;
+  color: #fff0d6;
+  font-size: 18px;
+  overflow-wrap: anywhere;
+}
+.agent-mode {
+  grid-column: 2;
+}
+.header-wallet {
+  display: grid;
+  gap: 3px;
+  white-space: nowrap;
+}
+.header-wallet strong {
+  color: #f5d39a;
+  font-size: 23px;
+  font-variant-numeric: tabular-nums;
+}
+.base-header .header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 .base-header .header-actions .secondary {
   color: #f1e9d8;
-  background: #28423f;
+  background: transparent;
   border-color: #98a98b50;
+}
+.base-header button:hover {
+  border-color: #e8c18b;
+}
+.base-header button:focus-visible,
+.maps-section button:focus-visible {
+  outline: 3px solid #ffe0a6;
+  outline-offset: 4px;
 }
 .base-main.homestead-page {
   padding: 30px 36px;
@@ -721,8 +683,10 @@ body:not(.in-raid) .base-header {
     width: min(420px, 90%);
     margin: 5px auto 10px;
   }
-  .cover-art .homestead-art {
-    max-height: 260px;
+  .cover-painting {
+    min-height: 0;
+    max-height: 300px;
+    aspect-ratio: 3 / 2;
   }
   .scene-caption {
     display: none;
@@ -751,41 +715,40 @@ body:not(.in-raid) .base-header {
   .home-landscape {
     inset: 30px 0 65px;
   }
-  .base-header .header-state > span {
-    display: none;
-  }
   body:not(.in-raid) .base-header {
-    height: auto;
-    min-height: 85px;
-    padding: 15px 18px;
-    gap: 12px;
-    flex-wrap: wrap;
+    padding: 16px;
+    gap: 16px;
+  }
+  .base-header .header-state {
+    width: 100%;
+    flex: 1 0 100%;
+    order: 2;
+  }
+  .agent-identity {
+    padding-left: 0;
+    border: 0;
   }
   .base-header .header-actions {
     margin-left: auto;
   }
-  .base-header .header-state {
-    margin-left: auto;
-  }
   .base-header .logo strong {
-    font-size: 19px;
-  }
-  .base-header .header-state strong {
     font-size: 18px;
-    padding: 7px 10px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
   .cover-screen *,
   .homestead-dashboard *,
-  .cover-subpage * {
+  .cover-subpage *,
+  .base-header *,
+  .maps-section * {
     animation: none !important;
     transition: none !important;
   }
 }
 /* The legacy game canvas needs 900px; the new lobby and cover do not. */
 body:has(.title-screen),
-body:has(.homestead-page) {
+body:has(.homestead-page),
+body:has(.maps-section) {
   min-width: 0;
 }
 @media (min-width: 801px) and (max-height: 850px) {
@@ -801,5 +764,219 @@ body:has(.homestead-page) {
   }
   .departure-button {
     padding-block: 19px;
+  }
+}
+
+/* Departure uses a route list and a single readable briefing. */
+.maps-section {
+  max-width: 1380px;
+  margin: auto;
+  color: #f7ead4;
+  padding: 12px 0 30px;
+}
+.base-main > section.maps-section:not(.panel) > .panel-heading h2 {
+  color: #fff0d6;
+}
+.departure-layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.75fr) minmax(0, 1.6fr);
+  gap: 28px;
+  margin-top: 26px;
+}
+.maps-section .map-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.maps-section .map-card {
+  position: relative;
+  width: 100%;
+  text-align: left;
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  padding: 16px 22px;
+  border-radius: 12px;
+  background: #27433f;
+  border: 1px solid #7a90776b;
+  color: #d4ddcd;
+  box-shadow: none;
+}
+.maps-section .map-card h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #fff0d6;
+}
+.maps-section .map-card.selected {
+  background: #e5d6b7;
+  color: #30483d;
+  border-color: #ffe3ad;
+  box-shadow: inset 5px 0 #b17a43;
+}
+.maps-section .map-card.selected h2 {
+  color: #203d35;
+}
+.maps-section .map-card span {
+  color: inherit;
+  font-size: 14px;
+}
+.base-main > section.maps-section:not(.panel) > .panel-heading > span {
+  color: #c8d5bd;
+}
+.map-status,
+.map-choice {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+.map-choice {
+  justify-self: end;
+}
+.maps-section .mission-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  margin: 0;
+  background: #f1e6cd;
+  color: #294239;
+  border: 1px solid #c9b993;
+  border-radius: 18px;
+}
+.mission-heading .panel-heading {
+  display: block;
+}
+.mission-heading h2 {
+  font-size: 36px;
+  color: #203c33;
+  margin: 12px 0;
+}
+.mission-heading p,
+.mission-heading .panel-heading span {
+  color: #4d6252;
+}
+.mission-status {
+  font-size: 13px;
+  color: #53674e;
+}
+.mission-zones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 24px;
+}
+.mission-zones span {
+  border: 1px solid #9baf9566;
+  border-radius: 30px;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+.maps-section .mission-info {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 20px 0;
+  border-block: 1px solid #8c9c7c55;
+}
+.mission-info > div {
+  display: grid;
+  gap: 12px;
+}
+.mission-info span {
+  color: #50614c;
+  font-size: 14px;
+}
+.mission-info strong {
+  color: #213f35;
+  font-size: 27px;
+}
+.mission-info small {
+  font-size: 14px;
+  font-weight: 400;
+}
+.mission-routes {
+  margin: 18px 0;
+}
+.mission-routes h3 {
+  font-size: 16px;
+}
+.mission-routes p {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #405944;
+}
+.maps-section .boss-list {
+  margin: 8px 0;
+  font-size: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.maps-section .boss-list span {
+  color: #694834;
+  background: #dbc6a466;
+  padding: 9px 12px;
+  border-radius: 6px;
+}
+.mission-footer {
+  margin-top: auto;
+  padding-top: 28px;
+}
+.mission-footer > p {
+  font-size: 14px;
+  color: #4c604e;
+}
+.mission-footer .button-row {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 14px;
+}
+.mission-footer button {
+  min-height: 56px;
+}
+.mission-footer .secondary {
+  color: #294b3a;
+  border-color: #7f9278;
+}
+.mission-footer .primary:not(:disabled):hover {
+  background: #42654e;
+  color: #fff4dd;
+}
+.mission-footer .primary {
+  background: #304f40;
+  color: #fff0d3;
+  border-color: #304f40;
+}
+@media (max-width: 800px) {
+  .departure-layout {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .maps-section .map-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .maps-section .map-card {
+    padding: 16px;
+  }
+  .maps-section .map-card h2 {
+    font-size: 21px;
+  }
+  .maps-section .mission-panel {
+    padding: 22px;
+  }
+}
+@media (max-width: 480px) {
+  .cover-title {
+    font-size: 48px;
+  }
+  .mission-info strong {
+    font-size: 21px;
+  }
+  .maps-section .mission-info {
+    gap: 8px;
+  }
+  .base-header .header-actions button {
+    padding: 8px;
+    font-size: 14px;
   }
 }
