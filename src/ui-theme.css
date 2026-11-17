@@ -10,10 +10,9 @@
   --ease-ui: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 body {
-  background:
-    radial-gradient(ellipse at 12% 5%, #fff9e8, transparent 48%),
-    radial-gradient(ellipse at 100% 90%, #b9c6a3, transparent 65%), #e6ddc8;
+  background: #102b25;
 }
+
 button,
 .button,
 select,

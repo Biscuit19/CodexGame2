@@ -2,6 +2,7 @@ import { reloadPose } from "./reload-motion";
 import { db, colors, type Item } from "./data";
 import { equipmentSprite, drawEquipment } from "./equipment-art";
 const shapes: Record<string, string> = {
+  clock: '<circle cx="32" cy="32" r="23"/><path d="M32 17v16l11 7"/>',
   rifle:
     '<path d="M10 34h40v-8H22l-4 3H8v8h8l-3 14h9l5-14h9v8h6V34m8-4h9"/><path d="M30 25v-6h10v6"/>',
   smg: '<path d="M13 27h32v11H30v16h-8V38h-8l-5 8H4l5-14H4v-6h9m33 4h12"/><path d="M33 24v-6h7v6"/>',

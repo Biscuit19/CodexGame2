@@ -86,7 +86,7 @@ test("基地窄屏、键盘焦点、减少动效与设置关闭", async ({ page 
   await page.emulateMedia({ reducedMotion: "reduce" });
   expect(
     await page
-      .locator(".scene-clouds")
+      .locator(".departure-button")
       .evaluate((e) => getComputedStyle(e).animationName),
   ).toBe("none");
   await page.setViewportSize({ width: 640, height: 900 });
