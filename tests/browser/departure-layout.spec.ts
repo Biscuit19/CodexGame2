@@ -13,7 +13,7 @@ test('出发准备锁定地图、返回整备、窄屏与菜单焦点', async ({
   await page.getByRole('button',{name:'准备出发',exact:true}).click();
   await page.locator('[data-action="map-select"][data-id="3"]').click();
   await expect(page.getByRole('button',{name:'开始行动',exact:true})).toBeDisabled();
-  await expect(page.locator('.mission-footer')).toContainText('解锁');
+  await expect(page.locator('[data-action=map-select][data-id="3"] [aria-label=未解锁]')).toBeVisible();
   await expect(page.locator('[data-action="map-select"][data-id="3"]')).toBeFocused();
   await page.locator('[data-action="map-select"][data-id="0"]').click();
   await expect(page.getByRole('button',{name:'开始行动',exact:true})).toBeEnabled();

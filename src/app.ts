@@ -5,7 +5,10 @@ import "./app.css";
 import "./ui-theme.css";
 import "./homestead.css";
 import coverPainting from "./assets/title-countryside.png";
-import { missionArt } from "./mission-art";
+import scene0 from "./assets/region-0.webp";
+import scene1 from "./assets/region-1.webp";
+import scene2 from "./assets/region-2.webp";
+import scene3 from "./assets/region-3.webp";
 import {
   db,
   SALE_RATIO,
@@ -461,36 +464,20 @@ function header() {
   return `<header class="base-header">${btn(logo(), "nav", 'data-id="base" aria-label="三角猫行动 · 返回基地"', "logo-button")}<div class="header-state"><div class="agent-identity"><span class="agent-label">干员</span><strong>${esc(s.name)}</strong><span class="agent-mode">${s.temporary ? "临时测试 · 不保存" : s.mode === "standard" ? "标准模式" : "轻松模式"}</span></div><div class="header-wallet"><span>金币</span><strong>◈ ${money(s.coins)}</strong></div></div><nav class="header-actions" aria-label="基地操作">${btn("设置", "settings", "", "secondary")}${page === "loadout" ? btn("准备出发", "quick-deploy", "", "primary") : ""}${page !== "base" ? btn("返回基地", "nav", 'data-id="base"', "secondary") : btn("开始界面", "to-title", "", "secondary")}</nav></header>`;
 }
 function dashboard() {
-  return `<section class="homestead-dashboard"><div class="base-intro"><div><span class="section-kicker">暖窝基地</span><h1>准备好下一次行动</h1></div><div class="base-progress"><span>${icon("paw", "currentColor", 22)} 首领 ${s.defeated.length}/6</span><span>成功撤离 ${s.stats.extracts}</span></div></div><div class="function-grid">${[
-    [
-      "loadout",
-      "仓库配装",
-      "bag",
-      "整理物资 · 检查装备",
-      `${s.stash.length}/${capacities[s.warehouse]} 格仓库`,
-      "w3",
-    ],
-    ["shop", "补给商店", "box", "武器、弹药与食物", "补齐出发所需", "f1"],
-    [
-      "collection",
-      "收藏图鉴",
-      "gem",
-      "查看已经发现的收藏",
-      `${s.collection.length}/${collectibles.length} 已发现`,
-      "c2_3",
-    ],
-  ]
-    .map(([id, label, glyph, info, status, item]) =>
-      btn(
-        `<span class="function-label">${icon(glyph, "currentColor", 26)} ${status}</span><span class="function-art">${itemIcon({ id: item, uid: item, qty: 1 }, 150)}</span><span class="function-copy"><strong>${label}</strong><span>${info}</span></span><span class="function-arrow">↗</span>`,
-        "nav",
-        `data-id="${id}" aria-label="${label}"`,
-        "home-entry function-" + id,
-      ),
-    )
-    .join(
-      "",
-    )}</div>${btn(`<span class="deploy-symbol">${icon("map", "currentColor", 52)}</span><span><strong>准备出发</strong><small>选择目的地，检查本次行动装备</small></span><span class="departure-arrow">→</span>`, "quick-deploy", 'aria-label="准备出发"', "departure-button")}<div class="base-status"><span>${icon("rifle", "currentColor", 22)} ${s.equipment.primary ? esc(name(s.equipment.primary.id)) : "尚未装备主武器"}</span><span>${s.mode === "standard" ? "标准模式 · 死亡掉落，安全箱保留" : "轻松模式 · 死亡保留所有物品"}</span></div></section>`;
+  const entries = [
+    ["loadout", "仓库配装", "w3"],
+    ["shop", "补给商店", "f1"],
+    ["collection", "收藏图鉴", "c2_3"],
+  ];
+  const cards = entries.map(([id, label, item]) =>
+    btn(
+      `<span class="function-art">${itemIcon({ id: item, uid: item, qty: 1 }, 150)}</span><span class="function-copy"><strong>${label}</strong></span>`,
+      "nav",
+      `data-id="${id}" aria-label="${label}"`,
+      "home-entry function-" + id,
+    ),
+  );
+  return `<section class="homestead-dashboard"><div class="function-grid">${cards.join("")}</div>${btn("<strong>准备出发</strong>", "quick-deploy", "", "departure-button")}</section>`;
 }
 
 function equipped() {
@@ -810,17 +797,27 @@ function shop() {
   }</section></div>`;
 }
 function mapsPage() {
-  const m = maps[mapIndex];
-  const locked = mapIndex > unlocked(s);
-  return `<section class="maps-section">${heading("出发准备", "选择本次行动地图")}<div class="departure-layout"><nav class="map-cards" aria-label="行动地图">${maps.map((map, i) => btn(`${missionArt(i)}<span class="map-card-copy"><span class="map-status">${i > unlocked(s) ? "尚未解锁" : "可以出发"}</span><h2>${map.name}</h2><span>${map.sub}</span><span class="map-choice">${i === mapIndex ? "● 已选择" : "查看地图 →"}</span></span>`, "map-select", `data-id="${i}" aria-pressed="${i === mapIndex}"`, "map-card " + (i === mapIndex ? "selected" : ""))).join("")}</nav><section class="panel mission-panel"><div class="mission-visual">${missionArt(mapIndex)}<span>区域示意 · 非导航地图</span></div><div class="mission-heading"><span class="mission-status">${locked ? "尚未解锁" : "行动地图"}</span>${heading(m.name, m.sub)}<p class="equipment-advice">${icon("armor", "currentColor", 28)} 推荐 ${mapIndex + 1} 级装备</p><div class="resource-chips"><span>${icon("box", "currentColor", 24)} 搜索物资</span><span>${icon("rifle", "currentColor", 24)} 武器箱</span><span>${icon("gem", "currentColor", 24)} 收藏品</span></div></div><div class="mission-zones">${m.zones.map((z) => `<span>${z}</span>`).join("")}</div><div class="mission-info"><div><span>${icon("clock", "currentColor", 22)} 行动限时</span><strong>${RAID_SECONDS / 60}<small> 分钟</small></strong></div><div><span>${icon("map", "currentColor", 22)} 撤离停留</span><strong>${EXTRACT_SECONDS}<small> 秒</small></strong></div><div><span>${icon("coin", "currentColor", 22)} 付费撤离</span><strong>◈ ${money(m.fee)}</strong></div></div><div class="mission-routes"><h3>撤离路线</h3><p>免费：${m.free.join(" / ")}</p><p>付费：${m.paid}</p></div><div class="boss-list">${bosses
+  const paintings = [scene0, scene1, scene2, scene3];
+  const ranges = ["1~2", "2~3", "3~4", "3~4"];
+  const limit = unlocked(s);
+  const locked = mapIndex > limit;
+  const choices = maps.map((map, i) =>
+    btn(
+      `<img src="${paintings[i]}" alt=""><strong>${map.name}</strong>${i > limit ? '<span aria-label="未解锁">🔒</span>' : ""}`,
+      "map-select",
+      `data-id="${i}" aria-pressed="${mapIndex === i}"`,
+      "region-choice",
+    ),
+  );
+  const leaders = bosses
     .filter((b) => b.map === mapIndex)
-    .map(
-      (b) =>
-        `<span>${s.defeated.includes(b.id) ? "✓ 已击败" : "区域首领"} · ${b.name}</span>`,
-    )
-    .join(
-      "",
-    )}</div><div class="mission-footer"><p>${locked ? "推进前一区域的主线并成功撤离后解锁。" : s.mode === "standard" ? "标准模式 · 死亡掉落，安全箱保留" : "轻松模式 · 死亡保留所有物品"}</p><div class="button-row">${btn("查看整备", "nav", 'data-id="loadout"', "secondary")}${btn("开始行动", "deploy", locked ? "disabled" : "", "primary")}</div>${!s.equipment.primary && !s.equipment.melee ? '<p class="warning-text">请先装备武器。</p>' : ""}</div></section></div></section>`;
+    .map((b) => b.name)
+    .join("、");
+  return `<section class="maps-section atlas">${heading("出发准备")}
+    <nav class="region-choices" aria-label="行动地图">${choices.join("")}</nav>
+    <figure><img class="region-hero" src="${paintings[mapIndex]}" alt="${maps[mapIndex].name}">
+    <figcaption><strong class="equipment-advice">推荐 ${ranges[mapIndex]} 级装备</strong><span>Boss：${leaders || "无"}</span><span>行动限时：${RAID_SECONDS / 60} 分钟</span></figcaption></figure>
+    <div class="mission-footer"><div class="button-row">${btn("查看整备", "nav", 'data-id="loadout"', "secondary")}${btn("开始行动", "deploy", locked ? 'disabled aria-label="开始行动" title="未解锁"' : "", "primary")}</div></div></section>`;
 }
 
 function collection() {

@@ -14,7 +14,7 @@ body:has(.base-header) {
 }
 body:not(.in-raid) button,
 body:not(.in-raid) .button {
-  border-radius: 5px 16px 5px 16px;
+  border-radius: 9px;
   border-color: #94bb8b55;
   box-shadow:
     inset 0 1px #c5e0a91a,
@@ -29,13 +29,13 @@ body:not(.in-raid) button:not(:disabled):hover,
 body:not(.in-raid) .button:hover {
   background: #3b664a;
   border-color: #c1dc91;
-  transform: translateY(-4px);
+  transform: none;
   box-shadow:
-    0 8px 0 #081f1b,
+    0 1px 0 #081f1b,
     0 16px 30px #061c1944;
 }
 body:not(.in-raid) button:not(:disabled):active {
-  transform: translateY(2px);
+  transform: none;
   box-shadow: inset 0 3px 8px #061e1a99;
 }
 body:not(.in-raid) button:focus-visible {
@@ -106,7 +106,7 @@ body:not(.in-raid) .base-main {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 13px;
+  font-size: 16px;
   letter-spacing: 0.24em;
   color: #bbd099;
 }
@@ -157,8 +157,8 @@ body:not(.in-raid) .base-main {
 }
 .cover-screen .title-options button:not(:disabled):hover,
 .cover-screen .title-options button:focus-visible {
-  color: #142e21;
-  transform: translateX(10px);
+  color: #fff2bf;
+  transform: none;
   box-shadow: none;
   background: transparent;
   border-color: transparent;
@@ -173,7 +173,7 @@ body:not(.in-raid) .base-main {
   letter-spacing: 0.12em;
 }
 .menu-marker {
-  font-size: 12px;
+  font-size: 16px;
   transition: transform 0.3s;
   opacity: 0.65;
 }
@@ -278,7 +278,7 @@ body:not(.in-raid) .base-header {
 .agent-label,
 .agent-mode,
 .header-wallet > span {
-  font-size: 12px;
+  font-size: 16px;
   color: #adc3a1;
 }
 .agent-mode {
@@ -310,7 +310,7 @@ body:not(.in-raid) .base-header {
   flex-wrap: wrap;
 }
 .base-header .header-actions button {
-  font-size: 15px;
+  font-size: 16px;
 }
 /* Base is a functional hub, not an illustration page. */
 .base-main.homestead-page {
@@ -330,7 +330,7 @@ body:not(.in-raid) .base-header {
 }
 .section-kicker {
   color: #a9c792;
-  font-size: 14px;
+  font-size: 16px;
   letter-spacing: 0.2em;
 }
 .base-intro h1 {
@@ -342,7 +342,7 @@ body:not(.in-raid) .base-header {
   display: flex;
   gap: 22px;
   color: #b4c9aa;
-  font-size: 14px;
+  font-size: 16px;
 }
 .base-progress > span {
   display: flex;
@@ -396,7 +396,7 @@ body:not(.in-raid) .base-header {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 13px;
+  font-size: 16px;
   color: #c0d3ac;
 }
 .function-art {
@@ -420,7 +420,7 @@ body:not(.in-raid) .base-header {
   color: #e8f0d9;
 }
 .function-copy > span {
-  font-size: 14px;
+  font-size: 16px;
   color: #b7ceb0;
 }
 .function-arrow {
@@ -467,7 +467,7 @@ body:not(.in-raid) .base-header {
 .departure-button small {
   display: block;
   margin-top: 8px;
-  font-size: 14px;
+  font-size: 16px;
   color: #c2d6ac;
 }
 .departure-arrow {
@@ -476,14 +476,14 @@ body:not(.in-raid) .base-header {
   transition: transform 0.3s;
 }
 .departure-button:hover .departure-arrow {
-  transform: translateX(10px);
+  transform: none;
 }
 .base-status {
   display: flex;
   justify-content: space-between;
   gap: 20px;
   color: #b4c7aa;
-  font-size: 14px;
+  font-size: 16px;
 }
 .base-status > span {
   display: flex;
@@ -550,10 +550,10 @@ body:not(.in-raid) .base-header {
 }
 .maps-section .map-card span {
   color: #bed1b4;
-  font-size: 14px;
+  font-size: 16px;
 }
 .maps-section .map-card .map-status {
-  font-size: 12px;
+  font-size: 16px;
   color: #a9c58a;
 }
 .map-choice {
@@ -596,10 +596,10 @@ body:not(.in-raid) .base-header {
   padding: 5px 8px;
   background: #102c25df;
   color: #d0dec0;
-  font-size: 11px;
+  font-size: 16px;
 }
 .mission-status {
-  font-size: 12px;
+  font-size: 16px;
   letter-spacing: 0.15em;
   color: #b6ce8f;
 }
@@ -614,7 +614,7 @@ body:not(.in-raid) .base-header {
 }
 .mission-heading .panel-heading span {
   color: #bed0b3;
-  font-size: 15px;
+  font-size: 16px;
 }
 .equipment-advice {
   display: flex;
@@ -633,7 +633,7 @@ body:not(.in-raid) .base-header {
   display: flex;
   gap: 6px;
   align-items: center;
-  font-size: 13px;
+  font-size: 16px;
   color: #c8dbb3;
 }
 .mission-zones {
@@ -643,7 +643,7 @@ body:not(.in-raid) .base-header {
   margin: 18px 0;
 }
 .mission-zones span {
-  font-size: 12px;
+  font-size: 16px;
   border-bottom: 1px solid #839c66;
   padding: 4px 0;
   margin-right: 8px;
@@ -665,7 +665,7 @@ body:not(.in-raid) .base-header {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 12px;
+  font-size: 16px;
   color: #bfd2af;
 }
 .mission-info strong {
@@ -673,14 +673,14 @@ body:not(.in-raid) .base-header {
   color: #e2edc6;
 }
 .mission-info small {
-  font-size: 12px;
+  font-size: 16px;
 }
 .mission-routes h3 {
-  font-size: 14px;
+  font-size: 16px;
   color: #dce7c7;
 }
 .mission-routes p {
-  font-size: 13px;
+  font-size: 16px;
   line-height: 1.8;
   color: #b6cbaa;
 }
@@ -689,7 +689,7 @@ body:not(.in-raid) .base-header {
   flex-wrap: wrap;
   margin: 16px 0;
   gap: 8px;
-  font-size: 13px;
+  font-size: 16px;
   color: #dfcd95;
 }
 .boss-list span {
@@ -704,7 +704,7 @@ body:not(.in-raid) .base-header {
   padding-top: 12px;
 }
 .mission-footer p {
-  font-size: 13px;
+  font-size: 16px;
   color: #b6cbaa;
 }
 .mission-footer .button-row {
@@ -851,7 +851,7 @@ body:not(.in-raid) .base-header {
     align-items: start;
   }
   .base-progress {
-    font-size: 12px;
+    font-size: 16px;
   }
   .function-grid {
     grid-template-columns: 1fr;
@@ -953,5 +953,165 @@ body:not(.in-raid) .base-header {
   }
   body:not(.in-raid) button:hover {
     transform: none;
+  }
+}
+
+.atlas {
+  width: min(1120px, 100%);
+  margin: auto;
+}
+.region-choices {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+button.region-choice {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 1em 0.5em;
+  min-height: 84px;
+  color: #fff;
+  text-shadow: 0 2px 4px #000;
+  background: #173226;
+}
+.region-choice img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  opacity: 0.42;
+}
+.region-choice[aria-pressed="true"] {
+  outline: 2px solid #e8d698;
+  outline-offset: 2px;
+}
+.region-choice strong {
+  font-size: clamp(18px, 2vw, 26px);
+}
+.atlas figure {
+  margin: 20px 0 0;
+}
+.region-hero {
+  display: block;
+  width: 100%;
+  max-height: 54vh;
+  aspect-ratio: 16/8;
+  object-fit: cover;
+  border-radius: 10px;
+  animation: scene-appear 0.35s ease-out;
+}
+@keyframes scene-appear {
+  from {
+    opacity: 0.6;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.atlas figcaption {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.65em 2em;
+  padding: 18px 0;
+  font-size: clamp(18px, 1.7vw, 23px);
+}
+.atlas .mission-footer {
+  margin: 0;
+}
+body button:is(.equipped-item, .close, .logo-button),
+body:not(.in-raid)
+  button:is(.equipped-item, .close, .logo-button):is(
+    :hover,
+    :active,
+    :disabled
+  ),
+body
+  button:is(.equipped-item, .close, .logo-button):is(
+    :hover,
+    :active,
+    :disabled
+  ) {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+}
+body .equipped-slot {
+  border: 0;
+  box-shadow: none;
+}
+body button.item-slot,
+body button.item-slot:not(:disabled):hover,
+body button.item-slot:active {
+  transform: none;
+  border-radius: 8px;
+  box-shadow: none;
+}
+body button.item-slot:hover > .item-art {
+  transform: none;
+}
+.base-header .logo strong {
+  font-size: clamp(20px, 2vw, 32px);
+}
+.base-header :is(.agent-mode, .header-actions button, .header-wallet span) {
+  font-size: 17px;
+}
+.cover-screen .title-options button {
+  border: 0;
+  background: transparent;
+  transform: none;
+}
+.cover-screen .title-options button:is(:hover, :focus-visible) {
+  color: #fff2bf;
+  transform: none;
+}
+.cover-screen .title-options button::before {
+  background: linear-gradient(90deg, #66825270, transparent);
+  clip-path: none;
+}
+.cover-screen .title-options strong {
+  font-family: "Noto Serif CJK SC", "Songti SC", serif;
+  transition:
+    letter-spacing 0.32s,
+    text-shadow 0.32s;
+}
+.cover-screen .title-options button:is(:hover, :focus-visible) strong {
+  letter-spacing: 0.24em;
+  text-shadow: 0 0 16px #f3cf8377;
+}
+.cover-screen .title-options button::after {
+  content: "";
+  position: absolute;
+  bottom: 6px;
+  left: 22px;
+  width: 70%;
+  height: 1px;
+  background: linear-gradient(90deg, #f3dca0, transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s;
+}
+.cover-screen .title-options button:is(:hover, :focus-visible)::after {
+  transform: scaleX(1);
+}
+@media (max-width: 640px) {
+  .region-choices {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .region-hero {
+    aspect-ratio: 16/9;
+  }
+  .atlas figcaption {
+    display: grid;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cover-screen .title-options button::before,
+  .cover-screen .title-options button::after {
+    transition: none;
   }
 }

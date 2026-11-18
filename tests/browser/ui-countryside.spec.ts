@@ -91,6 +91,6 @@ test("战斗HUD显示恢复量、装备耐久条，背包及Esc顶层菜单正�
   await page.screenshot({ path: "test-results/polish-result.png" });
   await page.getByRole("button", { name: /返回基地/ }).click();
   await expect(
-    page.getByRole("heading", { name: "暖窝基地", exact: true }),
+    page.getByRole("button", { name: "仓库配装", exact: true }),
   ).toBeVisible();
 });

@@ -596,7 +596,7 @@ async function start(page: Page, mode = "standard") {
     await page.locator('[data-action="new-mode"][data-id="easy"]').click();
   await page.getByRole("button", { name: "创建并进入基地" }).click();
   await expect(
-    page.getByRole("heading", { name: "暖窝基地", exact: true }),
+    page.getByRole("button", { name: "仓库配装", exact: true }),
   ).toBeVisible();
 }
 async function deploy(page: Page) {
@@ -646,7 +646,7 @@ test("开始菜单、标准模式默认、简洁基地、仓库右侧和固定�
   await page.getByRole("button", { name: "继续游戏", exact: true }).click();
   await page.getByRole("button", { name: "读取", exact: true }).first().click();
   await expect(
-    page.getByRole("heading", { name: "暖窝基地", exact: true }),
+    page.getByRole("button", { name: "仓库配装", exact: true }),
   ).toBeVisible();
 });
 
@@ -742,7 +742,7 @@ test("地图一立体模型、默认疾跑与持刀加速、暂停设置与完�
   );
   await page.getByRole("button", { name: "退出本局" }).click();
   await expect(
-    page.getByRole("heading", { name: "暖窝基地", exact: true }),
+    page.getByRole("button", { name: "仓库配装", exact: true }),
   ).toBeVisible();
   const after = await page.evaluate(() =>
     JSON.parse(JSON.stringify((window as any).__game.save)),

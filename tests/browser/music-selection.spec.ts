@@ -153,7 +153,7 @@ test("基地原始配乐循环、11首游戏音乐可选、随机与撤离后恢
   });
   await page.getByRole("button", { name: /返回基地/ }).click();
   await expect(
-    page.getByRole("heading", { name: "暖窝基地", exact: true }),
+    page.getByRole("button", { name: "仓库配装", exact: true }),
   ).toBeVisible();
   expect(
     await page.evaluate(() => (window as any).__game.sound.currentMusic),

@@ -126,6 +126,6 @@ for (const name of ["农庄内院 B", "麦田东侧 C"])
     });
     await page.getByRole("button", { name: /返回基地/ }).click();
     await expect(
-      page.getByRole("heading", { name: "暖窝基地", exact: true }),
+      page.getByRole("button", { name: "仓库配装", exact: true }),
     ).toBeVisible();
   });

@@ -2356,7 +2356,7 @@ body:has(.discovery-card) #toasts {
 
 /* Compact categories, legible notifications, and village-colored scrolling. */
 .food-category, .item-tooltip .food-category, .item-slot .food-category {
-  font-size: 14px; font-weight: 500; color: #d3dcc3;
+  font-size: 16px; font-weight: 500; color: #d3dcc3;
 }
 .item-tooltip > .food-category { display: block; margin-top: 3px; }
 .raid-income { color: #ffe08b; font-size: 22px; display: block; margin: 4px 0; }
@@ -2491,18 +2491,18 @@ body:not(.aiming) #crosshair { display: none; }
 }
 .vitals .stamina-row {
   gap: 8px;
-  font-size: 15px;
+  font-size: 16px;
   color: #dce6c6;
 }
 .vitals .stamina-row strong {
   font-size: 17px;
 }
 .vitals .stamina-row span:last-child {
-  font-size: 13px;
+  font-size: 16px;
   color: #bfcfad;
 }
 .vitals #armor-readout {
-  font-size: 14px;
+  font-size: 16px;
   margin-top: 9px;
   padding-top: 8px;
   border-top: 1px solid #ced8b42b;
@@ -2510,7 +2510,7 @@ body:not(.aiming) #crosshair { display: none; }
 }
 .vitals #regen-readout {
   display: block;
-  font-size: 14px;
+  font-size: 16px;
   color: #c3e8a9;
   margin-top: 4px;
 }

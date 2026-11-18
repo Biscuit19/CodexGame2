@@ -164,6 +164,6 @@ test("免费撤离绿烟和付费金币显示，实际停留可撤离", async ({
   });
   await page.getByRole("button", { name: /返回基地/ }).click();
   await expect(
-    page.getByRole("heading", { name: "暖窝基地", exact: true }),
+    page.getByRole("button", { name: "仓库配装", exact: true }),
   ).toBeVisible();
 });

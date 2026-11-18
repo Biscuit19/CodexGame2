@@ -25,15 +25,18 @@ test("深绿功能基地与四图导览、原图动效和减少动态效果", as
     await page.getByRole("button", { name: "返回基地", exact: true }).click();
   }
   await page.getByRole("button", { name: "准备出发", exact: true }).click();
-  await expect(page.locator(".map-card .mission-art")).toHaveCount(4);
+  await expect(page.locator(".region-choice img")).toHaveCount(4);
   for (let i = 0; i < 4; i++) {
     const card = page.locator(`[data-action="map-select"][data-id="${i}"]`);
     await card.click();
     await expect(card).toHaveAttribute("aria-pressed", "true");
     await expect(page.locator(".equipment-advice")).toContainText(
-      `推荐 ${i + 1} 级装备`,
+      `推荐 ${["1~2", "2~3", "3~4", "3~4"][i]} 级装备`,
     );
-    await expect(page.locator(".resource-chips svg")).toHaveCount(3);
+    await expect(page.locator(".region-hero")).toHaveAttribute(
+      "src",
+      (await card.locator("img").getAttribute("src"))!,
+    );
   }
   await page.setViewportSize({ width: 390, height: 844 });
   expect(

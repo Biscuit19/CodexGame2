@@ -136,8 +136,8 @@ test("隐藏测试入口资金与地图图鉴全解锁，购买、退出、结�
   await expect(page.locator(".collection-item.found")).toHaveCount(70);
   await page.getByRole("button", { name: "返回基地", exact: true }).click();
   await page.getByRole("button", { name: "准备出发", exact: true }).click();
-  await expect(page.locator(".map-card")).toHaveCount(4);
-  await expect(page.locator(".map-cards")).not.toContainText("尚未解锁");
+  await expect(page.locator(".region-choice")).toHaveCount(4);
+  await expect(page.locator(".region-choice [aria-label=未解锁]")).toHaveCount(0);
   for (let map = 0; map < 4; map++) {
     if (map > 0)
       await page.getByRole("button", { name: "准备出发", exact: true }).click();
@@ -494,7 +494,7 @@ test("Chrome 连续停留撤离点后显示顶层结算，截图、命中测试�
     document.querySelector("#chrome-extraction-cover")?.remove(),
   );
   await expect(
-    page.getByRole("heading", { name: "暖窝基地", exact: true }),
+    page.getByRole("button", { name: "仓库配装", exact: true }),
   ).toBeVisible();
 });
 
@@ -512,7 +512,7 @@ test("基地子页面按 Esc 返回基地，详情先关闭且结算不会被误
     await expect(page.locator(".home-entry")).toHaveCount(3);
     await expect(page.locator("#item-menu")).toHaveCount(0);
     await expect(
-      page.getByRole("heading", { name: "暖窝基地", exact: true }),
+      page.getByRole("button", { name: "仓库配装", exact: true }),
     ).toBeVisible();
   }
   await page.evaluate(
