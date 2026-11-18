@@ -1,0 +1,428 @@
+{
+  "version": 1,
+  "date": "2026-10-23",
+  "status": "SC1已采用，其他待选",
+  "processing": "外部素材只做固定音量匹配、无损转码；不剪切、不变调、不滤波、不叠层。原创五条基于原460Hz正弦点击，明确为本次自制。试听共同-30LUFS基线，原始对照亦匹配试听基线。",
+  "research": [
+    {
+      "url": "https://www.reddit.com/r/gamedev/search/?q=free%20UI%20sound%20effects&restrict_sr=1",
+      "status": 200
+    },
+    {
+      "url": "https://search.brave.com/search?q=game%20developers%20recommended%20soft%20cute%20UI%20sounds%20free%20pack",
+      "status": 200
+    },
+    {
+      "url": "https://opengameart.org/art-search-advanced?keys=soft+ui&field_art_type_tid%5B%5D=13&sort_by=count&sort_order=DESC",
+      "status": 200
+    },
+    {
+      "url": "https://opengameart.org/art-search-advanced?keys=pop&field_art_type_tid%5B%5D=13&sort_by=count&sort_order=DESC&items_per_page=120",
+      "status": 200
+    },
+    {
+      "url": "https://opengameart.org/art-search-advanced?keys=bubble&field_art_type_tid%5B%5D=13&sort_by=count&sort_order=DESC",
+      "status": 200
+    },
+    {
+      "url": "https://search.brave.com/search?q=free%20cute%20soft%20UI%20sound%20effects%20CC0%20itch.io%20pack",
+      "status": 200
+    }
+  ],
+  "groups": [
+    {
+      "id": "external",
+      "name": "公开素材 · 10位作者",
+      "candidates": [
+        {
+          "id": "SC1",
+          "name": "轻轻啵一下",
+          "author": "farfadet46",
+          "sourceUrl": "https://opengameart.org/content/bubbles-pop",
+          "license": "CC0-1.0",
+          "popularity": "8852次下载；49收藏；有已采用游戏集合",
+          "sourceFile": "pop.ogg",
+          "sourceSha256": "d55886ec5b145045d1abd13926675b93646a8865e53e1f7a3a58cfbb7b733cff",
+          "download": {
+            "url": "https://opengameart.org/sites/default/files/pop.ogg",
+            "file": "bubbles-pop.ogg",
+            "sha256": "d55886ec5b145045d1abd13926675b93646a8865e53e1f7a3a58cfbb7b733cff",
+            "bytes": 8578
+          },
+          "original": {
+            "url": "originals/SC1.ogg",
+            "sha256": "d55886ec5b145045d1abd13926675b93646a8865e53e1f7a3a58cfbb7b733cff"
+          },
+          "audio": {
+            "url": "audio/SC1.flac",
+            "sha256": "8d64773fe74226679a34ab6423d792d00db36ec3ac733ecca61adc39e7d3eab1",
+            "duration": 0.27573696145124715,
+            "gainDb": 3.450000000000003
+          }
+        },
+        {
+          "id": "SC2",
+          "name": "圆圆小泡泡",
+          "author": "wubitog",
+          "sourceUrl": "https://opengameart.org/content/3-pop-sounds",
+          "license": "CC0-1.0",
+          "popularity": "4064次下载；20收藏；评论有游戏采用回报",
+          "sourceFile": "3pops/pop2.ogg",
+          "sourceSha256": "8777e88188a8ae6b20729f28cb4240a31c2e0140b79be12bd30423f895a67fba",
+          "download": {
+            "url": "https://opengameart.org/sites/default/files/3pops.zip",
+            "file": "3-pop-sounds.zip",
+            "sha256": "b54c299913b6502e5d07ba62bcc6726f13498ee848d49f25fc4390e0b6103a82",
+            "bytes": 90641
+          },
+          "original": {
+            "url": "originals/SC2.ogg",
+            "sha256": "8777e88188a8ae6b20729f28cb4240a31c2e0140b79be12bd30423f895a67fba"
+          },
+          "audio": {
+            "url": "audio/SC2.flac",
+            "sha256": "0964217bcb5976178bb2544c7d7abe2e935c147914c1b04e7b228801f93474bf",
+            "duration": 0.2909750566893424,
+            "gainDb": 12.549999999999997
+          }
+        },
+        {
+          "id": "SC3",
+          "name": "柔软嘴唇啵",
+          "author": "cogitollc",
+          "sourceUrl": "https://opengameart.org/content/pop-sounds",
+          "license": "CC0-1.0",
+          "popularity": "此条968次下载；作者为自己的游戏制作",
+          "sourceFile": "pop1.ogg",
+          "sourceSha256": "a00ec6f278e2237d1b95dd0a53dfd2398ea44a7497794b38ab4b28602573d763",
+          "download": {
+            "url": "https://opengameart.org/sites/default/files/pop1.ogg",
+            "file": "pop-sounds.ogg",
+            "sha256": "a00ec6f278e2237d1b95dd0a53dfd2398ea44a7497794b38ab4b28602573d763",
+            "bytes": 6607
+          },
+          "original": {
+            "url": "originals/SC3.ogg",
+            "sha256": "a00ec6f278e2237d1b95dd0a53dfd2398ea44a7497794b38ab4b28602573d763"
+          },
+          "audio": {
+            "url": "audio/SC3.flac",
+            "sha256": "07feca38395a6c31c37ecc4fcb683067613cb0ee19523a6e6a6f7a10559ca9c5",
+            "duration": 0.2085034013605442,
+            "gainDb": -10.95
+          }
+        },
+        {
+          "id": "SC4",
+          "name": "软软轻按",
+          "author": "Kenney",
+          "sourceUrl": "https://kenney.nl/assets/ui-audio",
+          "license": "CC0-1.0",
+          "popularity": "官网UI Audio共50条；开发者资源指南推荐Kenney；官网未公开下载量",
+          "sourceFile": "Audio/click2.ogg",
+          "sourceSha256": "c394b46bc6737f7f7edfbfa3031ce621b7a43d498d456d6198364eee9cd3e306",
+          "download": {
+            "key": "kenney-ui",
+            "url": "https://kenney.nl/media/pages/assets/ui-audio/490d233f68-1677590494/kenney_ui-audio.zip",
+            "file": "kenney-ui--kenney_ui-audio.zip",
+            "bytes": 411949,
+            "sha256": "946fc23a63d535d693eb31b2eabb80c8c28d6351e2186b344ceb71b2cb1d5eb6"
+          },
+          "original": {
+            "url": "originals/SC4.ogg",
+            "sha256": "c394b46bc6737f7f7edfbfa3031ce621b7a43d498d456d6198364eee9cd3e306"
+          },
+          "audio": {
+            "url": "audio/SC4.flac",
+            "sha256": "4ab0d7214d9330f5699e6b603945b57b7500d76fa512d5d51986b20cc42127f9",
+            "duration": 0.0528344671201814,
+            "gainDb": -5.550000000000001
+          }
+        },
+        {
+          "id": "SC5",
+          "name": "极短轻泡",
+          "author": "trezegames",
+          "sourceUrl": "https://opengameart.org/content/pop-effect-sounds",
+          "license": "CC0-1.0",
+          "popularity": "此条404次下载；较小众的动作匹配补充",
+          "sourceFile": "p_1.ogg",
+          "sourceSha256": "189b05f2a278053f9b29b70f79746bf2d81e34b5e01502c10eb3691892a73b68",
+          "download": {
+            "url": "https://opengameart.org/sites/default/files/p_1.ogg",
+            "file": "pop-effect-sounds.ogg",
+            "sha256": "189b05f2a278053f9b29b70f79746bf2d81e34b5e01502c10eb3691892a73b68",
+            "bytes": 6784
+          },
+          "original": {
+            "url": "originals/SC5.ogg",
+            "sha256": "189b05f2a278053f9b29b70f79746bf2d81e34b5e01502c10eb3691892a73b68"
+          },
+          "audio": {
+            "url": "audio/SC5.flac",
+            "sha256": "eebbddaf3394141158578861a2dfcaea0bf634227143c1b51f6861f8c15842d1",
+            "duration": 0.09201814058956916,
+            "gainDb": 7.450000000000003
+          }
+        },
+        {
+          "id": "SC6",
+          "name": "小巧气泡点按",
+          "author": "EZduzziteh",
+          "sourceUrl": "https://opengameart.org/content/pop-sounds-0",
+          "license": "CC0-1.0",
+          "popularity": "此条963次下载；评论有游戏使用反馈",
+          "sourceFile": "pop1.wav",
+          "sourceSha256": "758416a61890a61f4e1f00a65531e75e7d867cad1e96392d829860b8aa3a66f6",
+          "download": {
+            "url": "https://opengameart.org/sites/default/files/pop1.wav",
+            "file": "pop-sounds-0.wav",
+            "sha256": "758416a61890a61f4e1f00a65531e75e7d867cad1e96392d829860b8aa3a66f6",
+            "bytes": 10836
+          },
+          "original": {
+            "url": "originals/SC6.wav",
+            "sha256": "758416a61890a61f4e1f00a65531e75e7d867cad1e96392d829860b8aa3a66f6"
+          },
+          "audio": {
+            "url": "audio/SC6.flac",
+            "sha256": "f71048aed3bf7325756533a7508547dc8f4fcca85ad53b58a7302cb152a95aaf",
+            "duration": 0.06015873015873016,
+            "gainDb": -8.75
+          }
+        },
+        {
+          "id": "SC7",
+          "name": "柔和游戏短音",
+          "author": "legoluft",
+          "sourceUrl": "https://opengameart.org/content/atmospheric-interaction-sound-pack",
+          "license": "CC0-1.0",
+          "popularity": "包11066次下载；评论有实际UI游戏采用反馈",
+          "sourceFile": "krank_sounds/summer/part.wav",
+          "sourceSha256": "00bed97fb05cc96e6ef51f2e2667848723e27844515eef242fdee6ff0d7a713b",
+          "download": {
+            "url": "https://opengameart.org/sites/default/files/krank_sounds.7z",
+            "file": "atmospheric-interaction-sound-pack.7z",
+            "sha256": "5127037a96d50b9ca09d3dfdab9b41784ac94bef89aeec33ba18849745525eec",
+            "bytes": 8656193
+          },
+          "original": {
+            "url": "originals/SC7.wav",
+            "sha256": "00bed97fb05cc96e6ef51f2e2667848723e27844515eef242fdee6ff0d7a713b"
+          },
+          "audio": {
+            "url": "audio/SC7.flac",
+            "sha256": "da256c23e508d915747a7df3a33a7d09b4372826ac6335deec4332caaa46fb32",
+            "duration": 0.3483673469387755,
+            "gainDb": -13.010000000000002
+          }
+        },
+        {
+          "id": "SC8",
+          "name": "单颗小水泡",
+          "author": "Brian MacIntosh / BMacZero",
+          "sourceUrl": "https://opengameart.org/content/bubble-sound-effects",
+          "license": "CC0-1.0",
+          "popularity": "此条2334次下载；14收藏",
+          "sourceFile": "bubbles-single2.wav",
+          "sourceSha256": "c6c7b9f3e7415e1fee6d5ca0c9556fa03443c4cbeaa623f7a70476fc5b5a11e8",
+          "download": {
+            "url": "https://opengameart.org/sites/default/files/bubbles-single2.wav",
+            "file": "bubble-sound-effects.wav",
+            "sha256": "c6c7b9f3e7415e1fee6d5ca0c9556fa03443c4cbeaa623f7a70476fc5b5a11e8",
+            "bytes": 38468
+          },
+          "original": {
+            "url": "originals/SC8.wav",
+            "sha256": "c6c7b9f3e7415e1fee6d5ca0c9556fa03443c4cbeaa623f7a70476fc5b5a11e8"
+          },
+          "audio": {
+            "url": "audio/SC8.flac",
+            "sha256": "d8f3d28d582329120721ed111b681a7c5098cfa4f5ac23cf9133228d31333d63",
+            "duration": 0.4356462585034014,
+            "gainDb": -3.3099999999999987
+          }
+        },
+        {
+          "id": "SC9",
+          "name": "软弹水泡",
+          "author": "rubberduck",
+          "sourceUrl": "https://opengameart.org/content/40-cc0-water-splash-slime-sfx",
+          "license": "CC0-1.0",
+          "popularity": "包5509次下载；48收藏",
+          "sourceFile": "bubble_02.ogg",
+          "sourceSha256": "7992a1a4637ea727b177b3edbc086ec280167d67a8fad010bb8fb58893b2e2f2",
+          "download": {
+            "url": "https://opengameart.org/sites/default/files/water-splash-slime-sfx.zip",
+            "file": "40-cc0-water-splash-slime-sfx.zip",
+            "sha256": "7cd39abb49d4362a37ba18dc0e454c7dc1d08029d4e5b683149046bc237b2eba",
+            "bytes": 2259262
+          },
+          "original": {
+            "url": "originals/SC9.ogg",
+            "sha256": "7992a1a4637ea727b177b3edbc086ec280167d67a8fad010bb8fb58893b2e2f2"
+          },
+          "audio": {
+            "url": "audio/SC9.flac",
+            "sha256": "4275566d8e8c911fd016d16de0e6859d44023a2f99dfcb8a1db48400388f3fcd",
+            "duration": 0.3603401360544218,
+            "gainDb": -8.350000000000001
+          }
+        },
+        {
+          "id": "SC10",
+          "name": "轻巧魔法确认",
+          "author": "Urizen Composer",
+          "sourceUrl": "https://opengameart.org/content/sci-fi-ui-sfx",
+          "license": "OGA-BY-4.0",
+          "popularity": "包380次下载；较小众的柔和短音补充",
+          "sourceFile": "UI Sci-Fi SFXs Confirm Pack Vol 1/PM_SD_UI_MAGIC_CONFIRM_2.wav",
+          "sourceSha256": "41080d9ec994e685aa6fcb6140733c36047657efdca20da08e0e66b41b65c9e1",
+          "download": {
+            "url": "https://opengameart.org/sites/default/files/ui_sci-fi_sfxs_confirm_pack_vol_1.zip",
+            "file": "sci-fi-ui-sfx.zip",
+            "sha256": "87c1391448817c188579cd3f4b14651efdd15a59987306142de5f2f14bd0814b",
+            "bytes": 2743074
+          },
+          "original": {
+            "url": "originals/SC10.wav",
+            "sha256": "41080d9ec994e685aa6fcb6140733c36047657efdca20da08e0e66b41b65c9e1"
+          },
+          "audio": {
+            "url": "audio/SC10.flac",
+            "sha256": "33f1d8bf3a55b5ae8ddf0e9e2bc8f8bddb41cabda7c4d9a7ed3d7adcd4bd8295",
+            "duration": 0.2821315192743764,
+            "gainDb": -6.07
+          }
+        }
+      ]
+    },
+    {
+      "id": "original",
+      "name": "基于原点击 · 5条自制",
+      "candidates": [
+        {
+          "id": "OC1",
+          "name": "暖一点的轻点",
+          "author": "本项目 · 本次自制",
+          "license": "Project-original",
+          "sourceUrl": "https://github.com/Biscuit19/CodexGame2/blob/main/scripts/assets/build-soft-clicks.py",
+          "design": {
+            "frequency": 440,
+            "duration": 0.06,
+            "attack": 0.012,
+            "glide": 0,
+            "secondHarmonic": 0
+          },
+          "audio": {
+            "url": "audio/OC1.flac",
+            "sha256": "e410675a159aba5f2d8b86f0f6ff9455ce2724bbbfa76a73506152e3beec87ee",
+            "duration": 0.07,
+            "gainDb": 11.950000000000003
+          }
+        },
+        {
+          "id": "OC2",
+          "name": "小水滴轻落",
+          "author": "本项目 · 本次自制",
+          "license": "Project-original",
+          "sourceUrl": "https://github.com/Biscuit19/CodexGame2/blob/main/scripts/assets/build-soft-clicks.py",
+          "design": {
+            "frequency": 520,
+            "duration": 0.055,
+            "attack": 0.01,
+            "glide": -70,
+            "secondHarmonic": 0
+          },
+          "audio": {
+            "url": "audio/OC2.flac",
+            "sha256": "9c1c984bf13624efd9bf4f921391506ae9a436fbb539d072d0d4050399dd837a",
+            "duration": 0.06498866213151927,
+            "gainDb": 12.350000000000001
+          }
+        },
+        {
+          "id": "OC3",
+          "name": "圆圆软点",
+          "author": "本项目 · 本次自制",
+          "license": "Project-original",
+          "sourceUrl": "https://github.com/Biscuit19/CodexGame2/blob/main/scripts/assets/build-soft-clicks.py",
+          "design": {
+            "frequency": 390,
+            "duration": 0.075,
+            "attack": 0.014,
+            "glide": 45,
+            "secondHarmonic": 0
+          },
+          "audio": {
+            "url": "audio/OC3.flac",
+            "sha256": "21ea3d0e74cd31d1d6595402bcff842c0b8f0da4e044d5fb5e32262217fac16e",
+            "duration": 0.08498866213151927,
+            "gainDb": 11.049999999999997
+          }
+        },
+        {
+          "id": "OC4",
+          "name": "带一点亮度的轻点",
+          "author": "本项目 · 本次自制",
+          "license": "Project-original",
+          "sourceUrl": "https://github.com/Biscuit19/CodexGame2/blob/main/scripts/assets/build-soft-clicks.py",
+          "design": {
+            "frequency": 480,
+            "duration": 0.065,
+            "attack": 0.012,
+            "glide": 0,
+            "secondHarmonic": 0.1
+          },
+          "audio": {
+            "url": "audio/OC4.flac",
+            "sha256": "65fc8b6c328e45b3f353782facc503d58ae5e9e9a21460017b8d4f60b2e9d3e7",
+            "duration": 0.07501133786848073,
+            "gainDb": 11.549999999999997
+          }
+        },
+        {
+          "id": "OC5",
+          "name": "轻盈小啵",
+          "author": "本项目 · 本次自制",
+          "license": "Project-original",
+          "sourceUrl": "https://github.com/Biscuit19/CodexGame2/blob/main/scripts/assets/build-soft-clicks.py",
+          "design": {
+            "frequency": 560,
+            "duration": 0.05,
+            "attack": 0.009,
+            "glide": -120,
+            "secondHarmonic": 0
+          },
+          "audio": {
+            "url": "audio/OC5.flac",
+            "sha256": "1b9ec2ac58efef6d02a5acc95b0e73cdf472d08bd78e6b616d0e9e2e052dd666",
+            "duration": 0.06,
+            "gainDb": 12.75
+          }
+        }
+      ]
+    }
+  ],
+  "reference": {
+    "id": "REF",
+    "name": "现有原始点击 · 对照",
+    "author": "原游戏点击",
+    "license": "Project-original",
+    "sourceUrl": "https://github.com/Biscuit19/CodexGame2/blob/main/scripts/assets/build-soft-clicks.py",
+    "design": {
+      "frequency": 460,
+      "duration": 0.05,
+      "attack": 0.008,
+      "glide": 0,
+      "secondHarmonic": 0
+    },
+    "audio": {
+      "url": "audio/REF.flac",
+      "sha256": "e136d48fc329bc9fa628fbaa945a65793690d8dcd48bf68c87e6067a5f2c7808",
+      "duration": 0.06,
+      "gainDb": 12.950000000000003
+    }
+  },
+  "adoptedChoice": "SC1"
+}
